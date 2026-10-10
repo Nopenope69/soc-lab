@@ -81,3 +81,12 @@ def test_ocv_table_must_be_strictly_increasing():
 
     with pytest.raises(ValueError, match="not strictly increasing"):
         Assumptions.model_validate(raw_dict)
+
+
+def test_soc_definition_basis_rejects_non_present_capacity():
+    """Verify that soc_definition.basis rejects any value except 'present_capacity'."""
+    _, raw_dict, _ = load_assumptions()
+    raw_dict["soc_definition"]["basis"]["value"] = "nameplate"
+
+    with pytest.raises(ValueError, match="reference SOC basis must be 'present_capacity'"):
+        Assumptions.model_validate(raw_dict)

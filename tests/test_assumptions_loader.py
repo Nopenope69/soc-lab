@@ -108,3 +108,45 @@ def test_derive_scenario_seed_is_reproducible():
 
     seed3 = derive_scenario_seed(42, "ffff0000ef567890abcd1234ef567890")
     assert seed1 != seed3
+
+
+def test_estimator_model_defaults_to_copy_of_plant_when_not_set():
+    """Verify that estimator_model defaults to plant parameters when mismatch is zero."""
+    from soc.assumptions.derived import get_effective_estimator_parameters
+
+    assumptions = resolve_assumptions()
+    est_params = get_effective_estimator_parameters(assumptions)
+
+    assert est_params["nominal_capacity_Ah"] == assumptions.plant.nominal_capacity_Ah.value
+    assert est_params["coulombic_efficiency"] == assumptions.plant.coulombic_efficiency.value
+    assert est_params["r0_table_ohm"] == assumptions.plant.r0_table_ohm.value
+    assert est_params["r1_table_ohm"] == assumptions.plant.r1_table_ohm.value
+    assert est_params["tau1_table_s"] == assumptions.plant.tau1_table_s.value
+    assert est_params["hysteresis_amplitude_v"] == assumptions.plant.hysteresis_amplitude_v.value
+
+
+def test_mismatch_block_scales_estimator_params_and_leaves_plant_unchanged():
+    """Verify that mismatch scales estimator parameters and leaves plant untouched."""
+    from soc.assumptions.derived import get_effective_estimator_parameters
+
+    cli_overrides = [
+        "estimator_model.mismatch.capacity_pct.value=10.0",
+        "estimator_model.mismatch.r0_pct.value=-10.0",
+        "estimator_model.mismatch.ocv_offset_mv.value=5.0",
+    ]
+    assumptions = resolve_assumptions(cli_overrides=cli_overrides)
+    est_params = get_effective_estimator_parameters(assumptions)
+
+    # Estimator parameters must be scaled
+    # 100 Ah + 10% = 110 Ah
+    assert est_params["nominal_capacity_Ah"] == pytest.approx(110.0)
+    # R0 at 25.0 C: 0.0010 - 10% = 0.0009
+    assert est_params["r0_table_ohm"]["25.0"] == pytest.approx(0.0009)
+    # OCV at 25.0 C first point: 2.500 V + 5 mV (0.005 V) = 2.505 V
+    assert est_params["ocv_table_v"]["25.0"][0] == pytest.approx(2.505)
+
+    # Plant parameters MUST remain strictly unchanged
+    assert assumptions.plant.nominal_capacity_Ah.value == 100.0
+    assert assumptions.plant.r0_table_ohm.value["25.0"] == 0.0010
+    assert assumptions.plant.ocv_table_v.value["25.0"][0] == 2.500
+

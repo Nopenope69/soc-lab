@@ -192,6 +192,15 @@ class SocDefinitionAssumptions(BaseModel):
     full_charge_voltage_threshold_v: AssumptionEntry
     full_charge_current_threshold_a: AssumptionEntry
 
+    @model_validator(mode="after")
+    def validate_basis(self) -> "SocDefinitionAssumptions":
+        """Enforce present_capacity basis."""
+        if self.basis.value != "present_capacity":
+            raise ValueError(
+                f"Invalid basis '{self.basis.value}': reference SOC basis must be 'present_capacity'"
+            )
+        return self
+
 
 class BarsAssumptions(BaseModel):
     """Test matrix pass/fail bar thresholds."""
