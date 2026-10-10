@@ -110,42 +110,53 @@ def test_rc_branch_current_step_response_analytic():
     assert i_rc == pytest.approx(expected_i_rc, rel=1e-3)
 
 
-def test_hysteresis_stays_bounded_in_neg1_to_1():
-    """Verify h stays strictly within [-1, 1] under extreme charge and discharge."""
-    h = 0.0
+def test_hysteresis_exact_closed_form_match():
+    """Verify that constant discharge and charge segments match closed form to 1e-9."""
     capacity_ah = 100.0
     gamma = 50.0
     coulomb_eff = 0.998
+    dt_s = 1.0
+    cap_as = 3600.0 * capacity_ah
 
-    # Large discharge pulse (positive current drives h toward -1)
-    for _ in range(300):
+    # 1. Constant discharge segment (50 A for 1500 steps from h0 = 0.0)
+    i_dis = 50.0
+    h = 0.0
+    n_dis = 1500
+    for _ in range(n_dis):
         h = Cell2RCModel.step_hysteresis(
             h=h,
-            i_a=200.0,
-            dt_s=1.0,
+            i_a=i_dis,
+            dt_s=dt_s,
             capacity_ah=capacity_ah,
             gamma=gamma,
             coulombic_efficiency=coulomb_eff,
         )
         assert -1.0 <= h <= 1.0
 
-    # At steady state discharge, h approaches -1.0
-    assert h == pytest.approx(-1.0, abs=1e-3)
+    alpha_dis = (1.0 * i_dis * gamma * dt_s) / cap_as
+    # Closed form from h0=0: h = -(1 - exp(-n * alpha))
+    h_closed_dis = -(1.0 - math.exp(-n_dis * alpha_dis))
+    assert abs(h - h_closed_dis) < 1e-9
 
-    # Large charge pulse (negative current drives h toward +1)
-    for _ in range(300):
+    # 2. Constant charge segment (-30 A for 400 steps starting from h_closed_dis)
+    i_chg = -30.0
+    n_chg = 400
+    h_start_chg = h
+    for _ in range(n_chg):
         h = Cell2RCModel.step_hysteresis(
             h=h,
-            i_a=-200.0,
-            dt_s=1.0,
+            i_a=i_chg,
+            dt_s=dt_s,
             capacity_ah=capacity_ah,
             gamma=gamma,
             coulombic_efficiency=coulomb_eff,
         )
         assert -1.0 <= h <= 1.0
 
-    # At steady state charge, h approaches +1.0
-    assert h == pytest.approx(1.0, abs=1e-3)
+    alpha_chg = (coulomb_eff * abs(i_chg) * gamma * dt_s) / cap_as
+    # Closed form: h = 1 - (1 - h_start) * exp(-n * alpha)
+    h_closed_chg = 1.0 - (1.0 - h_start_chg) * math.exp(-n_chg * alpha_chg)
+    assert abs(h - h_closed_chg) < 1e-9
 
 
 def test_zero_current_leaves_hysteresis_unchanged():

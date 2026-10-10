@@ -118,16 +118,6 @@ class PlantSimulator:
             m_hysteresis=m_hyst,
         )
 
-        truth_record = PlantTruthState(
-            soc=self.state.soc,
-            v_terminal=v_true,
-            i_true=i_true_a,
-            temp_c=temp_c,
-            i1=self.state.i1,
-            i2=self.state.i2,
-            h=self.state.h,
-        )
-
         # Update physical internal state
         next_soc = Cell2RCModel.step_soc(
             soc=self.state.soc,
@@ -157,6 +147,16 @@ class PlantSimulator:
             coulombic_efficiency=coulomb_eff,
         )
         self.state = CellState(soc=next_soc, i1=next_i1, i2=next_i2, h=next_h)
+
+        truth_record = PlantTruthState(
+            soc=next_soc,
+            v_terminal=v_true,
+            i_true=i_true_a,
+            temp_c=temp_c,
+            i1=next_i1,
+            i2=next_i2,
+            h=next_h,
+        )
 
         # Generate degraded sensor measurements
         dropout_rate = float(self.sensors_cfg.dropout_rate.value)
