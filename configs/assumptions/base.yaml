@@ -258,7 +258,7 @@ sensors:
     value: 0.0
     unit: "fraction"
     status: "placeholder"
-    bounds: [0.0, 0.5]
+    bounds: [0.0, 1.0]
     note: "Measurement transmission dropout probability"
   temperature_noise_sigma_c:
     value: 0.2
