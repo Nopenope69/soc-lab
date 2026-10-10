@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soc-lab"
+version = "0.1.0"
+description = "State-of-Charge (SOC) Estimation Algorithm Lab"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "TEC" }
+]
+dependencies = [
+    "numpy>=2.0.0",
+    "scipy>=1.14.0",
+    "pydantic>=2.10.0",
+    "pyyaml>=6.0.0",
+    "pytest>=8.0.0",
+    "matplotlib>=3.9.0",
+]
+
+[project.scripts]
+soc = "soc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["src"]

@@ -1,0 +1,13 @@
+# Sealed dataset splits locked by cycle
+# Test split must NEVER be read during tuning/estimation
+version: "1.0"
+train_cycles:
+  - "cycle_001"
+  - "cycle_002"
+  - "cycle_003"
+val_cycles:
+  - "cycle_004"
+test_cycles:
+  - "cycle_005"
+  - "cycle_006"
+hash: "a4f83c79d123e4b567890abcdef1234567890abcdef1234567890abcdef12345"

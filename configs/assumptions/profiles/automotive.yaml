@@ -1,0 +1,21 @@
+# Automotive Profile Overrides
+duty:
+  cycle_type:
+    value: "dynamic_fuds"
+    unit: "string"
+    status: "assumed"
+    note: "Dynamic automotive duty cycle profile"
+  pulse_c_rate:
+    value: 2.0
+    unit: "C"
+    status: "placeholder"
+    bounds: [0.01, 10.0]
+    note: "Peak automotive acceleration/braking C-rate"
+
+bars:
+  t5_converge_time_s:
+    value: 60.0
+    unit: "s"
+    status: "assumed"
+    bounds: [1.0, 3600.0]
+    note: "Automotive fast convergence bar: 60 seconds"

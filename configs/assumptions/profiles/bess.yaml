@@ -1,0 +1,27 @@
+# Stationary BESS Profile Overrides
+duty:
+  cycle_type:
+    value: "minor_loops"
+    unit: "string"
+    status: "assumed"
+    note: "Stationary BESS profile with partial cycling and resting"
+  pulse_c_rate:
+    value: 0.5
+    unit: "C"
+    status: "placeholder"
+    bounds: [0.01, 10.0]
+    note: "Nominal stationary storage charge/discharge rate"
+  rest_duration_s:
+    value: 3600.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [1.0, 86400.0]
+    note: "Long stationary rests between grid events"
+
+bars:
+  t5_converge_time_s:
+    value: 900.0
+    unit: "s"
+    status: "assumed"
+    bounds: [1.0, 3600.0]
+    note: "BESS relaxed convergence bar: 15 minutes (900 seconds)"

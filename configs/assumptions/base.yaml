@@ -1,0 +1,470 @@
+# Base Assumptions Configuration for SOC Estimation Lab
+# All cell values are clearly marked placeholder or assumed LFP parameters
+
+plant:
+  nominal_capacity_Ah:
+    value: 100.0
+    unit: "Ah"
+    status: "placeholder"
+    bounds: [1.0, 500.0]
+    note: "Placeholder nominal capacity for 100Ah prismatic LFP cell"
+  initial_soc:
+    value: 0.80
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Default true initial cell SOC"
+  coulombic_efficiency:
+    value: 0.998
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.8, 1.0]
+    note: "Coulombic efficiency during charging"
+  temperatures_c:
+    value: [15.0, 25.0, 35.0]
+    unit: "degC"
+    status: "placeholder"
+    bounds: [-20.0, 60.0]
+    note: "LUT calibration temperature points"
+  soc_grid:
+    value: [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0]
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "SOC grid points for parameter tables"
+  ocv_table_v:
+    value:
+      "15.0": [2.500, 3.050, 3.140, 3.240, 3.275, 3.285, 3.292, 3.297, 3.305, 3.325, 3.355, 3.420, 3.650]
+      "25.0": [2.500, 3.060, 3.150, 3.250, 3.280, 3.290, 3.295, 3.300, 3.310, 3.330, 3.360, 3.430, 3.650]
+      "35.0": [2.500, 3.070, 3.160, 3.260, 3.285, 3.295, 3.300, 3.305, 3.315, 3.335, 3.365, 3.440, 3.650]
+    unit: "V"
+    status: "placeholder"
+    bounds: [2.0, 4.0]
+    note: "Placeholder LFP OCV curve showing flat plateau and steep knees; strictly increasing"
+  r0_table_ohm:
+    value:
+      "15.0": 0.0014
+      "25.0": 0.0010
+      "35.0": 0.0008
+    unit: "Ohm"
+    status: "placeholder"
+    bounds: [0.0001, 0.05]
+    note: "Ohmic resistance over temperature"
+  r1_table_ohm:
+    value:
+      "15.0": 0.0008
+      "25.0": 0.0006
+      "35.0": 0.0005
+    unit: "Ohm"
+    status: "placeholder"
+    bounds: [0.00005, 0.05]
+    note: "First RC branch resistance"
+  tau1_table_s:
+    value:
+      "15.0": 18.0
+      "25.0": 15.0
+      "35.0": 12.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [0.5, 300.0]
+    note: "First RC branch time constant"
+  r2_table_ohm:
+    value:
+      "15.0": 0.0012
+      "25.0": 0.0009
+      "35.0": 0.0007
+    unit: "Ohm"
+    status: "placeholder"
+    bounds: [0.00005, 0.05]
+    note: "Second RC branch resistance"
+  tau2_table_s:
+    value:
+      "15.0": 75.0
+      "25.0": 60.0
+      "35.0": 50.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [1.0, 1200.0]
+    note: "Second RC branch time constant"
+  hysteresis_amplitude_v:
+    value: 0.015
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.0, 0.1]
+    note: "Hysteresis maximum half-amplitude M"
+  hysteresis_gamma:
+    value: 50.0
+    unit: "dimensionless"
+    status: "placeholder"
+    bounds: [1.0, 500.0]
+    note: "Hysteresis progression rate gamma"
+
+duty:
+  initial_soc:
+    value: 0.80
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Duty profile initial SOC"
+  ambient_temperature_c:
+    value: 25.0
+    unit: "degC"
+    status: "placeholder"
+    bounds: [-20.0, 60.0]
+    note: "Ambient operating temperature"
+  pulse_c_rate:
+    value: 1.0
+    unit: "C"
+    status: "placeholder"
+    bounds: [0.01, 10.0]
+    note: "Pulse current magnitude in C-rate"
+  pulse_duration_s:
+    value: 60.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [1.0, 3600.0]
+    note: "Pulse event duration"
+  rest_duration_s:
+    value: 300.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [1.0, 86400.0]
+    note: "Rest period between active events"
+  total_duration_s:
+    value: 3600.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [10.0, 604800.0]
+    note: "Total test profile duration"
+  cycle_type:
+    value: "pulse"
+    unit: "string"
+    status: "placeholder"
+    note: "Type of duty cycle generator"
+  charge_discharge_ratio:
+    value: 1.0
+    unit: "dimensionless"
+    status: "placeholder"
+    bounds: [0.1, 10.0]
+    note: "Charge to discharge duration ratio"
+  soc_min_limit:
+    value: 0.40
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Lower SOC limit for partial cycles"
+  soc_max_limit:
+    value: 0.60
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Upper SOC limit for partial cycles"
+
+estimator_model:
+  mismatch:
+    capacity_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated capacity mismatch percentage"
+    r0_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated R0 mismatch percentage"
+    r1_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated R1 mismatch percentage"
+    tau1_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated tau1 mismatch percentage"
+    r2_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated R2 mismatch percentage"
+    tau2_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated tau2 mismatch percentage"
+    ocv_offset_mv:
+      value: 0.0
+      unit: "mV"
+      status: "placeholder"
+      bounds: [-100.0, 100.0]
+      note: "Estimated OCV offset mismatch in mV"
+    hysteresis_amplitude_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated hysteresis amplitude mismatch"
+    hysteresis_gamma_pct:
+      value: 0.0
+      unit: "%"
+      status: "placeholder"
+      bounds: [-50.0, 50.0]
+      note: "Estimated hysteresis gamma mismatch"
+
+sensors:
+  current_offset_a:
+    value: 0.0
+    unit: "A"
+    status: "placeholder"
+    bounds: [-5.0, 5.0]
+    note: "Current sensor DC bias offset"
+  current_gain_error:
+    value: 0.0
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [-0.1, 0.1]
+    note: "Current sensor gain scale error"
+  current_noise_sigma_a:
+    value: 0.05
+    unit: "A"
+    status: "placeholder"
+    bounds: [0.0, 2.0]
+    note: "Current sensor Gaussian noise standard deviation"
+  voltage_noise_sigma_v:
+    value: 0.002
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.0, 0.05]
+    note: "Voltage sensor Gaussian noise standard deviation"
+  voltage_quantisation_v:
+    value: 0.001
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.0, 0.05]
+    note: "Analog front-end ADC LSB voltage step"
+  sample_period_s:
+    value: 1.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [0.01, 60.0]
+    note: "Sampling time step dt"
+  dropout_rate:
+    value: 0.0
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.0, 0.5]
+    note: "Measurement transmission dropout probability"
+  temperature_noise_sigma_c:
+    value: 0.2
+    unit: "degC"
+    status: "placeholder"
+    bounds: [0.0, 5.0]
+    note: "Temperature sensor noise standard deviation"
+
+filter:
+  initial_soc_offset:
+    value: 0.0
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [-0.5, 0.5]
+    note: "Simulated starting SOC offset error"
+  initial_soc_std:
+    value: 0.1
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.001, 1.0]
+    note: "Filter initial SOC standard deviation (sqrt of P0[0,0])"
+  initial_rc_current_std_a:
+    value: 0.1
+    unit: "A"
+    status: "placeholder"
+    bounds: [0.001, 10.0]
+    note: "Filter initial RC branch currents standard deviation"
+  initial_hysteresis_std:
+    value: 0.1
+    unit: "dimensionless"
+    status: "placeholder"
+    bounds: [0.001, 1.0]
+    note: "Filter initial hysteresis state standard deviation"
+  process_noise_q_soc:
+    value: 0.0000001
+    unit: "fraction^2"
+    status: "placeholder"
+    bounds: [1.0e-12, 1.0e-2]
+    note: "Process noise covariance Q for SOC state"
+  process_noise_q_rc:
+    value: 0.00001
+    unit: "A^2"
+    status: "placeholder"
+    bounds: [1.0e-10, 1.0e-1]
+    note: "Process noise covariance Q for RC branch current states"
+  process_noise_q_hysteresis:
+    value: 0.000001
+    unit: "dimensionless"
+    status: "placeholder"
+    bounds: [1.0e-10, 1.0e-1]
+    note: "Process noise covariance Q for hysteresis state"
+  measurement_noise_r_v:
+    value: 0.000025
+    unit: "V^2"
+    status: "placeholder"
+    bounds: [1.0e-8, 1.0e-1]
+    note: "Measurement noise covariance R for terminal voltage"
+  ocv_slope_weighting_gain:
+    value: 1.0
+    unit: "dimensionless"
+    status: "placeholder"
+    bounds: [0.0, 100.0]
+    note: "Observability weighting gain for plateau suppression"
+  convergence_threshold_2pct:
+    value: 0.02
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.001, 0.1]
+    note: "Threshold for 2% convergence verification"
+  convergence_threshold_5pct:
+    value: 0.05
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.001, 0.2]
+    note: "Threshold for 5% convergence verification"
+  reversal_min_current_a:
+    value: 2.0
+    unit: "A"
+    status: "placeholder"
+    bounds: [0.1, 50.0]
+    note: "Current threshold deadband for direction reversal detection"
+
+soc_definition:
+  basis:
+    value: "present_capacity"
+    unit: "string"
+    status: "assumed"
+    note: "SOC defined relative to present usable capacity, not nameplate"
+  anchor_enabled:
+    value: true
+    unit: "bool"
+    status: "assumed"
+    note: "Enable recalibration anchors when conditions are met"
+  rest_current_threshold_a:
+    value: 0.1
+    unit: "A"
+    status: "placeholder"
+    bounds: [0.001, 2.0]
+    note: "Maximum current magnitude defining cell rest"
+  rest_duration_threshold_s:
+    value: 600.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [10.0, 86400.0]
+    note: "Minimum rest duration before OCV anchoring triggers"
+  full_charge_voltage_threshold_v:
+    value: 3.60
+    unit: "V"
+    status: "placeholder"
+    bounds: [3.4, 3.7]
+    note: "Cell terminal voltage threshold for full-charge anchor"
+  full_charge_current_threshold_a:
+    value: 0.5
+    unit: "A"
+    status: "placeholder"
+    bounds: [0.01, 5.0]
+    note: "Current taper threshold for full-charge anchor"
+
+bars:
+  t1_ocv_error_max_mv:
+    value: 5.0
+    unit: "mV"
+    status: "assumed"
+    bounds: [0.5, 50.0]
+    note: "Pass bar for static OCV model error"
+  t2_dynamic_rmse_max:
+    value: 0.02
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for dynamic cycle RMSE"
+  t2_dynamic_max_error:
+    value: 0.05
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.005, 0.2]
+    note: "Pass bar for dynamic cycle max error"
+  t3_bess_rmse_24h_max:
+    value: 0.02
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for BESS 24h duty cycle RMSE"
+  t4_plateau_p95_max:
+    value: 0.03
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for plateau stress 95th-percentile error"
+  t5_converge_time_s:
+    value: 60.0
+    unit: "s"
+    status: "assumed"
+    bounds: [1.0, 3600.0]
+    note: "Pass bar for initial offset convergence time"
+  t6_drift_bess_per_day_max:
+    value: 0.01
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for 24h drift without anchor"
+  t7_error_rise_max:
+    value: 0.01
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for error rise due to quantization/noise"
+  t9_post_rest_step_error_max:
+    value: 0.02
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for error after rest resumption"
+  t10_reversal_spike_max:
+    value: 0.03
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for error spike after direction reversal"
+  t12_mismatch_rmse_rise_max:
+    value: 0.015
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for RMSE rise under parameter mismatch"
+  t14_auto_max_ms_per_step:
+    value: 5.0
+    unit: "ms"
+    status: "assumed"
+    bounds: [0.1, 100.0]
+    note: "Pass bar for computation time per step"
+
+run:
+  random_seed:
+    value: 42
+    unit: "integer"
+    status: "assumed"
+    bounds: [0.0, 1000000.0]
+    note: "Master random seed for reproducible synthetic generation"
+  splits_file:
+    value: "data/splits.lock"
+    unit: "path"
+    status: "assumed"
+    note: "Path to sealed dataset splits"
+  dataset_names:
+    value: ["synthetic_lfp_v1"]
+    unit: "list"
+    status: "assumed"
+    note: "Active dataset names"
