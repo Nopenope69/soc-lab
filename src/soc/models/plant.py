@@ -6,6 +6,7 @@ Estimators MUST treat dropped samples by executing only the time-update (predict
 with zero current or held last current, and skip the measurement correction (update) step.
 """
 
+import warnings
 from dataclasses import dataclass
 from typing import Optional, Tuple
 import math
@@ -82,6 +83,15 @@ class PlantSimulator:
         self, i_true_a: float, temp_c: float, dt_s: float
     ) -> Tuple[Measurement, PlantTruthState]:
         """Advance plant by dt seconds under applied true current, returning (meas, truth)."""
+        t_min = float(self.plant_cfg.temperatures_c.value[0])
+        t_max = float(self.plant_cfg.temperatures_c.value[-1])
+        if temp_c < t_min or temp_c > t_max:
+            warnings.warn(
+                f"Temperature {temp_c} C is outside calibration range [{t_min}, {t_max}] C; values are clamped.",
+                UserWarning,
+                stacklevel=2,
+            )
+
         cap_ah = float(self.plant_cfg.nominal_capacity_Ah.value)
         coulomb_eff = float(self.plant_cfg.coulombic_efficiency.value)
         gamma = float(self.plant_cfg.hysteresis_gamma.value)

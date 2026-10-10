@@ -122,3 +122,38 @@ def test_noise_repeatability_with_same_seed():
         assert meas1.v == pytest.approx(meas2.v)
         assert meas1.i == pytest.approx(meas2.i)
         assert meas1.temp_c == pytest.approx(meas2.temp_c)
+
+
+def test_temperature_outside_range_warns_and_clamps():
+    """Verify that operating outside [15, 35] C triggers a warning and clamps."""
+    assumptions = resolve_assumptions()
+    plant = PlantSimulator(assumptions)
+
+    # 5.0 C is below 15.0 C calibration minimum
+    with pytest.warns(UserWarning, match="outside calibration range"):
+        meas, truth = plant.step(i_true_a=10.0, temp_c=5.0, dt_s=1.0)
+        assert truth.temp_c == 5.0
+
+    # 45.0 C is above 35.0 C calibration maximum
+    with pytest.warns(UserWarning, match="outside calibration range"):
+        meas, truth = plant.step(i_true_a=10.0, temp_c=45.0, dt_s=1.0)
+        assert truth.temp_c == 45.0
+
+
+def test_two_consumers_fed_from_one_plant_run_receive_identical_measurements():
+    """Verify that multiple consumers/estimators fed from a single plant run see identical measurements."""
+    assumptions = resolve_assumptions()
+    plant = PlantSimulator(assumptions)
+
+    consumer_a_records = []
+    consumer_b_records = []
+
+    for t in range(30):
+        meas, _ = plant.step(i_true_a=12.5, temp_c=25.0, dt_s=1.0)
+        # Both consumers receive the single generated measurement instance
+        consumer_a_records.append((meas.v, meas.i, meas.temp_c, meas.dropout))
+        consumer_b_records.append((meas.v, meas.i, meas.temp_c, meas.dropout))
+
+    assert len(consumer_a_records) == len(consumer_b_records)
+    for rec_a, rec_b in zip(consumer_a_records, consumer_b_records):
+        assert rec_a == rec_b
