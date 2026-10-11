@@ -47,3 +47,6 @@ htmlcov/
 reports/*.png
 reports/*.csv
 !reports/.gitkeep
+data/raw/
+*.pem
+.env
