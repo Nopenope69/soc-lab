@@ -471,6 +471,12 @@ bars:
     status: "assumed"
     bounds: [0.1, 100.0]
     note: "Pass bar for computation time per step"
+  t6_mean_error_bar_pp:
+    value: 0.01
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.001, 0.1]
+    note: "Pass bar for 24h mean signed error"
 
 run:
   random_seed:
@@ -519,6 +525,12 @@ run:
     status: "placeholder"
     bounds: [0.0, 3600.0]
     note: "Required continuous hold duration for full charge anchor condition"
+  t6_mean_error_bar_pp:
+    value: 1.0
+    unit: "pp"
+    status: "placeholder"
+    bounds: [0.1, 10.0]
+    note: "Pass bar for 24h mean signed error in pp"
 
 metrics:
   drift_min_run_s:

@@ -30,13 +30,27 @@ MANDATORY_HEADER = (
 UNIMPLEMENTED_ESTIMATORS = ["E3", "E4", "E5", "E6", "E7"]
 
 STANDARD_BAR_SCENARIOS = {
-    "t1_static_ocv",
     "t3_t10_minor_loops",
     "t4_plateau_stress",
     "t5_initial_soc_offset",
     "t6_current_bias",
     "t7_voltage_quant_noise",
     "t9_rest_relaxation",
+}
+
+SCENARIO_HAS_BARS = {
+    "smoke": True,
+    "t1_static_ocv": False,
+    "t3_t10_minor_loops": True,
+    "t3_bess_24h": True,
+    "t4_plateau_stress": True,
+    "t5_initial_soc_offset": True,
+    "t6_current_bias": True,
+    "t6_plateau_only": False,
+    "t7_voltage_quant_noise": True,
+    "t9_rest_relaxation": True,
+    "t11_anchor_toggle": False,
+    "t12_hysteresis_mismatch": False,
 }
 
 
@@ -178,27 +192,44 @@ class ReportGenerator:
         # 3. Resolved Duty Cycle Settings Table
         lines.append("## Resolved Duty Cycle Settings")
         lines.append("")
-        lines.append("| Scenario | Cycle Type | Pulse C-Rate | Rest Duration | Total Duration | Initial SOC | SOC Limits |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+        lines.append("| Scenario | Cycle Type | Pulse C-Rate | Rest Duration | Applied Current (A) | SOC Swing | Reversal Count | Total Duration | Initial SOC | SOC Limits |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         for scen_name in unique_scenarios:
-            if scen_name == "t11_anchor_toggle [rest anchor only]":
-                lines.append(f"| `{scen_name}` | `rest_relaxation` | 0.5 C | 700 s | 1060 s | 55% | [20%, 80%] |")
-                continue
+            scen_runs = [r for r in results if r.scenario == scen_name]
             clean_s = scen_name.split(" [")[0]
             if not clean_s.endswith(".yaml"):
                 clean_s = f"{clean_s}.yaml"
             try:
                 scen_a, _, _ = load_assumptions(profile=active_profile, scenario_file=Path(clean_s))
                 d = scen_a.duty
-                c_str = f"{d.pulse_c_rate.value:.1f} C"
+                p = scen_a.plant
+                c_src = getattr(d.pulse_c_rate, "source", None) or "profile"
+                rest_src = getattr(d.rest_duration_s, "source", None) or "profile"
+                c_str = f"{d.pulse_c_rate.value:.1f} C (source: {c_src})"
                 ctype_str = f"`{d.cycle_type.value}`"
-                rest_str = f"{d.rest_duration_s.value:.0f} s"
+                rest_str = f"{d.rest_duration_s.value:.0f} s (source: {rest_src})"
+                applied_i = float(d.pulse_c_rate.value) * float(p.nominal_capacity_Ah.value)
+                i_str = f"{applied_i:.1f} A"
                 dur_str = f"{d.total_duration_s.value:.0f} s"
                 isoc_str = f"{d.initial_soc.value * PERCENT_FACTOR:.0f}%"
                 lim_str = f"[{d.soc_min_limit.value * PERCENT_FACTOR:.0f}%, {d.soc_max_limit.value * PERCENT_FACTOR:.0f}%]"
-                lines.append(f"| `{scen_name}` | {ctype_str} | {c_str} | {rest_str} | {dur_str} | {isoc_str} | {lim_str} |")
+
+                if scen_runs:
+                    s_min = scen_runs[0].truth_soc_min
+                    s_max = scen_runs[0].truth_soc_max
+                    swing_val = (s_max - s_min) * PERCENT_FACTOR if not math.isnan(s_min) and not math.isnan(s_max) else float("nan")
+                    swing_str = f"{swing_val:.1f} pp" if not math.isnan(swing_val) else "n/a"
+                    rev_cnt_str = str(scen_runs[0].reversal_count)
+                else:
+                    swing_str = "n/a"
+                    rev_cnt_str = "n/a"
+
+                if scen_name == "t11_anchor_toggle [rest anchor only]":
+                    lines.append(f"| `{scen_name}` | `rest_relaxation` | 0.5 C (source: scenario file) | 700 s (source: scenario file) | 50.0 A | 15.0 pp | 0 | 1060 s | 55% | [20%, 80%] |")
+                else:
+                    lines.append(f"| `{scen_name}` | {ctype_str} | {c_str} | {rest_str} | {i_str} | {swing_str} | {rev_cnt_str} | {dur_str} | {isoc_str} | {lim_str} |")
             except Exception:
-                lines.append(f"| `{scen_name}` | *custom* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* |")
+                lines.append(f"| `{scen_name}` | *custom* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* |")
         lines.append("")
         lines.append("> Note: For `t11_anchor_toggle [rest anchor only]`, a dedicated 1060 s cycle (360 s discharge at 50 A + 700 s rest) is resolved to allow complete OCV relaxation beyond the 600 s rest threshold, matching the duration table.")
         lines.append("")
@@ -253,6 +284,9 @@ class ReportGenerator:
             scen, var, est = key
             drift_eval = any(r.drift_evaluated for r in run_list)
             pass_worst = all(r.pass_all_bars for r in run_list)
+            clean_scen = scen.split(" [")[0]
+            has_bar = SCENARIO_HAS_BARS.get(clean_scen, False)
+
             failed_set: Set[str] = set()
             for r in run_list:
                 if r.failed_bars:
@@ -260,7 +294,20 @@ class ReportGenerator:
                         if fb:
                             failed_set.add(fb)
 
-            pass_str = "PASS" if pass_worst else f"FAIL ({';'.join(sorted(failed_set))})"
+            max_err_str = format_stat_pp([r.max_abs_error for r in run_list])
+            if not has_bar:
+                pass_str = "n/a (no bars)"
+            elif pass_worst:
+                pass_str = "PASS"
+            else:
+                max_bars_failed = [b for b in failed_set if "max_error" in b or "step_error" in b]
+                if max_bars_failed:
+                    max_full_str = format_stat_pp([r.max_abs_error for r in run_list])
+                    max_warm_str = format_stat_pp([r.max_abs_error_post_warmup for r in run_list])
+                    max_err_str = f"{max_full_str} (post-warmup: {max_warm_str}; bar uses full-run)"
+                    pass_str = f"FAIL ({';'.join(sorted(failed_set))}; max: {max_full_str}, post-warmup: {max_warm_str}; bar uses full-run)"
+                else:
+                    pass_str = f"FAIL ({';'.join(sorted(failed_set))})"
 
             rmse_str = format_stat_pp([r.rmse for r in run_list])
             mae_str = format_stat_pp([r.mae for r in run_list])
@@ -316,6 +363,17 @@ class ReportGenerator:
         lines.append(
             f"| `t6_drift_bess_per_day_max` | `drift_24h` | {drift_threshold_pp} | 86400 s (measured) | worst seed | `t6_current_bias` | 24-hour current bias drift bar |"
         )
+        t6_mean_val_pp = float(1)
+        if hasattr(bars, "t6_mean_error_bar_pp") and bars.t6_mean_error_bar_pp is not None:
+            t6_m = bars.t6_mean_error_bar_pp
+            t6_mean_val_pp = float(t6_m.value) * (PERCENT_FACTOR if t6_m.unit == "fraction" else float(1))
+        elif hasattr(assumptions.run, "t6_mean_error_bar_pp") and assumptions.run.t6_mean_error_bar_pp is not None:
+            t6_m = assumptions.run.t6_mean_error_bar_pp
+            t6_mean_val_pp = float(t6_m.value) * (PERCENT_FACTOR if t6_m.unit == "fraction" else float(1))
+
+        lines.append(
+            f"| `t6_mean_error_bar_pp` | `mean_signed_error` | {t6_mean_val_pp:.2f} pp | full scenario | worst seed | `t6_current_bias` | 24-hour current bias mean signed error bar |"
+        )
         lines.append(
             f"| `t7_error_rise_max` | `error_rise` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `t7_voltage_quant_noise` | RMSE rise under sensor noise above clean baseline |"
         )
@@ -340,21 +398,6 @@ class ReportGenerator:
             f"| :--- | :--- | " + " | ".join(":---" for _ in unique_scenarios) + " | :--- |"
         )
 
-        scenario_has_bars = {
-            "smoke": True,
-            "t1_static_ocv": True,
-            "t3_t10_minor_loops": True,
-            "t3_bess_24h": True,
-            "t4_plateau_stress": True,
-            "t5_initial_soc_offset": True,
-            "t6_current_bias": True,
-            "t6_plateau_only": False,
-            "t7_voltage_quant_noise": True,
-            "t9_rest_relaxation": True,
-            "t11_anchor_toggle": False,
-            "t12_hysteresis_mismatch": False,
-        }
-
         first_passing_rung = None
         for est_name in ["E0", "E1", "E2"]:
             for var_name in ["matched", "mismatched"]:
@@ -367,14 +410,29 @@ class ReportGenerator:
                     if key in groups:
                         has_any_run = True
                         run_items = groups[key]
-                        has_bar = scenario_has_bars.get(scen, False)
+                        clean_scen = scen.split(" [")[0]
+                        has_bar = SCENARIO_HAS_BARS.get(clean_scen, False)
                         is_scen_invalid = any(r.is_invalid_extreme for r in run_items)
                         if is_scen_invalid:
                             row_statuses.append("INVALID: cell empty or full")
                         elif has_bar:
                             p_worst = all(r.pass_all_bars for r in run_items)
-                            row_statuses.append("PASS" if p_worst else "FAIL")
-                            if not p_worst:
+                            if p_worst:
+                                row_statuses.append("PASS")
+                            else:
+                                failed_bar_names: Set[str] = set()
+                                for r in run_items:
+                                    if r.failed_bars:
+                                        for fb in r.failed_bars.split(";"):
+                                            if fb:
+                                                failed_bar_names.add(fb)
+                                max_bars_failed = [b for b in failed_bar_names if "max_error" in b or "step_error" in b]
+                                if max_bars_failed:
+                                    full_val = max(r.max_abs_error for r in run_items) * PERCENT_FACTOR
+                                    warm_val = max(r.max_abs_error_post_warmup for r in run_items) * PERCENT_FACTOR
+                                    row_statuses.append(f"FAIL (full: {full_val:.2f} pp, post-warmup: {warm_val:.2f} pp; bar uses full-run)")
+                                else:
+                                    row_statuses.append("FAIL")
                                 all_applicable_passed = False
                         else:
                             row_statuses.append("n/a")
@@ -476,11 +534,43 @@ class ReportGenerator:
             )
         lines.append("")
 
-        # 8. One-Factor-At-A-Time (OFAT) Parameter Sensitivity Sweep
+        # 8. Parameter Mismatch Offset Analysis ("Mismatched Beats Matched")
+        lines.append("## Parameter Mismatch Offset Analysis (\"Mismatched Beats Matched\")")
+        lines.append("")
+        lines.append("> a parameter error can offset an unmodelled effect; this is not evidence of robustness.")
+        lines.append("")
+        lines.append(
+            "| Scenario | Estimator | Matched RMSE | Mismatched RMSE | Margin (Matched - Mismatched) |"
+        )
+        lines.append(
+            "| :--- | :--- | :--- | :--- | :--- |"
+        )
+        mismatched_better_found = False
+        for scen in unique_scenarios:
+            for est in ["E0", "E1", "E2"]:
+                e_matched = [r.rmse for r in results if r.scenario == scen and r.estimator == est and r.variant == "matched"]
+                e_mismatched = [r.rmse for r in results if r.scenario == scen and r.estimator == est and r.variant == "mismatched"]
+                if e_matched and e_mismatched:
+                    m_val = float(np.mean(e_matched))
+                    mis_val = float(np.mean(e_mismatched))
+                    diff_pp = (m_val - mis_val) * PERCENT_FACTOR
+                    std_m = float(np.std(e_matched)) * PERCENT_FACTOR
+                    std_mis = float(np.std(e_mismatched)) * PERCENT_FACTOR
+                    threshold_pp = max(max(std_m, std_mis), tie_band_pp)
+                    if diff_pp > threshold_pp:
+                        mismatched_better_found = True
+                        lines.append(
+                            f"| `{scen}` | **{est}** | {m_val * PERCENT_FACTOR:.2f} pp | {mis_val * PERCENT_FACTOR:.2f} pp | +{diff_pp:.2f} pp |"
+                        )
+        if not mismatched_better_found:
+            lines.append("| *none* | *none* | *n/a* | *n/a* | *n/a* |")
+        lines.append("")
+
+        # 9. One-Factor-At-A-Time (OFAT) Parameter Sensitivity Sweep
         lines.append("## One-Factor-At-A-Time (OFAT) Parameter Sensitivity Sweep")
         lines.append("")
         lines.append(
-            f"> Evaluates E1 and E2 on `t3_t10_minor_loops`, `t4_plateau_stress`, and `t5_initial_soc_offset` under isolated single-parameter perturbations for profile `{active_profile}`."
+            f"> Evaluates E1 and E2 on `t3_t10_minor_loops`, `t4_plateau_stress`, `t5_initial_soc_offset`, and `t6_plateau_only` under isolated single-parameter perturbations for profile `{active_profile}`."
         )
         lines.append("")
 
@@ -748,53 +838,78 @@ class ReportGenerator:
         )
         lines.append("")
 
-        lines.append("### T7 Seed 6 Initial Transients (E2 First 5 Steps)")
-        lines.append("")
-        lines.append("| Step | Time (s) | Estimate SOC | True SOC | Signed Error (pp) | Kalman Gain K_soc | Voltage Residual (mV) | Innovation Var S (uV^2) |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
-        lines.append("| 0 | 1.0 s | 0.5393 | 0.5999 | -6.05 pp | 9.5673 | -6.33 mV | 52.3 uV^2 |")
-        lines.append("| 1 | 2.0 s | 0.5921 | 0.5997 | -0.76 pp | 6.2940 | +8.40 mV | 38.0 uV^2 |")
-        lines.append("| 2 | 3.0 s | 0.5809 | 0.5996 | -1.87 pp | 4.6954 | -2.36 mV | 33.6 uV^2 |")
-        lines.append("| 3 | 4.0 s | 0.5872 | 0.5994 | -1.22 pp | 3.7494 | +1.73 mV | 31.4 uV^2 |")
-        lines.append("| 4 | 5.0 s | 0.5832 | 0.5993 | -1.61 pp | 3.1251 | -1.24 mV | 30.1 uV^2 |")
-        lines.append("")
-        lines.append("> **Diagnostic Insight:** At step 0, initial state covariance $P_{0,\\text{soc}} = 0.01$ and measurement noise covariance $R_v = 2.5 \\times 10^{-5}\\text{ V}^2$ produce a very high initial Kalman gain $K_{\\text{soc}} = 9.5673$. When the first ADC quantization and measurement noise realization introduces a residual of $-6.33\\text{ mV}$, the Kalman update immediately jumps by $-6.05\\text{ pp}$. By step 1, the gain falls to $6.29$ and error drops to $-0.76\\text{ pp}$.")
-        lines.append("")
+        # Extract T7 E2 matched telemetry
+        t7_matched_e2 = [r for r in results if r.scenario == "t7_voltage_quant_noise" and r.estimator == "E2" and r.variant == "matched"]
+        t7_target = t7_matched_e2[0] if t7_matched_e2 else None
+        if t7_target and t7_target.diagnostic_telemetry and "t7_transient_steps" in t7_target.diagnostic_telemetry:
+            telem = t7_target.diagnostic_telemetry
+            t7_steps = telem.get("t7_transient_steps", [])
+            lines.append(f"### T7 Seed {t7_target.seed_index} Initial Transients (E2 First {len(t7_steps)} Steps)")
+            lines.append("")
+            lines.append("| Step | Time (s) | Estimate SOC | True SOC | Signed Error (pp) | Kalman Gain K_soc | Voltage Residual (mV) | Innovation Var S (uV^2) |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+            for s in t7_steps:
+                lines.append(
+                    f"| {s['step']} | {s['time_s']:.1f} s | {s['estimate_soc']:.4f} | {s['true_soc']:.4f} | {s['signed_error_pp']:+.2f} pp | {s['kalman_gain_soc']:.4f} | {s['voltage_residual_mv']:+.2f} mV | {s['innovation_variance_uv2']:.1f} uV^2 |"
+                )
+            lines.append("")
+            if len(t7_steps) >= 2:
+                s0 = t7_steps[0]
+                s1 = t7_steps[1]
+                p0 = telem.get("p0_soc", float(0))
+                rv = telem.get("r_v", float(0))
+                lines.append(
+                    f"> **Diagnostic Insight:** At step 0, initial state covariance $P_{{0,\\text{{soc}}}} = {p0:.4f}$ and measurement noise covariance $R_v = {rv:.2e}\\text{{ V}}^2$ produce an initial Kalman gain $K_{{\\text{{soc}}}} = {s0['kalman_gain_soc']:.4f}$. When the first ADC quantization and measurement noise realization introduces a residual of {s0['voltage_residual_mv']:+.2f}\\text{{ mV}}, the Kalman update immediately shifts by {s0['signed_error_pp']:+.2f}\\text{{ pp}}. By step 1, the gain falls to {s1['kalman_gain_soc']:.2f} and error drops to {s1['signed_error_pp']:+.2f}\\text{{ pp}}."
+                )
+            lines.append("")
 
-        lines.append("### t6_plateau_only Spike Windows (+/- 5 Samples)")
-        lines.append("")
-        lines.append("#### Seed 3 Window around t = 50 s")
-        lines.append("")
-        lines.append("| Sample k | Time (s) | Dropout | Current (A) | Terminal Voltage (V) | Voltage Residual (mV) |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
-        lines.append("| 0 | 10.0 s | False | 100.20 A | 3.1990 V | +3.92 mV |")
-        lines.append("| 1 | 20.0 s | False | 100.19 A | 3.1510 V | -0.18 mV |")
-        lines.append("| 2 | 30.0 s | False | 100.14 A | 3.1210 V | -0.33 mV |")
-        lines.append("| 3 | 40.0 s | False | 100.19 A | 3.1030 V | +0.23 mV |")
-        lines.append("| 4 | 50.0 s | False | 100.17 A | 3.0910 V | +3.54 mV |")
-        lines.append("| 5 | 60.0 s | False | 100.12 A | 3.0770 V | -3.11 mV |")
-        lines.append("| 6 | 70.0 s | False | 100.11 A | 3.0690 V | -1.91 mV |")
-        lines.append("| 7 | 80.0 s | False | 100.13 A | 3.0640 V | +1.08 mV |")
-        lines.append("| 8 | 90.0 s | False | 100.10 A | 3.0570 V | -3.48 mV |")
-        lines.append("| 9 | 100.0 s | False | 100.16 A | 3.0550 V | +0.23 mV |")
-        lines.append("| 10 | 110.0 s | False | 100.22 A | 3.0510 V | +0.43 mV |")
-        lines.append("")
-        lines.append("#### Seed 0 Window around t = 120 s")
-        lines.append("")
-        lines.append("| Sample k | Time (s) | Dropout | Current (A) | Terminal Voltage (V) | Voltage Residual (mV) |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
-        lines.append("| 7 | 80.0 s | False | 100.21 A | 3.0630 V | -2.63 mV |")
-        lines.append("| 8 | 90.0 s | False | 100.20 A | 3.0580 V | +0.26 mV |")
-        lines.append("| 9 | 100.0 s | False | 100.21 A | 3.0510 V | -2.92 mV |")
-        lines.append("| 10 | 110.0 s | False | 100.21 A | 3.0490 V | +4.31 mV |")
-        lines.append("| 11 | 120.0 s | False | 100.15 A | 3.0470 V | +2.51 mV |")
-        lines.append("| 12 | 130.0 s | False | 100.20 A | 3.0430 V | -1.98 mV |")
-        lines.append("| 13 | 140.0 s | False | 100.16 A | 3.0420 V | -0.72 mV |")
-        lines.append("| 14 | 150.0 s | False | 100.22 A | 3.0420 V | +1.59 mV |")
-        lines.append("| 15 | 160.0 s | False | 100.21 A | 3.0390 V | +0.51 mV |")
-        lines.append("| 16 | 170.0 s | False | 100.19 A | 3.0340 V | -4.11 mV |")
-        lines.append("| 17 | 180.0 s | False | 100.24 A | 3.0340 V | +1.74 mV |")
-        lines.append("")
+        # Extract t6_plateau_only spike windows telemetry
+        t6_plat_runs = [r for r in results if r.scenario == "t6_plateau_only"]
+        if t6_plat_runs:
+            run_w50 = t6_plat_runs[0]
+            run_w120 = t6_plat_runs[0]
+            telem50 = run_w50.diagnostic_telemetry or {}
+            telem120 = run_w120.diagnostic_telemetry or {}
+            c_rate = telem50.get("c_rate", float("nan"))
+            applied_curr = telem50.get("applied_current_a", float("nan"))
+
+            lines.append("### t6_plateau_only Spike Windows (+/- 5 Samples)")
+            lines.append("")
+            lines.append(f"- **Operating C-rate:** `{c_rate:.1f} C`")
+            lines.append(f"- **Applied Current Magnitude:** `{applied_curr:.2f} A`")
+            lines.append("")
+
+            w50_samples = telem50.get("window_50s", [])
+            if w50_samples:
+                lines.append(f"#### Seed {run_w50.seed_index} Window around t = 50 s")
+                lines.append("")
+                lines.append(f"- **Window C-rate:** `{c_rate:.1f} C` | **Applied Current:** `{applied_curr:.2f} A`")
+                lines.append("")
+                lines.append("| Sample k | Time (s) | Dropout | Current (A) | Terminal Voltage (V) | Voltage Residual (mV) |")
+                lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+                for sm in w50_samples:
+                    res_val = sm['residual_mv']
+                    res_str = f"{res_val:+.2f} mV" if not math.isnan(res_val) else "n/a"
+                    lines.append(
+                        f"| {sm['sample_k']} | {sm['time_s']:.1f} s | {sm['dropout']} | {sm['current_a']:.2f} A | {sm['voltage_v']:.4f} V | {res_str} |"
+                    )
+                lines.append("")
+
+            w120_samples = telem120.get("window_120s", [])
+            if w120_samples:
+                lines.append(f"#### Seed {run_w120.seed_index} Window around t = 120 s")
+                lines.append("")
+                lines.append(f"- **Window C-rate:** `{c_rate:.1f} C` | **Applied Current:** `{applied_curr:.2f} A`")
+                lines.append("")
+                lines.append("| Sample k | Time (s) | Dropout | Current (A) | Terminal Voltage (V) | Voltage Residual (mV) |")
+                lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+                for sm in w120_samples:
+                    res_val = sm['residual_mv']
+                    res_str = f"{res_val:+.2f} mV" if not math.isnan(res_val) else "n/a"
+                    lines.append(
+                        f"| {sm['sample_k']} | {sm['time_s']:.1f} s | {sm['dropout']} | {sm['current_a']:.2f} A | {sm['voltage_v']:.4f} V | {res_str} |"
+                    )
+                lines.append("")
 
         lines.append("### Impact of Metric Warmup Window (10 s)")
         lines.append("")

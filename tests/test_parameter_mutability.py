@@ -121,21 +121,75 @@ def test_mismatched_variant_with_all_zero_mismatch_raises_error():
         runner.evaluate_estimator_on_stream("E1", "mismatched", assumptions, meas, truths, times)
 
 
-def test_t3_generator_output_reversal_count():
-    """Verify that the duty cycle generator output for t3_t10_minor_loops produces expected reversal count of 2."""
+def test_minor_loops_scenario_reversal_count_in_both_profiles():
+    """Verify that any scenario with cycle_type: minor_loops has reversal_count >= 4 in both profiles."""
+    runner = ScenarioRunner()
+    for profile in ["automotive", "bess"]:
+        results = runner.run_scenario("t3_t10_minor_loops", profile=profile, num_seeds=1)
+        r = results[0]
+        assert r.reversal_count >= 4, f"Profile {profile} had {r.reversal_count} reversals, expected >= 4"
+
+
+def test_t4_and_t12_cycle_limits_duration_and_soc_range():
+    """Verify that t4_plateau_stress and t12 cycle for >= 3600 s with truth SOC range >= 20 pp."""
+    runner = ScenarioRunner()
+    for scen in ["t4_plateau_stress", "t12_hysteresis_mismatch"]:
+        for profile in ["automotive", "bess"]:
+            res = runner.run_scenario(scen, profile=profile, num_seeds=1)
+            r = res[0]
+            assert r.duration_s >= 3600.0, f"{scen} {profile} duration {r.duration_s} < 3600"
+            soc_range_pp = (r.soc_max - r.soc_min) * 100.0
+            assert soc_range_pp >= 20.0, f"{scen} {profile} SOC range {soc_range_pp} pp < 20 pp"
+
+
+def test_scenario_duty_setting_without_reason_raises_error(tmp_path):
+    """Verify that scenario setting c_rate or rest without a reason string raises ValueError."""
+    import yaml
     from soc.assumptions.loader import load_assumptions
-    from soc.eval.metrics import detect_reversals
+
+    bad_scen = tmp_path / "bad_duty_scenario.yaml"
+    bad_scen.write_text(yaml.dump({
+        "duty": {
+            "pulse_c_rate": {"value": 1.5}
+        }
+    }))
+    with pytest.raises(ValueError, match="sets duty 'pulse_c_rate' without a declared reason string"):
+        load_assumptions(scenario_file=bad_scen)
+
+
+def test_crate_override_changes_window_currents_and_profiles_differ():
+    """Verify that changing C-rate with --set changes spike window currents, and automotive vs bess spike sections differ."""
+    from soc.eval.report import ReportGenerator
 
     runner = ScenarioRunner()
-    scen_path = runner.config_dir / "scenarios" / "t3_t10_minor_loops.yaml"
-    assumptions, _, _ = load_assumptions(scenario_file=scen_path)
+    res_base = runner.run_scenario("t6_plateau_only", profile="automotive", num_seeds=1)
+    res_mod = runner.run_scenario("t6_plateau_only", profile="automotive", num_seeds=1, cli_overrides=["duty.pulse_c_rate.value=3.0"])
 
-    meas, _, _, _, _ = runner.generate_scenario_stream(assumptions, "t3_t10_minor_loops")
-    currents = [m.i for m in meas if not m.dropout]
-    deadband = float(assumptions.filter.reversal_min_current_a.value)
+    curr_base = res_base[0].diagnostic_telemetry.get("applied_current_a")
+    curr_mod = res_mod[0].diagnostic_telemetry.get("applied_current_a")
+    assert curr_base != curr_mod, "Applied current in diagnostic telemetry did not change with C-rate override"
 
-    reversals = detect_reversals(currents, deadband=deadband)
-    assert len(reversals) == 2
+    res_bess = runner.run_scenario("t6_plateau_only", profile="bess", num_seeds=1)
+    rep_auto = ReportGenerator.generate_report(res_base)
+    rep_bess = ReportGenerator.generate_report(res_bess)
+
+    assert "t6_plateau_only Spike Windows" in rep_auto
+    assert "t6_plateau_only Spike Windows" in rep_bess
+
+    auto_section = rep_auto.split("t6_plateau_only Spike Windows")[1].split("##")[0]
+    bess_section = rep_bess.split("t6_plateau_only Spike Windows")[1].split("##")[0]
+    assert auto_section != bess_section
+
+
+def test_pass_all_column_na_when_no_bars():
+    """Verify that Table 5 'Pass All' column displays 'n/a (no bars)' for scenarios where no bars apply."""
+    from soc.eval.report import ReportGenerator
+
+    runner = ScenarioRunner()
+    res_no_bars = runner.run_scenario("t1_static_ocv", profile="automotive", num_seeds=1)
+    report = ReportGenerator.generate_report(res_no_bars)
+
+    assert "n/a (no bars)" in report
 
 
 def test_automotive_and_bess_metric_tables_are_not_identical():

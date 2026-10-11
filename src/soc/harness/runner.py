@@ -17,6 +17,11 @@ from soc.assumptions.loader import (
     DEFAULT_PLATEAU_MIN,
     DEFAULT_TIE_BAND_PP,
     DEFAULT_WARMUP_COUNT,
+    DIAG_T7_STEPS_COUNT,
+    DIAG_WINDOW_HALF_SIZE,
+    DIAG_WINDOW_T1_S,
+    DIAG_WINDOW_T2_S,
+    MICROVOLT_FACTOR,
     OFAT_SWEEP_CONFIGS,
     PERCENT_FACTOR,
     SECONDS_PER_DAY,
@@ -112,6 +117,7 @@ class RunResult:
     truth_soc_min: float = float("nan")
     truth_soc_max: float = float("nan")
     is_invalid_extreme: bool = False
+    diagnostic_telemetry: Optional[Dict[str, Any]] = None
 
 
 class ScenarioRunner:
@@ -283,6 +289,8 @@ class ScenarioRunner:
             else step_durations_ms
         )
 
+        mean_signed_err = float(np.mean(kept_est - kept_truth)) if len(kept_truth) > 0 else float("nan")
+
         metrics = {
             "rmse": rmse(kept_truth, kept_est),
             "mae": mae(kept_truth, kept_est),
@@ -294,6 +302,7 @@ class ScenarioRunner:
             "converge_time_2pct": converge_time_2pct(kept_truth, kept_est, kept_times, threshold=th_2pct),
             "converge_time_5pct": converge_time_5pct(kept_truth, kept_est, kept_times, threshold=th_5pct),
             "drift_24h": d24,
+            "mean_signed_error": mean_signed_err,
             "post_reversal_error_60s": post_rev_err,
             "ms_per_step_mean": float(np.mean(timed_durations)) if timed_durations else float(0),
             "ms_per_step_median": float(np.median(timed_durations)) if timed_durations else float(0),
@@ -353,7 +362,6 @@ class ScenarioRunner:
         else:
             max_err_post_warmup = metrics["max_abs_error"]
 
-        mean_signed_err = float(np.mean(kept_est - kept_truth)) if len(kept_truth) > 0 else float("nan")
         allow_extremes = (
             bool(assumptions.duty.allow_extremes.value)
             if (assumptions.duty is not None and hasattr(assumptions.duty, "allow_extremes") and assumptions.duty.allow_extremes is not None)
@@ -363,6 +371,69 @@ class ScenarioRunner:
         if not allow_extremes:
             if soc_min_val <= float(0) or soc_max_val >= float(1):
                 is_invalid_extreme = True
+
+        # Diagnostic telemetry collection
+        diag_telemetry: Dict[str, Any] = {}
+        t7_steps = []
+        for step_k in range(min(DIAG_T7_STEPS_COUNT, len(estimates))):
+            est_k = held_estimates[step_k]
+            tr_k = truths[step_k].soc
+            out_k = estimates[step_k]
+            t7_steps.append({
+                "step": step_k,
+                "time_s": times[step_k],
+                "estimate_soc": est_k,
+                "true_soc": tr_k,
+                "signed_error_pp": (est_k - tr_k) * PERCENT_FACTOR,
+                "kalman_gain_soc": out_k.kalman_gain_soc if out_k.kalman_gain_soc is not None else float("nan"),
+                "voltage_residual_mv": (out_k.voltage_residual * float(1000)) if out_k.voltage_residual is not None else float("nan"),
+                "innovation_variance_uv2": (out_k.innovation_variance * MICROVOLT_FACTOR) if out_k.innovation_variance is not None else float("nan"),
+            })
+        diag_telemetry["t7_transient_steps"] = t7_steps
+        diag_telemetry["p0_soc"] = float(params.initial_soc_std ** 2)
+        diag_telemetry["r_v"] = float(params.measurement_noise_r_v)
+
+        c_rate = float(assumptions.duty.pulse_c_rate.value)
+        cap_ah = float(assumptions.plant.nominal_capacity_Ah.value)
+        applied_curr_a = c_rate * cap_ah
+        diag_telemetry["c_rate"] = c_rate
+        diag_telemetry["applied_current_a"] = applied_curr_a
+
+        if len(times) > 0:
+            times_arr = np.array(times, dtype=float)
+            idx_50 = int(np.argmin(np.abs(times_arr - DIAG_WINDOW_T1_S)))
+            start_50 = max(0, idx_50 - DIAG_WINDOW_HALF_SIZE)
+            end_50 = min(len(measurements), idx_50 + DIAG_WINDOW_HALF_SIZE + 1)
+            w50 = []
+            for k in range(start_50, end_50):
+                m_k = measurements[k]
+                res_k = estimates[k].voltage_residual
+                w50.append({
+                    "sample_k": k,
+                    "time_s": times[k],
+                    "dropout": bool(m_k.dropout),
+                    "current_a": float(m_k.i) if not m_k.dropout else float("nan"),
+                    "voltage_v": float(m_k.v) if not m_k.dropout else float("nan"),
+                    "residual_mv": (float(res_k) * float(1000)) if res_k is not None else float("nan"),
+                })
+            diag_telemetry["window_50s"] = w50
+
+            idx_120 = int(np.argmin(np.abs(times_arr - DIAG_WINDOW_T2_S)))
+            start_120 = max(0, idx_120 - DIAG_WINDOW_HALF_SIZE)
+            end_120 = min(len(measurements), idx_120 + DIAG_WINDOW_HALF_SIZE + 1)
+            w120 = []
+            for k in range(start_120, end_120):
+                m_k = measurements[k]
+                res_k = estimates[k].voltage_residual
+                w120.append({
+                    "sample_k": k,
+                    "time_s": times[k],
+                    "dropout": bool(m_k.dropout),
+                    "current_a": float(m_k.i) if not m_k.dropout else float("nan"),
+                    "voltage_v": float(m_k.v) if not m_k.dropout else float("nan"),
+                    "residual_mv": (float(res_k) * float(1000)) if res_k is not None else float("nan"),
+                })
+            diag_telemetry["window_120s"] = w120
 
         meta = {
             "duration_s": duration_s,
@@ -387,6 +458,7 @@ class ScenarioRunner:
             "truth_soc_min": soc_min_val,
             "truth_soc_max": soc_max_val,
             "is_invalid_extreme": is_invalid_extreme,
+            "diagnostic_telemetry": diag_telemetry,
         }
         return metrics, diag, meta
 
@@ -430,11 +502,28 @@ class ScenarioRunner:
             if metrics["converge_time_2pct"] > t5_max_s:
                 failed.append("t5_converge_time_s")
 
-        # T6 Current bias drift (only if duration meets drift_min_run_s)
-        if scenario_name in ["t6_current_bias"] and drift_evaluated:
-            t6_drift_max = float(bars.t6_drift_bess_per_day_max.value)
-            if abs(metrics["drift_24h"]) > t6_drift_max:
-                failed.append("t6_drift_bess_per_day_max")
+        # T6 Current bias drift & mean signed error
+        if scenario_name in ["t6_current_bias"]:
+            if drift_evaluated:
+                t6_drift_max = float(bars.t6_drift_bess_per_day_max.value)
+                if abs(metrics["drift_24h"]) > t6_drift_max:
+                    failed.append("t6_drift_bess_per_day_max")
+
+            # Second T6 bar: abs(mean_signed_error) <= run.t6_mean_error_bar_pp
+            t6_mean_bar = None
+            if hasattr(bars, "t6_mean_error_bar_pp") and bars.t6_mean_error_bar_pp is not None:
+                t6_mean_bar = float(bars.t6_mean_error_bar_pp.value)
+                if bars.t6_mean_error_bar_pp.unit == "pp":
+                    t6_mean_bar = t6_mean_bar / PERCENT_FACTOR
+            elif assumptions.run is not None and hasattr(assumptions.run, "t6_mean_error_bar_pp") and assumptions.run.t6_mean_error_bar_pp is not None:
+                t6_mean_bar = float(assumptions.run.t6_mean_error_bar_pp.value)
+                if assumptions.run.t6_mean_error_bar_pp.unit == "pp":
+                    t6_mean_bar = t6_mean_bar / PERCENT_FACTOR
+
+            if t6_mean_bar is not None:
+                mean_signed = metrics.get("mean_signed_error", float("nan"))
+                if not math.isnan(mean_signed) and abs(mean_signed) > t6_mean_bar:
+                    failed.append("t6_mean_error_bar_pp")
 
         # T7 Voltage quantisation noise error rise (compared against clean baseline)
         if scenario_name in ["t7_voltage_quant_noise"]:
@@ -675,6 +764,7 @@ class ScenarioRunner:
                             truth_soc_min=meta["truth_soc_min"],
                             truth_soc_max=meta["truth_soc_max"],
                             is_invalid_extreme=meta["is_invalid_extreme"],
+                            diagnostic_telemetry=meta.get("diagnostic_telemetry"),
                         )
                         results.append(res)
 
@@ -723,10 +813,10 @@ class ScenarioRunner:
     ) -> List[Dict[str, Any]]:
         """Run One-Factor-At-A-Time (OFAT) parameter sensitivity sweep.
 
-        Evaluates E1 and E2 across t3_t10_minor_loops, t4_plateau_stress, and t5_initial_soc_offset
+        Evaluates E1 and E2 across t3_t10_minor_loops, t4_plateau_stress, t5_initial_soc_offset, and t6_plateau_only
         under matched noise realization for each isolated parameter perturbation.
         """
-        scenarios = ["t3_t10_minor_loops", "t4_plateau_stress", "t5_initial_soc_offset"]
+        scenarios = ["t3_t10_minor_loops", "t4_plateau_stress", "t5_initial_soc_offset", "t6_plateau_only"]
         all_ofat_results: List[Dict[str, Any]] = []
 
         mism_fields = [

@@ -6,6 +6,7 @@ duty:
     value: 0.25
   pulse_c_rate:
     value: 0.7
+    reason: "knee crossing discharge rate for offset convergence"
   total_duration_s:
     value: 360.0
 

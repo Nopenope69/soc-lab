@@ -14,6 +14,8 @@ class AssumptionEntry(BaseModel):
     status: Literal["placeholder", "assumed", "measured", "fitted"]
     bounds: Optional[Tuple[float, float]] = None
     note: str
+    reason: Optional[str] = None
+    source: Optional[str] = None
 
     @model_validator(mode="after")
     def validate_bounds(self) -> "AssumptionEntry":
@@ -223,6 +225,7 @@ class BarsAssumptions(BaseModel):
     t10_reversal_spike_max: AssumptionEntry
     t12_mismatch_rmse_rise_max: AssumptionEntry
     t14_auto_max_ms_per_step: AssumptionEntry
+    t6_mean_error_bar_pp: Optional[AssumptionEntry] = None
 
 
 class RunAssumptions(BaseModel):
@@ -238,6 +241,7 @@ class RunAssumptions(BaseModel):
     tie_band_pp: Optional[AssumptionEntry] = None
     metric_warmup_s: Optional[AssumptionEntry] = None
     full_charge_hold_s: Optional[AssumptionEntry] = None
+    t6_mean_error_bar_pp: Optional[AssumptionEntry] = None
 
 
 class MetricsAssumptions(BaseModel):

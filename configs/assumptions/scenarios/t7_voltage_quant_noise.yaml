@@ -6,10 +6,12 @@ duty:
     value: 0.60
   pulse_c_rate:
     value: 0.5
+    reason: "pulse rate to evaluate sensor quantization and ADC noise"
   pulse_duration_s:
     value: 60.0
   rest_duration_s:
     value: 30.0
+    reason: "rest period between pulses for noise evaluation"
   total_duration_s:
     value: 300.0
 

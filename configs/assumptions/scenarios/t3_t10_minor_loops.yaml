@@ -5,10 +5,11 @@ duty:
   initial_soc:
     value: 0.50
   soc_min_limit:
-    value: 0.40
+    value: 0.45
   soc_max_limit:
-    value: 0.60
-  pulse_c_rate:
-    value: 0.5
+    value: 0.55
+  rest_duration_s:
+    value: 60.0
+    reason: "short rest between minor loops to observe reversals and achieve >= 4 reversals"
   total_duration_s:
     value: 3600.0

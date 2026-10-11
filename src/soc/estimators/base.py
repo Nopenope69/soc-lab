@@ -121,6 +121,7 @@ class SocEstimate:
     anchor_used: bool
     voltage_residual: Optional[float] = None
     innovation_variance: Optional[float] = None
+    kalman_gain_soc: Optional[float] = None
 
 
 @runtime_checkable

@@ -6,9 +6,11 @@ duty:
     value: 0.50
   pulse_c_rate:
     value: 0.5
+    reason: "pre-rest pulse discharge rate"
   pulse_duration_s:
     value: 60.0
   rest_duration_s:
     value: 600.0
+    reason: "extended relaxation period to evaluate post-rest step error"
   total_duration_s:
     value: 660.0

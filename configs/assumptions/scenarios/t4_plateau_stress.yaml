@@ -5,10 +5,11 @@ duty:
   initial_soc:
     value: 0.50
   soc_min_limit:
-    value: 0.30
+    value: 0.35
   soc_max_limit:
-    value: 0.70
-  pulse_c_rate:
-    value: 0.3
+    value: 0.65
+  rest_duration_s:
+    value: 60.0
+    reason: "short rest between plateau cycles to allow continuous reversal cycling within test duration"
   total_duration_s:
-    value: 1200.0
+    value: 3600.0

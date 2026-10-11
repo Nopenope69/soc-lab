@@ -43,6 +43,13 @@ T11_REST_DUTY_REST_S = 700.0
 TRANSIENT_SPIKE_MAX_ERR_THRESHOLD = 0.05  # 5.0 pp
 TRANSIENT_SPIKE_RMSE_THRESHOLD = 0.01     # 1.0 pp
 
+# Diagnostic telemetry sampling constants
+DIAG_WINDOW_T1_S = 50.0
+DIAG_WINDOW_T2_S = 120.0
+DIAG_WINDOW_HALF_SIZE = 5
+DIAG_T7_STEPS_COUNT = 5
+MICROVOLT_FACTOR = 1000000.0
+
 # T1 check offsets
 T1_MISMATCH_OFFSETS_MV = [3.0, 5.0]
 
@@ -233,6 +240,23 @@ def load_assumptions(
         if scen_path.exists():
             with open(scen_path, "r", encoding="utf-8") as f:
                 scen_dict = yaml.safe_load(f) or {}
+
+                # Scenario files may set c_rate or rest only with a reason string
+                if "duty" in scen_dict:
+                    duty_scen = scen_dict["duty"]
+                    for d_key in ["pulse_c_rate", "rest_duration_s"]:
+                        if d_key in duty_scen:
+                            val_entry = duty_scen[d_key]
+                            has_reason = False
+                            if isinstance(val_entry, dict):
+                                r_val = val_entry.get("reason")
+                                if r_val and str(r_val).strip():
+                                    has_reason = True
+                            if not has_reason:
+                                raise ValueError(
+                                    f"Scenario file '{scen_path.name}' sets duty '{d_key}' without a declared reason string."
+                                )
+
                 resolved_dict = deep_merge(resolved_dict, scen_dict)
         else:
             raise FileNotFoundError(f"Scenario configuration file not found: {scen_path}")
@@ -246,6 +270,20 @@ def load_assumptions(
             elif d_key == "rest_duration_s" and profile == "bess":
                 if "duty" not in scen_dict or "rest_duration_s" not in scen_dict["duty"]:
                     resolved_dict["duty"]["rest_duration_s"] = copy.deepcopy(d_val)
+
+    # Record duty setting sources: "scenario file" or "profile"
+    if "duty" in resolved_dict:
+        if "pulse_c_rate" in resolved_dict["duty"] and isinstance(resolved_dict["duty"]["pulse_c_rate"], dict):
+            if scen_dict and "duty" in scen_dict and "pulse_c_rate" in scen_dict["duty"]:
+                resolved_dict["duty"]["pulse_c_rate"]["source"] = "scenario file"
+            else:
+                resolved_dict["duty"]["pulse_c_rate"]["source"] = "profile"
+
+        if "rest_duration_s" in resolved_dict["duty"] and isinstance(resolved_dict["duty"]["rest_duration_s"], dict):
+            if scen_dict and "duty" in scen_dict and "rest_duration_s" in scen_dict["duty"]:
+                resolved_dict["duty"]["rest_duration_s"]["source"] = "scenario file"
+            else:
+                resolved_dict["duty"]["rest_duration_s"]["source"] = "profile"
 
     # Apply CLI overrides: --set path.to.key=value
     if cli_overrides:

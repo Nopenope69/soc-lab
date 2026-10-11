@@ -6,10 +6,12 @@ duty:
     value: 0.80
   pulse_c_rate:
     value: 0.5
+    reason: "fast smoke run pulse rate"
   pulse_duration_s:
     value: 60.0
   rest_duration_s:
     value: 30.0
+    reason: "short rest for fast smoke execution"
   total_duration_s:
     value: 180.0
 

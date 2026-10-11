@@ -180,4 +180,5 @@ class E1ExtendedKalmanFilter(Estimator):
             anchor_used=False,
             voltage_residual=float(residual),
             innovation_variance=float(s_val),
+            kalman_gain_soc=float(k_gain[0, 0]),
         )
