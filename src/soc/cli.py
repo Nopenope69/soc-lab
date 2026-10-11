@@ -4,6 +4,7 @@ import argparse
 import csv
 from pathlib import Path
 import sys
+import time
 from typing import List
 
 from soc.assumptions.loader import load_assumptions
@@ -19,9 +20,11 @@ def build_parser() -> argparse.ArgumentParser:
     # soc run
     run_parser = subparsers.add_parser("run", help="Run scenario benchmarks")
     run_parser.add_argument("--scenario", default="smoke", help="Scenario name (e.g. smoke, t4_plateau_stress)")
+    run_parser.add_argument("--all", action="store_true", help="Run all standard benchmark scenarios")
     run_parser.add_argument("--profile", default="automotive", help="Active profile (automotive, bess)")
     run_parser.add_argument("--estimators", default="E0,E1,E2", help="Comma-separated estimator names")
     run_parser.add_argument("--variants", default="matched,mismatched", help="Comma-separated variants")
+    run_parser.add_argument("--seeds", type=int, default=None, help="Number of random seeds per scenario")
     run_parser.add_argument("--output-csv", default=None, help="Path for CSV output")
     run_parser.add_argument("--csv", default=None, help="Alias for --output-csv")
     run_parser.add_argument("--output-report", default=None, help="Path for report output")
@@ -53,16 +56,35 @@ def handle_run(args: argparse.Namespace) -> int:
     var_list = [v.strip() for v in args.variants.split(",") if v.strip()]
     overrides: List[str] = getattr(args, "set", [])
 
-    results = runner.run_scenario(
-        scenario_name=args.scenario,
-        profile=args.profile,
-        cli_overrides=overrides,
-        estimators=est_list,
-        variants=var_list,
-    )
+    t_start = time.perf_counter()
 
-    csv_file_str = args.csv or args.output_csv or "reports/smoke_results.csv"
-    report_file_str = args.report or args.output_report or "reports/smoke_report.md"
+    if args.all:
+        results = runner.run_all_scenarios(
+            profile=args.profile,
+            cli_overrides=overrides,
+            estimators=est_list,
+            variants=var_list,
+            num_seeds=args.seeds,
+        )
+        csv_default = "reports/full_results.csv"
+        report_default = "reports/full_report.md"
+    else:
+        results = runner.run_scenario(
+            scenario_name=args.scenario,
+            profile=args.profile,
+            cli_overrides=overrides,
+            estimators=est_list,
+            variants=var_list,
+            num_seeds=args.seeds,
+        )
+        csv_default = "reports/smoke_results.csv"
+        report_default = "reports/smoke_report.md"
+
+    t_end = time.perf_counter()
+    wall_time_s = t_end - t_start
+
+    csv_file_str = args.csv or args.output_csv or csv_default
+    report_file_str = args.report or args.output_report or report_default
 
     csv_path = Path(csv_file_str)
     runner.save_results_to_csv(results, csv_path)
@@ -75,7 +97,15 @@ def handle_run(args: argparse.Namespace) -> int:
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(report_md)
 
+    scenarios_run = len(set(r.scenario for r in results))
+    seeds_run = len(set(r.seed_index for r in results))
+    estimators_run = len(set(r.estimator for r in results))
+
     print(f"Benchmark run complete: {len(results)} configurations evaluated.")
+    print(f"  Scenarios run:      {scenarios_run}")
+    print(f"  Seeds per scenario: {seeds_run}")
+    print(f"  Estimators:         {estimators_run}")
+    print(f"  Total wall time:    {wall_time_s:.2f} s")
     print(f"Results CSV: {csv_path}")
     print(f"Report MD:   {report_path}")
     return 0

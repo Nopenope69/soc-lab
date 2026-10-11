@@ -232,6 +232,15 @@ class RunAssumptions(BaseModel):
     splits_file: AssumptionEntry
     dataset_names: AssumptionEntry
     warmup_steps: Optional[AssumptionEntry] = None
+    num_seeds: Optional[AssumptionEntry] = None
+
+
+class MetricsAssumptions(BaseModel):
+    """Evaluation metric configuration and duration thresholds."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    drift_min_run_s: AssumptionEntry
 
 
 class Assumptions(BaseModel):
@@ -247,3 +256,5 @@ class Assumptions(BaseModel):
     soc_definition: SocDefinitionAssumptions
     bars: BarsAssumptions
     run: RunAssumptions
+    metrics: Optional[MetricsAssumptions] = None
+

@@ -10,4 +10,4 @@ duty:
 estimator_model:
   mismatch:
     ocv_offset_mv:
-      value: 2.0
+      value: 3.0

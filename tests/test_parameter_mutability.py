@@ -37,9 +37,9 @@ def test_parameter_mutability_current_offset_moves_e0_drift_in_expected_directio
     """
     runner = ScenarioRunner()
 
-    res_base = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=0.0"])
-    res_pos = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=0.5"])
-    res_neg = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=-0.5"])
+    res_base = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=0.0", "metrics.drift_min_run_s=60.0"])
+    res_pos = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=0.5", "metrics.drift_min_run_s=60.0"])
+    res_neg = runner.run_scenario("smoke", cli_overrides=["sensors.current_offset_a=-0.5", "metrics.drift_min_run_s=60.0"])
 
     e0_base = next(r for r in res_base if r.estimator == "E0" and r.variant == "matched")
     e0_pos = next(r for r in res_pos if r.estimator == "E0" and r.variant == "matched")
@@ -54,3 +54,44 @@ def test_parameter_mutability_current_offset_moves_e0_drift_in_expected_directio
     expected_delta_drift = - (0.5 * 86400.0) / (3600.0 * 100.0)
     actual_delta_drift = e0_pos.drift_24h - e0_base.drift_24h
     assert actual_delta_drift == pytest.approx(expected_delta_drift, rel=1e-3)
+
+
+def test_short_run_drift_not_evaluated():
+    """Verify that runs shorter than metrics.drift_min_run_s set drift_evaluated=False and format as 'n/a (run too short)'."""
+    import math
+    from soc.eval.report import ReportGenerator
+
+    runner = ScenarioRunner()
+    # smoke duration is 180 s, which is < drift_min_run_s (3600 s)
+    res_smoke = runner.run_scenario("smoke")
+    e0 = next(r for r in res_smoke if r.estimator == "E0" and r.variant == "matched")
+    assert e0.duration_s < 3600.0
+    assert e0.drift_evaluated is False
+    assert math.isnan(e0.drift_24h)
+
+    # In the rendered report, it must show 'n/a (run too short)'
+    report = ReportGenerator.generate_report(res_smoke)
+    assert "n/a (run too short)" in report
+
+
+def test_t1_check_3mv_mismatch_scenario():
+    """Verify that T1 model check on t1_static_ocv (with ocv_offset_mv=3.0) reports 3 mV max and RMS."""
+    import numpy as np
+    from soc.assumptions.loader import load_assumptions
+    from soc.eval.model_checks import check_ocv_table_error_mv
+
+    runner = ScenarioRunner()
+    scen_path = runner.config_dir / "scenarios" / "t1_static_ocv.yaml"
+    assumptions, _, _ = load_assumptions(scenario_file=scen_path)
+
+    plant_ocv = assumptions.plant.ocv_table_v.value
+    offset_mv = float(assumptions.estimator_model.mismatch.ocv_offset_mv.value)
+    assert offset_mv == 3.0
+
+    for temp_str, v_list in plant_ocv.items():
+        ref_arr = np.array(v_list, dtype=float)
+        model_arr = ref_arr + (offset_mv / 1000.0)
+        max_mv, rms_mv = check_ocv_table_error_mv(model_arr, ref_arr)
+        assert max_mv == pytest.approx(3.0, abs=1e-9)
+        assert rms_mv == pytest.approx(3.0, abs=1e-9)
+

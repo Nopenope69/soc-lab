@@ -19,7 +19,7 @@ def test_runner_feeds_identical_measurement_stream_to_all_estimators():
     runner = ScenarioRunner()
     assumptions, _, _ = load_assumptions(scenario_file=runner.config_dir / "scenarios" / "smoke.yaml")
 
-    measurements, truths, times, _ = runner.generate_scenario_stream(assumptions, "smoke")
+    measurements, truths, times, _, _ = runner.generate_scenario_stream(assumptions, "smoke")
 
     # Record streams passed to E0, E1, E2 in both matched and mismatched
     recorded_streams = {}
@@ -67,9 +67,10 @@ def test_noise_seed_repeatability_and_scenario_isolation():
     assumptions1, _, _ = load_assumptions(scenario_file=runner.config_dir / "scenarios" / "smoke.yaml")
     assumptions2, _, _ = load_assumptions(scenario_file=runner.config_dir / "scenarios" / "smoke.yaml")
 
-    meas1, _, _, _ = runner.generate_scenario_stream(assumptions1, "smoke")
-    meas2, _, _, _ = runner.generate_scenario_stream(assumptions2, "smoke")
+    meas1, _, _, _, s1 = runner.generate_scenario_stream(assumptions1, "smoke")
+    meas2, _, _, _, s2 = runner.generate_scenario_stream(assumptions2, "smoke")
 
+    assert s1 == s2
     assert len(meas1) == len(meas2)
     for m1, m2 in zip(meas1, meas2):
         if np.isnan(m1.v):
@@ -77,3 +78,17 @@ def test_noise_seed_repeatability_and_scenario_isolation():
         else:
             assert m1.v == m2.v
             assert m1.i == m2.i
+
+
+def test_matched_and_mismatched_share_identical_seeds_across_runs():
+    """Verify matched and mismatched variants share identical noise seeds across multiple seeds."""
+    runner = ScenarioRunner()
+    results = runner.run_scenario("smoke", num_seeds=3)
+
+    matched_seeds = [r.noise_seed for r in results if r.variant == "matched" and r.estimator == "E0"]
+    mismatched_seeds = [r.noise_seed for r in results if r.variant == "mismatched" and r.estimator == "E0"]
+
+    assert len(matched_seeds) == 3
+    assert len(mismatched_seeds) == 3
+    assert matched_seeds == mismatched_seeds
+

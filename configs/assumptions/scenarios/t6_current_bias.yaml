@@ -11,7 +11,7 @@ duty:
   rest_duration_s:
     value: 60.0
   total_duration_s:
-    value: 1800.0
+    value: 3600.0
 
 sensors:
   current_offset_a:

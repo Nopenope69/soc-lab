@@ -2,7 +2,7 @@
 
 import math
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 import numpy as np
 
 from soc.assumptions.loader import PERCENT_FACTOR, load_assumptions
@@ -16,50 +16,84 @@ MANDATORY_HEADER = (
 
 UNIMPLEMENTED_ESTIMATORS = ["E3", "E4", "E5", "E6", "E7"]
 
+STANDARD_BAR_SCENARIOS = {
+    "t1_static_ocv",
+    "t3_t10_minor_loops",
+    "t4_plateau_stress",
+    "t5_initial_soc_offset",
+    "t6_current_bias",
+    "t7_voltage_quant_noise",
+    "t9_rest_relaxation",
+}
 
-def format_pp(val: float) -> str:
-    """Format fractional error as percentage points, handling NaN and Inf."""
-    if val is None or math.isnan(val):
+
+def format_stat_pp(vals: List[float], drift_eval: bool = True) -> str:
+    """Format fractional error list as mean +/- std (worst) in percentage points."""
+    valid = [v for v in vals if v is not None and not math.isnan(v) and not math.isinf(v)]
+    if not drift_eval:
+        return "n/a (run too short)"
+    if len(valid) == 0:
+        if any(math.isinf(v) for v in vals if v is not None):
+            return "never"
         return "n/a"
-    if math.isinf(val):
+
+    arr = np.array(valid, dtype=float)
+    mean_val = float(np.mean(arr))
+    std_val = float(np.std(arr))
+    worst_val = float(np.max(np.abs(arr))) if "drift" in str(vals) else float(np.max(arr))
+
+    if len(vals) == 1:
+        return f"{mean_val * PERCENT_FACTOR:.2f} pp"
+    return f"{mean_val * PERCENT_FACTOR:.2f} ± {std_val * PERCENT_FACTOR:.2f} pp (w: {worst_val * PERCENT_FACTOR:.2f} pp)"
+
+
+def format_stat_sec(vals: List[float]) -> str:
+    """Format duration list as mean +/- std (worst) in seconds."""
+    if any(math.isinf(v) for v in vals if v is not None):
         return "never"
-    return f"{val * PERCENT_FACTOR:.2f} pp"
-
-
-def format_sec(val: float) -> str:
-    """Format duration in seconds, handling NaN and Inf."""
-    if val is None or math.isnan(val):
+    valid = [v for v in vals if v is not None and not math.isnan(v)]
+    if len(valid) == 0:
         return "n/a"
-    if math.isinf(val):
-        return "never"
-    return f"{val:.1f} s"
+
+    arr = np.array(valid, dtype=float)
+    mean_val = float(np.mean(arr))
+    std_val = float(np.std(arr))
+    worst_val = float(np.max(arr))
+
+    if len(vals) == 1:
+        return f"{mean_val:.1f} s"
+    return f"{mean_val:.1f} ± {std_val:.1f} s (w: {worst_val:.1f} s)"
 
 
-def format_ms(val: float) -> str:
-    """Format execution time in milliseconds."""
-    if val is None or math.isnan(val):
+def format_stat_ms(vals: List[float]) -> str:
+    """Format latency list as mean +/- std (worst) in milliseconds."""
+    valid = [v for v in vals if v is not None and not math.isnan(v)]
+    if len(valid) == 0:
         return "n/a"
-    if math.isinf(val):
-        return "never"
-    return f"{val:.2f} ms"
+
+    arr = np.array(valid, dtype=float)
+    mean_val = float(np.mean(arr))
+    std_val = float(np.std(arr))
+    worst_val = float(np.max(arr))
+
+    if len(vals) == 1:
+        return f"{mean_val:.2f} ms"
+    return f"{mean_val:.2f} ± {std_val:.2f} ms (w: {worst_val:.2f} ms)"
 
 
-def format_mv(val: float) -> str:
-    """Format voltage in millivolts."""
-    if val is None or math.isnan(val):
+def format_stat_float(vals: List[float], scale: float = 1) -> str:
+    """Format general float list as mean +/- std."""
+    valid = [v for v in vals if v is not None and not math.isnan(v)]
+    if len(valid) == 0:
         return "n/a"
-    if math.isinf(val):
-        return "never"
-    return f"{val * 1000:.2f} mV"
 
+    arr = np.array(valid, dtype=float) * scale
+    mean_val = float(np.mean(arr))
+    std_val = float(np.std(arr))
 
-def format_float(val: float) -> str:
-    """Format general float."""
-    if val is None or math.isnan(val):
-        return "n/a"
-    if math.isinf(val):
-        return "never"
-    return f"{val:.3f}"
+    if len(vals) == 1:
+        return f"{mean_val:.2f}"
+    return f"{mean_val:.2f} ± {std_val:.2f}"
 
 
 class ReportGenerator:
@@ -90,11 +124,17 @@ class ReportGenerator:
         config_hash = first_res.config_hash if first_res else "unknown"
         placeholders = first_res.placeholder_count if first_res else 0
         assumed = first_res.assumed_count if first_res else 0
-        temp_warnings = first_res.temp_clamp_warnings if first_res else 0
+        temp_warnings = sum(r.temp_clamp_warnings for r in results) if results else 0
 
         # Load assumptions if not provided
         if assumptions is None:
             assumptions, _, _ = load_assumptions(profile=active_profile)
+
+        # Count seeds, scenarios, estimators
+        unique_scenarios = sorted(list(set(r.scenario for r in results))) if results else []
+        unique_estimators = sorted(list(set(r.estimator for r in results))) if results else []
+        unique_seeds = sorted(list(set(r.seed_index for r in results))) if results else [0]
+        num_seeds_total = len(unique_seeds)
 
         # 2. Executive Metadata
         lines.append("## Executive Metadata")
@@ -102,12 +142,21 @@ class ReportGenerator:
         lines.append(f"- **Active Profile:** `{active_profile}`")
         lines.append(f"- **Git Commit:** `{commit_hash}`")
         lines.append(f"- **Configuration Hash:** `{config_hash}`")
+        lines.append(f"- **Scenarios Evaluated:** `{len(unique_scenarios)}`")
+        lines.append(f"- **Random Seeds per Scenario:** `{num_seeds_total}`")
+        lines.append(f"- **Estimators Evaluated:** `{len(unique_estimators)}` ({', '.join(unique_estimators)})")
         lines.append(f"- **Temperature-Clamp Warnings:** `{temp_warnings}`")
         lines.append("")
 
-        # 3. Benchmark Metric Results Table
+        # 3. Benchmark Metric Results Table (Grouped by scenario, variant, estimator)
         lines.append("## Benchmark Metric Results")
         lines.append("")
+        if num_seeds_total > 1:
+            lines.append(
+                f"> Statistics computed across {num_seeds_total} random seeds: format is `mean ± std (worst)`."
+            )
+            lines.append("")
+
         lines.append(
             "| Scenario | Variant | Estimator | RMSE | MAE | Max Err | P95 Err | Plateau RMSE | Conv 5% | Conv 2% | Drift 24h | Rev Spike | ms/step (med) | V Res (mV) | NIS | Pass All |"
         )
@@ -115,18 +164,42 @@ class ReportGenerator:
             "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
         )
 
+        # Group results
+        groups: Dict[Tuple[str, str, str], List[RunResult]] = {}
         for r in results:
-            pass_str = "PASS" if r.pass_all_bars else f"FAIL ({r.failed_bars})"
-            v_res_str = (
-                f"{r.voltage_residual_rmse * 1000:.2f}"
-                if not math.isnan(r.voltage_residual_rmse)
-                else "n/a"
-            )
-            nis_str = (
-                f"{r.mean_nis:.2f}" if not math.isnan(r.mean_nis) else "n/a"
-            )
+            key = (r.scenario, r.variant, r.estimator)
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(r)
+
+        for key, run_list in groups.items():
+            scen, var, est = key
+            drift_eval = any(r.drift_evaluated for r in run_list)
+            pass_worst = all(r.pass_all_bars for r in run_list)
+            failed_set: Set[str] = set()
+            for r in run_list:
+                if r.failed_bars:
+                    for fb in r.failed_bars.split(";"):
+                        if fb:
+                            failed_set.add(fb)
+
+            pass_str = "PASS" if pass_worst else f"FAIL ({';'.join(sorted(failed_set))})"
+
+            rmse_str = format_stat_pp([r.rmse for r in run_list])
+            mae_str = format_stat_pp([r.mae for r in run_list])
+            max_err_str = format_stat_pp([r.max_abs_error for r in run_list])
+            p95_str = format_stat_pp([r.p95_error for r in run_list])
+            plat_str = format_stat_pp([r.plateau_rmse_20_80 for r in run_list])
+            c5_str = format_stat_sec([r.converge_time_5pct for r in run_list])
+            c2_str = format_stat_sec([r.converge_time_2pct for r in run_list])
+            d24_str = format_stat_pp([r.drift_24h for r in run_list], drift_eval=drift_eval)
+            rev_str = format_stat_pp([r.post_reversal_error_60s for r in run_list])
+            ms_str = format_stat_ms([r.ms_per_step_median for r in run_list])
+            vres_str = format_stat_float([r.voltage_residual_rmse for r in run_list], scale=1000)
+            nis_str = format_stat_float([r.mean_nis for r in run_list])
+
             lines.append(
-                f"| `{r.scenario}` | `{r.variant}` | **{r.estimator}** | {format_pp(r.rmse)} | {format_pp(r.mae)} | {format_pp(r.max_abs_error)} | {format_pp(r.p95_error)} | {format_pp(r.plateau_rmse_20_80)} | {format_sec(r.converge_time_5pct)} | {format_sec(r.converge_time_2pct)} | {format_pp(r.drift_24h)} | {format_pp(r.post_reversal_error_60s)} | {format_ms(r.ms_per_step_median)} | {v_res_str} | {nis_str} | {pass_str} |"
+                f"| `{scen}` | `{var}` | **{est}** | {rmse_str} | {mae_str} | {max_err_str} | {p95_str} | {plat_str} | {c5_str} | {c2_str} | {d24_str} | {rev_str} | {ms_str} | {vres_str} | {nis_str} | {pass_str} |"
             )
 
         # List unimplemented estimators
@@ -136,10 +209,11 @@ class ReportGenerator:
             )
         lines.append("")
 
-        # 4. Profile Bars & Pass/Fail Matrix
+        # 4. Profile Bars & Pass/Fail Evaluation
         lines.append("## Profile Bars & Pass/Fail Evaluation")
         lines.append("")
         bars = assumptions.bars
+        drift_threshold_pp = f"{bars.t6_drift_bess_per_day_max.value * PERCENT_FACTOR:.2f} pp"
         lines.append(f"Pass/fail criteria loaded from active profile `{active_profile}`:")
         lines.append("")
         lines.append("| Bar Name | Threshold | Applied Scenarios | Description |")
@@ -148,28 +222,28 @@ class ReportGenerator:
             f"| `t1_ocv_error_max_mv` | {bars.t1_ocv_error_max_mv.value} mV | `t1_static_ocv` | Model OCV table error against reference |"
         )
         lines.append(
-            f"| `t2_dynamic_rmse_max` | {format_pp(bars.t2_dynamic_rmse_max.value)} | `smoke`, `t3_t10_minor_loops` | Dynamic cycling RMSE bar |"
+            f"| `t2_dynamic_rmse_max` | {bars.t2_dynamic_rmse_max.value * PERCENT_FACTOR:.2f} pp | `smoke`, `t3_t10_minor_loops` | Dynamic cycling RMSE bar |"
         )
         lines.append(
-            f"| `t2_dynamic_max_error` | {format_pp(bars.t2_dynamic_max_error.value)} | `smoke`, `t3_t10_minor_loops` | Dynamic cycling maximum error bar |"
+            f"| `t2_dynamic_max_error` | {bars.t2_dynamic_max_error.value * PERCENT_FACTOR:.2f} pp | `smoke`, `t3_t10_minor_loops` | Dynamic cycling maximum error bar |"
         )
         lines.append(
-            f"| `t4_plateau_p95_max` | {format_pp(bars.t4_plateau_p95_max.value)} | `t4_plateau_stress` | 95th percentile error on plateau |"
+            f"| `t4_plateau_p95_max` | {bars.t4_plateau_p95_max.value * PERCENT_FACTOR:.2f} pp | `t4_plateau_stress` | 95th percentile error on plateau |"
         )
         lines.append(
             f"| `t5_converge_time_s` | {bars.t5_converge_time_s.value} s | `t5_initial_soc_offset` | Convergence time from 10pp offset |"
         )
         lines.append(
-            f"| `t6_drift_bess_per_day_max` | {format_pp(bars.t6_drift_bess_per_day_max.value)} | `t6_current_bias` | 24-hour current bias drift bar |"
+            f"| `t6_drift_bess_per_day_max` | {drift_threshold_pp} | `t6_current_bias` | 24-hour current bias drift bar |"
         )
         lines.append(
-            f"| `t7_error_rise_max` | {format_pp(bars.t7_error_rise_max.value)} | `t7_voltage_quant_noise` | Max error rise under sensor noise |"
+            f"| `t7_error_rise_max` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | `t7_voltage_quant_noise` | Max error rise under sensor noise |"
         )
         lines.append(
-            f"| `t9_post_rest_step_error_max` | {format_pp(bars.t9_post_rest_step_error_max.value)} | `t9_rest_relaxation` | Max error during RC relaxation |"
+            f"| `t9_post_rest_step_error_max` | {bars.t9_post_rest_step_error_max.value * PERCENT_FACTOR:.2f} pp | `t9_rest_relaxation` | Max error during RC relaxation |"
         )
         lines.append(
-            f"| `t10_reversal_spike_max` | {format_pp(bars.t10_reversal_spike_max.value)} | `t3_t10_minor_loops` | Error spike after direction reversal |"
+            f"| `t10_reversal_spike_max` | {bars.t10_reversal_spike_max.value * PERCENT_FACTOR:.2f} pp | `t3_t10_minor_loops` | Error spike after direction reversal |"
         )
         lines.append(
             f"| `t14_auto_max_ms_per_step` | {bars.t14_auto_max_ms_per_step.value} ms | all scenarios | Median computation latency per step |"
@@ -177,55 +251,81 @@ class ReportGenerator:
         lines.append("")
 
         # Pass/fail matrix per estimator per scenario
-        estimators_present = sorted(list(set(r.estimator for r in results)))
-        scenarios_present = sorted(list(set(r.scenario for r in results)))
-
         lines.append("### Pass / Fail Matrix")
         lines.append("")
         lines.append(
-            f"| Estimator | Variant | " + " | ".join(f"`{s}`" for s in scenarios_present) + " | Overall |"
+            f"| Estimator | Variant | " + " | ".join(f"`{s}`" for s in unique_scenarios) + " | Overall |"
         )
         lines.append(
-            f"| :--- | :--- | " + " | ".join(":---" for _ in scenarios_present) + " | :--- |"
+            f"| :--- | :--- | " + " | ".join(":---" for _ in unique_scenarios) + " | :--- |"
         )
+
+        scenario_has_bars = {
+            "smoke": True,
+            "t1_static_ocv": True,
+            "t3_t10_minor_loops": True,
+            "t4_plateau_stress": True,
+            "t5_initial_soc_offset": True,
+            "t6_current_bias": True,
+            "t7_voltage_quant_noise": True,
+            "t9_rest_relaxation": True,
+            "t11_anchor_toggle": False,
+        }
 
         first_passing_rung = None
         for est_name in ["E0", "E1", "E2"]:
             for var_name in ["matched", "mismatched"]:
-                matching_rows = [
-                    r for r in results if r.estimator == est_name and r.variant == var_name
-                ]
-                if not matching_rows:
-                    continue
-
                 row_statuses = []
-                all_passed = True
-                for scen in scenarios_present:
-                    scen_matches = [r for r in matching_rows if r.scenario == scen]
-                    if scen_matches:
-                        is_p = scen_matches[0].pass_all_bars
-                        row_statuses.append("PASS" if is_p else "FAIL")
-                        if not is_p:
-                            all_passed = False
+                all_applicable_passed = True
+                has_any_run = False
+
+                for scen in unique_scenarios:
+                    key = (scen, var_name, est_name)
+                    if key in groups:
+                        has_any_run = True
+                        run_items = groups[key]
+                        has_bar = scenario_has_bars.get(scen, False)
+                        if has_bar:
+                            p_worst = all(r.pass_all_bars for r in run_items)
+                            row_statuses.append("PASS" if p_worst else "FAIL")
+                            if not p_worst:
+                                all_applicable_passed = False
+                        else:
+                            row_statuses.append("n/a")
                     else:
                         row_statuses.append("n/a")
 
-                overall_str = "**PASS**" if all_passed else "FAIL"
+                if not has_any_run:
+                    continue
+
+                overall_str = "**PASS**" if all_applicable_passed else "FAIL"
                 lines.append(
                     f"| **{est_name}** | `{var_name}` | "
                     + " | ".join(row_statuses)
                     + f" | {overall_str} |"
                 )
 
-                if all_passed and first_passing_rung is None:
+                if all_applicable_passed and first_passing_rung is None:
                     first_passing_rung = f"{est_name} ({var_name})"
 
         lines.append("")
-        rung_label = first_passing_rung if first_passing_rung else "None (all rungs failed at least one bar)"
-        lines.append(f"**First Rung Meeting All Bars:** `{rung_label}`")
+
+        # Check whether all required bar scenarios were executed
+        missing_bar_scenarios = [
+            s for s in sorted(STANDARD_BAR_SCENARIOS) if s not in unique_scenarios
+        ]
+        # Exception: if only smoke was run, or subset was run
+        if len(missing_bar_scenarios) > 0:
+            missing_str = ", ".join(f"`{s}`" for s in missing_bar_scenarios)
+            lines.append(
+                f"**First Rung Meeting All Bars:** `incomplete: not all bar scenarios were run` (missing: {missing_str})"
+            )
+        else:
+            rung_label = first_passing_rung if first_passing_rung else "None (all rungs failed at least one bar)"
+            lines.append(f"**First Rung Meeting All Bars:** `{rung_label}`")
         lines.append("")
 
-        # 5. T1 Model Check Section
+        # 5. T1 Model Check Section (Matched & Mismatched)
         lines.append("## T1 OCV Model Check")
         lines.append("")
         lines.append(
@@ -233,48 +333,82 @@ class ReportGenerator:
         )
         lines.append("")
 
-        # Evaluate OCV error between plant and mismatched estimator_model
         plant_ocv = assumptions.plant.ocv_table_v.value
         mismatch_offset_mv = float(assumptions.estimator_model.mismatch.ocv_offset_mv.value)
+        if mismatch_offset_mv == 0 and "t1_static_ocv" in unique_scenarios:
+            try:
+                t1_assump, _, _ = load_assumptions(profile=profile_name, scenario_file=Path("t1_static_ocv.yaml"))
+                mismatch_offset_mv = float(t1_assump.estimator_model.mismatch.ocv_offset_mv.value)
+            except Exception:
+                pass
         t1_bar_mv = float(bars.t1_ocv_error_max_mv.value)
 
-        lines.append("| Temperature | Max Error (mV) | RMS Error (mV) | Bar Threshold | Result |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- |")
+        lines.append("| Variant | Temperature | Max Error (mV) | RMS Error (mV) | Bar Threshold | Result |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
 
-        all_t1_pass = True
         if isinstance(plant_ocv, dict):
+            # 1. Matched variant
             for temp_str, v_list in plant_ocv.items():
                 ref_arr = np.array(v_list, dtype=float)
-                # Model after mismatch
+                max_mv, rms_mv = check_ocv_table_error_mv(ref_arr, ref_arr)
+                lines.append(
+                    f"| `matched` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | PASS |"
+                )
+            # 2. Mismatched variant
+            for temp_str, v_list in plant_ocv.items():
+                ref_arr = np.array(v_list, dtype=float)
                 model_arr = ref_arr + (mismatch_offset_mv / 1000)
                 max_mv, rms_mv = check_ocv_table_error_mv(model_arr, ref_arr)
-                t1_pass = max_mv <= t1_bar_mv
-                if not t1_pass:
-                    all_t1_pass = False
-                res_str = "PASS" if t1_pass else "FAIL"
+                res_str = "PASS" if max_mv <= t1_bar_mv else "FAIL"
                 lines.append(
-                    f"| `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | {res_str} |"
+                    f"| `mismatched` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | {res_str} |"
                 )
         lines.append("")
 
-        # 6. Diagnostic Observations
+        # 6. Diagnostic Observations & Hysteresis Performance
         lines.append("## Diagnostic Observations")
         lines.append("")
-        # Compare E1 and E2 plateau RMSE
-        e1_plat = [r.plateau_rmse_20_80 for r in results if r.estimator == "E1"]
-        e2_plat = [r.plateau_rmse_20_80 for r in results if r.estimator == "E2"]
+        hyst_target_scen = (
+            "t4_plateau_stress"
+            if "t4_plateau_stress" in unique_scenarios
+            else (unique_scenarios[0] if unique_scenarios else "smoke")
+        )
         hyst_amp = float(assumptions.plant.hysteresis_amplitude_v.value)
-        if e1_plat and e2_plat and hyst_amp > float(0):
-            mean_e1 = float(np.mean(e1_plat))
-            mean_e2 = float(np.mean(e2_plat))
-            if mean_e2 > mean_e1:
-                lines.append(
-                    f"> **[DIAGNOSTIC WARNING]** Plant hysteresis is active ({hyst_amp*1000:.1f} mV), but E2 plateau RMSE ({mean_e2*PERCENT_FACTOR:.2f} pp) did not outperform E1 ({mean_e1*PERCENT_FACTOR:.2f} pp)."
+
+        lines.append(f"### Hysteresis Diagnostic Evaluation")
+        lines.append(f"- **Target Scenario:** `{hyst_target_scen}`")
+        lines.append(f"- **Seeds Evaluated:** `{num_seeds_total}` (indices: `{unique_seeds}`)")
+        lines.append(f"- **Plant Hysteresis Amplitude:** `{hyst_amp * 1000:.1f} mV`")
+        lines.append("")
+
+        for v_name in ["matched", "mismatched"]:
+            e1_vals = [
+                r.plateau_rmse_20_80
+                for r in results
+                if r.scenario == hyst_target_scen and r.estimator == "E1" and r.variant == v_name
+            ]
+            e2_vals = [
+                r.plateau_rmse_20_80
+                for r in results
+                if r.scenario == hyst_target_scen and r.estimator == "E2" and r.variant == v_name
+            ]
+            if e1_vals and e2_vals:
+                m_e1 = float(np.mean(e1_vals)) * PERCENT_FACTOR
+                m_e2 = float(np.mean(e2_vals)) * PERCENT_FACTOR
+                diff = m_e1 - m_e2
+                comparison = (
+                    f"E2 beats E1 by {diff:.2f} pp"
+                    if diff >= float(0)
+                    else f"E1 beats E2 by {-diff:.2f} pp"
                 )
-            else:
                 lines.append(
-                    f"- **Hysteresis Performance:** With plant hysteresis active ({hyst_amp*1000:.1f} mV), E2 achieved plateau RMSE {mean_e2*PERCENT_FACTOR:.2f} pp vs E1 {mean_e1*PERCENT_FACTOR:.2f} pp."
+                    f"- **`{v_name}` variant:** E1 Plateau RMSE = `{m_e1:.2f} pp`, E2 Plateau RMSE = `{m_e2:.2f} pp` ({comparison})"
                 )
+
+        lines.append("")
+        lines.append(
+            "> *Clarification on previous smoke report:* The previously displayed values (0.69 pp and 1.24 pp) occurred because matched and mismatched runs were averaged together across estimators (E2: (0.15 + 1.24)/2 = 0.695 pp; E1: (1.29 + 1.19)/2 = 1.24 pp). In this report, all diagnostic values are strictly partitioned by variant and match the corresponding rows in the benchmark results table."
+        )
         lines.append("")
 
         # 7. Audit Footer

@@ -19,3 +19,8 @@ estimator_model:
       value: -5.0
     r0_pct:
       value: 10.0
+
+run:
+  num_seeds:
+    value: 1
+

@@ -10,6 +10,7 @@ import warnings
 import numpy as np
 
 from soc.assumptions.loader import (
+    DEFAULT_DRIFT_MIN_RUN_S,
     DEFAULT_PERCENTILE_95,
     DEFAULT_PLATEAU_MAX,
     DEFAULT_PLATEAU_MIN,
@@ -50,6 +51,12 @@ class RunResult:
     profile: str
     config_hash: str
     git_commit: str
+    noise_seed: int
+    seed_index: int
+    duration_s: float
+    n_samples_kept: int
+    n_dropped: int
+    drift_evaluated: bool
     placeholder_count: int
     assumed_count: int
     temp_clamp_warnings: int
@@ -80,14 +87,15 @@ class ScenarioRunner:
         self,
         assumptions: Assumptions,
         scenario_name: str,
-    ) -> Tuple[List[Measurement], List[PlantTruthState], List[float], int]:
-        """Generate single reproducible measurement and truth stream for scenario.
+        seed_index: int = 0,
+    ) -> Tuple[List[Measurement], List[PlantTruthState], List[float], int, int]:
+        """Generate single reproducible measurement and truth stream for scenario and seed.
 
-        Noise seed derived from (run_seed, scenario_hash).
-        Returns: (measurements, truths, cumulative_times, temp_warning_count).
+        Noise seed derived from (run_seed, scenario_hash, seed_index).
+        Returns: (measurements, truths, cumulative_times, temp_warning_count, noise_seed).
         """
         run_seed = int(assumptions.run.random_seed.value)
-        noise_seed = derive_scenario_noise_seed(run_seed, scenario_name)
+        noise_seed = derive_scenario_noise_seed(run_seed, scenario_name, seed_index)
         rng = np.random.default_rng(noise_seed)
 
         duty_steps = DutyCycleGenerator.generate(assumptions)
@@ -113,7 +121,7 @@ class ScenarioRunner:
         temp_warnings = sum(
             1 for w in recorded_warnings if "Temperature" in str(w.message)
         )
-        return measurements, truths, times, temp_warnings
+        return measurements, truths, times, temp_warnings, noise_seed
 
     def evaluate_estimator_on_stream(
         self,
@@ -123,7 +131,7 @@ class ScenarioRunner:
         measurements: List[Measurement],
         truths: List[PlantTruthState],
         times: List[float],
-    ) -> Tuple[Dict[str, float], Dict[str, float]]:
+    ) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, Any]]:
         """Run single estimator over measurement stream with timing and error filtering."""
         is_matched = variant == "matched"
         params = ParamSet.from_assumptions(assumptions, matched=is_matched)
@@ -160,6 +168,23 @@ class ScenarioRunner:
         kept_est = np.array([held_estimates[k] for k in kept_indices], dtype=float)
         kept_currents = np.array([truths[k].i_true for k in kept_indices], dtype=float)
 
+        duration_s = times[-1] if len(times) > 0 else float(0)
+        n_samples_kept = len(kept_indices)
+        n_dropped = len(measurements) - n_samples_kept
+
+        # Check drift min run duration requirement
+        drift_min_s = (
+            float(assumptions.metrics.drift_min_run_s.value)
+            if (assumptions.metrics is not None and hasattr(assumptions.metrics, "drift_min_run_s"))
+            else DEFAULT_DRIFT_MIN_RUN_S
+        )
+        drift_evaluated = duration_s >= drift_min_s
+
+        if drift_evaluated:
+            d24 = drift_24h(kept_truth, kept_est, kept_times, seconds_per_day=SECONDS_PER_DAY)
+        else:
+            d24 = float("nan")
+
         # Metric calculations
         th_2pct = float(assumptions.filter.convergence_threshold_2pct.value)
         th_5pct = float(assumptions.filter.convergence_threshold_5pct.value)
@@ -187,7 +212,7 @@ class ScenarioRunner:
             ),
             "converge_time_2pct": converge_time_2pct(kept_truth, kept_est, kept_times, threshold=th_2pct),
             "converge_time_5pct": converge_time_5pct(kept_truth, kept_est, kept_times, threshold=th_5pct),
-            "drift_24h": drift_24h(kept_truth, kept_est, kept_times, seconds_per_day=SECONDS_PER_DAY),
+            "drift_24h": d24,
             "post_reversal_error_60s": post_reversal_error_60s(
                 kept_truth, kept_est, kept_times, kept_currents, deadband=deadband
             ),
@@ -211,13 +236,21 @@ class ScenarioRunner:
             ),
             "mean_nis": float(np.mean(nis_list)) if nis_list else float("nan"),
         }
-        return metrics, diag
+
+        meta = {
+            "duration_s": duration_s,
+            "n_samples_kept": n_samples_kept,
+            "n_dropped": n_dropped,
+            "drift_evaluated": drift_evaluated,
+        }
+        return metrics, diag, meta
 
     def check_pass_bars(
         self,
         scenario_name: str,
         metrics: Dict[str, float],
         assumptions: Assumptions,
+        drift_evaluated: bool = True,
     ) -> Tuple[bool, List[str]]:
         """Evaluate applicable pass/fail bars from active profile for scenario."""
         bars = assumptions.bars
@@ -244,8 +277,8 @@ class ScenarioRunner:
             if metrics["converge_time_5pct"] > t5_max_s:
                 failed.append("t5_converge_time_s")
 
-        # T6 Current bias drift
-        if scenario_name in ["t6_current_bias"]:
+        # T6 Current bias drift (only if duration meets drift_min_run_s)
+        if scenario_name in ["t6_current_bias"] and drift_evaluated:
             t6_drift_max = float(bars.t6_drift_bess_per_day_max.value)
             if abs(metrics["drift_24h"]) > t6_drift_max:
                 failed.append("t6_drift_bess_per_day_max")
@@ -282,8 +315,9 @@ class ScenarioRunner:
         cli_overrides: Optional[List[str]] = None,
         estimators: Optional[List[str]] = None,
         variants: Optional[List[str]] = None,
+        num_seeds: Optional[int] = None,
     ) -> List[RunResult]:
-        """Execute a full scenario benchmark across estimators and variants."""
+        """Execute scenario benchmark across estimators, variants, and random seeds."""
         active_estimators = estimators or ["E0", "E1", "E2"]
         active_variants = variants or ["matched", "mismatched"]
 
@@ -302,55 +336,101 @@ class ScenarioRunner:
         status_counts = count_assumption_statuses(raw_dict)
         profile_label = profile or "automotive"
 
-        # Generate single shared measurement stream for scenario
-        measurements, truths, times, temp_warnings = self.generate_scenario_stream(
-            assumptions, scen_clean
-        )
+        if num_seeds is not None:
+            n_seeds = num_seeds
+        elif assumptions.run.num_seeds is not None:
+            n_seeds = int(assumptions.run.num_seeds.value)
+        else:
+            n_seeds = 1
 
         results: List[RunResult] = []
 
-        for variant in active_variants:
-            for est_name in active_estimators:
-                metrics, diag = self.evaluate_estimator_on_stream(
-                    estimator_name=est_name,
-                    variant=variant,
-                    assumptions=assumptions,
-                    measurements=measurements,
-                    truths=truths,
-                    times=times,
-                )
-                passed, failed_list = self.check_pass_bars(
-                    scen_clean, metrics, assumptions
-                )
-                res = RunResult(
-                    scenario=scen_clean,
-                    estimator=est_name,
-                    variant=variant,
-                    profile=profile_label,
-                    config_hash=config_hash,
-                    git_commit=commit,
-                    placeholder_count=status_counts["placeholder"],
-                    assumed_count=status_counts["assumed"],
-                    temp_clamp_warnings=temp_warnings,
-                    rmse=metrics["rmse"],
-                    mae=metrics["mae"],
-                    max_abs_error=metrics["max_abs_error"],
-                    p95_error=metrics["p95_error"],
-                    plateau_rmse_20_80=metrics["plateau_rmse_20_80"],
-                    converge_time_2pct=metrics["converge_time_2pct"],
-                    converge_time_5pct=metrics["converge_time_5pct"],
-                    drift_24h=metrics["drift_24h"],
-                    post_reversal_error_60s=metrics["post_reversal_error_60s"],
-                    ms_per_step_mean=metrics["ms_per_step_mean"],
-                    ms_per_step_median=metrics["ms_per_step_median"],
-                    voltage_residual_rmse=diag["voltage_residual_rmse"],
-                    mean_nis=diag["mean_nis"],
-                    pass_all_bars=passed,
-                    failed_bars=";".join(failed_list),
-                )
-                results.append(res)
+        for s_idx in range(n_seeds):
+            # Generate single shared measurement stream for (scenario, s_idx)
+            measurements, truths, times, temp_warnings, noise_seed = self.generate_scenario_stream(
+                assumptions, scen_clean, seed_index=s_idx
+            )
+
+            for variant in active_variants:
+                for est_name in active_estimators:
+                    metrics, diag, meta = self.evaluate_estimator_on_stream(
+                        estimator_name=est_name,
+                        variant=variant,
+                        assumptions=assumptions,
+                        measurements=measurements,
+                        truths=truths,
+                        times=times,
+                    )
+                    passed, failed_list = self.check_pass_bars(
+                        scen_clean, metrics, assumptions, drift_evaluated=meta["drift_evaluated"]
+                    )
+                    res = RunResult(
+                        scenario=scen_clean,
+                        estimator=est_name,
+                        variant=variant,
+                        profile=profile_label,
+                        config_hash=config_hash,
+                        git_commit=commit,
+                        noise_seed=noise_seed,
+                        seed_index=s_idx,
+                        duration_s=meta["duration_s"],
+                        n_samples_kept=meta["n_samples_kept"],
+                        n_dropped=meta["n_dropped"],
+                        drift_evaluated=meta["drift_evaluated"],
+                        placeholder_count=status_counts["placeholder"],
+                        assumed_count=status_counts["assumed"],
+                        temp_clamp_warnings=temp_warnings,
+                        rmse=metrics["rmse"],
+                        mae=metrics["mae"],
+                        max_abs_error=metrics["max_abs_error"],
+                        p95_error=metrics["p95_error"],
+                        plateau_rmse_20_80=metrics["plateau_rmse_20_80"],
+                        converge_time_2pct=metrics["converge_time_2pct"],
+                        converge_time_5pct=metrics["converge_time_5pct"],
+                        drift_24h=metrics["drift_24h"],
+                        post_reversal_error_60s=metrics["post_reversal_error_60s"],
+                        ms_per_step_mean=metrics["ms_per_step_mean"],
+                        ms_per_step_median=metrics["ms_per_step_median"],
+                        voltage_residual_rmse=diag["voltage_residual_rmse"],
+                        mean_nis=diag["mean_nis"],
+                        pass_all_bars=passed,
+                        failed_bars=";".join(failed_list),
+                    )
+                    results.append(res)
 
         return results
+
+    def run_all_scenarios(
+        self,
+        profile: Optional[str] = None,
+        cli_overrides: Optional[List[str]] = None,
+        estimators: Optional[List[str]] = None,
+        variants: Optional[List[str]] = None,
+        num_seeds: Optional[int] = None,
+    ) -> List[RunResult]:
+        """Execute full test suite across all standard scenarios."""
+        standard_scenarios = [
+            "t1_static_ocv",
+            "t3_t10_minor_loops",
+            "t4_plateau_stress",
+            "t5_initial_soc_offset",
+            "t6_current_bias",
+            "t7_voltage_quant_noise",
+            "t9_rest_relaxation",
+            "t11_anchor_toggle",
+        ]
+        all_res: List[RunResult] = []
+        for scen in standard_scenarios:
+            scen_results = self.run_scenario(
+                scenario_name=scen,
+                profile=profile,
+                cli_overrides=cli_overrides,
+                estimators=estimators,
+                variants=variants,
+                num_seeds=num_seeds,
+            )
+            all_res.extend(scen_results)
+        return all_res
 
     @staticmethod
     def save_results_to_csv(results: List[RunResult], output_path: Path) -> None:

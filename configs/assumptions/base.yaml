@@ -485,3 +485,18 @@ run:
     status: "assumed"
     bounds: [0.0, 1000.0]
     note: "Number of steps discarded as warm-up when timing ms_per_step"
+  num_seeds:
+    value: 1
+    unit: "count"
+    status: "assumed"
+    bounds: [1.0, 100.0]
+    note: "Number of random seeds evaluated per scenario"
+
+metrics:
+  drift_min_run_s:
+    value: 3600.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [60.0, 86400.0]
+    note: "Minimum duration required to evaluate 24-hour drift"
+
