@@ -178,3 +178,19 @@ def test_zero_current_leaves_hysteresis_unchanged():
             coulombic_efficiency=coulomb_eff,
         )
     assert h == pytest.approx(h_init)
+
+
+def test_table_2d_float_rounding_key_matching():
+    """Verify that 2D table initializes and lookups correctly even with slight float precision differences."""
+    temps = [15.0, 25.0, 35.0]
+    socs = [0.0, 0.5, 1.0]
+    # Keys with slight float precision variations
+    table_dict = {
+        "15.000000000000002": [2.50, 3.20, 3.65],
+        "25.000000000000004": [2.55, 3.25, 3.70],
+        "34.99999999999999": [2.60, 3.30, 3.75],
+    }
+    table = InterpolatedTable2D(temps, socs, table_dict)
+    assert table.lookup(0.5, 25.0) == pytest.approx(3.25)
+    assert table.lookup(0.5, 25.0 + 1e-9) == pytest.approx(3.25)
+

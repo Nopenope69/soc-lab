@@ -67,7 +67,7 @@ class InterpolatedTable2D:
                 val_found = table_dict[t_key_str]
             else:
                 for k, v in table_dict.items():
-                    if float(k) == t_val:
+                    if np.isclose(float(k), t_val):
                         val_found = v
                         break
 

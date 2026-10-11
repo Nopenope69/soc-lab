@@ -321,6 +321,7 @@ def test_informational_rest_anchor_error_on_plateau_with_hysteresis():
     """
     assumptions, _, _ = load_assumptions(cli_overrides=[
         "plant.initial_soc=0.55",
+        "soc_definition.rest_anchor_enabled=true",
         "soc_definition.rest_duration_threshold_s=100.0",
         "sensors.current_offset_a=0.0",
         "sensors.current_gain_error=0.0",
@@ -352,10 +353,10 @@ def test_informational_rest_anchor_error_on_plateau_with_hysteresis():
     print(f"\n[Informational] Rest anchor on plateau with hysteresis ON introduced error: {anchor_error:+.4f} ({anchor_error*100:+.2f} pp)")
 
 
-def test_informational_e1_plateau_error_with_hysteresis_on():
-    """Informational test: E1 plateau error with plant hysteresis ON.
+def test_informational_a_e1_and_e2_plateau_rmse():
+    """Informational run (a): E1 and E2 on same plateau run with plant hysteresis ON.
 
-    Runs E1 on dynamic plateau duty with hysteresis active in the plant.
+    Report plateau_rmse_20_80 for E1 and E2 side by side (report only, no pass/fail).
     """
     assumptions, _, _ = load_assumptions(cli_overrides=[
         "plant.initial_soc=0.50",
@@ -369,18 +370,144 @@ def test_informational_e1_plateau_error_with_hysteresis_on():
     ])
     params = ParamSet.from_assumptions(assumptions)
     plant = PlantSimulator(assumptions)
-    est = E1ExtendedKalmanFilter(params)
-    est.reset(0.50)
+    e1 = E1ExtendedKalmanFilter(params)
+    e2 = E2EKFHysteresis(params)
+    e1.reset(0.50)
+    e2.reset(0.50)
 
     truths = []
-    ests = []
+    e1_ests = []
+    e2_ests = []
     for k in range(500):
         i_val = 30.0 if (k // 50) % 2 == 0 else -30.0
         meas, truth = plant.step(i_val, 25.0, 1.0)
-        out = est.step(meas)
+        out1 = e1.step(meas)
+        out2 = e2.step(meas)
         truths.append(truth.soc)
-        ests.append(out.soc)
+        e1_ests.append(out1.soc)
+        e2_ests.append(out2.soc)
 
-    rmse_plat = plateau_rmse_20_80(np.array(truths), np.array(ests), 0.20, 0.80)
-    print(f"\n[Informational] E1 plateau RMSE with plant hysteresis ON: {rmse_plat:.6f} ({rmse_plat*100:.4f} pp)")
-    assert rmse_plat >= 0.0
+    truths_arr = np.array(truths)
+    rmse_e1 = plateau_rmse_20_80(truths_arr, np.array(e1_ests), 0.20, 0.80)
+    rmse_e2 = plateau_rmse_20_80(truths_arr, np.array(e2_ests), 0.20, 0.80)
+
+    print(f"\n[Informational (a)] Plateau RMSE (20-80%):")
+    print(f"  E1 = {rmse_e1*100:.4f} pp")
+    print(f"  E2 = {rmse_e2*100:.4f} pp")
+
+
+def test_informational_b_wrong_start_on_plateau():
+    """Informational run (b): Wrong start on plateau.
+
+    True SOC 0.60, estimate 0.70, noiseless and matched, 30 A discharge and charge
+    pulses that stay inside 30 to 80% SOC, 3600 s.
+    Report E1 and E2 error at 900 s and 3600 s and converge_time_5pct (report only).
+    """
+    assumptions, _, _ = load_assumptions(cli_overrides=[
+        "plant.initial_soc=0.60",
+        "sensors.current_offset_a=0.0",
+        "sensors.current_gain_error=0.0",
+        "sensors.current_noise_sigma_a=0.0",
+        "sensors.voltage_noise_sigma_v=0.0",
+        "sensors.voltage_quantisation_v=0.0",
+        "sensors.dropout_rate=0.0",
+        "sensors.temperature_noise_sigma_c=0.0",
+    ])
+    params = ParamSet.from_assumptions(assumptions)
+    plant = PlantSimulator(assumptions)
+    e1 = E1ExtendedKalmanFilter(params)
+    e2 = E2EKFHysteresis(params)
+    e1.reset(0.70)  # +0.10 offset
+    e2.reset(0.70)  # +0.10 offset
+
+    times = []
+    truths = []
+    e1_ests = []
+    e2_ests = []
+
+    e1_err_900 = None
+    e2_err_900 = None
+
+    for k in range(3600):
+        # 30 A pulses alternating every 180 s (stays within [0.585, 0.600])
+        i_val = 30.0 if (k // 180) % 2 == 0 else -30.0
+        meas, truth = plant.step(i_val, 25.0, 1.0)
+        out1 = e1.step(meas)
+        out2 = e2.step(meas)
+
+        t_now = float(k + 1)
+        times.append(t_now)
+        truths.append(truth.soc)
+        e1_ests.append(out1.soc)
+        e2_ests.append(out2.soc)
+
+        if k + 1 == 900:
+            e1_err_900 = abs(out1.soc - truth.soc)
+            e2_err_900 = abs(out2.soc - truth.soc)
+
+    truths_arr = np.array(truths)
+    times_arr = np.array(times)
+    e1_arr = np.array(e1_ests)
+    e2_arr = np.array(e2_ests)
+
+    e1_err_3600 = abs(e1_arr[-1] - truths_arr[-1])
+    e2_err_3600 = abs(e2_arr[-1] - truths_arr[-1])
+
+    ct_e1 = converge_time_5pct(truths_arr, e1_arr, times_arr, threshold=0.05)
+    ct_e2 = converge_time_5pct(truths_arr, e2_arr, times_arr, threshold=0.05)
+
+    ct_e1_str = "inf" if math.isinf(ct_e1) else f"{ct_e1:.1f} s"
+    ct_e2_str = "inf" if math.isinf(ct_e2) else f"{ct_e2:.1f} s"
+
+    print(f"\n[Informational (b)] Wrong start on plateau (true=0.60, est=0.70, 3600s inside plateau):")
+    print(f"  E1: error@900s = {e1_err_900*100:.4f} pp, error@3600s = {e1_err_3600*100:.4f} pp, converge_time_5pct = {ct_e1_str}")
+    print(f"  E2: error@900s = {e2_err_900*100:.4f} pp, error@3600s = {e2_err_3600*100:.4f} pp, converge_time_5pct = {ct_e2_str}")
+
+
+def test_informational_c_wrong_start_plateau_then_lower_knee():
+    """Informational run (c): Same as (b), but duty then discharges across lower knee.
+
+    Report error before and after the crossing (report only, no pass/fail).
+    """
+    assumptions, _, _ = load_assumptions(cli_overrides=[
+        "plant.initial_soc=0.60",
+        "sensors.current_offset_a=0.0",
+        "sensors.current_gain_error=0.0",
+        "sensors.current_noise_sigma_a=0.0",
+        "sensors.voltage_noise_sigma_v=0.0",
+        "sensors.voltage_quantisation_v=0.0",
+        "sensors.dropout_rate=0.0",
+        "sensors.temperature_noise_sigma_c=0.0",
+    ])
+    params = ParamSet.from_assumptions(assumptions)
+    plant = PlantSimulator(assumptions)
+    e1 = E1ExtendedKalmanFilter(params)
+    e2 = E2EKFHysteresis(params)
+    e1.reset(0.70)
+    e2.reset(0.70)
+
+    # 1. Plateau phase for 3600 s
+    for k in range(3600):
+        i_val = 30.0 if (k // 180) % 2 == 0 else -30.0
+        meas, truth = plant.step(i_val, 25.0, 1.0)
+        out1 = e1.step(meas)
+        out2 = e2.step(meas)
+
+    e1_err_before = abs(out1.soc - truth.soc)
+    e2_err_before = abs(out2.soc - truth.soc)
+
+    # 2. Discharge across lower knee (< 0.15 SOC): 70 A discharge for 2400 s
+    # 70 A * 2400 s / (3600 * 100) = 0.4667 delta SOC; 0.60 - 0.4667 = 0.1333 (< 0.15)
+    for _ in range(2400):
+        meas, truth = plant.step(70.0, 25.0, 1.0)
+        out1 = e1.step(meas)
+        out2 = e2.step(meas)
+
+    e1_err_after = abs(out1.soc - truth.soc)
+    e2_err_after = abs(out2.soc - truth.soc)
+
+    print(f"\n[Informational (c)] Wrong start on plateau then crossing lower knee:")
+    print(f"  Final plant SOC reached: {truth.soc:.4f}")
+    print(f"  E1: error before knee = {e1_err_before*100:.4f} pp, error after knee = {e1_err_after*100:.4f} pp")
+    print(f"  E2: error before knee = {e2_err_before*100:.4f} pp, error after knee = {e2_err_after*100:.4f} pp")
+

@@ -326,21 +326,30 @@ def test_ms_per_step_analytic_closed_form():
 # 10. NaN Input Rejection Tests
 # =====================================================================
 
-def test_metrics_raise_value_error_on_nan():
+@pytest.mark.parametrize(
+    "func_name",
+    [
+        "rmse",
+        "mae",
+        "max_abs_error",
+        "p95_error",
+        "plateau_rmse_20_80",
+    ],
+)
+def test_metrics_raise_value_error_on_nan(func_name):
     """All metric functions raise ValueError when input contains NaN."""
     truth = np.array([0.5, float("nan"), 0.5])
     estimate = np.array([0.5, 0.5, 0.5])
 
+    funcs = {
+        "rmse": lambda t, e: rmse(t, e),
+        "mae": lambda t, e: mae(t, e),
+        "max_abs_error": lambda t, e: max_abs_error(t, e),
+        "p95_error": lambda t, e: p95_error(t, e, percentile=95.0),
+        "plateau_rmse_20_80": lambda t, e: plateau_rmse_20_80(t, e, soc_min=0.20, soc_max=0.80),
+    }
     with pytest.raises(ValueError, match="NaN"):
-        rmse(truth, estimate)
-    with pytest.raises(ValueError, match="NaN"):
-        mae(truth, estimate)
-    with pytest.raises(ValueError, match="NaN"):
-        max_abs_error(truth, estimate)
-    with pytest.raises(ValueError, match="NaN"):
-        p95_error(truth, estimate, percentile=95.0)
-    with pytest.raises(ValueError, match="NaN"):
-        plateau_rmse_20_80(truth, estimate, soc_min=0.20, soc_max=0.80)
+        funcs[func_name](truth, estimate)
 
 
 def test_converge_time_raises_on_nan():

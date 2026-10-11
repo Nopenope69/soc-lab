@@ -353,7 +353,7 @@ soc_definition:
     status: "assumed"
     note: "Enable recalibration anchors when conditions are met"
   rest_anchor_enabled:
-    value: true
+    value: false
     unit: "bool"
     status: "assumed"
     note: "Enable rest OCV inversion anchor when rest conditions are met"

@@ -88,9 +88,11 @@ def test_dropout_handling_skips_update_and_holds_last_current(params):
         assert out_drop.innovation_variance is None
 
 
-def test_e0_rest_anchor_triggers_after_threshold(params):
+def test_e0_rest_anchor_triggers_after_threshold():
     """Verify that E0 rest anchor triggers after sustained rest period."""
-    est = E0CoulombCounting(params)
+    assumptions, _, _ = load_assumptions(cli_overrides=["soc_definition.rest_anchor_enabled=true"])
+    params_anchor = ParamSet.from_assumptions(assumptions)
+    est = E0CoulombCounting(params_anchor)
     # Start E0 at wrong SOC 0.50
     est.reset(0.50)
 

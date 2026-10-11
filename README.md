@@ -17,8 +17,12 @@ All configurable parameters live in YAML under `configs/assumptions/`. Layered r
 Every parameter is strictly validated via Pydantic with explicit bounds, units, notes, and statuses (`placeholder`, `assumed`, `measured`, `fitted`).
 Derived quantities (e.g. $C_j = \tau_j / R_j$) are computed in exactly one place dynamically.
 
+## Limitations
+- **Flat LFP Plateau & Rest-Anchor Vulnerability:** On LFP chemistries, the OCV plateau between 20% and 80% SOC has a shallow slope (~0.5 mV per percentage point of SOC, or $d\mathrm{OCV}/d\mathrm{SOC} \approx 0.05\,\mathrm{V}$). When cell hysteresis is active (e.g., hysteresis amplitude $M = 15\,\mathrm{mV}$) and not fully relaxed or accounted for, attempting to invert terminal voltage directly to SOC during rest introduces a severe **-20.8 percentage point error** (-0.2084). Consequently, `soc_definition.rest_anchor_enabled` defaults to `false`. Scenario `t11_anchor_toggle` explicitly toggles the rest anchor on to evaluate this degradation, and benchmark reports label those rows.
+
 ## Quick Start
 ```bash
 make test     # Run all unit and analytic tests
 make smoke    # Run smoke scenario (<60s) for E0, E1, E2
 ```
+
