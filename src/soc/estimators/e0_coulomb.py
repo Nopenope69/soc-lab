@@ -70,7 +70,7 @@ class E0CoulombCounting(Estimator):
         anchor_applied = False
 
         # 1. Full-charge anchor
-        if self.params.anchor_enabled:
+        if self.params.anchor_enabled and self.params.full_charge_anchor_enabled:
             v_thresh = self.params.full_charge_voltage_threshold_v
             i_thresh = self.params.full_charge_current_threshold_a
             if measurement.v >= v_thresh and abs(measurement.i) <= i_thresh:

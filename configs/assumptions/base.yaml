@@ -387,6 +387,11 @@ soc_definition:
     status: "placeholder"
     bounds: [0.90, 1.0]
     note: "Target SOC assigned upon full-charge anchor trigger"
+  full_charge_anchor_enabled:
+    value: true
+    unit: "bool"
+    status: "assumed"
+    note: "Enable full-charge voltage taper anchor when conditions are met"
 
 bars:
   t1_ocv_error_max_mv:
@@ -491,6 +496,18 @@ run:
     status: "assumed"
     bounds: [1.0, 100.0]
     note: "Number of random seeds evaluated per scenario"
+  tie_band_pp:
+    value: 0.5
+    unit: "pp"
+    status: "placeholder"
+    bounds: [0.0, 10.0]
+    note: "Deadband threshold in percentage points for E2 vs E1 tie outcome"
+  metric_warmup_s:
+    value: 10.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [0.0, 3600.0]
+    note: "Warmup window in seconds to exclude initial settling transients from metric evaluation"
 
 metrics:
   drift_min_run_s:

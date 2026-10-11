@@ -60,6 +60,7 @@ class ParamSet:
     full_charge_voltage_threshold_v: float
     full_charge_current_threshold_a: float
     full_charge_anchor_soc: float
+    full_charge_anchor_enabled: bool = True
 
     @classmethod
     def from_assumptions(cls, assumptions: Assumptions, matched: bool = True) -> "ParamSet":
@@ -67,6 +68,11 @@ class ParamSet:
         eff = get_effective_estimator_parameters(assumptions, matched=matched)
         f_cfg = assumptions.filter
         s_cfg = assumptions.soc_definition
+        fc_enabled = (
+            bool(s_cfg.full_charge_anchor_enabled.value)
+            if hasattr(s_cfg, "full_charge_anchor_enabled") and s_cfg.full_charge_anchor_enabled is not None
+            else True
+        )
 
         return cls(
             nominal_capacity_ah=float(eff["nominal_capacity_Ah"]),
@@ -95,6 +101,7 @@ class ParamSet:
             full_charge_voltage_threshold_v=float(s_cfg.full_charge_voltage_threshold_v.value),
             full_charge_current_threshold_a=float(s_cfg.full_charge_current_threshold_a.value),
             full_charge_anchor_soc=float(s_cfg.full_charge_anchor_soc.value),
+            full_charge_anchor_enabled=fc_enabled,
         )
 
 

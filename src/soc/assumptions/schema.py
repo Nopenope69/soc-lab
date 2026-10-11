@@ -193,6 +193,7 @@ class SocDefinitionAssumptions(BaseModel):
     full_charge_voltage_threshold_v: AssumptionEntry
     full_charge_current_threshold_a: AssumptionEntry
     full_charge_anchor_soc: AssumptionEntry
+    full_charge_anchor_enabled: Optional[AssumptionEntry] = None
 
     @model_validator(mode="after")
     def validate_basis(self) -> "SocDefinitionAssumptions":
@@ -233,6 +234,8 @@ class RunAssumptions(BaseModel):
     dataset_names: AssumptionEntry
     warmup_steps: Optional[AssumptionEntry] = None
     num_seeds: Optional[AssumptionEntry] = None
+    tie_band_pp: Optional[AssumptionEntry] = None
+    metric_warmup_s: Optional[AssumptionEntry] = None
 
 
 class MetricsAssumptions(BaseModel):

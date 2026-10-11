@@ -10,13 +10,21 @@ import numpy as np
 
 from soc.assumptions.loader import (
     DEFAULT_DRIFT_MIN_RUN_S,
+    DEFAULT_METRIC_WARMUP_S,
     DEFAULT_PERCENTILE_95,
+    DEFAULT_PLATEAU_FRACTION_MIN,
     DEFAULT_PLATEAU_MAX,
     DEFAULT_PLATEAU_MIN,
+    DEFAULT_TIE_BAND_PP,
     DEFAULT_WARMUP_COUNT,
     OFAT_SWEEP_CONFIGS,
     PERCENT_FACTOR,
     SECONDS_PER_DAY,
+    T11_REST_DUTY_DISCHARGE_CURRENT_A,
+    T11_REST_DUTY_DISCHARGE_S,
+    T11_REST_DUTY_INITIAL_SOC,
+    T11_REST_DUTY_OFFSET,
+    T11_REST_DUTY_REST_S,
     TRANSIENT_SPIKE_MAX_ERR_THRESHOLD,
     TRANSIENT_SPIKE_RMSE_THRESHOLD,
     count_assumption_statuses,
@@ -83,13 +91,16 @@ class RunResult:
     reversal_count: int = 0
     error_rise: float = float("nan")
     anchor_count: int = 0
+    samples_anchored: int = 0
     first_anchor_time_s: float = float("nan")
     err_pre_anchor: float = float("nan")
     err_post_anchor: float = float("nan")
     clean_rmse: float = float("nan")
+    signed_rmse_rise: float = float("nan")
     rmse_rise: float = float("nan")
     clean_max_error: float = float("nan")
     max_error_rise: float = float("nan")
+    max_abs_error_post_warmup: float = float("nan")
     soc_min: float = float("nan")
     soc_max: float = float("nan")
     fraction_on_plateau: float = float("nan")
@@ -183,6 +194,8 @@ class ScenarioRunner:
         curr_est = init_soc + init_offset
 
         anchor_cnt = 0
+        samples_anchored = 0
+        in_anchor = False
         first_anc_time = float("nan")
         err_pre = float("nan")
         err_post = float("nan")
@@ -200,12 +213,17 @@ class ScenarioRunner:
             held_estimates.append(curr_est)
 
             if out.anchor_used:
-                anchor_cnt += 1
-                if math.isnan(first_anc_time):
-                    first_anc_time = times[k]
-                    prev_truth = truths[k - 1].soc if k > 0 else truths[0].soc
-                    err_pre = abs(prev_est - prev_truth)
-                    err_post = abs(out.soc - truths[k].soc)
+                samples_anchored += 1
+                if not in_anchor:
+                    anchor_cnt += 1
+                    in_anchor = True
+                    if math.isnan(first_anc_time):
+                        first_anc_time = times[k]
+                        prev_truth = truths[k - 1].soc if k > 0 else truths[0].soc
+                        err_pre = abs(prev_est - prev_truth)
+                        err_post = abs(out.soc - truths[k].soc)
+            else:
+                in_anchor = False
 
         kept_indices = [idx for idx, m in enumerate(measurements) if not m.dropout]
         if len(kept_indices) == 0:
@@ -317,6 +335,20 @@ class ScenarioRunner:
             spk_soc = float(kept_truth[max_idx])
             spk_err = float(abs_errs[max_idx])
 
+        # Warmup handling for max_abs_error_post_warmup
+        warmup_s = (
+            float(assumptions.run.metric_warmup_s.value)
+            if (assumptions.run is not None and hasattr(assumptions.run, "metric_warmup_s") and assumptions.run.metric_warmup_s is not None)
+            else DEFAULT_METRIC_WARMUP_S
+        )
+        post_warmup_idx = [idx for idx, k in enumerate(kept_indices) if times[k] > warmup_s]
+        if post_warmup_idx:
+            pw_truth = kept_truth[post_warmup_idx]
+            pw_est = kept_est[post_warmup_idx]
+            max_err_post_warmup = max_abs_error(pw_truth, pw_est)
+        else:
+            max_err_post_warmup = metrics["max_abs_error"]
+
         meta = {
             "duration_s": duration_s,
             "n_samples_kept": n_samples_kept,
@@ -324,9 +356,11 @@ class ScenarioRunner:
             "drift_evaluated": drift_evaluated,
             "reversal_count": reversal_cnt,
             "anchor_count": anchor_cnt,
+            "samples_anchored": samples_anchored,
             "first_anchor_time_s": first_anc_time,
             "err_pre_anchor": err_pre,
             "err_post_anchor": err_post,
+            "max_abs_error_post_warmup": max_err_post_warmup,
             "soc_min": soc_min_val,
             "soc_max": soc_max_val,
             "fraction_on_plateau": frac_plat,
@@ -450,7 +484,7 @@ class ScenarioRunner:
             anchor_modes = [
                 ("anchors off", False, False),
                 ("full-charge only", True, False),
-                ("rest anchor on", True, True),
+                ("rest anchor only", False, True),
             ]
         else:
             anchor_modes = [
@@ -485,22 +519,62 @@ class ScenarioRunner:
                 mode_assumptions.soc_definition.rest_anchor_enabled.value = rest_en
                 display_scenario = f"t11_anchor_toggle [{mode_label}]" if mode_label else scen_clean
 
+                if mode_label == "rest anchor only":
+                    rest_assump = copy.deepcopy(assumptions)
+                    rest_assump.plant.initial_soc.value = T11_REST_DUTY_INITIAL_SOC
+                    rest_assump.duty.initial_soc.value = T11_REST_DUTY_INITIAL_SOC
+                    rest_assump.filter.initial_soc_offset.value = T11_REST_DUTY_OFFSET
+                    rest_assump.soc_definition.anchor_enabled.value = True
+                    rest_assump.soc_definition.full_charge_anchor_enabled.value = False
+                    rest_assump.soc_definition.rest_anchor_enabled.value = True
+
+                    mode_assumptions = rest_assump
+                    dt_val = float(rest_assump.sensors.sample_period_s.value)
+                    n_dischg = int(T11_REST_DUTY_DISCHARGE_S / dt_val)
+                    n_rest = int(T11_REST_DUTY_REST_S / dt_val)
+                    rest_steps = []
+                    amb_t = float(rest_assump.duty.ambient_temperature_c.value)
+                    for _ in range(n_dischg):
+                        rest_steps.append((T11_REST_DUTY_DISCHARGE_CURRENT_A, amb_t, dt_val))
+                    for _ in range(n_rest):
+                        rest_steps.append((float(0), amb_t, dt_val))
+
+                    plant_rest = PlantSimulator(rest_assump, rng=np.random.default_rng(noise_seed))
+                    plant_rest.reset(T11_REST_DUTY_INITIAL_SOC)
+
+                    active_meas = []
+                    active_truths = []
+                    active_times = []
+                    t_acc = float(0)
+                    for i_a, tc, dt_s in rest_steps:
+                        m, tr = plant_rest.step(i_a, tc, dt_s)
+                        t_acc += dt_s
+                        active_meas.append(m)
+                        active_truths.append(tr)
+                        active_times.append(t_acc)
+                else:
+                    active_meas = measurements
+                    active_truths = truths
+                    active_times = times
+
                 for variant in active_variants:
                     for est_name in active_estimators:
                         metrics, diag, meta = self.evaluate_estimator_on_stream(
                             estimator_name=est_name,
                             variant=variant,
                             assumptions=mode_assumptions,
-                            measurements=measurements,
-                            truths=truths,
-                            times=times,
+                            measurements=active_meas,
+                            truths=active_truths,
+                            times=active_times,
                         )
 
                         clean_r = float("nan")
                         noisy_r = metrics["rmse"]
+                        signed_r_rise = float("nan")
                         r_rise = float("nan")
                         clean_m = float("nan")
                         noisy_m = metrics["max_abs_error"]
+                        signed_m_rise = float("nan")
                         m_rise = float("nan")
                         if clean_meas is not None:
                             clean_metrics, _, _ = self.evaluate_estimator_on_stream(
@@ -512,9 +586,11 @@ class ScenarioRunner:
                                 times=clean_times,
                             )
                             clean_r = clean_metrics["rmse"]
-                            r_rise = max(float(0), noisy_r - clean_r)
+                            signed_r_rise = noisy_r - clean_r
+                            r_rise = max(float(0), signed_r_rise)
                             clean_m = clean_metrics["max_abs_error"]
-                            m_rise = max(float(0), noisy_m - clean_m)
+                            signed_m_rise = noisy_m - clean_m
+                            m_rise = max(float(0), signed_m_rise)
 
                         passed, failed_list = self.check_pass_bars(
                             scen_clean,
@@ -559,13 +635,16 @@ class ScenarioRunner:
                             reversal_count=meta["reversal_count"],
                             error_rise=r_rise,
                             anchor_count=meta["anchor_count"],
+                            samples_anchored=meta["samples_anchored"],
                             first_anchor_time_s=meta["first_anchor_time_s"],
                             err_pre_anchor=meta["err_pre_anchor"],
                             err_post_anchor=meta["err_post_anchor"],
                             clean_rmse=clean_r,
+                            signed_rmse_rise=signed_r_rise,
                             rmse_rise=r_rise,
                             clean_max_error=clean_m,
                             max_error_rise=m_rise,
+                            max_abs_error_post_warmup=meta["max_abs_error_post_warmup"],
                             soc_min=meta["soc_min"],
                             soc_max=meta["soc_max"],
                             fraction_on_plateau=meta["fraction_on_plateau"],
