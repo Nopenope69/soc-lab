@@ -61,6 +61,7 @@ class ParamSet:
     full_charge_current_threshold_a: float
     full_charge_anchor_soc: float
     full_charge_anchor_enabled: bool = True
+    full_charge_hold_s: float = 60.0
 
     @classmethod
     def from_assumptions(cls, assumptions: Assumptions, matched: bool = True) -> "ParamSet":
@@ -72,6 +73,11 @@ class ParamSet:
             bool(s_cfg.full_charge_anchor_enabled.value)
             if hasattr(s_cfg, "full_charge_anchor_enabled") and s_cfg.full_charge_anchor_enabled is not None
             else True
+        )
+        fc_hold_s = (
+            float(assumptions.run.full_charge_hold_s.value)
+            if hasattr(assumptions.run, "full_charge_hold_s") and assumptions.run.full_charge_hold_s is not None
+            else 60.0
         )
 
         return cls(
@@ -102,6 +108,7 @@ class ParamSet:
             full_charge_current_threshold_a=float(s_cfg.full_charge_current_threshold_a.value),
             full_charge_anchor_soc=float(s_cfg.full_charge_anchor_soc.value),
             full_charge_anchor_enabled=fc_enabled,
+            full_charge_hold_s=fc_hold_s,
         )
 
 

@@ -28,6 +28,9 @@ DEFAULT_TIE_BAND_PP = 0.5
 DEFAULT_METRIC_WARMUP_S = 10.0
 DEFAULT_PLATEAU_FRACTION_MIN = 0.10
 FLOAT_EPSILON = 1e-6
+DEFAULT_FULL_CHARGE_HOLD_S = 60.0
+SOC_VALID_MIN = 0.02
+SOC_VALID_MAX = 0.98
 
 # T11 plateau rest anchor duty parameters
 T11_REST_DUTY_INITIAL_SOC = 0.55
@@ -238,7 +241,8 @@ def load_assumptions(
     if prof_dict and "duty" in prof_dict:
         for d_key, d_val in prof_dict["duty"].items():
             if d_key == "pulse_c_rate":
-                resolved_dict["duty"]["pulse_c_rate"] = copy.deepcopy(d_val)
+                if "duty" not in scen_dict or "pulse_c_rate" not in scen_dict["duty"]:
+                    resolved_dict["duty"]["pulse_c_rate"] = copy.deepcopy(d_val)
             elif d_key == "rest_duration_s" and profile == "bess":
                 if "duty" not in scen_dict or "rest_duration_s" not in scen_dict["duty"]:
                     resolved_dict["duty"]["rest_duration_s"] = copy.deepcopy(d_val)

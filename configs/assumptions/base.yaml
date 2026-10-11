@@ -159,6 +159,11 @@ duty:
     status: "placeholder"
     bounds: [0.0, 1.0]
     note: "Upper SOC limit for partial cycles"
+  allow_extremes:
+    value: false
+    unit: "boolean"
+    status: "placeholder"
+    note: "Whether scenario explicitly explores extreme SOC states outside [0.02, 0.98]"
 
 estimator_model:
   mismatch:
@@ -508,6 +513,12 @@ run:
     status: "placeholder"
     bounds: [0.0, 3600.0]
     note: "Warmup window in seconds to exclude initial settling transients from metric evaluation"
+  full_charge_hold_s:
+    value: 60.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [0.0, 3600.0]
+    note: "Required continuous hold duration for full charge anchor condition"
 
 metrics:
   drift_min_run_s:

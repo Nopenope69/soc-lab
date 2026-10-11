@@ -7,7 +7,7 @@ duty:
   pulse_c_rate:
     value: 0.7
   total_duration_s:
-    value: 900.0
+    value: 360.0
 
 plant:
   initial_soc:

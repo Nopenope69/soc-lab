@@ -26,6 +26,7 @@ class E0CoulombCounting(Estimator):
         self.params = params
         self.soc = float(0)
         self.rest_timer_s = float(0)
+        self.full_charge_timer_s = float(0)
         self.last_valid_i = float(0)
         self.last_valid_temp = float(self.params.temperatures_c[1])
 
@@ -40,6 +41,7 @@ class E0CoulombCounting(Estimator):
         """Reset estimator internal state to initial SOC."""
         self.soc = min(max(float(soc0), float(0)), float(1))
         self.rest_timer_s = float(0)
+        self.full_charge_timer_s = float(0)
         self.last_valid_i = float(0)
 
     def step(self, measurement: Measurement) -> SocEstimate:
@@ -73,10 +75,19 @@ class E0CoulombCounting(Estimator):
         if self.params.anchor_enabled and self.params.full_charge_anchor_enabled:
             v_thresh = self.params.full_charge_voltage_threshold_v
             i_thresh = self.params.full_charge_current_threshold_a
-            if measurement.v >= v_thresh and abs(measurement.i) <= i_thresh:
-                self.soc = float(self.params.full_charge_anchor_soc)
-                anchor_applied = True
-                self.rest_timer_s = float(0)
+            is_cv_taper = (
+                measurement.v >= v_thresh
+                and measurement.i < float(0)
+                and abs(measurement.i) <= i_thresh
+            )
+            if is_cv_taper:
+                self.full_charge_timer_s += dt
+                if self.full_charge_timer_s >= self.params.full_charge_hold_s:
+                    self.soc = float(self.params.full_charge_anchor_soc)
+                    anchor_applied = True
+                    self.rest_timer_s = float(0)
+            else:
+                self.full_charge_timer_s = float(0)
 
         # 2. Rest anchor
         if not anchor_applied and self.params.anchor_enabled and self.params.rest_anchor_enabled:

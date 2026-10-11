@@ -111,6 +111,7 @@ class DutyAssumptions(BaseModel):
     charge_discharge_ratio: AssumptionEntry
     soc_min_limit: AssumptionEntry
     soc_max_limit: AssumptionEntry
+    allow_extremes: Optional[AssumptionEntry] = None
 
 
 class EstimatorMismatch(BaseModel):
@@ -236,6 +237,7 @@ class RunAssumptions(BaseModel):
     num_seeds: Optional[AssumptionEntry] = None
     tie_band_pp: Optional[AssumptionEntry] = None
     metric_warmup_s: Optional[AssumptionEntry] = None
+    full_charge_hold_s: Optional[AssumptionEntry] = None
 
 
 class MetricsAssumptions(BaseModel):

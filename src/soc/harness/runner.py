@@ -108,6 +108,10 @@ class RunResult:
     spike_time_s: float = float("nan")
     spike_true_soc: float = float("nan")
     spike_error: float = float("nan")
+    mean_signed_error: float = float("nan")
+    truth_soc_min: float = float("nan")
+    truth_soc_max: float = float("nan")
+    is_invalid_extreme: bool = False
 
 
 class ScenarioRunner:
@@ -349,6 +353,17 @@ class ScenarioRunner:
         else:
             max_err_post_warmup = metrics["max_abs_error"]
 
+        mean_signed_err = float(np.mean(kept_est - kept_truth)) if len(kept_truth) > 0 else float("nan")
+        allow_extremes = (
+            bool(assumptions.duty.allow_extremes.value)
+            if (assumptions.duty is not None and hasattr(assumptions.duty, "allow_extremes") and assumptions.duty.allow_extremes is not None)
+            else False
+        )
+        is_invalid_extreme = False
+        if not allow_extremes:
+            if soc_min_val <= float(0) or soc_max_val >= float(1):
+                is_invalid_extreme = True
+
         meta = {
             "duration_s": duration_s,
             "n_samples_kept": n_samples_kept,
@@ -368,6 +383,10 @@ class ScenarioRunner:
             "spike_time_s": spk_t,
             "spike_true_soc": spk_soc,
             "spike_error": spk_err,
+            "mean_signed_error": mean_signed_err,
+            "truth_soc_min": soc_min_val,
+            "truth_soc_max": soc_max_val,
+            "is_invalid_extreme": is_invalid_extreme,
         }
         return metrics, diag, meta
 
@@ -629,8 +648,8 @@ class ScenarioRunner:
                             ms_per_step_median=metrics["ms_per_step_median"],
                             voltage_residual_rmse=diag["voltage_residual_rmse"],
                             mean_nis=diag["mean_nis"],
-                            pass_all_bars=passed,
-                            failed_bars=";".join(failed_list),
+                            pass_all_bars=passed and not meta["is_invalid_extreme"],
+                            failed_bars="INVALID: cell empty or full" if meta["is_invalid_extreme"] else ";".join(failed_list),
                             dirty=dirty,
                             reversal_count=meta["reversal_count"],
                             error_rise=r_rise,
@@ -652,6 +671,10 @@ class ScenarioRunner:
                             spike_time_s=meta["spike_time_s"],
                             spike_true_soc=meta["spike_true_soc"],
                             spike_error=meta["spike_error"],
+                            mean_signed_error=meta["mean_signed_error"],
+                            truth_soc_min=meta["truth_soc_min"],
+                            truth_soc_max=meta["truth_soc_max"],
+                            is_invalid_extreme=meta["is_invalid_extreme"],
                         )
                         results.append(res)
 

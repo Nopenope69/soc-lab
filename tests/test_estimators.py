@@ -113,3 +113,39 @@ def test_e0_rest_anchor_triggers_after_threshold():
     assert out.anchor_used is True
     # Inverted SOC from 3.33 V at 25 C should be near 0.80
     assert out.soc == pytest.approx(0.80, abs=0.02)
+
+
+def test_e0_full_charge_anchor_pulse_and_cv_taper(params):
+    """Verify that a 2C charge pulse followed by rest does not anchor,
+
+    while a continuous CV taper to the cutoff anchors after full_charge_hold_s.
+    """
+    est = E0CoulombCounting(params)
+    est.reset(0.50)
+
+    # 1. 2C charge pulse (-200 A for 100 Ah cell) with terminal voltage exceeding threshold
+    v_high = 3.60
+    meas_pulse = Measurement(v=v_high, i=-200.0, temp_c=25.0, dt=1.0, dropout=False)
+    out_pulse = est.step(meas_pulse)
+    assert out_pulse.anchor_used is False, "Charge pulse at -200 A must not anchor"
+
+    # Followed by rest (i = 0 A) with voltage remaining elevated above threshold
+    for _ in range(120):
+        meas_rest = Measurement(v=v_high, i=0.0, temp_c=25.0, dt=1.0, dropout=False)
+        out_rest = est.step(meas_rest)
+        assert out_rest.anchor_used is False, "Rest after charge pulse must not trigger full-charge anchor"
+
+    # 2. CV taper to cutoff: negative current charging at low rate (|i| <= 0.5 A, i < 0)
+    # Must hold continuously for full_charge_hold_s (60 s)
+    taper_current = -0.4  # Negative (charging) and <= i_thresh (0.5 A)
+    for step_idx in range(59):
+        meas_taper = Measurement(v=v_high, i=taper_current, temp_c=25.0, dt=1.0, dropout=False)
+        out_taper = est.step(meas_taper)
+        assert out_taper.anchor_used is False, f"Step {step_idx} (< 60 s hold) must not anchor yet"
+
+    # Step 60: reaches full_charge_hold_s (60.0 s) -> MUST anchor!
+    meas_taper_final = Measurement(v=v_high, i=taper_current, temp_c=25.0, dt=1.0, dropout=False)
+    out_final = est.step(meas_taper_final)
+    assert out_final.anchor_used is True, "Sustained CV taper for 60 s must trigger full-charge anchor"
+    assert out_final.soc == pytest.approx(params.full_charge_anchor_soc, abs=1e-3)
+

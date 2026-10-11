@@ -6,6 +6,8 @@ duty:
     value: 0.9967
   total_duration_s:
     value: 830.0
+  allow_extremes:
+    value: true
 
 filter:
   initial_soc_offset:

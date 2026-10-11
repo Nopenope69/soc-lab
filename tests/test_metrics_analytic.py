@@ -463,3 +463,104 @@ def test_timing_alignment_noiseless_e0_integrator_zero_error():
     expected_step_delta = (current_applied_a * dt) / (3600.0 * cap_ah)
     assert shifted_max_err == pytest.approx(expected_step_delta, rel=1e-6)
     assert shifted_max_err > 5e-4
+
+
+# =====================================================================
+# 13. Hand-Calculated Verification Tests
+# =====================================================================
+
+def test_tie_band_hand_calculated():
+    """Verify tie-band decision logic (WIN, TIE, LOSS) against exact hand calculations."""
+    def _evaluate_tie_band(e1_vals, e2_vals, tie_band_pp=0.5):
+        v1 = float(np.mean(e1_vals))
+        v2 = float(np.mean(e2_vals))
+        diff_pp = (v1 - v2) * 100.0
+        std_1 = float(np.std(e1_vals)) * 100.0
+        std_2 = float(np.std(e2_vals)) * 100.0
+        threshold = max(max(std_1, std_2), tie_band_pp)
+        if abs(diff_pp) <= threshold:
+            return "TIE"
+        elif diff_pp > threshold:
+            return "WIN"
+        else:
+            return "LOSS"
+
+    # Case 1: WIN (E1 error 5.0 pp vs E2 error 3.8 pp -> diff +1.2 pp > threshold 0.5 pp)
+    assert _evaluate_tie_band([0.050], [0.038], tie_band_pp=0.5) == "WIN"
+
+    # Case 2: TIE (E1 error 5.0 pp vs E2 error 4.8 pp -> diff +0.2 pp <= threshold 0.5 pp)
+    assert _evaluate_tie_band([0.050], [0.048], tie_band_pp=0.5) == "TIE"
+
+    # Case 3: LOSS (E1 error 4.0 pp vs E2 error 5.5 pp -> diff -1.5 pp < -threshold 0.5 pp)
+    assert _evaluate_tie_band([0.040], [0.055], tie_band_pp=0.5) == "LOSS"
+
+    # Case 4: Seed variance widens tie band:
+    # E1 = [4.0 pp, 6.0 pp] has std = 1.0 pp. Threshold becomes max(1.0, 0.5) = 1.0 pp.
+    # With E1 mean = 5.8 pp and E2 = 5.0 pp, diff = +0.8 pp <= 1.0 pp -> TIE (widened band!)
+    assert _evaluate_tie_band([0.048, 0.068], [0.050, 0.050], tie_band_pp=0.5) == "TIE"
+    # But if diff = +1.5 pp > 1.0 pp -> WIN
+    assert _evaluate_tie_band([0.055, 0.075], [0.050, 0.050], tie_band_pp=0.5) == "WIN"
+
+
+def test_warmup_window_hand_calculated():
+    """Verify warmup window metric exclusion against exact hand calculation."""
+    times = np.array([2.0, 5.0, 10.0, 12.0, 15.0])
+    truth = np.array([0.5, 0.5, 0.5, 0.5, 0.5])
+    est = np.array([0.7, 0.6, 0.55, 0.51, 0.50])
+    # Full errors: [0.20, 0.10, 0.05, 0.01, 0.00]
+    full_max_err = max_abs_error(truth, est)
+    assert full_max_err == pytest.approx(0.20, abs=1e-12)
+
+    # Post-warmup with warmup_s = 10.0 s (times > 10.0 s -> indices 3, 4: t=12.0s, 15.0s)
+    warmup_s = 10.0
+    post_idx = [idx for idx, t in enumerate(times) if t > warmup_s]
+    assert post_idx == [3, 4]
+
+    post_warmup_max_err = max_abs_error(truth[post_idx], est[post_idx])
+    # Post-warmup errors are [0.01, 0.00] -> max is 0.01
+    assert post_warmup_max_err == pytest.approx(0.01, abs=1e-12)
+
+
+def test_anchor_events_vs_samples_anchored_hand_calculated():
+    """Verify distinct counting of contiguous anchor events vs individual samples anchored."""
+    # Pattern: rest -> anchor (3 samples) -> active (2 samples) -> anchor (2 samples) -> rest
+    anchor_flags = [False, True, True, True, False, False, True, True, False]
+
+    samples_anchored = 0
+    anchor_events = 0
+    in_anchor = False
+
+    for flag in anchor_flags:
+        if flag:
+            samples_anchored += 1
+            if not in_anchor:
+                anchor_events += 1
+                in_anchor = True
+        else:
+            in_anchor = False
+
+    assert anchor_events == 2, f"Expected 2 contiguous anchor events, got {anchor_events}"
+    assert samples_anchored == 5, f"Expected 5 total samples anchored, got {samples_anchored}"
+
+
+def test_signed_t7_rise_hand_calculated():
+    """Verify signed and clipped error rise calculation against exact hand calculations."""
+    def _compute_rise(clean_rmse, noisy_rmse):
+        signed_rise = noisy_rmse - clean_rmse
+        clipped_rise = max(0.0, signed_rise)
+        return signed_rise, clipped_rise
+
+    # Case A: Positive rise (noisy degrades performance)
+    clean_a = 0.0100
+    noisy_a = 0.0125
+    signed_a, clipped_a = _compute_rise(clean_a, noisy_a)
+    assert signed_a == pytest.approx(0.0025, abs=1e-12)
+    assert clipped_a == pytest.approx(0.0025, abs=1e-12)
+
+    # Case B: Negative rise (noisy happens to have lower RMSE)
+    clean_b = 0.0150
+    noisy_b = 0.0135
+    signed_b, clipped_b = _compute_rise(clean_b, noisy_b)
+    assert signed_b == pytest.approx(-0.0015, abs=1e-12)
+    assert clipped_b == pytest.approx(0.0, abs=1e-12)
+

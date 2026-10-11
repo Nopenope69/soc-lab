@@ -292,8 +292,8 @@ def test_case_c_e0_full_charge_anchor_corrects_offset():
 
     anchor_fired = False
     final_post_anchor_err = None
-    for k in range(50):
-        # Charge at -10 A for 36 s (adds 0.001 SOC to reach 1.0), then taper at -0.2 A
+    for k in range(100):
+        # Charge at -10 A for 36 s (adds 0.001 SOC to reach 1.0), then taper at -0.2 A for 64 s
         i_val = -10.0 if k < 36 else -0.2
         meas, truth = plant.step(i_val, 25.0, 1.0)
         out = est.step(meas)

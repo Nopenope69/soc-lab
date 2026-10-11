@@ -40,7 +40,3 @@ sensors:
     status: "placeholder"
     bounds: [0.01, 60.0]
     note: "Sampling period dt"
-
-soc_definition:
-  anchor_enabled:
-    value: false

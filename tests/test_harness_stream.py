@@ -92,3 +92,43 @@ def test_matched_and_mismatched_share_identical_seeds_across_runs():
     assert len(mismatched_seeds) == 3
     assert matched_seeds == mismatched_seeds
 
+
+def test_generator_scenarios_stay_within_soc_bounds_unless_declared():
+    """Verify generator truth streams stay in [0.02, 0.98] unless allow_extremes is declared."""
+    runner = ScenarioRunner()
+    scenarios = [
+        "smoke",
+        "t1_static_ocv",
+        "t3_t10_minor_loops",
+        "t3_bess_24h",
+        "t4_plateau_stress",
+        "t5_initial_soc_offset",
+        "t6_current_bias",
+        "t6_plateau_only",
+        "t7_voltage_quant_noise",
+        "t9_rest_relaxation",
+        "t11_anchor_toggle",
+        "t12_hysteresis_mismatch",
+    ]
+    for profile in ["automotive", "bess"]:
+        for sc in scenarios:
+            assumptions, _, _ = load_assumptions(
+                profile=profile,
+                scenario_file=runner.config_dir / "scenarios" / f"{sc}.yaml",
+            )
+            allow_extremes = (
+                bool(assumptions.duty.allow_extremes.value)
+                if (assumptions.duty is not None and hasattr(assumptions.duty, "allow_extremes") and assumptions.duty.allow_extremes is not None)
+                else False
+            )
+            _, truths, _, _, _ = runner.generate_scenario_stream(assumptions, sc)
+            socs = [t.soc for t in truths]
+            min_soc = min(socs)
+            max_soc = max(socs)
+            if not allow_extremes:
+                assert min_soc >= 0.02, f"{profile}/{sc} drops below 0.02: min={min_soc:.4f}"
+                assert max_soc <= 0.98, f"{profile}/{sc} exceeds 0.98: max={max_soc:.4f}"
+            else:
+                assert min_soc < 0.02 or max_soc > 0.98, f"{profile}/{sc} declared extremes but stayed inside bounds"
+
+

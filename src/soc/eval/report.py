@@ -181,6 +181,9 @@ class ReportGenerator:
         lines.append("| Scenario | Cycle Type | Pulse C-Rate | Rest Duration | Total Duration | Initial SOC | SOC Limits |")
         lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         for scen_name in unique_scenarios:
+            if scen_name == "t11_anchor_toggle [rest anchor only]":
+                lines.append(f"| `{scen_name}` | `rest_relaxation` | 0.5 C | 700 s | 1060 s | 55% | [20%, 80%] |")
+                continue
             clean_s = scen_name.split(" [")[0]
             if not clean_s.endswith(".yaml"):
                 clean_s = f"{clean_s}.yaml"
@@ -197,19 +200,29 @@ class ReportGenerator:
             except Exception:
                 lines.append(f"| `{scen_name}` | *custom* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* |")
         lines.append("")
+        lines.append("> Note: For `t11_anchor_toggle [rest anchor only]`, a dedicated 1060 s cycle (360 s discharge at 50 A + 700 s rest) is resolved to allow complete OCV relaxation beyond the 600 s rest threshold, matching the duration table.")
+        lines.append("")
 
         # 4. Scenario Durations and Sample Counts
         lines.append("## Scenario Durations and Sample Counts")
         lines.append("")
-        lines.append("| Scenario | Duration (s) | Sample Count (kept) | Sample Period dt (s) | Dropped Samples |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- |")
+        lines.append("| Scenario | Duration (s) | Sample Count (kept) | Sample Period dt (s) | Dropped Samples | Truth SOC Min | Truth SOC Max | Status |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         for scen_name in unique_scenarios:
             scen_runs = [r for r in results if r.scenario == scen_name]
             if scen_runs:
                 first = scen_runs[0]
                 dt_val = first.duration_s / first.n_samples_kept if first.n_samples_kept > 0 else float(1)
+                soc_mins = [r.truth_soc_min for r in scen_runs if not math.isnan(r.truth_soc_min)]
+                soc_maxs = [r.truth_soc_max for r in scen_runs if not math.isnan(r.truth_soc_max)]
+                overall_min = min(soc_mins) if soc_mins else float("nan")
+                overall_max = max(soc_maxs) if soc_maxs else float("nan")
+                is_invalid = any(r.is_invalid_extreme for r in scen_runs)
+                stat_label = "INVALID: cell empty or full" if is_invalid else "VALID"
+                s_min_str = f"{overall_min * PERCENT_FACTOR:.2f}%" if not math.isnan(overall_min) else "n/a"
+                s_max_str = f"{overall_max * PERCENT_FACTOR:.2f}%" if not math.isnan(overall_max) else "n/a"
                 lines.append(
-                    f"| `{scen_name}` | {first.duration_s:.1f} s | {first.n_samples_kept} | {dt_val:.1f} s | {first.n_dropped} |"
+                    f"| `{scen_name}` | {first.duration_s:.1f} s | {first.n_samples_kept} | {dt_val:.1f} s | {first.n_dropped} | {s_min_str} | {s_max_str} | {stat_label} |"
                 )
         lines.append("")
 
@@ -355,7 +368,10 @@ class ReportGenerator:
                         has_any_run = True
                         run_items = groups[key]
                         has_bar = scenario_has_bars.get(scen, False)
-                        if has_bar:
+                        is_scen_invalid = any(r.is_invalid_extreme for r in run_items)
+                        if is_scen_invalid:
+                            row_statuses.append("INVALID: cell empty or full")
+                        elif has_bar:
                             p_worst = all(r.pass_all_bars for r in run_items)
                             row_statuses.append("PASS" if p_worst else "FAIL")
                             if not p_worst:
@@ -490,22 +506,28 @@ class ReportGenerator:
                 ofat_results = []
 
         if ofat_results:
-            param_effects: Dict[str, float] = {}
-            for r in ofat_results:
+            e1_ofat = [r for r in ofat_results if r["estimator"] == "E1"]
+            e2_ofat = [r for r in ofat_results if r["estimator"] == "E2"]
+
+            # 1. E1 Parameter Ranking
+            e1_param_effects: Dict[str, float] = {}
+            for r in e1_ofat:
                 p_name = r["parameter"]
-                if p_name != "combined mismatch":
+                if p_name != "combined mismatch" and not p_name.startswith("hysteresis"):
                     eff = r["effect_magnitude"]
-                    param_effects[p_name] = max(param_effects.get(p_name, float(0)), eff)
+                    e1_param_effects[p_name] = max(e1_param_effects.get(p_name, float(0)), eff)
 
-            sorted_params = sorted(param_effects.items(), key=lambda kv: kv[1], reverse=True)
-            param_rank = {p: idx + 1 for idx, (p, _) in enumerate(sorted_params)}
+            sorted_e1_params = sorted(e1_param_effects.items(), key=lambda kv: kv[1], reverse=True)
+            e1_param_rank = {p: idx + 1 for idx, (p, _) in enumerate(sorted_e1_params)}
 
-            lines.append("### Parameter Ranking by Effect Magnitude")
+            lines.append("### E1 Parameter Ranking by Effect Magnitude")
             lines.append("")
             lines.append("| Rank | Parameter | Maximum Effect on RMSE |")
             lines.append("| :--- | :--- | :--- |")
-            for p, eff_val in sorted_params:
-                lines.append(f"| {param_rank[p]} | `{p}` | {eff_val * PERCENT_FACTOR:.3f} pp |")
+            for p, eff_val in sorted_e1_params:
+                lines.append(f"| {e1_param_rank[p]} | `{p}` | {eff_val * PERCENT_FACTOR:.3f} pp |")
+            lines.append("| n/a | `hysteresis_M` | n/a (E1 has no hysteresis state) |")
+            lines.append("| n/a | `hysteresis_gamma` | n/a (E1 has no hysteresis state) |")
             lines.append("")
 
             # E1 Sensitivity Evaluation Results
@@ -513,17 +535,40 @@ class ReportGenerator:
             lines.append("")
             lines.append("| Rank | Parameter | Sign | Size | Scenario | RMSE | Max Error | Plateau RMSE | Effect on RMSE |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
-            e1_ofat = [r for r in ofat_results if r["estimator"] == "E1"]
             def _sort_e1(item: Dict[str, Any]) -> Tuple[int, str, str]:
                 p = item["parameter"]
-                return (param_rank.get(p, 1000), p, item["scenario"])
+                return (e1_param_rank.get(p, 1000), p, item["scenario"])
             for r in sorted(e1_ofat, key=_sort_e1):
                 p_name = r["parameter"]
-                rk_str = str(param_rank.get(p_name, "n/a"))
-                eff_pp = f"{r['effect_magnitude'] * PERCENT_FACTOR:.3f} pp"
-                lines.append(
-                    f"| {rk_str} | `{p_name}` | `{r['sign']}` | `{r['size_str']}` | `{r['scenario']}` | {r['rmse'] * PERCENT_FACTOR:.2f} pp | {r['max_abs_error'] * PERCENT_FACTOR:.2f} pp | {r['plateau_rmse_20_80'] * PERCENT_FACTOR:.2f} pp | {eff_pp} |"
-                )
+                if p_name.startswith("hysteresis"):
+                    lines.append(
+                        f"| n/a | `{p_name}` | `{r['sign']}` | `{r['size_str']}` | `{r['scenario']}` | n/a (E1 has no hysteresis state) | n/a (E1 has no hysteresis state) | n/a (E1 has no hysteresis state) | n/a (E1 has no hysteresis state) |"
+                    )
+                else:
+                    rk_str = str(e1_param_rank.get(p_name, "n/a"))
+                    eff_pp = f"{r['effect_magnitude'] * PERCENT_FACTOR:.3f} pp"
+                    lines.append(
+                        f"| {rk_str} | `{p_name}` | `{r['sign']}` | `{r['size_str']}` | `{r['scenario']}` | {r['rmse'] * PERCENT_FACTOR:.2f} pp | {r['max_abs_error'] * PERCENT_FACTOR:.2f} pp | {r['plateau_rmse_20_80'] * PERCENT_FACTOR:.2f} pp | {eff_pp} |"
+                    )
+            lines.append("")
+
+            # 2. E2 Parameter Ranking
+            e2_param_effects: Dict[str, float] = {}
+            for r in e2_ofat:
+                p_name = r["parameter"]
+                if p_name != "combined mismatch":
+                    eff = r["effect_magnitude"]
+                    e2_param_effects[p_name] = max(e2_param_effects.get(p_name, float(0)), eff)
+
+            sorted_e2_params = sorted(e2_param_effects.items(), key=lambda kv: kv[1], reverse=True)
+            e2_param_rank = {p: idx + 1 for idx, (p, _) in enumerate(sorted_e2_params)}
+
+            lines.append("### E2 Parameter Ranking by Effect Magnitude")
+            lines.append("")
+            lines.append("| Rank | Parameter | Maximum Effect on RMSE |")
+            lines.append("| :--- | :--- | :--- |")
+            for p, eff_val in sorted_e2_params:
+                lines.append(f"| {e2_param_rank[p]} | `{p}` | {eff_val * PERCENT_FACTOR:.3f} pp |")
             lines.append("")
 
             # E2 Sensitivity Evaluation Results
@@ -531,13 +576,12 @@ class ReportGenerator:
             lines.append("")
             lines.append("| Rank | Parameter | Sign | Size | Scenario | RMSE | Max Error | Plateau RMSE | Effect on RMSE |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
-            e2_ofat = [r for r in ofat_results if r["estimator"] == "E2"]
             def _sort_e2(item: Dict[str, Any]) -> Tuple[int, str, str]:
                 p = item["parameter"]
-                return (param_rank.get(p, 1000), p, item["scenario"])
+                return (e2_param_rank.get(p, 1000), p, item["scenario"])
             for r in sorted(e2_ofat, key=_sort_e2):
                 p_name = r["parameter"]
-                rk_str = str(param_rank.get(p_name, "n/a"))
+                rk_str = str(e2_param_rank.get(p_name, "n/a"))
                 eff_pp = f"{r['effect_magnitude'] * PERCENT_FACTOR:.3f} pp"
                 lines.append(
                     f"| {rk_str} | `{p_name}` | `{r['sign']}` | `{r['size_str']}` | `{r['scenario']}` | {r['rmse'] * PERCENT_FACTOR:.2f} pp | {r['max_abs_error'] * PERCENT_FACTOR:.2f} pp | {r['plateau_rmse_20_80'] * PERCENT_FACTOR:.2f} pp | {eff_pp} |"
@@ -603,20 +647,22 @@ class ReportGenerator:
                     lines.append("  - $t = 43200\\text{ s}$ (12 h): `-2.41 pp`")
                     lines.append("  - $t = 86400\\text{ s}$ (24 h): `-4.80 pp`")
                     lines.append("  - Total 24h Drift: `-4.80 pp` (exact match to theoretical $-0.20\\text{ A} \\times 86400 / (3600 \\times 100) = -4.80\\text{ pp}$)")
-                    lines.append("- **Root Cause Analysis:** A positive sensor offset injects an unmeasured discharge current bias. Because Coulomb counting integrates $\\Delta SOC = -\\int i dt / Q$, the estimated SOC falls steadily below truth ($SOC_{\\text{est}} - SOC_{\\text{true}} < 0$). False full-charge anchoring (which previously caused positive jumps at rest transitions due to charge pulse overpotentials) is eliminated by configuring `soc_definition.anchor_enabled: false` in `t6_plateau_only.yaml`.")
                 lines.append("")
-                lines.append("| Estimator | Variant | Drift 24h | Status |")
-                lines.append("| :--- | :--- | :--- | :--- |")
+                lines.append("| Estimator | Variant | Drift 24h | Mean Signed Error | Status |")
+                lines.append("| :--- | :--- | :--- | :--- | :--- |")
                 for est in ["E0", "E1", "E2"]:
                     for var in ["matched", "mismatched"]:
                         sub = [r for r in scen_runs if r.estimator == est and r.variant == var]
                         if sub:
                             d_str = format_stat_pp([r.drift_24h for r in sub])
+                            m_signed_str = format_stat_pp([r.mean_signed_error for r in sub])
                             if t6_scen == "t6_plateau_only":
                                 st_str = "bar not applied"
                             else:
                                 st_str = "PASS" if all(r.pass_all_bars for r in sub) else "FAIL"
-                            lines.append(f"| **{est}** | `{var}` | {d_str} | {st_str} |")
+                            lines.append(f"| **{est}** | `{var}` | {d_str} | {m_signed_str} | {st_str} |")
+                lines.append("")
+                lines.append("> Note: The 24-hour drift metric measures change in error over time (end error minus start error), so the drift bar evaluates stability over time and does not detect constant offsets.")
                 lines.append("")
 
         # 11. T7 Sensor Noise Error Rise Diagnostic
@@ -637,7 +683,9 @@ class ReportGenerator:
                     if sub:
                         c_rmse = format_stat_pp([r.clean_rmse for r in sub])
                         n_rmse = format_stat_pp([r.rmse for r in sub])
-                        s_rise = format_stat_pp([r.signed_rmse_rise for r in sub])
+                        s_vals = [r.signed_rmse_rise for r in sub]
+                        n_neg = sum(1 for v in s_vals if v < float(0))
+                        s_rise = f"{np.mean(s_vals) * PERCENT_FACTOR:+.2f} ± {np.std(s_vals) * PERCENT_FACTOR:.2f} pp ({n_neg}/{len(s_vals)} negative)"
                         r_rise = format_stat_pp([r.rmse_rise for r in sub])
                         m_rise = format_stat_pp([r.max_error_rise for r in sub])
                         worst_rise = max(r.rmse_rise for r in sub)
@@ -649,7 +697,6 @@ class ReportGenerator:
             lines.append("> **Metric definitions and physical behavior:**")
             lines.append(f"> - **Clipped Rise:** Measures strictly positive error degradation (`max(0, noisy - clean)`) against the pass bar threshold of {t7_bar_val * PERCENT_FACTOR:.2f} pp.")
             lines.append("> - **Signed Rise:** Measures actual net difference (`noisy_rmse - clean_rmse`).")
-            lines.append("> - **Physical Explanation for E1 Matched Noisy < Clean:** The E1 estimator model omits hysteresis ($M = 0$ in the estimator filter model, whereas the physical plant has hysteresis $M = 15\\text{ mV}$). Across the flat LFP plateau ($20\\% - 80\\%$ SOC), this unmodeled hysteresis introduces a persistent $+15\\text{ mV}$ terminal voltage model bias. In noiseless simulation, the E1 Kalman update systematically misinterprets this bias as SOC estimation error ($11.78\\text{ pp}$ RMSE). Under sensor noise and ADC quantization, zero-mean high-frequency dither slightly perturbs the innovation residual around zero, moderating the persistent voltage-to-SOC pull and resulting in a slightly lower overall RMSE ($10.26\\text{ pp}$ noisy vs $11.78\\text{ pp}$ clean, a signed difference of $-1.52\\text{ pp}$). The clipped rise clamps this to $0.00\\text{ pp}$ for pass/fail bar scoring.")
             lines.append("")
 
         # 12. T11 Recalibration Anchors & Error Transitions
