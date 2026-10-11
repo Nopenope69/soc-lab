@@ -179,6 +179,8 @@ class ReportGenerator:
         lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         for scen_name in unique_scenarios:
             clean_s = scen_name.split(" [")[0]
+            if not clean_s.endswith(".yaml"):
+                clean_s = f"{clean_s}.yaml"
             try:
                 scen_a, _, _ = load_assumptions(profile=active_profile, scenario_file=Path(clean_s))
                 d = scen_a.duty
@@ -592,7 +594,7 @@ class ReportGenerator:
             "> T11 evaluates anchor triggering across three configurations: `anchors off`, `full-charge only`, and `rest anchor on`."
         )
         lines.append("")
-        t11_runs = [r for r in results if "t11_anchor_toggle" in r.scenario]
+        t11_runs = [r for r in results if "t11_anchor_toggle" in r.scenario and r.seed_index == 0]
         if t11_runs:
             lines.append("| Configuration | Estimator | Variant | Anchor Count | First Anchor Time | Pre-Anchor Error | Post-Anchor Error | Error Drop |")
             lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
