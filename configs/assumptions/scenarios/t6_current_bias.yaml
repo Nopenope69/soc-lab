@@ -1,0 +1,18 @@
+# T6 current bias and drift test
+duty:
+  cycle_type:
+    value: "pulse"
+  initial_soc:
+    value: 0.70
+  pulse_c_rate:
+    value: 0.2
+  pulse_duration_s:
+    value: 60.0
+  rest_duration_s:
+    value: 60.0
+  total_duration_s:
+    value: 1800.0
+
+sensors:
+  current_offset_a:
+    value: 0.2

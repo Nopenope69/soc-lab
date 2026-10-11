@@ -231,6 +231,7 @@ class RunAssumptions(BaseModel):
     random_seed: AssumptionEntry
     splits_file: AssumptionEntry
     dataset_names: AssumptionEntry
+    warmup_steps: Optional[AssumptionEntry] = None
 
 
 class Assumptions(BaseModel):

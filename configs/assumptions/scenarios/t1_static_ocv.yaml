@@ -1,0 +1,13 @@
+# T1 static OCV model check scenario
+duty:
+  cycle_type:
+    value: "static"
+  initial_soc:
+    value: 0.50
+  total_duration_s:
+    value: 10.0
+
+estimator_model:
+  mismatch:
+    ocv_offset_mv:
+      value: 2.0

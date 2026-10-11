@@ -1,0 +1,14 @@
+# T9 rest relaxation and post-rest step error test
+duty:
+  cycle_type:
+    value: "rest_relaxation"
+  initial_soc:
+    value: 0.50
+  pulse_c_rate:
+    value: 0.5
+  pulse_duration_s:
+    value: 60.0
+  rest_duration_s:
+    value: 600.0
+  total_duration_s:
+    value: 660.0

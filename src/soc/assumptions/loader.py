@@ -16,6 +16,18 @@ from soc.assumptions.schema import Assumptions
 # Constants exported from the defaults loader for system scaling
 PERCENT_FACTOR = 100.0
 SECONDS_PER_DAY = 86400.0
+DEFAULT_PERCENTILE_95 = 95.0
+DEFAULT_PLATEAU_MIN = 0.20
+DEFAULT_PLATEAU_MAX = 0.80
+DEFAULT_WARMUP_COUNT = 10
+
+
+def derive_scenario_noise_seed(base_seed: int, scenario_name: str) -> int:
+    """Derive reproducible, scenario-specific noise seed from run seed and scenario name."""
+    hash_hex = hashlib.sha256(scenario_name.encode("utf-8")).hexdigest()
+    hash_int = int(hash_hex[:8], 16)
+    return int((base_seed + hash_int) % 2147483647)
+
 
 
 def get_default_config_dir() -> Path:

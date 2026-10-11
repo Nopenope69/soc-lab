@@ -1,0 +1,21 @@
+# Fast smoke scenario running in under 60 seconds
+duty:
+  cycle_type:
+    value: "pulse"
+  initial_soc:
+    value: 0.80
+  pulse_c_rate:
+    value: 0.5
+  pulse_duration_s:
+    value: 60.0
+  rest_duration_s:
+    value: 30.0
+  total_duration_s:
+    value: 180.0
+
+estimator_model:
+  mismatch:
+    capacity_pct:
+      value: -5.0
+    r0_pct:
+      value: 10.0

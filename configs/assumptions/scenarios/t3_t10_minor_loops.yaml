@@ -1,0 +1,14 @@
+# T3 / T10 minor loops and direction reversals
+duty:
+  cycle_type:
+    value: "minor_loops"
+  initial_soc:
+    value: 0.50
+  soc_min_limit:
+    value: 0.40
+  soc_max_limit:
+    value: 0.60
+  pulse_c_rate:
+    value: 0.5
+  total_duration_s:
+    value: 600.0

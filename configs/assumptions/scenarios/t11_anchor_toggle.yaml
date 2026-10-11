@@ -1,0 +1,22 @@
+# T11 anchor toggle evaluation (rest anchor enabled)
+duty:
+  cycle_type:
+    value: "rest_relaxation"
+  initial_soc:
+    value: 0.50
+  pulse_c_rate:
+    value: 0.5
+  pulse_duration_s:
+    value: 60.0
+  rest_duration_s:
+    value: 700.0
+  total_duration_s:
+    value: 760.0
+
+soc_definition:
+  anchor_enabled:
+    value: true
+  rest_anchor_enabled:
+    value: true
+  rest_duration_threshold_s:
+    value: 600.0

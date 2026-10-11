@@ -1,0 +1,18 @@
+# T5 initial SOC offset convergence test
+duty:
+  cycle_type:
+    value: "knee_crossing"
+  initial_soc:
+    value: 0.25
+  pulse_c_rate:
+    value: 0.7
+  total_duration_s:
+    value: 900.0
+
+plant:
+  initial_soc:
+    value: 0.25
+
+filter:
+  initial_soc_offset:
+    value: 0.10

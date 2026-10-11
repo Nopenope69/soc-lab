@@ -77,11 +77,13 @@ def compute_derived_quantities(assumptions: Assumptions) -> Dict[str, Any]:
     }
 
 
-def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, Any]:
+def get_effective_estimator_parameters(
+    assumptions: Assumptions, matched: bool = False
+) -> Dict[str, Any]:
     """Extract estimator parameters with mismatch scaling applied, leaving plant intact.
 
     Defaults to a copy of plant parameters if explicit estimator parameters are None.
-    Applies percentage deviations defined in estimator_model.mismatch.
+    Applies percentage deviations defined in estimator_model.mismatch unless matched=True.
     """
     mismatch = assumptions.estimator_model.mismatch
 
@@ -90,12 +92,14 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
         cap_val = float(assumptions.estimator_model.nominal_capacity_Ah.value)
     else:
         plant_cap = float(assumptions.plant.nominal_capacity_Ah.value)
-        cap_scale = 1 + (float(mismatch.capacity_pct.value) / PERCENT_FACTOR)
+        cap_pct = float(0) if matched else float(mismatch.capacity_pct.value)
+        cap_scale = 1 + (cap_pct / PERCENT_FACTOR)
         cap_val = plant_cap * cap_scale
 
     # Helper for scaling table or scalar by percentage
     def _scale_table_or_scalar(val: Any, pct: float) -> Any:
-        scale = 1 + (pct / PERCENT_FACTOR)
+        effective_pct = float(0) if matched else pct
+        scale = 1 + (effective_pct / PERCENT_FACTOR)
         if isinstance(val, dict):
             return {k: float(v) * scale for k, v in val.items()}
         elif isinstance(val, (int, float)):
@@ -141,7 +145,7 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
         )
 
     # 5. OCV table (with mV offset)
-    ocv_offset_v = float(mismatch.ocv_offset_mv.value) / 1000
+    ocv_offset_v = float(0) if matched else float(mismatch.ocv_offset_mv.value) / 1000
     plant_ocv = assumptions.plant.ocv_table_v.value
     est_ocv: Dict[str, List[float]] = {}
     if isinstance(plant_ocv, dict):
@@ -154,14 +158,16 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
         h_amp = float(assumptions.estimator_model.hysteresis_amplitude_v.value)
     else:
         h_amp_plant = float(assumptions.plant.hysteresis_amplitude_v.value)
-        h_amp_scale = 1 + (float(mismatch.hysteresis_amplitude_pct.value) / PERCENT_FACTOR)
+        h_amp_pct = float(0) if matched else float(mismatch.hysteresis_amplitude_pct.value)
+        h_amp_scale = 1 + (h_amp_pct / PERCENT_FACTOR)
         h_amp = h_amp_plant * h_amp_scale
 
     if assumptions.estimator_model.hysteresis_gamma is not None:
         h_gamma = float(assumptions.estimator_model.hysteresis_gamma.value)
     else:
         h_gamma_plant = float(assumptions.plant.hysteresis_gamma.value)
-        h_gamma_scale = 1 + (float(mismatch.hysteresis_gamma_pct.value) / PERCENT_FACTOR)
+        h_gamma_pct = float(0) if matched else float(mismatch.hysteresis_gamma_pct.value)
+        h_gamma_scale = 1 + (h_gamma_pct / PERCENT_FACTOR)
         h_gamma = h_gamma_plant * h_gamma_scale
 
     # 7. Efficiency

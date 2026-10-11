@@ -62,9 +62,9 @@ class ParamSet:
     full_charge_anchor_soc: float
 
     @classmethod
-    def from_assumptions(cls, assumptions: Assumptions) -> "ParamSet":
+    def from_assumptions(cls, assumptions: Assumptions, matched: bool = False) -> "ParamSet":
         """Construct estimator parameter set from resolved assumptions."""
-        eff = get_effective_estimator_parameters(assumptions)
+        eff = get_effective_estimator_parameters(assumptions, matched=matched)
         f_cfg = assumptions.filter
         s_cfg = assumptions.soc_definition
 

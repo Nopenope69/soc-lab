@@ -479,3 +479,9 @@ run:
     unit: "list"
     status: "assumed"
     note: "Active dataset names"
+  warmup_steps:
+    value: 10
+    unit: "count"
+    status: "assumed"
+    bounds: [0.0, 1000.0]
+    note: "Number of steps discarded as warm-up when timing ms_per_step"
