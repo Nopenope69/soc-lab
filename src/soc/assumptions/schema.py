@@ -187,10 +187,12 @@ class SocDefinitionAssumptions(BaseModel):
 
     basis: AssumptionEntry
     anchor_enabled: AssumptionEntry
+    rest_anchor_enabled: AssumptionEntry
     rest_current_threshold_a: AssumptionEntry
     rest_duration_threshold_s: AssumptionEntry
     full_charge_voltage_threshold_v: AssumptionEntry
     full_charge_current_threshold_a: AssumptionEntry
+    full_charge_anchor_soc: AssumptionEntry
 
     @model_validator(mode="after")
     def validate_basis(self) -> "SocDefinitionAssumptions":

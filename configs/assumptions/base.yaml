@@ -352,6 +352,11 @@ soc_definition:
     unit: "bool"
     status: "assumed"
     note: "Enable recalibration anchors when conditions are met"
+  rest_anchor_enabled:
+    value: true
+    unit: "bool"
+    status: "assumed"
+    note: "Enable rest OCV inversion anchor when rest conditions are met"
   rest_current_threshold_a:
     value: 0.1
     unit: "A"
@@ -376,6 +381,12 @@ soc_definition:
     status: "placeholder"
     bounds: [0.01, 5.0]
     note: "Current taper threshold for full-charge anchor"
+  full_charge_anchor_soc:
+    value: 1.0
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.90, 1.0]
+    note: "Target SOC assigned upon full-charge anchor trigger"
 
 bars:
   t1_ocv_error_max_mv:
