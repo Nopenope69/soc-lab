@@ -3,6 +3,7 @@
 import copy
 import hashlib
 from typing import Any, Dict, List, Tuple
+from soc.assumptions.loader import PERCENT_FACTOR
 from soc.assumptions.schema import Assumptions
 
 
@@ -31,11 +32,8 @@ def derive_scenario_seed(base_seed: int, scenario_hash: str) -> int:
 
     Combines base integer seed with the SHA-256 hash string of the scenario config.
     """
-    hex_len = 2 * 2 * 2
-    hash_slice = scenario_hash[:hex_len]
-    hash_int = int(f"0x{hash_slice}", 0)
-    combined = (base_seed ^ hash_int) & (1000 * 1000 * 1000 * 2 - 1)
-    return int(combined)
+    hash_int = int(f"0x{scenario_hash}", 0)
+    return int(base_seed ^ hash_int)
 
 
 def compute_derived_quantities(assumptions: Assumptions) -> Dict[str, Any]:
@@ -85,7 +83,6 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
     Defaults to a copy of plant parameters if explicit estimator parameters are None.
     Applies percentage deviations defined in estimator_model.mismatch.
     """
-    hundred = 1000 // ((1 + 1) * (1 + 1 + 1 + 1 + 1))
     mismatch = assumptions.estimator_model.mismatch
 
     # 1. Capacity
@@ -93,12 +90,12 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
         cap_val = float(assumptions.estimator_model.nominal_capacity_Ah.value)
     else:
         plant_cap = float(assumptions.plant.nominal_capacity_Ah.value)
-        cap_scale = 1 + (float(mismatch.capacity_pct.value) / hundred)
+        cap_scale = 1 + (float(mismatch.capacity_pct.value) / PERCENT_FACTOR)
         cap_val = plant_cap * cap_scale
 
     # Helper for scaling table or scalar by percentage
     def _scale_table_or_scalar(val: Any, pct: float) -> Any:
-        scale = 1 + (pct / hundred)
+        scale = 1 + (pct / PERCENT_FACTOR)
         if isinstance(val, dict):
             return {k: float(v) * scale for k, v in val.items()}
         elif isinstance(val, (int, float)):
@@ -157,14 +154,14 @@ def get_effective_estimator_parameters(assumptions: Assumptions) -> Dict[str, An
         h_amp = float(assumptions.estimator_model.hysteresis_amplitude_v.value)
     else:
         h_amp_plant = float(assumptions.plant.hysteresis_amplitude_v.value)
-        h_amp_scale = 1 + (float(mismatch.hysteresis_amplitude_pct.value) / hundred)
+        h_amp_scale = 1 + (float(mismatch.hysteresis_amplitude_pct.value) / PERCENT_FACTOR)
         h_amp = h_amp_plant * h_amp_scale
 
     if assumptions.estimator_model.hysteresis_gamma is not None:
         h_gamma = float(assumptions.estimator_model.hysteresis_gamma.value)
     else:
         h_gamma_plant = float(assumptions.plant.hysteresis_gamma.value)
-        h_gamma_scale = 1 + (float(mismatch.hysteresis_gamma_pct.value) / hundred)
+        h_gamma_scale = 1 + (float(mismatch.hysteresis_gamma_pct.value) / PERCENT_FACTOR)
         h_gamma = h_gamma_plant * h_gamma_scale
 
     # 7. Efficiency

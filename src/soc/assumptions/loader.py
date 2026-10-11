@@ -13,6 +13,10 @@ from pydantic import ValidationError
 
 from soc.assumptions.schema import Assumptions
 
+# Constants exported from the defaults loader for system scaling
+PERCENT_FACTOR = 100.0
+SECONDS_PER_DAY = 86400.0
+
 
 def get_default_config_dir() -> Path:
     """Return the absolute path to configs/assumptions/."""

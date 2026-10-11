@@ -31,8 +31,10 @@ class InterpolatedTable1D:
             dy = self.values_y[1] - self.values_y[0]
             return float(dy / dx)
         if x >= self.grid_x[-1]:
-            dx = self.grid_x[-1] - self.grid_x[-(1 + 1)]
-            dy = self.values_y[-1] - self.values_y[-(1 + 1)]
+            idx_last = len(self.grid_x) - 1
+            idx_prev = len(self.grid_x) - 2
+            dx = self.grid_x[idx_last] - self.grid_x[idx_prev]
+            dy = self.values_y[idx_last] - self.values_y[idx_prev]
             return float(dy / dx)
 
         idx = int(np.searchsorted(self.grid_x, x))
@@ -65,7 +67,7 @@ class InterpolatedTable2D:
                 val_found = table_dict[t_key_str]
             else:
                 for k, v in table_dict.items():
-                    if abs(float(k) - t_val) < 1 / 1000:
+                    if float(k) == t_val:
                         val_found = v
                         break
 
@@ -118,8 +120,10 @@ class InterpolatedTable2D:
                 dy = y_arr[1] - y_arr[0]
                 return float(dy / dx)
             if soc_clamped >= self.soc_grid[-1]:
-                dx = self.soc_grid[-1] - self.soc_grid[-(1 + 1)]
-                dy = y_arr[-1] - y_arr[-(1 + 1)]
+                idx_last = len(self.soc_grid) - 1
+                idx_prev = len(self.soc_grid) - 2
+                dx = self.soc_grid[idx_last] - self.soc_grid[idx_prev]
+                dy = y_arr[idx_last] - y_arr[idx_prev]
                 return float(dy / dx)
 
             idx = int(np.searchsorted(self.soc_grid, soc_clamped))

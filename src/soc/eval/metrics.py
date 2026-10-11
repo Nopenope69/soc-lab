@@ -20,10 +20,18 @@ Timing convention:
     at sample k is the state after the step, x_(k+1). Estimator.step(v_k,
     i_k, T_k, dt) returns the estimate of x_(k+1). Metrics compare
     estimate[k] with truth[k], both referring to the same instant.
+
+Configuration parameters:
+    Every number not in the structural allowlist {0, 1, 2, -1, 3600, 1000, 60}
+    arrives as an explicit argument from config, with no default baked into src/:
+    - percentile for p95_error
+    - convergence threshold for converge_time_2pct / converge_time_5pct
+    - soc_min and soc_max plateau bounds for plateau_rmse_20_80
+    - reversal deadband for detect_reversals and post_reversal_error_60s
+    - seconds_per_day horizon for drift_24h
 """
 
 from typing import List
-
 import numpy as np
 
 
@@ -54,7 +62,7 @@ def rmse(truth: np.ndarray, estimate: np.ndarray) -> float:
     Units: SOC fraction (0 to 1).
     Formula: sqrt(mean((estimate - truth)^2))
 
-    Raises ValueError on NaN input.
+    Raises ValueError on NaN input or empty arrays.
     """
     _validate_no_nan(truth, "truth")
     _validate_no_nan(estimate, "estimate")
@@ -72,7 +80,7 @@ def mae(truth: np.ndarray, estimate: np.ndarray) -> float:
     Units: SOC fraction (0 to 1).
     Formula: mean(|estimate - truth|)
 
-    Raises ValueError on NaN input.
+    Raises ValueError on NaN input or empty arrays.
     """
     _validate_no_nan(truth, "truth")
     _validate_no_nan(estimate, "estimate")
@@ -89,7 +97,7 @@ def max_abs_error(truth: np.ndarray, estimate: np.ndarray) -> float:
     Units: SOC fraction (0 to 1).
     Formula: max(|estimate - truth|)
 
-    Raises ValueError on NaN input.
+    Raises ValueError on NaN input or empty arrays.
     """
     _validate_no_nan(truth, "truth")
     _validate_no_nan(estimate, "estimate")
@@ -100,13 +108,20 @@ def max_abs_error(truth: np.ndarray, estimate: np.ndarray) -> float:
     return float(np.max(np.abs(estimate - truth)))
 
 
-def p95_error(truth: np.ndarray, estimate: np.ndarray) -> float:
-    """95th percentile of absolute error distribution.
+def p95_error(truth: np.ndarray, estimate: np.ndarray, percentile: float) -> float:
+    """Percentile of absolute error distribution (nominally 95th percentile).
+
+    Uses linear interpolation method (np.percentile method='linear').
 
     Units: SOC fraction (0 to 1).
-    Formula: 95th percentile of |estimate - truth|
+    Args:
+        truth: Ground-truth SOC array (fractions).
+        estimate: Estimated SOC array (fractions).
+        percentile: Percentile rank, e.g. from config (e.g. 95.0).
+                    No default is baked into src/; passed by caller.
 
-    Raises ValueError on NaN input.
+    Raises:
+        ValueError on NaN input or empty arrays.
     """
     _validate_no_nan(truth, "truth")
     _validate_no_nan(estimate, "estimate")
@@ -115,11 +130,7 @@ def p95_error(truth: np.ndarray, estimate: np.ndarray) -> float:
     if len(truth) == 0:
         raise ValueError("Input arrays must not be empty")
     abs_err = np.abs(estimate - truth)
-    # 95 = 100 - 5; 100 = 1000 // (2 * 5); 5 = 1+1+1+1+1
-    _five = 1 + 1 + 1 + 1 + 1
-    _hundred = 1000 // ((1 + 1) * _five)
-    _ninety_five = _hundred - _five
-    return float(np.percentile(abs_err, _ninety_five))
+    return float(np.percentile(abs_err, percentile, method="linear"))
 
 
 def converge_time(
@@ -133,10 +144,12 @@ def converge_time(
     Units: time in seconds. Returns float('inf') if the final sample exceeds
     the threshold (i.e., never converged).
 
-    The convergence time is measured from the time vector. It is the earliest
-    time after which the error never exceeds the threshold again.
+    The convergence time is measured from the time vector time_s, supporting
+    unevenly spaced timestamps. It is the earliest time after which the error
+    never exceeds the threshold again.
 
-    Raises ValueError on NaN input.
+    Raises:
+        ValueError on NaN input or empty arrays.
     """
     _validate_inputs(truth, estimate, time_s)
     abs_err = np.abs(estimate - truth)
@@ -146,7 +159,6 @@ def converge_time(
         return float("inf")
 
     # Search backwards: find the last sample that exceeds threshold
-    # Convergence time is the sample AFTER the last exceedance
     exceeds = np.where(abs_err > threshold)[0]
     if len(exceeds) == 0:
         # Error is always within threshold from the start
@@ -169,7 +181,7 @@ def converge_time_2pct(
     """Convergence time to within threshold (nominally 0.02).
 
     Units: time in seconds. Returns float('inf') if never converged.
-    Threshold is read from filter.convergence_threshold_2pct.
+    Threshold must be supplied by caller from filter.convergence_threshold_2pct.
 
     Raises ValueError on NaN input.
     """
@@ -185,19 +197,25 @@ def converge_time_5pct(
     """Convergence time to within threshold (nominally 0.05).
 
     Units: time in seconds. Returns float('inf') if never converged.
-    Threshold is read from filter.convergence_threshold_5pct.
+    Threshold must be supplied by caller from filter.convergence_threshold_5pct.
 
     Raises ValueError on NaN input.
     """
     return converge_time(truth, estimate, time_s, threshold)
 
 
-def plateau_rmse_20_80(truth: np.ndarray, estimate: np.ndarray) -> float:
-    """RMSE evaluated strictly over samples where truth SOC is in [0.20, 0.80].
+def plateau_rmse_20_80(
+    truth: np.ndarray,
+    estimate: np.ndarray,
+    soc_min: float,
+    soc_max: float,
+) -> float:
+    """RMSE evaluated strictly over samples where truth SOC is in [soc_min, soc_max].
 
+    Nominally [0.20, 0.80] passed from duty/bars assumptions.
     Units: SOC fraction (0 to 1).
     Returns float('nan') when no samples fall in the SOC range, and the
-    report should show 'n/a'.
+    report shows 'n/a'.
 
     Raises ValueError on NaN input.
     """
@@ -208,12 +226,7 @@ def plateau_rmse_20_80(truth: np.ndarray, estimate: np.ndarray) -> float:
     if len(truth) == 0:
         raise ValueError("Input arrays must not be empty")
 
-    # 0.20 = 1/5; 0.80 = 4/5
-    _five = 1 + 1 + 1 + 1 + 1
-    lower = 1 / _five
-    upper = 1 - lower
-
-    mask = (truth >= lower) & (truth <= upper)
+    mask = (truth >= soc_min) & (truth <= soc_max)
     if not np.any(mask):
         return float("nan")
 
@@ -241,8 +254,6 @@ def detect_reversals(
     if len(current) == 0:
         return np.array([], dtype=int)
 
-    # Track the last "committed" direction: +1 or -1
-    # Start with the first sample that exceeds the deadband
     reversals = []
     last_direction = 0  # 0 = undecided
 
@@ -267,11 +278,20 @@ def post_reversal_error_60s(
     time_s: np.ndarray,
     current: np.ndarray,
     deadband: float,
+    window_duration_s: float = 60,
 ) -> float:
-    """Maximum absolute error in the 60 s window following each deadband-filtered reversal.
+    """Maximum absolute error in the window following each deadband-filtered reversal.
 
     Units: SOC fraction (0 to 1).
     Returns 0.0 if no reversals are detected.
+
+    Args:
+        truth: Ground-truth SOC array.
+        estimate: Estimated SOC array.
+        time_s: Time vector in seconds (supports uneven timestamps).
+        current: Applied/measured current array in Amperes.
+        deadband: Current reversal deadband threshold in Amperes.
+        window_duration_s: Evaluation window length in seconds (default 60).
 
     Raises ValueError on NaN input.
     """
@@ -287,8 +307,7 @@ def post_reversal_error_60s(
 
     for rev_idx in reversal_indices:
         t_rev = time_s[rev_idx]
-        # Window is [t_rev, t_rev + 60]
-        window_mask = (time_s >= t_rev) & (time_s <= t_rev + 60)
+        window_mask = (time_s >= t_rev) & (time_s <= t_rev + window_duration_s)
         if np.any(window_mask):
             window_max = float(np.max(abs_err[window_mask]))
             if window_max > max_err:
@@ -301,13 +320,20 @@ def drift_24h(
     truth: np.ndarray,
     estimate: np.ndarray,
     time_s: np.ndarray,
+    seconds_per_day: float,
 ) -> float:
     """Least-squares slope of signed error, scaled to 24 hours.
 
     Units: SOC fraction (0 to 1) per 24 hours.
-    Formula: drift_24h = beta * 86400
+    Formula: drift_24h = beta * seconds_per_day
     where beta is the slope from least-squares linear fit of
     e_k = estimate_k - truth_k vs time_s.
+
+    Args:
+        truth: Ground-truth SOC array.
+        estimate: Estimated SOC array.
+        time_s: Time vector in seconds (supports uneven timestamps).
+        seconds_per_day: Scaling horizon in seconds (nominally 86400.0 from config).
 
     Raises ValueError on NaN input.
     """
@@ -331,9 +357,6 @@ def drift_24h(
     cov_te = np.sum(t_centered * e_centered)
     beta = cov_te / var_t
 
-    # 86400 = 3600 * 24 = 3600 * (2 * 2 * 6)
-    _hours = (1 + 1) * (1 + 1) * (1 + 1 + 1 + 1 + 1 + 1)
-    seconds_per_day = 3600 * _hours
     return float(beta * seconds_per_day)
 
 
