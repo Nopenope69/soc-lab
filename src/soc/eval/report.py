@@ -1,14 +1,22 @@
 """Benchmark report generator producing GitHub Flavored Markdown reports."""
 
+import copy
 import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 import numpy as np
 
-from soc.assumptions.loader import PERCENT_FACTOR, FLOAT_EPSILON, load_assumptions
+from soc.assumptions.loader import (
+    DEFAULT_PLATEAU_MAX,
+    DEFAULT_PLATEAU_MIN,
+    FLOAT_EPSILON,
+    PERCENT_FACTOR,
+    T1_MISMATCH_OFFSETS_MV,
+    load_assumptions,
+)
 from soc.assumptions.schema import Assumptions
 from soc.eval.model_checks import check_ocv_table_error_mv
-from soc.harness.runner import RunResult
+from soc.harness.runner import RunResult, ScenarioRunner
 
 MANDATORY_HEADER = (
     "> Synthetic data. Software correctness and comparison only, not accuracy evidence.\n"
@@ -116,6 +124,7 @@ class ReportGenerator:
         results: List[RunResult],
         assumptions: Optional[Assumptions] = None,
         profile_name: Optional[str] = None,
+        ofat_results: Optional[List[Dict[str, Any]]] = None,
     ) -> str:
         """Render complete Markdown benchmark report from RunResult collection."""
         lines: List[str] = []
@@ -163,7 +172,28 @@ class ReportGenerator:
         lines.append(f"- **Temperature-Clamp Warnings:** `{temp_warnings}`")
         lines.append("")
 
-        # 3. Scenario Durations and Sample Counts
+        # 3. Resolved Duty Cycle Settings Table
+        lines.append("## Resolved Duty Cycle Settings")
+        lines.append("")
+        lines.append("| Scenario | Cycle Type | Pulse C-Rate | Rest Duration | Total Duration | Initial SOC | SOC Limits |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+        for scen_name in unique_scenarios:
+            clean_s = scen_name.split(" [")[0]
+            try:
+                scen_a, _, _ = load_assumptions(profile=active_profile, scenario_file=Path(clean_s))
+                d = scen_a.duty
+                c_str = f"{d.pulse_c_rate.value:.1f} C"
+                ctype_str = f"`{d.cycle_type.value}`"
+                rest_str = f"{d.rest_duration_s.value:.0f} s"
+                dur_str = f"{d.total_duration_s.value:.0f} s"
+                isoc_str = f"{d.initial_soc.value * PERCENT_FACTOR:.0f}%"
+                lim_str = f"[{d.soc_min_limit.value * PERCENT_FACTOR:.0f}%, {d.soc_max_limit.value * PERCENT_FACTOR:.0f}%]"
+                lines.append(f"| `{scen_name}` | {ctype_str} | {c_str} | {rest_str} | {dur_str} | {isoc_str} | {lim_str} |")
+            except Exception:
+                lines.append(f"| `{scen_name}` | *custom* | *n/a* | *n/a* | *n/a* | *n/a* | *n/a* |")
+        lines.append("")
+
+        # 4. Scenario Durations and Sample Counts
         lines.append("## Scenario Durations and Sample Counts")
         lines.append("")
         lines.append("| Scenario | Duration (s) | Sample Count (kept) | Sample Period dt (s) | Dropped Samples |")
@@ -178,7 +208,7 @@ class ReportGenerator:
                 )
         lines.append("")
 
-        # 4. Benchmark Metric Results Table (Grouped by scenario, variant, estimator)
+        # 5. Benchmark Metric Results Table (Grouped by scenario, variant, estimator)
         lines.append("## Benchmark Metric Results")
         lines.append("")
         if num_seeds_total > 1:
@@ -194,7 +224,6 @@ class ReportGenerator:
             "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
         )
 
-        # Group results
         groups: Dict[Tuple[str, str, str], List[RunResult]] = {}
         for r in results:
             key = (r.scenario, r.variant, r.estimator)
@@ -232,14 +261,13 @@ class ReportGenerator:
                 f"| `{scen}` | `{var}` | **{est}** | {rmse_str} | {mae_str} | {max_err_str} | {p95_str} | {plat_str} | {c5_str} | {c2_str} | {d24_str} | {rev_str} | {ms_str} | {vres_str} | {nis_str} | {pass_str} |"
             )
 
-        # List unimplemented estimators
         for unimpl in UNIMPLEMENTED_ESTIMATORS:
             lines.append(
                 f"| *scheduled* | *n/a* | **{unimpl}** | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* | *not implemented* |"
             )
         lines.append("")
 
-        # 4. Profile Bars & Pass/Fail Evaluation
+        # 6. Profile Bars & Pass/Fail Evaluation
         lines.append("## Profile Bars & Pass/Fail Evaluation")
         lines.append("")
         bars = assumptions.bars
@@ -257,6 +285,10 @@ class ReportGenerator:
         lines.append(
             f"| `t2_dynamic_max_error` | `max_abs_error` | {bars.t2_dynamic_max_error.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `smoke`, `t3_t10_minor_loops` | Dynamic cycling maximum error bar |"
         )
+        if active_profile == "bess":
+            lines.append(
+                f"| `t3_bess_rmse_24h_max` | `rmse` | {bars.t3_bess_rmse_24h_max.value * PERCENT_FACTOR:.2f} pp | 24 h duty | worst seed | `t3_bess_24h` | Stationary BESS 24h duty cycle RMSE bar |"
+            )
         lines.append(
             f"| `t4_plateau_p95_max` | `p95_error` | {bars.t4_plateau_p95_max.value * PERCENT_FACTOR:.2f} pp | truth SOC in [0.20, 0.80] | worst seed | `t4_plateau_stress` | 95th percentile error on plateau |"
         )
@@ -267,7 +299,7 @@ class ReportGenerator:
             f"| `t6_drift_bess_per_day_max` | `drift_24h` | {drift_threshold_pp} | 86400 s (measured) | worst seed | `t6_current_bias` | 24-hour current bias drift bar |"
         )
         lines.append(
-            f"| `t7_error_rise_max` | `error_rise` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `t7_voltage_quant_noise` | Max error rise under sensor noise above clean baseline |"
+            f"| `t7_error_rise_max` | `error_rise` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `t7_voltage_quant_noise` | RMSE rise under sensor noise above clean baseline |"
         )
         lines.append(
             f"| `t9_post_rest_step_error_max` | `max_abs_error` | {bars.t9_post_rest_step_error_max.value * PERCENT_FACTOR:.2f} pp | post-rest step | worst seed | `t9_rest_relaxation` | Max error during RC relaxation |"
@@ -294,12 +326,15 @@ class ReportGenerator:
             "smoke": True,
             "t1_static_ocv": True,
             "t3_t10_minor_loops": True,
+            "t3_bess_24h": True,
             "t4_plateau_stress": True,
             "t5_initial_soc_offset": True,
             "t6_current_bias": True,
+            "t6_plateau_only": False,
             "t7_voltage_quant_noise": True,
             "t9_rest_relaxation": True,
             "t11_anchor_toggle": False,
+            "t12_hysteresis_mismatch": False,
         }
 
         first_passing_rung = None
@@ -340,11 +375,11 @@ class ReportGenerator:
 
         lines.append("")
 
-        # Check whether all required bar scenarios were executed
-        missing_bar_scenarios = [
-            s for s in sorted(STANDARD_BAR_SCENARIOS) if s not in unique_scenarios
-        ]
-        # Exception: if only smoke was run, or subset was run
+        expected_bar_scenarios = set(STANDARD_BAR_SCENARIOS)
+        if active_profile == "bess":
+            expected_bar_scenarios.add("t3_bess_24h")
+
+        missing_bar_scenarios = [s for s in sorted(expected_bar_scenarios) if s not in unique_scenarios]
         if len(missing_bar_scenarios) > 0:
             missing_str = ", ".join(f"`{s}`" for s in missing_bar_scenarios)
             lines.append(
@@ -355,7 +390,111 @@ class ReportGenerator:
             lines.append(f"**First Rung Meeting All Bars:** `{rung_label}`")
         lines.append("")
 
-        # 5. T1 Model Check Section (Matched & Mismatched)
+        # 7. E2 vs E1 Head-to-Head Evaluation Table
+        lines.append("## E2 vs E1 Head-to-Head Comparison")
+        lines.append("")
+        lines.append(
+            "> Purely computed comparison of E2 versus E1 across scenarios on Plateau RMSE (or overall RMSE where plateau is unpopulated)."
+        )
+        lines.append("")
+        lines.append(
+            "| Scenario | E2 Beats E1 (Matched)? | E1 Plateau RMSE (m) | E2 Plateau RMSE (m) | Margin Matched | E2 Beats E1 (Mismatched)? | E1 Plateau RMSE (mis) | E2 Plateau RMSE (mis) | Margin Mismatched |"
+        )
+        lines.append(
+            "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |"
+        )
+
+        for scen in unique_scenarios:
+            e1_m = [r.plateau_rmse_20_80 for r in results if r.scenario == scen and r.estimator == "E1" and r.variant == "matched"]
+            e2_m = [r.plateau_rmse_20_80 for r in results if r.scenario == scen and r.estimator == "E2" and r.variant == "matched"]
+            e1_mis = [r.plateau_rmse_20_80 for r in results if r.scenario == scen and r.estimator == "E1" and r.variant == "mismatched"]
+            e2_mis = [r.plateau_rmse_20_80 for r in results if r.scenario == scen and r.estimator == "E2" and r.variant == "mismatched"]
+
+            # Fallback to overall RMSE if plateau RMSE is NaN
+            use_overall = False
+            if e1_m and (len(e1_m) == 0 or math.isnan(e1_m[0])):
+                use_overall = True
+                e1_m = [r.rmse for r in results if r.scenario == scen and r.estimator == "E1" and r.variant == "matched"]
+                e2_m = [r.rmse for r in results if r.scenario == scen and r.estimator == "E2" and r.variant == "matched"]
+                e1_mis = [r.rmse for r in results if r.scenario == scen and r.estimator == "E1" and r.variant == "mismatched"]
+                e2_mis = [r.rmse for r in results if r.scenario == scen and r.estimator == "E2" and r.variant == "mismatched"]
+
+            metric_lbl = " (overall)" if use_overall else ""
+
+            def _compare_pair(e1_list: List[float], e2_list: List[float]) -> Tuple[str, str, str, str]:
+                if not e1_list or not e2_list:
+                    return "n/a", "n/a", "n/a", "n/a"
+                v1 = float(np.mean(e1_list))
+                v2 = float(np.mean(e2_list))
+                diff_pp = (v1 - v2) * PERCENT_FACTOR
+                beats = "YES" if diff_pp >= float(0) else "NO"
+                m_str = f"+{diff_pp:.2f} pp" if diff_pp >= float(0) else f"{diff_pp:.2f} pp"
+                return beats, f"{v1 * PERCENT_FACTOR:.2f} pp", f"{v2 * PERCENT_FACTOR:.2f} pp", m_str
+
+            b_m, s1_m, s2_m, mg_m = _compare_pair(e1_m, e2_m)
+            b_mis, s1_mis, s2_mis, mg_mis = _compare_pair(e1_mis, e2_mis)
+            lines.append(
+                f"| `{scen}`{metric_lbl} | **{b_m}** | {s1_m} | {s2_m} | {mg_m} | **{b_mis}** | {s1_mis} | {s2_mis} | {mg_mis} |"
+            )
+        lines.append("")
+
+        # 8. One-Factor-At-A-Time (OFAT) Parameter Sensitivity Sweep
+        lines.append("## One-Factor-At-A-Time (OFAT) Parameter Sensitivity Sweep")
+        lines.append("")
+        lines.append(
+            "> Evaluates E1 and E2 on `t3_t10_minor_loops`, `t4_plateau_stress`, and `t5_initial_soc_offset` under isolated single-parameter perturbations with matched noise realization."
+        )
+        lines.append("")
+
+        if ofat_results is None:
+            try:
+                runner = ScenarioRunner()
+                ofat_results = runner.run_ofat_sensitivity(profile=active_profile)
+            except Exception:
+                ofat_results = []
+
+        if ofat_results:
+            # Rank parameters by maximum effect magnitude
+            param_effects: Dict[str, float] = {}
+            for r in ofat_results:
+                p_name = r["parameter"]
+                if p_name != "combined mismatch":
+                    eff = r["effect_magnitude"]
+                    param_effects[p_name] = max(param_effects.get(p_name, float(0)), eff)
+
+            sorted_params = sorted(param_effects.items(), key=lambda kv: kv[1], reverse=True)
+            param_rank = {p: idx + 1 for idx, (p, _) in enumerate(sorted_params)}
+
+            lines.append("### Parameter Ranking by Effect Magnitude")
+            lines.append("")
+            lines.append("| Rank | Parameter | Maximum Effect on RMSE |")
+            lines.append("| :--- | :--- | :--- |")
+            for p, eff_val in sorted_params:
+                lines.append(f"| {param_rank[p]} | `{p}` | {eff_val * PERCENT_FACTOR:.3f} pp |")
+            lines.append("")
+
+            lines.append("### Sensitivity Evaluation Results")
+            lines.append("")
+            lines.append("| Rank | Parameter | Perturbation | Estimator | Scenario | RMSE | Max Error | Plateau RMSE | Effect Magnitude |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+
+            # Sort results by parameter rank
+            def _sort_key(item: Dict[str, Any]) -> Tuple[int, str, str, str]:
+                p = item["parameter"]
+                rank_num = param_rank.get(p, 1000)
+                return (rank_num, p, item["scenario"], item["estimator"])
+
+            sorted_ofat = sorted(ofat_results, key=_sort_key)
+            for r in sorted_ofat:
+                p_name = r["parameter"]
+                rk_str = str(param_rank.get(p_name, "n/a"))
+                eff_pp = f"{r['effect_magnitude'] * PERCENT_FACTOR:.3f} pp"
+                lines.append(
+                    f"| {rk_str} | `{p_name}` | `{r['size_str']}` | **{r['estimator']}** | `{r['scenario']}` | {r['rmse'] * PERCENT_FACTOR:.2f} pp | {r['max_abs_error'] * PERCENT_FACTOR:.2f} pp | {r['plateau_rmse_20_80'] * PERCENT_FACTOR:.2f} pp | {eff_pp} |"
+                )
+            lines.append("")
+
+        # 9. T1 Model Check Section (Matched & Mismatched at 3 mV and 5 mV)
         lines.append("## T1 OCV Model Check")
         lines.append("")
         lines.append(
@@ -364,153 +503,134 @@ class ReportGenerator:
         lines.append("")
 
         plant_ocv = assumptions.plant.ocv_table_v.value
-        mismatch_offset_mv = float(assumptions.estimator_model.mismatch.ocv_offset_mv.value)
-        if mismatch_offset_mv == 0 and "t1_static_ocv" in unique_scenarios:
-            try:
-                t1_assump, _, _ = load_assumptions(profile=profile_name, scenario_file=Path("t1_static_ocv.yaml"))
-                mismatch_offset_mv = float(t1_assump.estimator_model.mismatch.ocv_offset_mv.value)
-            except Exception:
-                pass
         t1_bar_mv = float(bars.t1_ocv_error_max_mv.value)
 
-        lines.append("| Variant | Temperature | Max Error (mV) | RMS Error (mV) | Bar Threshold | Result |")
-        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+        lines.append("| Variant | Temperature | Max Error (mV) | RMS Error (mV) | Bar Threshold | Margin to Bar | Result |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
 
         if isinstance(plant_ocv, dict):
             # 1. Matched variant
             for temp_str, v_list in plant_ocv.items():
                 ref_arr = np.array(v_list, dtype=float)
                 max_mv, rms_mv = check_ocv_table_error_mv(ref_arr, ref_arr)
+                margin_mv = t1_bar_mv - max_mv
                 lines.append(
-                    f"| `matched` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | PASS |"
+                    f"| `matched (0 mV)` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | +{margin_mv:.2f} mV | PASS |"
                 )
-            # 2. Mismatched variant
-            for temp_str, v_list in plant_ocv.items():
-                ref_arr = np.array(v_list, dtype=float)
-                model_arr = ref_arr + (mismatch_offset_mv / 1000)
-                max_mv, rms_mv = check_ocv_table_error_mv(model_arr, ref_arr)
-                res_str = "PASS" if max_mv <= t1_bar_mv else "FAIL"
-                lines.append(
-                    f"| `mismatched` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | {res_str} |"
-                )
+            # 2. Mismatched variants at 3 mV and 5 mV
+            for off_mv in T1_MISMATCH_OFFSETS_MV:
+                for temp_str, v_list in plant_ocv.items():
+                    ref_arr = np.array(v_list, dtype=float)
+                    model_arr = ref_arr + (off_mv / 1000)
+                    max_mv, rms_mv = check_ocv_table_error_mv(model_arr, ref_arr)
+                    margin_mv = t1_bar_mv - max_mv
+                    res_str = "PASS" if max_mv <= t1_bar_mv else "FAIL"
+                    margin_str = f"+{margin_mv:.2f} mV" if margin_mv >= float(0) else f"{margin_mv:.2f} mV"
+                    lines.append(
+                        f"| `mismatched ({off_mv:.0f} mV)` | `{temp_str} C` | {max_mv:.2f} mV | {rms_mv:.2f} mV | {t1_bar_mv:.1f} mV | {margin_str} | {res_str} |"
+                    )
         lines.append("")
 
-        # 6. Diagnostic Observations & Hysteresis Performance
-        lines.append("## Diagnostic Observations")
-        lines.append("")
-        hyst_target_scen = (
-            "t4_plateau_stress"
-            if "t4_plateau_stress" in unique_scenarios
-            else (unique_scenarios[0] if unique_scenarios else "smoke")
-        )
-        hyst_amp = float(assumptions.plant.hysteresis_amplitude_v.value)
-
-        lines.append(f"### Hysteresis Diagnostic Evaluation")
-        lines.append(f"- **Target Scenario:** `{hyst_target_scen}`")
-        lines.append(f"- **Seeds Evaluated:** `{num_seeds_total}` (indices: `{unique_seeds}`)")
-        lines.append(f"- **Plant Hysteresis Amplitude:** `{hyst_amp * 1000:.1f} mV`")
-        lines.append("")
-
-        for v_name in ["matched", "mismatched"]:
-            e1_vals = [
-                r.plateau_rmse_20_80
-                for r in results
-                if r.scenario == hyst_target_scen and r.estimator == "E1" and r.variant == v_name
-            ]
-            e2_vals = [
-                r.plateau_rmse_20_80
-                for r in results
-                if r.scenario == hyst_target_scen and r.estimator == "E2" and r.variant == v_name
-            ]
-            if e1_vals and e2_vals:
-                m_e1 = float(np.mean(e1_vals)) * PERCENT_FACTOR
-                m_e2 = float(np.mean(e2_vals)) * PERCENT_FACTOR
-                diff = m_e1 - m_e2
-                comparison = (
-                    f"E2 beats E1 by {diff:.2f} pp"
-                    if diff >= float(0)
-                    else f"E1 beats E2 by {-diff:.2f} pp"
-                )
-                lines.append(
-                    f"- **`{v_name}` variant:** E1 Plateau RMSE = `{m_e1:.2f} pp`, E2 Plateau RMSE = `{m_e2:.2f} pp` ({comparison})"
-                )
-
+        # 10. T6 Current Bias & Drift Diagnostics
+        lines.append("## T6 Current Bias & Drift Diagnostics")
         lines.append("")
         lines.append(
-            "> *Clarification on previous smoke report:* The previously displayed values (0.69 pp and 1.24 pp) occurred because matched and mismatched runs were averaged together across estimators (E2: (0.15 + 1.24)/2 = 0.695 pp; E1: (1.29 + 1.19)/2 = 1.24 pp). In this report, all diagnostic values are strictly partitioned by variant and match the corresponding rows in the benchmark results table."
+            "> Evaluates estimator current bias drift over 24 hours under sensor current offset (0.2 A)."
         )
         lines.append("")
 
-        # 6b. Matched vs. Mismatched Parameter Sensitivity Audit
-        lines.append("### Matched vs. Mismatched Parameter Sensitivity Audit")
-        lines.append("")
-        lines.append(
-            "> Verifies that model parameter mismatches induce observable divergence in estimator performance. Scenarios where matched and mismatched results are identical for E1 or E2 are flagged below."
-        )
-        lines.append("")
-        identical_cases = []
-        for scen_name in unique_scenarios:
-            for est in ["E1", "E2"]:
-                matched_runs = [r for r in results if r.scenario == scen_name and r.estimator == est and r.variant == "matched"]
-                mismatched_runs = [r for r in results if r.scenario == scen_name and r.estimator == est and r.variant == "mismatched"]
-                if matched_runs and mismatched_runs:
-                    m_rmse = float(np.mean([r.rmse for r in matched_runs]))
-                    mis_rmse = float(np.mean([r.rmse for r in mismatched_runs]))
-                    m_max = float(np.mean([r.max_abs_error for r in matched_runs]))
-                    mis_max = float(np.mean([r.max_abs_error for r in mismatched_runs]))
-                    if abs(m_rmse - mis_rmse) < FLOAT_EPSILON and abs(m_max - mis_max) < FLOAT_EPSILON:
-                        identical_cases.append(f"`{scen_name}` ({est})")
-        if identical_cases:
-            lines.append(f"- **Identical Rows Detected:** {', '.join(identical_cases)}")
-        else:
-            lines.append("- **Sensitivity Audit Result:** All evaluated scenarios exhibit non-zero parameter sensitivity between matched and mismatched variants for E1 and E2. Zero identical rows detected.")
-        lines.append("")
+        for t6_scen in ["t6_current_bias", "t6_plateau_only"]:
+            scen_runs = [r for r in results if r.scenario == t6_scen]
+            if scen_runs:
+                first = scen_runs[0]
+                lines.append(f"### `{t6_scen}`")
+                lines.append(f"- **SOC Range:** `[{first.soc_min * PERCENT_FACTOR:.1f}%, {first.soc_max * PERCENT_FACTOR:.1f}%]`")
+                lines.append(f"- **Time on Plateau ([0.20, 0.80]):** `{first.fraction_on_plateau * PERCENT_FACTOR:.1f}%`")
+                lines.append("")
+                lines.append("| Estimator | Variant | Drift 24h | Status |")
+                lines.append("| :--- | :--- | :--- | :--- |")
+                for est in ["E0", "E1", "E2"]:
+                    for var in ["matched", "mismatched"]:
+                        sub = [r for r in scen_runs if r.estimator == est and r.variant == var]
+                        if sub:
+                            d_str = format_stat_pp([r.drift_24h for r in sub])
+                            st_str = "PASS" if all(r.pass_all_bars for r in sub) else "FAIL"
+                            lines.append(f"| **{est}** | `{var}` | {d_str} | {st_str} |")
+                lines.append("")
 
-        # 6c. T12 Hysteresis Parameter Mismatch Evaluation
-        lines.append("### T12 Hysteresis Parameter Mismatch Evaluation (E1 vs E2)")
+        # 11. T7 Sensor Noise Error Rise Diagnostic
+        lines.append("## T7 Sensor Noise Error Rise Diagnostic")
         lines.append("")
         lines.append(
-            "> Evaluates estimator robustness when hysteresis parameters are mismatched on the estimator side (M at +30%, gamma at +50%). E1 lacks a hysteresis state entirely; E2 models hysteresis with imperfect parameters."
+            "> Evaluates estimator degradation under sensor quantization and ADC noise against a clean baseline with identical seed and duty."
         )
         lines.append("")
-        t12_runs = [r for r in results if r.scenario == "t12_hysteresis_mismatch"]
-        if t12_runs:
-            lines.append("| Estimator | Variant | RMSE | Max Error | Plateau RMSE (20-80) | P95 Error |")
-            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
-            for est in ["E1", "E2"]:
+        t7_runs = [r for r in results if r.scenario == "t7_voltage_quant_noise"]
+        if t7_runs:
+            t7_bar_val = float(bars.t7_error_rise_max.value)
+            lines.append("| Estimator | Variant | Clean RMSE | Noisy RMSE | RMSE Rise | Bar Threshold | Result | Max Error Rise |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+            for est in ["E0", "E1", "E2"]:
                 for var in ["matched", "mismatched"]:
-                    sub = [r for r in t12_runs if r.estimator == est and r.variant == var]
+                    sub = [r for r in t7_runs if r.estimator == est and r.variant == var]
                     if sub:
-                        r_rmse = format_stat_pp([r.rmse for r in sub])
-                        r_max = format_stat_pp([r.max_abs_error for r in sub])
-                        r_plat = format_stat_pp([r.plateau_rmse_20_80 for r in sub])
-                        r_p95 = format_stat_pp([r.p95_error for r in sub])
-                        lines.append(f"| **{est}** | `{var}` | {r_rmse} | {r_max} | {r_plat} | {r_p95} |")
+                        c_rmse = format_stat_pp([r.clean_rmse for r in sub])
+                        n_rmse = format_stat_pp([r.rmse for r in sub])
+                        r_rise = format_stat_pp([r.rmse_rise for r in sub])
+                        m_rise = format_stat_pp([r.max_error_rise for r in sub])
+                        worst_rise = max(r.rmse_rise for r in sub)
+                        res_str = "PASS" if worst_rise <= t7_bar_val else "FAIL"
+                        lines.append(
+                            f"| **{est}** | `{var}` | {c_rmse} | {n_rmse} | {r_rise} | {t7_bar_val * PERCENT_FACTOR:.2f} pp | **{res_str}** | {m_rise} |"
+                        )
+            lines.append("")
+
+        # 12. T11 Recalibration Anchors & Error Transitions
+        lines.append("## T11 Recalibration Anchor Modes & Verification")
+        lines.append("")
+        lines.append(
+            "> T11 evaluates anchor triggering across three configurations: `anchors off`, `full-charge only`, and `rest anchor on`."
+        )
+        lines.append("")
+        t11_runs = [r for r in results if "t11_anchor_toggle" in r.scenario]
+        if t11_runs:
+            lines.append("| Configuration | Estimator | Variant | Anchor Count | First Anchor Time | Pre-Anchor Error | Post-Anchor Error | Error Drop |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+            for r in t11_runs:
+                if r.estimator == "E0":
+                    anc_cnt = r.anchor_count
+                    anc_t = f"{r.first_anchor_time_s:.1f} s" if not math.isnan(r.first_anchor_time_s) else "never"
+                    pre_e = f"{r.err_pre_anchor * PERCENT_FACTOR:.2f} pp" if not math.isnan(r.err_pre_anchor) else "n/a"
+                    post_e = f"{r.err_post_anchor * PERCENT_FACTOR:.2f} pp" if not math.isnan(r.err_post_anchor) else "n/a"
+                    drop = (
+                        f"{(r.err_pre_anchor - r.err_post_anchor) * PERCENT_FACTOR:.2f} pp"
+                        if not math.isnan(r.err_pre_anchor) and not math.isnan(r.err_post_anchor)
+                        else "n/a"
+                    )
+                    lines.append(f"| `{r.scenario}` | **{r.estimator}** | `{r.variant}` | {anc_cnt} | {anc_t} | {pre_e} | {post_e} | {drop} |")
+            lines.append("")
+
+        # 13. Transient Spike Anomaly Detection
+        lines.append("## Transient Spike Anomaly Detection")
+        lines.append("")
+        lines.append(
+            "> Flags any evaluation run where maximum absolute error exceeds 5.0 pp while RMSE remains below 1.0 pp."
+        )
+        lines.append("")
+        spike_runs = [r for r in results if r.spike_detected]
+        if spike_runs:
+            lines.append("| Scenario | Estimator | Variant | Seed | Max Error | RMSE | Timestamp (s) | True SOC at t |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+            for r in spike_runs:
+                lines.append(
+                    f"| `{r.scenario}` | **{r.estimator}** | `{r.variant}` | {r.seed_index} | {r.max_abs_error * PERCENT_FACTOR:.2f} pp | {r.rmse * PERCENT_FACTOR:.2f} pp | {r.spike_time_s:.1f} s | {r.spike_true_soc * PERCENT_FACTOR:.1f}% |"
+                )
             lines.append("")
         else:
-            lines.append("*T12 scenario not evaluated in this report.*")
+            lines.append("- **Anomaly Detection Status:** No runs exhibited transient error spikes exceeding 5.0 pp with RMSE under 1.0 pp.")
             lines.append("")
 
-        # 6d. T7 Sensor Noise Error Rise Diagnostic
-        lines.append("### T7 Sensor Noise Error Rise Diagnostic")
-        lines.append("")
-        lines.append(
-            "> The T7 error rise bar evaluates degradation under sensor quantization and ADC noise. The error rise is computed strictly against a clean, noiseless baseline with the same seed and duty: `error_rise = max(0, max_abs_error_noisy - max_abs_error_clean)`. Evaluated against active profile bar `t7_error_rise_max` on the worst seed."
-        )
-        lines.append("")
-
-        # 6e. T11 Anchor Modes and Plateau Hysteresis Impact
-        lines.append("### T11 Anchor Modes and Plateau Hysteresis Impact")
-        lines.append("")
-        lines.append(
-            "> T11 evaluates three distinct anchoring configurations: `anchors off`, `full-charge only`, and `rest anchor on`."
-        )
-        lines.append(
-            "> **Rest Anchoring on Plateau:** In previous evaluations with a low rest current threshold (0.1 A), sensor current noise (sigma=0.05 A) repeatedly exceeded the quiet threshold, resetting the rest timer before 600 consecutive seconds could accumulate. With the threshold aligned to 0.3 A, rest anchoring triggers on the flat LFP plateau. However, unrelaxed hysteresis voltage (~15 mV) offsets the terminal voltage from the equilibrium thermodynamic OCV. Inverting terminal voltage to SOC on the flat plateau maps this small voltage offset into a large error (10-15 percentage points) on E0. Pure Coulomb counting without rest anchoring avoids this error entirely, demonstrating why rest anchoring without hysteresis tracking degrades accuracy on flat chemistry plateaus."
-        )
-        lines.append("")
-
-        # 7. Audit Footer
+        # 14. Assumptions Audit Summary
         lines.append("## Assumptions Audit Summary")
         lines.append("")
         lines.append(f"- **Placeholder Parameters:** `{placeholders}`")

@@ -3,6 +3,15 @@
 from dataclasses import dataclass
 from typing import List
 
+from soc.assumptions.loader import (
+    ANCHOR_EVAL_CHARGE_CURRENT_A,
+    ANCHOR_EVAL_CHARGE_DURATION_S,
+    ANCHOR_EVAL_DISCHARGE_CURRENT_A,
+    ANCHOR_EVAL_DISCHARGE_DURATION_S,
+    ANCHOR_EVAL_REST_DURATION_S,
+    ANCHOR_EVAL_TAPER_CURRENT_A,
+    ANCHOR_EVAL_TAPER_DURATION_S,
+)
 from soc.assumptions.schema import Assumptions
 
 
@@ -68,15 +77,56 @@ class DutyCycleGenerator:
                 steps.append(DutyStep(i_app=current, temp_c=ambient_temp_c, dt=dt_s))
             return steps
 
+        if cycle_type == "anchor_evaluation":
+            # 1. Charge phase to reach full-charge voltage
+            # 2. Current taper phase (taper current <= 2.0 A) to trigger full-charge anchor
+            # 3. Discharge phase into plateau
+            # 4. Sustained rest phase (>= 600 s) to trigger rest anchor
+            t_chg = ANCHOR_EVAL_CHARGE_DURATION_S
+            t_taper = t_chg + ANCHOR_EVAL_TAPER_DURATION_S
+            t_dischg = t_taper + ANCHOR_EVAL_DISCHARGE_DURATION_S
+            for step_idx in range(num_steps):
+                t_elapsed = step_idx * dt_s
+                if t_elapsed < t_chg:
+                    current = ANCHOR_EVAL_CHARGE_CURRENT_A
+                elif t_elapsed < t_taper:
+                    current = ANCHOR_EVAL_TAPER_CURRENT_A
+                elif t_elapsed < t_dischg:
+                    current = ANCHOR_EVAL_DISCHARGE_CURRENT_A
+                else:
+                    current = float(0)
+                steps.append(DutyStep(i_app=current, temp_c=ambient_temp_c, dt=dt_s))
+            return steps
+
         if cycle_type == "plateau_stress" or cycle_type == "minor_loops":
-            # Oscillate between soc_min and soc_max with reversals
+            # Oscillate between soc_min and soc_max with reversals and optional rest intervals
             sim_soc = float(duty.initial_soc.value)
             direction = 1  # 1 = discharging, -1 = charging
+            rest_timer = float(0)
+            in_rest = False
             for _ in range(num_steps):
+                if in_rest:
+                    steps.append(DutyStep(i_app=float(0), temp_c=ambient_temp_c, dt=dt_s))
+                    rest_timer = rest_timer + dt_s
+                    if rest_timer >= rest_dur_s:
+                        in_rest = False
+                        rest_timer = float(0)
+                    continue
+
                 if direction == 1 and sim_soc <= soc_min:
                     direction = -1
+                    if rest_dur_s > float(0):
+                        in_rest = True
+                        rest_timer = dt_s
+                        steps.append(DutyStep(i_app=float(0), temp_c=ambient_temp_c, dt=dt_s))
+                        continue
                 elif direction == -1 and sim_soc >= soc_max:
                     direction = 1
+                    if rest_dur_s > float(0):
+                        in_rest = True
+                        rest_timer = dt_s
+                        steps.append(DutyStep(i_app=float(0), temp_c=ambient_temp_c, dt=dt_s))
+                        continue
 
                 if direction == 1:
                     current = i_pulse
@@ -84,8 +134,13 @@ class DutyCycleGenerator:
                     current = -i_pulse / ratio
 
                 steps.append(DutyStep(i_app=current, temp_c=ambient_temp_c, dt=dt_s))
-                # Propagate simulated SOC: dSOC = -I * dt / (3600 * Q)
-                sim_soc = sim_soc - (current * dt_s) / (3600 * cap_ah)
+                # Propagate simulated SOC: dSOC = -eta * I * dt / (3600 * Q)
+                eta_gen = (
+                    float(plant.coulombic_efficiency.value)
+                    if current < float(0)
+                    else float(1)
+                )
+                sim_soc = sim_soc - (eta_gen * current * dt_s) / (float(3600) * cap_ah)
             return steps
 
         # Default: standard pulse train (discharge -> rest -> charge -> rest)

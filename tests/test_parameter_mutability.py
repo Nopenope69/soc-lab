@@ -1,5 +1,7 @@
 """Parameter mutability tests verifying zero-code configuration overrides."""
 
+from pathlib import Path
+import numpy as np
 import pytest
 from soc.harness.runner import ScenarioRunner
 
@@ -134,4 +136,66 @@ def test_t3_generator_output_reversal_count():
 
     reversals = detect_reversals(currents, deadband=deadband)
     assert len(reversals) == 2
+
+
+def test_automotive_and_bess_metric_tables_are_not_identical():
+    """Verify that automotive and BESS benchmark runs produce non-identical metric tables."""
+    from soc.harness.runner import ScenarioRunner
+
+    runner = ScenarioRunner()
+    auto_res = runner.run_scenario("t3_t10_minor_loops", profile="automotive", num_seeds=1)
+    bess_res = runner.run_scenario("t3_t10_minor_loops", profile="bess", num_seeds=1)
+
+    auto_rmses = [r.rmse for r in auto_res]
+    bess_rmses = [r.rmse for r in bess_res]
+
+    # Due to 2.0 C vs 0.5 C duty profile scaling, RMSEs must diverge
+    assert auto_rmses != bess_rmses, "Automotive and BESS metric results unexpectedly identical"
+
+
+def test_t11_anchor_firing_and_error_transition():
+    """Verify that T11 anchor cycle triggers full-charge anchor and drops SOC error."""
+    from soc.harness.runner import ScenarioRunner
+
+    runner = ScenarioRunner()
+    results = runner.run_scenario("t11_anchor_toggle", num_seeds=1)
+
+    # Check that in full-charge and rest anchor modes, E0 anchors fired
+    fc_runs = [r for r in results if "[full-charge only]" in r.scenario and r.estimator == "E0"]
+    assert len(fc_runs) > 0
+    first_fc = fc_runs[0]
+    assert first_fc.anchor_count > 0, "Full-charge anchor failed to fire in T11 anchor cycle"
+    assert not np.isnan(first_fc.first_anchor_time_s)
+    assert not np.isnan(first_fc.err_post_anchor)
+    assert first_fc.err_post_anchor < first_fc.err_pre_anchor
+
+
+def test_ofat_sensitivity_sweep_coverage():
+    """Verify that OFAT parameter sensitivity sweep evaluates all 16 isolated perturbations and combined."""
+    from soc.assumptions.loader import OFAT_SWEEP_CONFIGS
+    from soc.harness.runner import ScenarioRunner
+
+    runner = ScenarioRunner()
+    ofat_rows = runner.run_ofat_sensitivity("automotive")
+    assert len(ofat_rows) > 0
+
+    params_evaluated = set(r["parameter"] for r in ofat_rows)
+    expected_params = set(cfg[1] for cfg in OFAT_SWEEP_CONFIGS)
+    expected_params.add("combined mismatch")
+    assert expected_params.issubset(params_evaluated)
+
+
+def test_t6_plateau_only_scenario_stays_within_plateau():
+    """Verify that t6_plateau_only keeps true SOC strictly between 30% and 70%."""
+    from soc.assumptions.loader import load_assumptions
+    from soc.harness.runner import ScenarioRunner
+
+    runner = ScenarioRunner()
+    assumptions, _, _ = load_assumptions(scenario_file=Path("t6_plateau_only.yaml"))
+    _, truths, _, _, _ = runner.generate_scenario_stream(assumptions, "t6_plateau_only", seed_index=0)
+
+    socs = [t.soc for t in truths]
+    assert min(socs) >= 0.29
+    assert max(socs) <= 0.71
+
 

@@ -14,8 +14,11 @@ from soc.assumptions.loader import (
     DEFAULT_PLATEAU_MAX,
     DEFAULT_PLATEAU_MIN,
     DEFAULT_WARMUP_COUNT,
+    OFAT_SWEEP_CONFIGS,
     PERCENT_FACTOR,
     SECONDS_PER_DAY,
+    TRANSIENT_SPIKE_MAX_ERR_THRESHOLD,
+    TRANSIENT_SPIKE_RMSE_THRESHOLD,
     count_assumption_statuses,
     derive_scenario_noise_seed,
     get_default_config_dir,
@@ -79,6 +82,21 @@ class RunResult:
     dirty: bool = False
     reversal_count: int = 0
     error_rise: float = float("nan")
+    anchor_count: int = 0
+    first_anchor_time_s: float = float("nan")
+    err_pre_anchor: float = float("nan")
+    err_post_anchor: float = float("nan")
+    clean_rmse: float = float("nan")
+    rmse_rise: float = float("nan")
+    clean_max_error: float = float("nan")
+    max_error_rise: float = float("nan")
+    soc_min: float = float("nan")
+    soc_max: float = float("nan")
+    fraction_on_plateau: float = float("nan")
+    spike_detected: bool = False
+    spike_time_s: float = float("nan")
+    spike_true_soc: float = float("nan")
+    spike_error: float = float("nan")
 
 
 class ScenarioRunner:
@@ -161,21 +179,33 @@ class ScenarioRunner:
 
         step_durations_ms: List[float] = []
         estimates: List[SocEstimate] = []
+        held_estimates: List[float] = []
+        curr_est = init_soc + init_offset
 
-        for meas in measurements:
+        anchor_cnt = 0
+        first_anc_time = float("nan")
+        err_pre = float("nan")
+        err_post = float("nan")
+
+        for k, meas in enumerate(measurements):
             t_start = time.perf_counter()
             out = estimator.step(meas)
             t_end = time.perf_counter()
             step_durations_ms.append((t_end - t_start) * 1000)
             estimates.append(out)
 
-        # Dropped samples handling: hold last valid estimate and exclude dropped steps
-        held_estimates: List[float] = []
-        curr_est = init_soc + init_offset
-        for meas, est in zip(measurements, estimates):
+            prev_est = curr_est
             if not meas.dropout:
-                curr_est = est.soc
+                curr_est = out.soc
             held_estimates.append(curr_est)
+
+            if out.anchor_used:
+                anchor_cnt += 1
+                if math.isnan(first_anc_time):
+                    first_anc_time = times[k]
+                    prev_truth = truths[k - 1].soc if k > 0 else truths[0].soc
+                    err_pre = abs(prev_est - prev_truth)
+                    err_post = abs(out.soc - truths[k].soc)
 
         kept_indices = [idx for idx, m in enumerate(measurements) if not m.dropout]
         if len(kept_indices) == 0:
@@ -264,12 +294,46 @@ class ScenarioRunner:
             "mean_nis": float(np.mean(nis_list)) if nis_list else float("nan"),
         }
 
+        # SOC range and fraction on plateau ([0.20, 0.80])
+        soc_min_val = float(np.min(kept_truth)) if len(kept_truth) > 0 else float("nan")
+        soc_max_val = float(np.max(kept_truth)) if len(kept_truth) > 0 else float("nan")
+        on_plat = (kept_truth >= DEFAULT_PLATEAU_MIN) & (kept_truth <= DEFAULT_PLATEAU_MAX)
+        frac_plat = float(np.mean(on_plat)) if len(kept_truth) > 0 else float("nan")
+
+        # Transient spike anomaly detection: max_abs_error > 5.0 pp and rmse < 1.0 pp
+        abs_errs = np.abs(kept_est - kept_truth)
+        spike_det = False
+        spk_t = float("nan")
+        spk_soc = float("nan")
+        spk_err = float("nan")
+        if (
+            metrics["max_abs_error"] > TRANSIENT_SPIKE_MAX_ERR_THRESHOLD
+            and metrics["rmse"] < TRANSIENT_SPIKE_RMSE_THRESHOLD
+            and len(abs_errs) > 0
+        ):
+            max_idx = int(np.argmax(abs_errs))
+            spike_det = True
+            spk_t = float(kept_times[max_idx])
+            spk_soc = float(kept_truth[max_idx])
+            spk_err = float(abs_errs[max_idx])
+
         meta = {
             "duration_s": duration_s,
             "n_samples_kept": n_samples_kept,
             "n_dropped": n_dropped,
             "drift_evaluated": drift_evaluated,
             "reversal_count": reversal_cnt,
+            "anchor_count": anchor_cnt,
+            "first_anchor_time_s": first_anc_time,
+            "err_pre_anchor": err_pre,
+            "err_post_anchor": err_post,
+            "soc_min": soc_min_val,
+            "soc_max": soc_max_val,
+            "fraction_on_plateau": frac_plat,
+            "spike_detected": spike_det,
+            "spike_time_s": spk_t,
+            "spike_true_soc": spk_soc,
+            "spike_error": spk_err,
         }
         return metrics, diag, meta
 
@@ -294,6 +358,12 @@ class ScenarioRunner:
                 failed.append("t2_dynamic_rmse_max")
             if metrics["max_abs_error"] > t2_max_err:
                 failed.append("t2_dynamic_max_error")
+
+        # T3 BESS 24h error
+        if scenario_name in ["t3_bess_24h"]:
+            t3_rmse_max = float(bars.t3_bess_rmse_24h_max.value)
+            if metrics["rmse"] > t3_rmse_max:
+                failed.append("t3_bess_rmse_24h_max")
 
         # T4 Plateau stress
         if scenario_name in ["t4_plateau_stress"]:
@@ -426,7 +496,12 @@ class ScenarioRunner:
                             times=times,
                         )
 
-                        err_rise = float("nan")
+                        clean_r = float("nan")
+                        noisy_r = metrics["rmse"]
+                        r_rise = float("nan")
+                        clean_m = float("nan")
+                        noisy_m = metrics["max_abs_error"]
+                        m_rise = float("nan")
                         if clean_meas is not None:
                             clean_metrics, _, _ = self.evaluate_estimator_on_stream(
                                 estimator_name=est_name,
@@ -436,7 +511,10 @@ class ScenarioRunner:
                                 truths=clean_truths,
                                 times=clean_times,
                             )
-                            err_rise = max(float(0), metrics["max_abs_error"] - clean_metrics["max_abs_error"])
+                            clean_r = clean_metrics["rmse"]
+                            r_rise = max(float(0), noisy_r - clean_r)
+                            clean_m = clean_metrics["max_abs_error"]
+                            m_rise = max(float(0), noisy_m - clean_m)
 
                         passed, failed_list = self.check_pass_bars(
                             scen_clean,
@@ -444,7 +522,7 @@ class ScenarioRunner:
                             mode_assumptions,
                             drift_evaluated=meta["drift_evaluated"],
                             reversal_count=meta["reversal_count"],
-                            error_rise=err_rise,
+                            error_rise=r_rise,
                         )
                         res = RunResult(
                             scenario=display_scenario,
@@ -479,7 +557,22 @@ class ScenarioRunner:
                             failed_bars=";".join(failed_list),
                             dirty=dirty,
                             reversal_count=meta["reversal_count"],
-                            error_rise=err_rise,
+                            error_rise=r_rise,
+                            anchor_count=meta["anchor_count"],
+                            first_anchor_time_s=meta["first_anchor_time_s"],
+                            err_pre_anchor=meta["err_pre_anchor"],
+                            err_post_anchor=meta["err_post_anchor"],
+                            clean_rmse=clean_r,
+                            rmse_rise=r_rise,
+                            clean_max_error=clean_m,
+                            max_error_rise=m_rise,
+                            soc_min=meta["soc_min"],
+                            soc_max=meta["soc_max"],
+                            fraction_on_plateau=meta["fraction_on_plateau"],
+                            spike_detected=meta["spike_detected"],
+                            spike_time_s=meta["spike_time_s"],
+                            spike_true_soc=meta["spike_true_soc"],
+                            spike_error=meta["spike_error"],
                         )
                         results.append(res)
 
@@ -500,11 +593,16 @@ class ScenarioRunner:
             "t4_plateau_stress",
             "t5_initial_soc_offset",
             "t6_current_bias",
+            "t6_plateau_only",
             "t7_voltage_quant_noise",
             "t9_rest_relaxation",
             "t11_anchor_toggle",
             "t12_hysteresis_mismatch",
         ]
+        if profile == "bess":
+            # BESS profile includes dedicated 24h stationary storage scenario
+            standard_scenarios.insert(2, "t3_bess_24h")
+
         all_res: List[RunResult] = []
         for scen in standard_scenarios:
             scen_results = self.run_scenario(
@@ -517,6 +615,105 @@ class ScenarioRunner:
             )
             all_res.extend(scen_results)
         return all_res
+
+    def run_ofat_sensitivity(
+        self, profile: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Run One-Factor-At-A-Time (OFAT) parameter sensitivity sweep.
+
+        Evaluates E1 and E2 across t3_t10_minor_loops, t4_plateau_stress, and t5_initial_soc_offset
+        under matched noise realization for each isolated parameter perturbation.
+        """
+        scenarios = ["t3_t10_minor_loops", "t4_plateau_stress", "t5_initial_soc_offset"]
+        all_ofat_results: List[Dict[str, Any]] = []
+
+        mism_fields = [
+            "capacity_pct",
+            "r0_pct",
+            "r1_pct",
+            "r2_pct",
+            "tau1_pct",
+            "tau2_pct",
+            "ocv_offset_mv",
+            "hysteresis_amplitude_pct",
+            "hysteresis_gamma_pct",
+        ]
+
+        for scen in scenarios:
+            scen_path = self.config_dir / "scenarios" / f"{scen}.yaml"
+            base_assumptions, _, _ = load_assumptions(
+                profile=profile, scenario_file=scen_path
+            )
+            meas, truths, times, _, _ = self.generate_scenario_stream(
+                base_assumptions, scen, seed_index=0
+            )
+
+            # Base matched reference
+            matched_metrics: Dict[str, Dict[str, float]] = {}
+            for est_name in ["E1", "E2"]:
+                m_metrics, _, _ = self.evaluate_estimator_on_stream(
+                    estimator_name=est_name,
+                    variant="matched",
+                    assumptions=base_assumptions,
+                    measurements=meas,
+                    truths=truths,
+                    times=times,
+                )
+                matched_metrics[est_name] = m_metrics
+
+            # Combined default mismatch run
+            for est_name in ["E1", "E2"]:
+                comb_metrics, _, _ = self.evaluate_estimator_on_stream(
+                    estimator_name=est_name,
+                    variant="mismatched",
+                    assumptions=base_assumptions,
+                    measurements=meas,
+                    truths=truths,
+                    times=times,
+                )
+                eff = abs(comb_metrics["rmse"] - matched_metrics[est_name]["rmse"])
+                all_ofat_results.append({
+                    "scenario": scen,
+                    "estimator": est_name,
+                    "parameter": "combined mismatch",
+                    "sign": "+/-",
+                    "size_str": "combined",
+                    "rmse": comb_metrics["rmse"],
+                    "max_abs_error": comb_metrics["max_abs_error"],
+                    "plateau_rmse_20_80": comb_metrics["plateau_rmse_20_80"],
+                    "effect_magnitude": eff,
+                })
+
+            # Isolated OFAT perturbations
+            for field, param_name, sign_str, delta_val, delta_str in OFAT_SWEEP_CONFIGS:
+                ofat_assump = copy.deepcopy(base_assumptions)
+                for mf in mism_fields:
+                    setattr(getattr(ofat_assump.estimator_model.mismatch, mf), "value", float(0))
+                setattr(getattr(ofat_assump.estimator_model.mismatch, field), "value", float(delta_val))
+
+                for est_name in ["E1", "E2"]:
+                    pert_metrics, _, _ = self.evaluate_estimator_on_stream(
+                        estimator_name=est_name,
+                        variant="mismatched",
+                        assumptions=ofat_assump,
+                        measurements=meas,
+                        truths=truths,
+                        times=times,
+                    )
+                    eff = abs(pert_metrics["rmse"] - matched_metrics[est_name]["rmse"])
+                    all_ofat_results.append({
+                        "scenario": scen,
+                        "estimator": est_name,
+                        "parameter": param_name,
+                        "sign": sign_str,
+                        "size_str": delta_str,
+                        "rmse": pert_metrics["rmse"],
+                        "max_abs_error": pert_metrics["max_abs_error"],
+                        "plateau_rmse_20_80": pert_metrics["plateau_rmse_20_80"],
+                        "effect_magnitude": eff,
+                    })
+
+        return all_ofat_results
 
     @staticmethod
     def save_results_to_csv(results: List[RunResult], output_path: Path) -> None:

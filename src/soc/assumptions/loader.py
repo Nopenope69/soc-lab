@@ -26,6 +26,42 @@ DEFAULT_MISMATCH_R0_PCT = 10.0
 DEFAULT_MISMATCH_OCV_OFFSET_MV = 5.0
 FLOAT_EPSILON = 1e-6
 
+# Anomaly detector thresholds
+TRANSIENT_SPIKE_MAX_ERR_THRESHOLD = 0.05  # 5.0 pp
+TRANSIENT_SPIKE_RMSE_THRESHOLD = 0.01     # 1.0 pp
+
+# T1 check offsets
+T1_MISMATCH_OFFSETS_MV = [3.0, 5.0]
+
+# Anchor evaluation duty timings and currents
+ANCHOR_EVAL_CHARGE_DURATION_S = 60.0
+ANCHOR_EVAL_CHARGE_CURRENT_A = -20.0
+ANCHOR_EVAL_TAPER_DURATION_S = 60.0
+ANCHOR_EVAL_TAPER_CURRENT_A = -0.4
+ANCHOR_EVAL_DISCHARGE_DURATION_S = 60.0
+ANCHOR_EVAL_DISCHARGE_CURRENT_A = 20.0
+ANCHOR_EVAL_REST_DURATION_S = 650.0
+
+# OFAT sensitivity sweep definitions: (field, param_name, sign, delta_val, delta_str)
+OFAT_SWEEP_CONFIGS = [
+    ("capacity_pct", "capacity", "+", 5.0, "+5%"),
+    ("capacity_pct", "capacity", "-", -5.0, "-5%"),
+    ("r0_pct", "R0", "+", 20.0, "+20%"),
+    ("r0_pct", "R0", "-", -20.0, "-20%"),
+    ("r1_pct", "R1", "+", 20.0, "+20%"),
+    ("r1_pct", "R1", "-", -20.0, "-20%"),
+    ("r2_pct", "R2", "+", 20.0, "+20%"),
+    ("r2_pct", "R2", "-", -20.0, "-20%"),
+    ("ocv_offset_mv", "ocv_offset", "+", 2.0, "+2 mV"),
+    ("ocv_offset_mv", "ocv_offset", "-", -2.0, "-2 mV"),
+    ("ocv_offset_mv", "ocv_offset", "+", 5.0, "+5 mV"),
+    ("ocv_offset_mv", "ocv_offset", "-", -5.0, "-5 mV"),
+    ("hysteresis_amplitude_pct", "hysteresis_M", "+", 30.0, "+30%"),
+    ("hysteresis_amplitude_pct", "hysteresis_M", "-", -30.0, "-30%"),
+    ("hysteresis_gamma_pct", "hysteresis_gamma", "+", 50.0, "+50%"),
+    ("hysteresis_gamma_pct", "hysteresis_gamma", "-", -50.0, "-50%"),
+]
+
 
 def derive_scenario_noise_seed(base_seed: int, scenario_name: str, seed_index: int = 0) -> int:
     """Derive reproducible, scenario-specific noise seed from run seed, scenario name, and seed index."""
@@ -161,6 +197,7 @@ def load_assumptions(
         resolved_dict = yaml.safe_load(f) or {}
 
     # Apply profile if specified
+    prof_dict = {}
     if profile:
         profile_path = Path(profile)
         if not profile_path.is_absolute() and not profile_path.exists():
@@ -175,6 +212,7 @@ def load_assumptions(
             raise FileNotFoundError(f"Profile configuration file not found: {profile_path}")
 
     # Apply scenario if specified
+    scen_dict = {}
     if scenario_file:
         scen_path = Path(scenario_file)
         if not scen_path.is_absolute() and not scen_path.exists():
@@ -185,6 +223,15 @@ def load_assumptions(
                 resolved_dict = deep_merge(resolved_dict, scen_dict)
         else:
             raise FileNotFoundError(f"Scenario configuration file not found: {scen_path}")
+
+    # Ensure profile duty settings apply to scenario execution
+    if prof_dict and "duty" in prof_dict:
+        for d_key, d_val in prof_dict["duty"].items():
+            if d_key == "pulse_c_rate":
+                resolved_dict["duty"]["pulse_c_rate"] = copy.deepcopy(d_val)
+            elif d_key == "rest_duration_s" and profile == "bess":
+                if "duty" not in scen_dict or "rest_duration_s" not in scen_dict["duty"]:
+                    resolved_dict["duty"]["rest_duration_s"] = copy.deepcopy(d_val)
 
     # Apply CLI overrides: --set path.to.key=value
     if cli_overrides:

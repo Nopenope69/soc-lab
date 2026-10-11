@@ -1,0 +1,42 @@
+# T6 plateau-only current bias and drift test (strictly constrained to 30-70% SOC)
+duty:
+  cycle_type:
+    value: "plateau_stress"
+  initial_soc:
+    value: 0.50
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Mid-plateau start SOC"
+  soc_min_limit:
+    value: 0.30
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Lower SOC limit on plateau"
+  soc_max_limit:
+    value: 0.70
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Upper SOC limit on plateau"
+  total_duration_s:
+    value: 86400.0
+    unit: "s"
+    status: "assumed"
+    bounds: [10.0, 604800.0]
+    note: "24-hour evaluation duration"
+
+sensors:
+  current_offset_a:
+    value: 0.2
+    unit: "A"
+    status: "placeholder"
+    bounds: [-2.0, 2.0]
+    note: "Sensor current bias"
+  sample_period_s:
+    value: 10.0
+    unit: "s"
+    status: "placeholder"
+    bounds: [0.01, 60.0]
+    note: "Sampling period dt"

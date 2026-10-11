@@ -1,0 +1,31 @@
+# T3 BESS 24-hour stationary duty with partial cycles and long rests
+# Inherits cycle_type (minor_loops), pulse_c_rate (0.5), and rest_duration_s (3600.0) from BESS profile duty group.
+duty:
+  total_duration_s:
+    value: 86400.0
+    unit: "s"
+    status: "assumed"
+    bounds: [10.0, 604800.0]
+    note: "24-hour stationary BESS cycle"
+  initial_soc:
+    value: 0.50
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Initial SOC for 24h BESS profile"
+  soc_min_limit:
+    value: 0.30
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Lower partial cycle limit"
+  soc_max_limit:
+    value: 0.70
+    unit: "fraction"
+    status: "assumed"
+    bounds: [0.0, 1.0]
+    note: "Upper partial cycle limit"
+
+sensors:
+  sample_period_s:
+    value: 10.0
