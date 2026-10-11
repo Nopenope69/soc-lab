@@ -104,10 +104,10 @@ def get_git_commit_hash() -> str:
 
 
 def is_git_dirty() -> bool:
-    """Check if git working tree has uncommitted changes."""
+    """Check if git working tree has uncommitted changes in tracked files."""
     try:
         out = subprocess.check_output(
-            ["git", "status", "--porcelain"], stderr=subprocess.DEVNULL
+            ["git", "status", "--porcelain", "--untracked-files=no"], stderr=subprocess.DEVNULL
         ).decode("utf-8").strip()
         return len(out) > 0
     except Exception:
