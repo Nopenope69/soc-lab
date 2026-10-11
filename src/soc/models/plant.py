@@ -4,6 +4,14 @@ Estimator treatment of dropped samples:
 When `Measurement.dropout` is True, measurement fields `v`, `i`, and `temp_c` are NaN.
 Estimators MUST treat dropped samples by executing only the time-update (predict) step
 with zero current or held last current, and skip the measurement correction (update) step.
+
+Timing convention:
+- At sample k the plant applies current i_k to state x_k. The measurement carries
+  v_k = terminal voltage at x_k under i_k, and i_k.
+- Truth recorded at sample k is the state after the step, x_(k+1).
+- Estimator.step(v_k, i_k, T_k, dt) must return the estimate of x_(k+1), so it updates
+  on v_k using its prior for x_k, then propagates with i_k.
+- Metrics compare estimate k with truth k, which now refer to the same instant.
 """
 
 import warnings
