@@ -11,8 +11,10 @@ duty:
   rest_duration_s:
     value: 60.0
   total_duration_s:
-    value: 3600.0
+    value: 86400.0
 
 sensors:
   current_offset_a:
     value: 0.2
+  sample_period_s:
+    value: 10.0

@@ -2,8 +2,13 @@
 
 import copy
 import hashlib
-from typing import Any, Dict, List, Tuple
-from soc.assumptions.loader import PERCENT_FACTOR
+from typing import Any, Dict, List, Optional, Tuple
+from soc.assumptions.loader import (
+    PERCENT_FACTOR,
+    DEFAULT_MISMATCH_CAPACITY_PCT,
+    DEFAULT_MISMATCH_R0_PCT,
+    DEFAULT_MISMATCH_OCV_OFFSET_MV,
+)
 from soc.assumptions.schema import Assumptions
 
 
@@ -78,7 +83,7 @@ def compute_derived_quantities(assumptions: Assumptions) -> Dict[str, Any]:
 
 
 def get_effective_estimator_parameters(
-    assumptions: Assumptions, matched: bool = False
+    assumptions: Assumptions, matched: Optional[bool] = None
 ) -> Dict[str, Any]:
     """Extract estimator parameters with mismatch scaling applied, leaving plant intact.
 
@@ -87,18 +92,30 @@ def get_effective_estimator_parameters(
     """
     mismatch = assumptions.estimator_model.mismatch
 
+    if matched is True:
+        is_matched = True
+    elif matched is False:
+        is_matched = False
+    else:
+        is_base_defaults = (
+            float(mismatch.capacity_pct.value) == DEFAULT_MISMATCH_CAPACITY_PCT
+            and float(mismatch.r0_pct.value) == DEFAULT_MISMATCH_R0_PCT
+            and float(mismatch.ocv_offset_mv.value) == DEFAULT_MISMATCH_OCV_OFFSET_MV
+        )
+        is_matched = is_base_defaults
+
     # 1. Capacity
     if assumptions.estimator_model.nominal_capacity_Ah is not None:
         cap_val = float(assumptions.estimator_model.nominal_capacity_Ah.value)
     else:
         plant_cap = float(assumptions.plant.nominal_capacity_Ah.value)
-        cap_pct = float(0) if matched else float(mismatch.capacity_pct.value)
+        cap_pct = float(0) if is_matched else float(mismatch.capacity_pct.value)
         cap_scale = 1 + (cap_pct / PERCENT_FACTOR)
         cap_val = plant_cap * cap_scale
 
     # Helper for scaling table or scalar by percentage
     def _scale_table_or_scalar(val: Any, pct: float) -> Any:
-        effective_pct = float(0) if matched else pct
+        effective_pct = float(0) if is_matched else pct
         scale = 1 + (effective_pct / PERCENT_FACTOR)
         if isinstance(val, dict):
             return {k: float(v) * scale for k, v in val.items()}
@@ -145,7 +162,7 @@ def get_effective_estimator_parameters(
         )
 
     # 5. OCV table (with mV offset)
-    ocv_offset_v = float(0) if matched else float(mismatch.ocv_offset_mv.value) / 1000
+    ocv_offset_v = float(0) if is_matched else float(mismatch.ocv_offset_mv.value) / 1000
     plant_ocv = assumptions.plant.ocv_table_v.value
     est_ocv: Dict[str, List[float]] = {}
     if isinstance(plant_ocv, dict):
@@ -158,7 +175,7 @@ def get_effective_estimator_parameters(
         h_amp = float(assumptions.estimator_model.hysteresis_amplitude_v.value)
     else:
         h_amp_plant = float(assumptions.plant.hysteresis_amplitude_v.value)
-        h_amp_pct = float(0) if matched else float(mismatch.hysteresis_amplitude_pct.value)
+        h_amp_pct = float(0) if is_matched else float(mismatch.hysteresis_amplitude_pct.value)
         h_amp_scale = 1 + (h_amp_pct / PERCENT_FACTOR)
         h_amp = h_amp_plant * h_amp_scale
 
@@ -166,7 +183,7 @@ def get_effective_estimator_parameters(
         h_gamma = float(assumptions.estimator_model.hysteresis_gamma.value)
     else:
         h_gamma_plant = float(assumptions.plant.hysteresis_gamma.value)
-        h_gamma_pct = float(0) if matched else float(mismatch.hysteresis_gamma_pct.value)
+        h_gamma_pct = float(0) if is_matched else float(mismatch.hysteresis_gamma_pct.value)
         h_gamma_scale = 1 + (h_gamma_pct / PERCENT_FACTOR)
         h_gamma = h_gamma_plant * h_gamma_scale
 

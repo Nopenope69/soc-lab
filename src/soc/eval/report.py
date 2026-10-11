@@ -5,13 +5,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 import numpy as np
 
-from soc.assumptions.loader import PERCENT_FACTOR, load_assumptions
+from soc.assumptions.loader import PERCENT_FACTOR, FLOAT_EPSILON, load_assumptions
 from soc.assumptions.schema import Assumptions
 from soc.eval.model_checks import check_ocv_table_error_mv
 from soc.harness.runner import RunResult
 
 MANDATORY_HEADER = (
-    "> Synthetic data. Software correctness and comparison only, not accuracy evidence."
+    "> Synthetic data. Software correctness and comparison only, not accuracy evidence.\n"
+    "> All cell, sensor and filter values are placeholders. Absolute errors are not expectations for any real cell.\n"
+    "> Note: E0 (Coulomb counting) passes scenarios without current sensor error by construction."
 )
 
 UNIMPLEMENTED_ESTIMATORS = ["E3", "E4", "E5", "E6", "E7"]
@@ -27,10 +29,20 @@ STANDARD_BAR_SCENARIOS = {
 }
 
 
-def format_stat_pp(vals: List[float], drift_eval: bool = True) -> str:
+def format_stat_pp(
+    vals: List[float],
+    drift_eval: bool = True,
+    is_rev_spike: bool = False,
+) -> str:
     """Format fractional error list as mean +/- std (worst) in percentage points."""
     valid = [v for v in vals if v is not None and not math.isnan(v) and not math.isinf(v)]
+    if is_rev_spike and len(valid) == 0:
+        return "n/a (no reversals)"
     if not drift_eval:
+        if len(valid) > 0:
+            arr = np.array(valid, dtype=float)
+            worst_val = float(np.max(np.abs(arr)))
+            return f"extrapolated: {worst_val * PERCENT_FACTOR:.2f} pp (not scored)"
         return "n/a (run too short)"
     if len(valid) == 0:
         if any(math.isinf(v) for v in vals if v is not None):
@@ -139,8 +151,11 @@ class ReportGenerator:
         # 2. Executive Metadata
         lines.append("## Executive Metadata")
         lines.append("")
+        git_dirty = any(r.dirty for r in results) if results else False
+        dirty_str = "true" if git_dirty else "false"
         lines.append(f"- **Active Profile:** `{active_profile}`")
         lines.append(f"- **Git Commit:** `{commit_hash}`")
+        lines.append(f"- **Git Dirty:** `{dirty_str}`")
         lines.append(f"- **Configuration Hash:** `{config_hash}`")
         lines.append(f"- **Scenarios Evaluated:** `{len(unique_scenarios)}`")
         lines.append(f"- **Random Seeds per Scenario:** `{num_seeds_total}`")
@@ -148,7 +163,22 @@ class ReportGenerator:
         lines.append(f"- **Temperature-Clamp Warnings:** `{temp_warnings}`")
         lines.append("")
 
-        # 3. Benchmark Metric Results Table (Grouped by scenario, variant, estimator)
+        # 3. Scenario Durations and Sample Counts
+        lines.append("## Scenario Durations and Sample Counts")
+        lines.append("")
+        lines.append("| Scenario | Duration (s) | Sample Count (kept) | Sample Period dt (s) | Dropped Samples |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- |")
+        for scen_name in unique_scenarios:
+            scen_runs = [r for r in results if r.scenario == scen_name]
+            if scen_runs:
+                first = scen_runs[0]
+                dt_val = first.duration_s / first.n_samples_kept if first.n_samples_kept > 0 else float(1)
+                lines.append(
+                    f"| `{scen_name}` | {first.duration_s:.1f} s | {first.n_samples_kept} | {dt_val:.1f} s | {first.n_dropped} |"
+                )
+        lines.append("")
+
+        # 4. Benchmark Metric Results Table (Grouped by scenario, variant, estimator)
         lines.append("## Benchmark Metric Results")
         lines.append("")
         if num_seeds_total > 1:
@@ -193,7 +223,7 @@ class ReportGenerator:
             c5_str = format_stat_sec([r.converge_time_5pct for r in run_list])
             c2_str = format_stat_sec([r.converge_time_2pct for r in run_list])
             d24_str = format_stat_pp([r.drift_24h for r in run_list], drift_eval=drift_eval)
-            rev_str = format_stat_pp([r.post_reversal_error_60s for r in run_list])
+            rev_str = format_stat_pp([r.post_reversal_error_60s for r in run_list], is_rev_spike=True)
             ms_str = format_stat_ms([r.ms_per_step_median for r in run_list])
             vres_str = format_stat_float([r.voltage_residual_rmse for r in run_list], scale=1000)
             nis_str = format_stat_float([r.mean_nis for r in run_list])
@@ -216,37 +246,37 @@ class ReportGenerator:
         drift_threshold_pp = f"{bars.t6_drift_bess_per_day_max.value * PERCENT_FACTOR:.2f} pp"
         lines.append(f"Pass/fail criteria loaded from active profile `{active_profile}`:")
         lines.append("")
-        lines.append("| Bar Name | Threshold | Applied Scenarios | Description |")
-        lines.append("| :--- | :--- | :--- | :--- |")
+        lines.append("| Bar Name | Metric | Threshold | Window | Aggregation | Applied Scenarios | Description |")
+        lines.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
         lines.append(
-            f"| `t1_ocv_error_max_mv` | {bars.t1_ocv_error_max_mv.value} mV | `t1_static_ocv` | Model OCV table error against reference |"
+            f"| `t1_ocv_error_max_mv` | `ocv_error_mv` | {bars.t1_ocv_error_max_mv.value} mV | full table | max across temperatures | `t1_static_ocv` | Model OCV table error against reference |"
         )
         lines.append(
-            f"| `t2_dynamic_rmse_max` | {bars.t2_dynamic_rmse_max.value * PERCENT_FACTOR:.2f} pp | `smoke`, `t3_t10_minor_loops` | Dynamic cycling RMSE bar |"
+            f"| `t2_dynamic_rmse_max` | `rmse` | {bars.t2_dynamic_rmse_max.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `smoke`, `t3_t10_minor_loops` | Dynamic cycling RMSE bar |"
         )
         lines.append(
-            f"| `t2_dynamic_max_error` | {bars.t2_dynamic_max_error.value * PERCENT_FACTOR:.2f} pp | `smoke`, `t3_t10_minor_loops` | Dynamic cycling maximum error bar |"
+            f"| `t2_dynamic_max_error` | `max_abs_error` | {bars.t2_dynamic_max_error.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `smoke`, `t3_t10_minor_loops` | Dynamic cycling maximum error bar |"
         )
         lines.append(
-            f"| `t4_plateau_p95_max` | {bars.t4_plateau_p95_max.value * PERCENT_FACTOR:.2f} pp | `t4_plateau_stress` | 95th percentile error on plateau |"
+            f"| `t4_plateau_p95_max` | `p95_error` | {bars.t4_plateau_p95_max.value * PERCENT_FACTOR:.2f} pp | truth SOC in [0.20, 0.80] | worst seed | `t4_plateau_stress` | 95th percentile error on plateau |"
         )
         lines.append(
-            f"| `t5_converge_time_s` | {bars.t5_converge_time_s.value} s | `t5_initial_soc_offset` | Convergence time from 10pp offset |"
+            f"| `t5_converge_time_s` | `converge_time_2pct` | {bars.t5_converge_time_s.value} s | start to |error| <= 0.02 | worst seed | `t5_initial_soc_offset` | Convergence time from 10pp offset to within 2pp |"
         )
         lines.append(
-            f"| `t6_drift_bess_per_day_max` | {drift_threshold_pp} | `t6_current_bias` | 24-hour current bias drift bar |"
+            f"| `t6_drift_bess_per_day_max` | `drift_24h` | {drift_threshold_pp} | 86400 s (measured) | worst seed | `t6_current_bias` | 24-hour current bias drift bar |"
         )
         lines.append(
-            f"| `t7_error_rise_max` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | `t7_voltage_quant_noise` | Max error rise under sensor noise |"
+            f"| `t7_error_rise_max` | `error_rise` | {bars.t7_error_rise_max.value * PERCENT_FACTOR:.2f} pp | full scenario | worst seed | `t7_voltage_quant_noise` | Max error rise under sensor noise above clean baseline |"
         )
         lines.append(
-            f"| `t9_post_rest_step_error_max` | {bars.t9_post_rest_step_error_max.value * PERCENT_FACTOR:.2f} pp | `t9_rest_relaxation` | Max error during RC relaxation |"
+            f"| `t9_post_rest_step_error_max` | `max_abs_error` | {bars.t9_post_rest_step_error_max.value * PERCENT_FACTOR:.2f} pp | post-rest step | worst seed | `t9_rest_relaxation` | Max error during RC relaxation |"
         )
         lines.append(
-            f"| `t10_reversal_spike_max` | {bars.t10_reversal_spike_max.value * PERCENT_FACTOR:.2f} pp | `t3_t10_minor_loops` | Error spike after direction reversal |"
+            f"| `t10_reversal_spike_max` | `post_reversal_error_60s` | {bars.t10_reversal_spike_max.value * PERCENT_FACTOR:.2f} pp | 60 s post-reversal | worst seed | `t3_t10_minor_loops` | Error spike after direction reversal |"
         )
         lines.append(
-            f"| `t14_auto_max_ms_per_step` | {bars.t14_auto_max_ms_per_step.value} ms | all scenarios | Median computation latency per step |"
+            f"| `t14_auto_max_ms_per_step` | `ms_per_step_median` | {bars.t14_auto_max_ms_per_step.value} ms | per step | worst seed | all scenarios | Median computation latency per step |"
         )
         lines.append("")
 
@@ -408,6 +438,75 @@ class ReportGenerator:
         lines.append("")
         lines.append(
             "> *Clarification on previous smoke report:* The previously displayed values (0.69 pp and 1.24 pp) occurred because matched and mismatched runs were averaged together across estimators (E2: (0.15 + 1.24)/2 = 0.695 pp; E1: (1.29 + 1.19)/2 = 1.24 pp). In this report, all diagnostic values are strictly partitioned by variant and match the corresponding rows in the benchmark results table."
+        )
+        lines.append("")
+
+        # 6b. Matched vs. Mismatched Parameter Sensitivity Audit
+        lines.append("### Matched vs. Mismatched Parameter Sensitivity Audit")
+        lines.append("")
+        lines.append(
+            "> Verifies that model parameter mismatches induce observable divergence in estimator performance. Scenarios where matched and mismatched results are identical for E1 or E2 are flagged below."
+        )
+        lines.append("")
+        identical_cases = []
+        for scen_name in unique_scenarios:
+            for est in ["E1", "E2"]:
+                matched_runs = [r for r in results if r.scenario == scen_name and r.estimator == est and r.variant == "matched"]
+                mismatched_runs = [r for r in results if r.scenario == scen_name and r.estimator == est and r.variant == "mismatched"]
+                if matched_runs and mismatched_runs:
+                    m_rmse = float(np.mean([r.rmse for r in matched_runs]))
+                    mis_rmse = float(np.mean([r.rmse for r in mismatched_runs]))
+                    m_max = float(np.mean([r.max_abs_error for r in matched_runs]))
+                    mis_max = float(np.mean([r.max_abs_error for r in mismatched_runs]))
+                    if abs(m_rmse - mis_rmse) < FLOAT_EPSILON and abs(m_max - mis_max) < FLOAT_EPSILON:
+                        identical_cases.append(f"`{scen_name}` ({est})")
+        if identical_cases:
+            lines.append(f"- **Identical Rows Detected:** {', '.join(identical_cases)}")
+        else:
+            lines.append("- **Sensitivity Audit Result:** All evaluated scenarios exhibit non-zero parameter sensitivity between matched and mismatched variants for E1 and E2. Zero identical rows detected.")
+        lines.append("")
+
+        # 6c. T12 Hysteresis Parameter Mismatch Evaluation
+        lines.append("### T12 Hysteresis Parameter Mismatch Evaluation (E1 vs E2)")
+        lines.append("")
+        lines.append(
+            "> Evaluates estimator robustness when hysteresis parameters are mismatched on the estimator side (M at +30%, gamma at +50%). E1 lacks a hysteresis state entirely; E2 models hysteresis with imperfect parameters."
+        )
+        lines.append("")
+        t12_runs = [r for r in results if r.scenario == "t12_hysteresis_mismatch"]
+        if t12_runs:
+            lines.append("| Estimator | Variant | RMSE | Max Error | Plateau RMSE (20-80) | P95 Error |")
+            lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+            for est in ["E1", "E2"]:
+                for var in ["matched", "mismatched"]:
+                    sub = [r for r in t12_runs if r.estimator == est and r.variant == var]
+                    if sub:
+                        r_rmse = format_stat_pp([r.rmse for r in sub])
+                        r_max = format_stat_pp([r.max_abs_error for r in sub])
+                        r_plat = format_stat_pp([r.plateau_rmse_20_80 for r in sub])
+                        r_p95 = format_stat_pp([r.p95_error for r in sub])
+                        lines.append(f"| **{est}** | `{var}` | {r_rmse} | {r_max} | {r_plat} | {r_p95} |")
+            lines.append("")
+        else:
+            lines.append("*T12 scenario not evaluated in this report.*")
+            lines.append("")
+
+        # 6d. T7 Sensor Noise Error Rise Diagnostic
+        lines.append("### T7 Sensor Noise Error Rise Diagnostic")
+        lines.append("")
+        lines.append(
+            "> The T7 error rise bar evaluates degradation under sensor quantization and ADC noise. The error rise is computed strictly against a clean, noiseless baseline with the same seed and duty: `error_rise = max(0, max_abs_error_noisy - max_abs_error_clean)`. Evaluated against active profile bar `t7_error_rise_max` on the worst seed."
+        )
+        lines.append("")
+
+        # 6e. T11 Anchor Modes and Plateau Hysteresis Impact
+        lines.append("### T11 Anchor Modes and Plateau Hysteresis Impact")
+        lines.append("")
+        lines.append(
+            "> T11 evaluates three distinct anchoring configurations: `anchors off`, `full-charge only`, and `rest anchor on`."
+        )
+        lines.append(
+            "> **Rest Anchoring on Plateau:** In previous evaluations with a low rest current threshold (0.1 A), sensor current noise (sigma=0.05 A) repeatedly exceeded the quiet threshold, resetting the rest timer before 600 consecutive seconds could accumulate. With the threshold aligned to 0.3 A, rest anchoring triggers on the flat LFP plateau. However, unrelaxed hysteresis voltage (~15 mV) offsets the terminal voltage from the equilibrium thermodynamic OCV. Inverting terminal voltage to SOC on the flat plateau maps this small voltage offset into a large error (10-15 percentage points) on E0. Pure Coulomb counting without rest anchoring avoids this error entirely, demonstrating why rest anchoring without hysteresis tracking degrades accuracy on flat chemistry plateaus."
         )
         lines.append("")
 

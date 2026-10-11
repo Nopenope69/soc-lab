@@ -95,3 +95,43 @@ def test_t1_check_3mv_mismatch_scenario():
         assert max_mv == pytest.approx(3.0, abs=1e-9)
         assert rms_mv == pytest.approx(3.0, abs=1e-9)
 
+
+def test_mismatched_variant_with_all_zero_mismatch_raises_error():
+    """Verify that runner raises ValueError if mismatched variant is evaluated with all-zero mismatch."""
+    from soc.assumptions.loader import load_assumptions
+    from soc.harness.generator import DutyCycleGenerator
+    from soc.models.plant import PlantSimulator
+
+    runner = ScenarioRunner()
+    cli_overrides = [
+        "estimator_model.mismatch.capacity_pct.value=0.0",
+        "estimator_model.mismatch.r0_pct.value=0.0",
+        "estimator_model.mismatch.r1_pct.value=0.0",
+        "estimator_model.mismatch.r2_pct.value=0.0",
+        "estimator_model.mismatch.ocv_offset_mv.value=0.0",
+        "estimator_model.mismatch.hysteresis_amplitude_pct.value=0.0",
+        "estimator_model.mismatch.hysteresis_gamma_pct.value=0.0",
+    ]
+    assumptions, _, _ = load_assumptions(cli_overrides=cli_overrides)
+    meas, truths, times, _, _ = runner.generate_scenario_stream(assumptions, "smoke")
+
+    with pytest.raises(ValueError, match="all-zero mismatch"):
+        runner.evaluate_estimator_on_stream("E1", "mismatched", assumptions, meas, truths, times)
+
+
+def test_t3_generator_output_reversal_count():
+    """Verify that the duty cycle generator output for t3_t10_minor_loops produces expected reversal count of 2."""
+    from soc.assumptions.loader import load_assumptions
+    from soc.eval.metrics import detect_reversals
+
+    runner = ScenarioRunner()
+    scen_path = runner.config_dir / "scenarios" / "t3_t10_minor_loops.yaml"
+    assumptions, _, _ = load_assumptions(scenario_file=scen_path)
+
+    meas, _, _, _, _ = runner.generate_scenario_stream(assumptions, "t3_t10_minor_loops")
+    currents = [m.i for m in meas if not m.dropout]
+    deadband = float(assumptions.filter.reversal_min_current_a.value)
+
+    reversals = detect_reversals(currents, deadband=deadband)
+    assert len(reversals) == 2
+

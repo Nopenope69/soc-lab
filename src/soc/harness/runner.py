@@ -1,5 +1,4 @@
-"""Scenario execution engine, identical measurement stream distribution, and metric logger."""
-
+import copy
 import csv
 from dataclasses import dataclass, asdict
 import math
@@ -21,6 +20,7 @@ from soc.assumptions.loader import (
     derive_scenario_noise_seed,
     get_default_config_dir,
     get_git_commit_hash,
+    is_git_dirty,
     load_assumptions,
 )
 from soc.assumptions.schema import Assumptions
@@ -29,6 +29,7 @@ from soc.estimators.registry import get_estimator
 from soc.eval.metrics import (
     converge_time_2pct,
     converge_time_5pct,
+    detect_reversals,
     drift_24h,
     mae,
     max_abs_error,
@@ -75,6 +76,9 @@ class RunResult:
     mean_nis: float
     pass_all_bars: bool
     failed_bars: str
+    dirty: bool = False
+    reversal_count: int = 0
+    error_rise: float = float("nan")
 
 
 class ScenarioRunner:
@@ -134,6 +138,20 @@ class ScenarioRunner:
     ) -> Tuple[Dict[str, float], Dict[str, float], Dict[str, Any]]:
         """Run single estimator over measurement stream with timing and error filtering."""
         is_matched = variant == "matched"
+        if not is_matched:
+            mism = assumptions.estimator_model.mismatch
+            mism_fields = [
+                "capacity_pct",
+                "r0_pct",
+                "r1_pct",
+                "r2_pct",
+                "ocv_offset_mv",
+                "hysteresis_amplitude_pct",
+                "hysteresis_gamma_pct",
+            ]
+            if all(float(getattr(mism, f).value) == float(0) for f in mism_fields):
+                raise ValueError("Mismatched variant evaluated with all-zero mismatch configuration.")
+
         params = ParamSet.from_assumptions(assumptions, matched=is_matched)
         estimator = get_estimator(estimator_name, params)
 
@@ -179,16 +197,27 @@ class ScenarioRunner:
             else DEFAULT_DRIFT_MIN_RUN_S
         )
         drift_evaluated = duration_s >= drift_min_s
-
-        if drift_evaluated:
-            d24 = drift_24h(kept_truth, kept_est, kept_times, seconds_per_day=SECONDS_PER_DAY)
-        else:
-            d24 = float("nan")
+        d24 = (
+            drift_24h(kept_truth, kept_est, kept_times, seconds_per_day=SECONDS_PER_DAY)
+            if drift_evaluated
+            else float("nan")
+        )
 
         # Metric calculations
         th_2pct = float(assumptions.filter.convergence_threshold_2pct.value)
         th_5pct = float(assumptions.filter.convergence_threshold_5pct.value)
         deadband = float(assumptions.filter.reversal_min_current_a.value)
+
+        # Reversals detection
+        reversal_indices = detect_reversals(kept_currents, deadband=deadband)
+        reversal_cnt = len(reversal_indices)
+        post_rev_err = (
+            post_reversal_error_60s(
+                kept_truth, kept_est, kept_times, kept_currents, deadband=deadband
+            )
+            if reversal_cnt > 0
+            else float("nan")
+        )
 
         # Warm-up handling for timing
         warmup = (
@@ -213,9 +242,7 @@ class ScenarioRunner:
             "converge_time_2pct": converge_time_2pct(kept_truth, kept_est, kept_times, threshold=th_2pct),
             "converge_time_5pct": converge_time_5pct(kept_truth, kept_est, kept_times, threshold=th_5pct),
             "drift_24h": d24,
-            "post_reversal_error_60s": post_reversal_error_60s(
-                kept_truth, kept_est, kept_times, kept_currents, deadband=deadband
-            ),
+            "post_reversal_error_60s": post_rev_err,
             "ms_per_step_mean": float(np.mean(timed_durations)) if timed_durations else float(0),
             "ms_per_step_median": float(np.median(timed_durations)) if timed_durations else float(0),
         }
@@ -242,6 +269,7 @@ class ScenarioRunner:
             "n_samples_kept": n_samples_kept,
             "n_dropped": n_dropped,
             "drift_evaluated": drift_evaluated,
+            "reversal_count": reversal_cnt,
         }
         return metrics, diag, meta
 
@@ -251,6 +279,8 @@ class ScenarioRunner:
         metrics: Dict[str, float],
         assumptions: Assumptions,
         drift_evaluated: bool = True,
+        reversal_count: int = 0,
+        error_rise: float = float("nan"),
     ) -> Tuple[bool, List[str]]:
         """Evaluate applicable pass/fail bars from active profile for scenario."""
         bars = assumptions.bars
@@ -271,10 +301,10 @@ class ScenarioRunner:
             if metrics["p95_error"] > t4_max:
                 failed.append("t4_plateau_p95_max")
 
-        # T5 Convergence time
+        # T5 Convergence time (uses converge_time_2pct per plan)
         if scenario_name in ["t5_initial_soc_offset"]:
             t5_max_s = float(bars.t5_converge_time_s.value)
-            if metrics["converge_time_5pct"] > t5_max_s:
+            if metrics["converge_time_2pct"] > t5_max_s:
                 failed.append("t5_converge_time_s")
 
         # T6 Current bias drift (only if duration meets drift_min_run_s)
@@ -283,10 +313,10 @@ class ScenarioRunner:
             if abs(metrics["drift_24h"]) > t6_drift_max:
                 failed.append("t6_drift_bess_per_day_max")
 
-        # T7 Voltage quantisation noise
+        # T7 Voltage quantisation noise error rise (compared against clean baseline)
         if scenario_name in ["t7_voltage_quant_noise"]:
             t7_rise_max = float(bars.t7_error_rise_max.value)
-            if metrics["max_abs_error"] > t7_rise_max:
+            if not math.isnan(error_rise) and error_rise > t7_rise_max:
                 failed.append("t7_error_rise_max")
 
         # T9 Post rest step error
@@ -295,8 +325,8 @@ class ScenarioRunner:
             if metrics["max_abs_error"] > t9_post_max:
                 failed.append("t9_post_rest_step_error_max")
 
-        # T10 Reversal spike
-        if scenario_name in ["t3_t10_minor_loops"]:
+        # T10 Reversal spike (only if reversal_count > 0)
+        if scenario_name in ["t3_t10_minor_loops"] and reversal_count > 0:
             t10_spike_max = float(bars.t10_reversal_spike_max.value)
             if metrics["post_reversal_error_60s"] > t10_spike_max:
                 failed.append("t10_reversal_spike_max")
@@ -333,6 +363,7 @@ class ScenarioRunner:
             profile=profile, scenario_file=scen_path, cli_overrides=cli_overrides
         )
         commit = get_git_commit_hash()
+        dirty = is_git_dirty()
         status_counts = count_assumption_statuses(raw_dict)
         profile_label = profile or "automotive"
 
@@ -345,58 +376,112 @@ class ScenarioRunner:
 
         results: List[RunResult] = []
 
+        if scen_clean == "t11_anchor_toggle":
+            anchor_modes = [
+                ("anchors off", False, False),
+                ("full-charge only", True, False),
+                ("rest anchor on", True, True),
+            ]
+        else:
+            anchor_modes = [
+                (
+                    None,
+                    bool(assumptions.soc_definition.anchor_enabled.value),
+                    bool(assumptions.soc_definition.rest_anchor_enabled.value),
+                )
+            ]
+
         for s_idx in range(n_seeds):
             # Generate single shared measurement stream for (scenario, s_idx)
             measurements, truths, times, temp_warnings, noise_seed = self.generate_scenario_stream(
                 assumptions, scen_clean, seed_index=s_idx
             )
 
-            for variant in active_variants:
-                for est_name in active_estimators:
-                    metrics, diag, meta = self.evaluate_estimator_on_stream(
-                        estimator_name=est_name,
-                        variant=variant,
-                        assumptions=assumptions,
-                        measurements=measurements,
-                        truths=truths,
-                        times=times,
-                    )
-                    passed, failed_list = self.check_pass_bars(
-                        scen_clean, metrics, assumptions, drift_evaluated=meta["drift_evaluated"]
-                    )
-                    res = RunResult(
-                        scenario=scen_clean,
-                        estimator=est_name,
-                        variant=variant,
-                        profile=profile_label,
-                        config_hash=config_hash,
-                        git_commit=commit,
-                        noise_seed=noise_seed,
-                        seed_index=s_idx,
-                        duration_s=meta["duration_s"],
-                        n_samples_kept=meta["n_samples_kept"],
-                        n_dropped=meta["n_dropped"],
-                        drift_evaluated=meta["drift_evaluated"],
-                        placeholder_count=status_counts["placeholder"],
-                        assumed_count=status_counts["assumed"],
-                        temp_clamp_warnings=temp_warnings,
-                        rmse=metrics["rmse"],
-                        mae=metrics["mae"],
-                        max_abs_error=metrics["max_abs_error"],
-                        p95_error=metrics["p95_error"],
-                        plateau_rmse_20_80=metrics["plateau_rmse_20_80"],
-                        converge_time_2pct=metrics["converge_time_2pct"],
-                        converge_time_5pct=metrics["converge_time_5pct"],
-                        drift_24h=metrics["drift_24h"],
-                        post_reversal_error_60s=metrics["post_reversal_error_60s"],
-                        ms_per_step_mean=metrics["ms_per_step_mean"],
-                        ms_per_step_median=metrics["ms_per_step_median"],
-                        voltage_residual_rmse=diag["voltage_residual_rmse"],
-                        mean_nis=diag["mean_nis"],
-                        pass_all_bars=passed,
-                        failed_bars=";".join(failed_list),
-                    )
-                    results.append(res)
+            clean_meas, clean_truths, clean_times = None, None, None
+            if scen_clean == "t7_voltage_quant_noise":
+                clean_assump = copy.deepcopy(assumptions)
+                clean_assump.sensors.current_noise_sigma_a.value = float(0)
+                clean_assump.sensors.voltage_noise_sigma_v.value = float(0)
+                clean_assump.sensors.voltage_quantisation_v.value = float(0)
+                clean_assump.sensors.dropout_rate.value = float(0)
+                clean_assump.sensors.temperature_noise_sigma_c.value = float(0)
+                clean_meas, clean_truths, clean_times, _, _ = self.generate_scenario_stream(
+                    clean_assump, scen_clean, seed_index=s_idx
+                )
+
+            for mode_label, anchor_en, rest_en in anchor_modes:
+                mode_assumptions = copy.deepcopy(assumptions)
+                mode_assumptions.soc_definition.anchor_enabled.value = anchor_en
+                mode_assumptions.soc_definition.rest_anchor_enabled.value = rest_en
+                display_scenario = f"t11_anchor_toggle [{mode_label}]" if mode_label else scen_clean
+
+                for variant in active_variants:
+                    for est_name in active_estimators:
+                        metrics, diag, meta = self.evaluate_estimator_on_stream(
+                            estimator_name=est_name,
+                            variant=variant,
+                            assumptions=mode_assumptions,
+                            measurements=measurements,
+                            truths=truths,
+                            times=times,
+                        )
+
+                        err_rise = float("nan")
+                        if clean_meas is not None:
+                            clean_metrics, _, _ = self.evaluate_estimator_on_stream(
+                                estimator_name=est_name,
+                                variant=variant,
+                                assumptions=clean_assump,
+                                measurements=clean_meas,
+                                truths=clean_truths,
+                                times=clean_times,
+                            )
+                            err_rise = max(float(0), metrics["max_abs_error"] - clean_metrics["max_abs_error"])
+
+                        passed, failed_list = self.check_pass_bars(
+                            scen_clean,
+                            metrics,
+                            mode_assumptions,
+                            drift_evaluated=meta["drift_evaluated"],
+                            reversal_count=meta["reversal_count"],
+                            error_rise=err_rise,
+                        )
+                        res = RunResult(
+                            scenario=display_scenario,
+                            estimator=est_name,
+                            variant=variant,
+                            profile=profile_label,
+                            config_hash=config_hash,
+                            git_commit=commit,
+                            noise_seed=noise_seed,
+                            seed_index=s_idx,
+                            duration_s=meta["duration_s"],
+                            n_samples_kept=meta["n_samples_kept"],
+                            n_dropped=meta["n_dropped"],
+                            drift_evaluated=meta["drift_evaluated"],
+                            placeholder_count=status_counts["placeholder"],
+                            assumed_count=status_counts["assumed"],
+                            temp_clamp_warnings=temp_warnings,
+                            rmse=metrics["rmse"],
+                            mae=metrics["mae"],
+                            max_abs_error=metrics["max_abs_error"],
+                            p95_error=metrics["p95_error"],
+                            plateau_rmse_20_80=metrics["plateau_rmse_20_80"],
+                            converge_time_2pct=metrics["converge_time_2pct"],
+                            converge_time_5pct=metrics["converge_time_5pct"],
+                            drift_24h=metrics["drift_24h"],
+                            post_reversal_error_60s=metrics["post_reversal_error_60s"],
+                            ms_per_step_mean=metrics["ms_per_step_mean"],
+                            ms_per_step_median=metrics["ms_per_step_median"],
+                            voltage_residual_rmse=diag["voltage_residual_rmse"],
+                            mean_nis=diag["mean_nis"],
+                            pass_all_bars=passed,
+                            failed_bars=";".join(failed_list),
+                            dirty=dirty,
+                            reversal_count=meta["reversal_count"],
+                            error_rise=err_rise,
+                        )
+                        results.append(res)
 
         return results
 
@@ -418,6 +503,7 @@ class ScenarioRunner:
             "t7_voltage_quant_noise",
             "t9_rest_relaxation",
             "t11_anchor_toggle",
+            "t12_hysteresis_mismatch",
         ]
         all_res: List[RunResult] = []
         for scen in standard_scenarios:

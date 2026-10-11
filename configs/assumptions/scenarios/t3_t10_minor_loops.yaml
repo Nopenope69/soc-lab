@@ -11,4 +11,4 @@ duty:
   pulse_c_rate:
     value: 0.5
   total_duration_s:
-    value: 600.0
+    value: 3600.0

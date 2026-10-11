@@ -163,19 +163,19 @@ duty:
 estimator_model:
   mismatch:
     capacity_pct:
-      value: 0.0
+      value: -5.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
       note: "Estimated capacity mismatch percentage"
     r0_pct:
-      value: 0.0
+      value: 10.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
       note: "Estimated R0 mismatch percentage"
     r1_pct:
-      value: 0.0
+      value: 10.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
@@ -187,7 +187,7 @@ estimator_model:
       bounds: [-50.0, 50.0]
       note: "Estimated tau1 mismatch percentage"
     r2_pct:
-      value: 0.0
+      value: 10.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
@@ -199,19 +199,19 @@ estimator_model:
       bounds: [-50.0, 50.0]
       note: "Estimated tau2 mismatch percentage"
     ocv_offset_mv:
-      value: 0.0
+      value: 5.0
       unit: "mV"
       status: "placeholder"
       bounds: [-100.0, 100.0]
       note: "Estimated OCV offset mismatch in mV"
     hysteresis_amplitude_pct:
-      value: 0.0
+      value: 10.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
       note: "Estimated hysteresis amplitude mismatch"
     hysteresis_gamma_pct:
-      value: 0.0
+      value: 10.0
       unit: "%"
       status: "placeholder"
       bounds: [-50.0, 50.0]
@@ -494,7 +494,7 @@ run:
 
 metrics:
   drift_min_run_s:
-    value: 3600.0
+    value: 86400.0
     unit: "s"
     status: "placeholder"
     bounds: [60.0, 86400.0]

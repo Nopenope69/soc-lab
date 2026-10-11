@@ -20,7 +20,11 @@ DEFAULT_PERCENTILE_95 = 95.0
 DEFAULT_PLATEAU_MIN = 0.20
 DEFAULT_PLATEAU_MAX = 0.80
 DEFAULT_WARMUP_COUNT = 10
-DEFAULT_DRIFT_MIN_RUN_S = 3600.0
+DEFAULT_DRIFT_MIN_RUN_S = 86400.0
+DEFAULT_MISMATCH_CAPACITY_PCT = -5.0
+DEFAULT_MISMATCH_R0_PCT = 10.0
+DEFAULT_MISMATCH_OCV_OFFSET_MV = 5.0
+FLOAT_EPSILON = 1e-6
 
 
 def derive_scenario_noise_seed(base_seed: int, scenario_name: str, seed_index: int = 0) -> int:
@@ -97,6 +101,17 @@ def get_git_commit_hash() -> str:
         return commit
     except Exception:
         return "uncommitted"
+
+
+def is_git_dirty() -> bool:
+    """Check if git working tree has uncommitted changes."""
+    try:
+        out = subprocess.check_output(
+            ["git", "status", "--porcelain"], stderr=subprocess.DEVNULL
+        ).decode("utf-8").strip()
+        return len(out) > 0
+    except Exception:
+        return False
 
 
 def count_assumption_statuses(data: Any) -> Dict[str, int]:

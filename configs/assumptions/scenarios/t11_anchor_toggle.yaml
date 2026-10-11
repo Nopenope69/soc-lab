@@ -18,5 +18,7 @@ soc_definition:
     value: true
   rest_anchor_enabled:
     value: true
+  rest_current_threshold_a:
+    value: 0.3
   rest_duration_threshold_s:
     value: 600.0

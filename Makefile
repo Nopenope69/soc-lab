@@ -17,7 +17,8 @@ smoke:
 	$(PYTHON) -m soc.cli run --scenario configs/assumptions/scenarios/smoke.yaml --report reports/smoke_report.md --csv reports/smoke_results.csv
 
 full:
-	$(PYTHON) -m soc.cli run --all --seeds 10 --report reports/full_report.md --csv reports/full_results.csv
+	$(PYTHON) -m soc.cli run --all --profile automotive --seeds 10 --report reports/automotive_report.md --csv reports/automotive_results.csv
+	$(PYTHON) -m soc.cli run --all --profile bess --seeds 10 --report reports/bess_report.md --csv reports/bess_results.csv
 
 clean:
 	rm -rf build dist *.egg-info .pytest_cache
