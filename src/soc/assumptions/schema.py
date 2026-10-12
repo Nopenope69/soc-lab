@@ -181,6 +181,27 @@ class FilterAssumptions(BaseModel):
     convergence_threshold_2pct: AssumptionEntry
     convergence_threshold_5pct: AssumptionEntry
     reversal_min_current_a: AssumptionEntry
+    rbc_use_hysteresis_state: AssumptionEntry
+    rbc_q_theta: AssumptionEntry
+    rbc_r_theta: AssumptionEntry
+    rbc_initial_theta_std: AssumptionEntry
+    q_theta: Optional[AssumptionEntry] = None
+    r_theta: Optional[AssumptionEntry] = None
+    initial_theta_std: Optional[AssumptionEntry] = None
+    e5_enable_r_inflation: AssumptionEntry
+    e5_enable_slope_gating: AssumptionEntry
+    e5_enable_step_cap: AssumptionEntry
+    e5_sigma_ocv_model_v: AssumptionEntry
+    e5_slope_ref: AssumptionEntry
+    e5_max_soc_step: AssumptionEntry
+    e5_use_observability_cap: AssumptionEntry
+    e5_cap_plateau: AssumptionEntry
+    e5_cap_knee: AssumptionEntry
+    sigma_ocv_model_v: Optional[AssumptionEntry] = None
+    slope_ref: Optional[AssumptionEntry] = None
+    max_soc_step: Optional[AssumptionEntry] = None
+    cap_plateau: Optional[AssumptionEntry] = None
+    cap_knee: Optional[AssumptionEntry] = None
 
 
 class SocDefinitionAssumptions(BaseModel):

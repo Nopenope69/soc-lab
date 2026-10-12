@@ -1,0 +1,20 @@
+# T5 knee crossing scenario: 10 pp initial SOC offset with discharge crossing the lower knee
+duty:
+  cycle_type:
+    value: "knee_crossing"
+  initial_soc:
+    value: 0.25
+  pulse_c_rate:
+    value: 0.5
+    reason: "continuous discharge to cross lower knee from plateau into steep region"
+  total_duration_s:
+    value: 1440.0
+    reason: "1440s at 0.5C discharges 20 pp SOC, driving cell from 0.25 to 0.05 without violating 0.02 lower bound"
+
+plant:
+  initial_soc:
+    value: 0.25
+
+filter:
+  initial_soc_offset:
+    value: 0.10

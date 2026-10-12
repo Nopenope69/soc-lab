@@ -63,6 +63,23 @@ class ParamSet:
     full_charge_anchor_enabled: bool = True
     full_charge_hold_s: float = 60.0
 
+    # RBC DEKF (E6) tunings
+    rbc_use_hysteresis_state: bool = True
+    rbc_q_theta: float = float(0)
+    rbc_r_theta: float = float(0)
+    rbc_initial_theta_std: float = float(0)
+
+    # Observability-gated EKF (E5) tunings
+    e5_enable_r_inflation: bool = True
+    e5_enable_slope_gating: bool = True
+    e5_enable_step_cap: bool = True
+    e5_sigma_ocv_model_v: float = float(0)
+    e5_slope_ref: float = float(0)
+    e5_max_soc_step: float = float(0)
+    e5_use_observability_cap: bool = True
+    e5_cap_plateau: float = float(0)
+    e5_cap_knee: float = float(0)
+
     @classmethod
     def from_assumptions(cls, assumptions: Assumptions, matched: bool = True) -> "ParamSet":
         """Construct estimator parameter set from resolved assumptions."""
@@ -78,6 +95,71 @@ class ParamSet:
             float(assumptions.run.full_charge_hold_s.value)
             if hasattr(assumptions.run, "full_charge_hold_s") and assumptions.run.full_charge_hold_s is not None
             else 60.0
+        )
+        rbc_use_hyst = (
+            bool(f_cfg.rbc_use_hysteresis_state.value)
+            if hasattr(f_cfg, "rbc_use_hysteresis_state") and f_cfg.rbc_use_hysteresis_state is not None
+            else True
+        )
+        rbc_q_th = (
+            float(f_cfg.rbc_q_theta.value)
+            if hasattr(f_cfg, "rbc_q_theta") and f_cfg.rbc_q_theta is not None
+            else (float(f_cfg.q_theta.value) if hasattr(f_cfg, "q_theta") and f_cfg.q_theta is not None else float(0))
+        )
+        rbc_r_th = (
+            float(f_cfg.rbc_r_theta.value)
+            if hasattr(f_cfg, "rbc_r_theta") and f_cfg.rbc_r_theta is not None
+            else (float(f_cfg.r_theta.value) if hasattr(f_cfg, "r_theta") and f_cfg.r_theta is not None else float(0))
+        )
+        rbc_init_std = (
+            float(f_cfg.rbc_initial_theta_std.value)
+            if hasattr(f_cfg, "rbc_initial_theta_std") and f_cfg.rbc_initial_theta_std is not None
+            else (float(f_cfg.initial_theta_std.value) if hasattr(f_cfg, "initial_theta_std") and f_cfg.initial_theta_std is not None else float(0))
+        )
+        e5_r_inf = (
+            bool(f_cfg.e5_enable_r_inflation.value)
+            if hasattr(f_cfg, "e5_enable_r_inflation") and f_cfg.e5_enable_r_inflation is not None
+            else True
+        )
+        e5_sl_gate = (
+            bool(f_cfg.e5_enable_slope_gating.value)
+            if hasattr(f_cfg, "e5_enable_slope_gating") and f_cfg.e5_enable_slope_gating is not None
+            else True
+        )
+        e5_st_cap = (
+            bool(f_cfg.e5_enable_step_cap.value)
+            if hasattr(f_cfg, "e5_enable_step_cap") and f_cfg.e5_enable_step_cap is not None
+            else True
+        )
+        e5_sig_ocv = (
+            float(f_cfg.e5_sigma_ocv_model_v.value)
+            if hasattr(f_cfg, "e5_sigma_ocv_model_v") and f_cfg.e5_sigma_ocv_model_v is not None
+            else (float(f_cfg.sigma_ocv_model_v.value) if hasattr(f_cfg, "sigma_ocv_model_v") and f_cfg.sigma_ocv_model_v is not None else float(0))
+        )
+        e5_sl_ref = (
+            float(f_cfg.e5_slope_ref.value)
+            if hasattr(f_cfg, "e5_slope_ref") and f_cfg.e5_slope_ref is not None
+            else (float(f_cfg.slope_ref.value) if hasattr(f_cfg, "slope_ref") and f_cfg.slope_ref is not None else float(0))
+        )
+        e5_mx_step = (
+            float(f_cfg.e5_max_soc_step.value)
+            if hasattr(f_cfg, "e5_max_soc_step") and f_cfg.e5_max_soc_step is not None
+            else (float(f_cfg.max_soc_step.value) if hasattr(f_cfg, "max_soc_step") and f_cfg.max_soc_step is not None else float(0))
+        )
+        e5_use_obs_cap = (
+            bool(f_cfg.e5_use_observability_cap.value)
+            if hasattr(f_cfg, "e5_use_observability_cap") and f_cfg.e5_use_observability_cap is not None
+            else True
+        )
+        e5_cap_plat = (
+            float(f_cfg.e5_cap_plateau.value)
+            if hasattr(f_cfg, "e5_cap_plateau") and f_cfg.e5_cap_plateau is not None
+            else (float(f_cfg.cap_plateau.value) if hasattr(f_cfg, "cap_plateau") and f_cfg.cap_plateau is not None else float(0))
+        )
+        e5_cap_kn = (
+            float(f_cfg.e5_cap_knee.value)
+            if hasattr(f_cfg, "e5_cap_knee") and f_cfg.e5_cap_knee is not None
+            else (float(f_cfg.cap_knee.value) if hasattr(f_cfg, "cap_knee") and f_cfg.cap_knee is not None else float(0))
         )
 
         return cls(
@@ -109,6 +191,19 @@ class ParamSet:
             full_charge_anchor_soc=float(s_cfg.full_charge_anchor_soc.value),
             full_charge_anchor_enabled=fc_enabled,
             full_charge_hold_s=fc_hold_s,
+            rbc_use_hysteresis_state=rbc_use_hyst,
+            rbc_q_theta=rbc_q_th,
+            rbc_r_theta=rbc_r_th,
+            rbc_initial_theta_std=rbc_init_std,
+            e5_enable_r_inflation=e5_r_inf,
+            e5_enable_slope_gating=e5_sl_gate,
+            e5_enable_step_cap=e5_st_cap,
+            e5_sigma_ocv_model_v=e5_sig_ocv,
+            e5_slope_ref=e5_sl_ref,
+            e5_max_soc_step=e5_mx_step,
+            e5_use_observability_cap=e5_use_obs_cap,
+            e5_cap_plateau=e5_cap_plat,
+            e5_cap_knee=e5_cap_kn,
         )
 
 
@@ -122,6 +217,8 @@ class SocEstimate:
     voltage_residual: Optional[float] = None
     innovation_variance: Optional[float] = None
     kalman_gain_soc: Optional[float] = None
+    theta: Optional[float] = None
+    theta_std: Optional[float] = None
 
 
 @runtime_checkable

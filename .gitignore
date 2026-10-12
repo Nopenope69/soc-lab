@@ -50,3 +50,4 @@ reports/*.csv
 data/raw/
 *.pem
 .env
+.DS_Store

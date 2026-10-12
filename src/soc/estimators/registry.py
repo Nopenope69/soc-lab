@@ -10,6 +10,8 @@ from soc.estimators.base import Estimator, ParamSet
 from soc.estimators.e0_coulomb import E0CoulombCounting
 from soc.estimators.e1_ekf import E1ExtendedKalmanFilter
 from soc.estimators.e2_ekf_hysteresis import E2EKFHysteresis
+from soc.estimators.e5_observability_ekf import E5ObservabilityEKF
+from soc.estimators.e6_rbc_dekf import E6RBCDEKF
 
 
 class _StubEstimator(Estimator):
@@ -47,8 +49,8 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "E2": E2EKFHysteresis,
     "E3": _create_stub("E3"),
     "E4": _create_stub("E4"),
-    "E5": _create_stub("E5"),
-    "E6": _create_stub("E6"),
+    "E5": E5ObservabilityEKF,
+    "E6": E6RBCDEKF,
     "E7": _create_stub("E7"),
 }
 

@@ -345,6 +345,84 @@ filter:
     status: "placeholder"
     bounds: [0.1, 50.0]
     note: "Current threshold deadband for direction reversal detection"
+  rbc_use_hysteresis_state:
+    value: true
+    unit: "bool"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Toggle hysteresis state in E6 RBC DEKF (true: 4 states, false: 3 states)"
+  rbc_q_theta:
+    value: 0.000001
+    unit: "V^2"
+    status: "placeholder"
+    bounds: [1.0e-12, 0.1]
+    note: "Process noise covariance Q for residual voltage bias in E6"
+  rbc_r_theta:
+    value: 0.0001
+    unit: "V^2"
+    status: "placeholder"
+    bounds: [1.0e-8, 0.1]
+    note: "Measurement noise covariance R for residual voltage bias filter in E6"
+  rbc_initial_theta_std:
+    value: 0.05
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.001, 1.0]
+    note: "Initial standard deviation for residual voltage bias in E6"
+  e5_enable_r_inflation:
+    value: true
+    unit: "bool"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Enable measurement variance inflation by model uncertainty in E5"
+  e5_enable_slope_gating:
+    value: true
+    unit: "bool"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Enable OCV slope gating of voltage-driven SOC correction in E5"
+  e5_enable_step_cap:
+    value: true
+    unit: "bool"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Enable per-step cap on voltage-driven SOC correction in E5"
+  e5_sigma_ocv_model_v:
+    value: 0.005
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.0001, 0.1]
+    note: "OCV model uncertainty standard deviation for variance inflation in E5"
+  e5_slope_ref:
+    value: 0.2
+    unit: "V"
+    status: "placeholder"
+    bounds: [0.01, 5.0]
+    note: "Reference OCV slope for observability gating in E5"
+  e5_max_soc_step:
+    value: 0.001
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.00001, 0.1]
+    note: "Maximum allowed SOC correction magnitude per step in E5"
+  e5_use_observability_cap:
+    value: true
+    unit: "bool"
+    status: "placeholder"
+    bounds: [0.0, 1.0]
+    note: "Toggle observability-dependent per-step cap vs fixed cap in E5"
+  e5_cap_plateau:
+    value: 0.0001
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.000001, 0.05]
+    note: "Per-step SOC correction cap on the flat plateau in E5 v2"
+  e5_cap_knee:
+    value: 0.05
+    unit: "fraction"
+    status: "placeholder"
+    bounds: [0.001, 1.0]
+    note: "Per-step SOC correction cap at the steep knees in E5 v2"
 
 soc_definition:
   basis:
