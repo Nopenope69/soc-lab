@@ -1,0 +1,28 @@
+=== Repository State ===
+git log --oneline -n 10:
+9935ee7 (HEAD -> main, origin/main) feat: add CALCE A123 pipeline, Phase B benchmark verdict, and root cause diagnostics
+ce13cdb feat: implement E5 & E6 estimators, complete CALCE Phase A audit and adapter plan
+4770649 chore: extend gitignore
+3553cd4 chore: commit remaining files
+a6c9e04 (tag: soc-lab-v0.1) Finalize benchmark lab requirements: dynamic diagnostics, duty provenance, and test matrix bars
+60a14b8 Fix E0 full-charge anchor condition, duration table alignment, OFAT rankings, and add SOC boundary tests
+383671a fix(benchmark): refine diagnostics, tie-band logic, warmup metric, and anchor accounting
+e62542f fix(report): resolve scenario duty yaml paths and deduplicate T11 seeds in report
+35f082e fix(benchmark): OFAT sensitivity sweep, profile duty resolution, and report diagnostics overhaul
+531a221 fix(provenance): check tracked files only in is_git_dirty
+
+git status --short:
+ M src/soc/estimators/registry.py
+
+=== A0 Baseline Test Run ===
+Command: ./.venv/bin/pytest -q
+Output:
+........................................................................ [ 58%]
+....................................................                     [100%]
+124 passed in 349.58s (0:05:49)
+Exit code: 0
+
+Notes:
+In src/soc/estimators/registry.py, Any was used in annotations without being imported from typing.
+Typing import was updated from `from typing import Dict, List, Type` to `from typing import Any, Dict, List, Type`.
+All 124 tests collected and passed successfully.

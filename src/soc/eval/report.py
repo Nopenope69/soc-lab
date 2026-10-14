@@ -50,7 +50,7 @@ SCENARIO_HAS_BARS = {
     "t7_voltage_quant_noise": True,
     "t9_rest_relaxation": True,
     "t11_anchor_toggle": False,
-    "t12_hysteresis_mismatch": False,
+    "t12_hysteresis_mismatch": True,
 }
 
 

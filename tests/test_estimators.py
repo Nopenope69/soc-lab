@@ -58,6 +58,16 @@ def test_registry_lists_all_e0_to_e7():
     assert sorted(registered) == sorted(expected)
 
 
+def test_registry_annotations_evaluate_cleanly():
+    """Verify that type annotations in registry.py evaluate without NameError."""
+    from typing import get_type_hints
+    import soc.estimators.registry as reg
+
+    hints_stub = get_type_hints(reg._StubEstimator.step)
+    assert hints_stub.get("measurement") is not None
+    assert hints_stub.get("return") is not None
+
+
 def test_dropout_handling_skips_update_and_holds_last_current(params):
     """Verify that on dropped samples (NaN measurements), estimators skip update
 

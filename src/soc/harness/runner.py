@@ -90,7 +90,7 @@ class RunResult:
     ms_per_step_median: float
     voltage_residual_rmse: float
     mean_nis: float
-    pass_all_bars: bool
+    pass_all_bars: Optional[bool]
     failed_bars: str
     dirty: bool = False
     reversal_count: int = 0
@@ -543,6 +543,12 @@ class ScenarioRunner:
             if metrics["post_reversal_error_60s"] > t10_spike_max:
                 failed.append("t10_reversal_spike_max")
 
+        # T12 Hysteresis mismatch error rise
+        if scenario_name in ["t12_hysteresis_mismatch"]:
+            t12_rise_max = float(bars.t12_mismatch_rmse_rise_max.value)
+            if not math.isnan(error_rise) and error_rise > t12_rise_max:
+                failed.append("t12_mismatch_rmse_rise_max")
+
         # T14 Execution speed
         t14_ms_max = float(bars.t14_auto_max_ms_per_step.value)
         if metrics["ms_per_step_median"] > t14_ms_max:
@@ -665,6 +671,7 @@ class ScenarioRunner:
                     active_truths = truths
                     active_times = times
 
+                matched_rmse: Dict[str, float] = {}
                 for variant in active_variants:
                     for est_name in active_estimators:
                         metrics, diag, meta = self.evaluate_estimator_on_stream(
@@ -700,6 +707,13 @@ class ScenarioRunner:
                             signed_m_rise = noisy_m - clean_m
                             m_rise = max(float(0), signed_m_rise)
 
+                        if variant == "matched":
+                            matched_rmse[est_name] = metrics["rmse"]
+                        elif variant == "mismatched" and scen_clean == "t12_hysteresis_mismatch":
+                            if est_name in matched_rmse:
+                                signed_r_rise = metrics["rmse"] - matched_rmse[est_name]
+                                r_rise = max(float(0), signed_r_rise)
+
                         passed, failed_list = self.check_pass_bars(
                             scen_clean,
                             metrics,
@@ -708,6 +722,15 @@ class ScenarioRunner:
                             reversal_count=meta["reversal_count"],
                             error_rise=r_rise,
                         )
+
+                        scenarios_without_bars = {"t1_static_ocv", "t6_plateau_only", "t11_anchor_toggle"}
+                        if scen_clean in scenarios_without_bars:
+                            pass_all_val = None
+                            failed_bars_val = "n/a (no bars)"
+                        else:
+                            pass_all_val = passed and not meta["is_invalid_extreme"]
+                            failed_bars_val = "INVALID: cell empty or full" if meta["is_invalid_extreme"] else ";".join(failed_list)
+
                         res = RunResult(
                             scenario=display_scenario,
                             estimator=est_name,
@@ -737,8 +760,8 @@ class ScenarioRunner:
                             ms_per_step_median=metrics["ms_per_step_median"],
                             voltage_residual_rmse=diag["voltage_residual_rmse"],
                             mean_nis=diag["mean_nis"],
-                            pass_all_bars=passed and not meta["is_invalid_extreme"],
-                            failed_bars="INVALID: cell empty or full" if meta["is_invalid_extreme"] else ";".join(failed_list),
+                            pass_all_bars=pass_all_val,
+                            failed_bars=failed_bars_val,
                             dirty=dirty,
                             reversal_count=meta["reversal_count"],
                             error_rise=r_rise,
@@ -919,4 +942,7 @@ class ScenarioRunner:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             for r in results:
-                writer.writerow(asdict(r))
+                row_dict = asdict(r)
+                if row_dict["pass_all_bars"] is None:
+                    row_dict["pass_all_bars"] = "n/a"
+                writer.writerow(row_dict)

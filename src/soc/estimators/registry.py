@@ -4,7 +4,7 @@ E0, E1, and E2 are fully implemented.
 E3 through E7 raise NotImplementedError at construction (scheduled for Phase 4).
 """
 
-from typing import Dict, List, Type
+from typing import Any, Dict, List, Type
 
 from soc.estimators.base import Estimator, ParamSet
 from soc.estimators.e0_coulomb import E0CoulombCounting

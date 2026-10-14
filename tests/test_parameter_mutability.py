@@ -181,15 +181,23 @@ def test_crate_override_changes_window_currents_and_profiles_differ():
     assert auto_section != bess_section
 
 
-def test_pass_all_column_na_when_no_bars():
-    """Verify that Table 5 'Pass All' column displays 'n/a (no bars)' for scenarios where no bars apply."""
+def test_pass_all_column_na_when_no_bars(tmp_path):
+    """Verify that Table 5 'Pass All' column displays 'n/a (no bars)' and CSV writer writes 'n/a' when no bars apply."""
     from soc.eval.report import ReportGenerator
 
     runner = ScenarioRunner()
     res_no_bars = runner.run_scenario("t1_static_ocv", profile="automotive", num_seeds=1)
-    report = ReportGenerator.generate_report(res_no_bars)
+    for r in res_no_bars:
+        assert r.pass_all_bars is None
 
+    report = ReportGenerator.generate_report(res_no_bars)
     assert "n/a (no bars)" in report
+
+    # Verify CSV writer outputs 'n/a' instead of True/None
+    csv_file = tmp_path / "test_no_bars.csv"
+    runner.save_results_to_csv(res_no_bars, csv_file)
+    csv_text = csv_file.read_text(encoding="utf-8")
+    assert ",n/a," in csv_text or csv_text.endswith(",n/a\n") or csv_text.endswith(",n/a")
 
 
 def test_automotive_and_bess_metric_tables_are_not_identical():

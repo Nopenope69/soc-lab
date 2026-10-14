@@ -1,6 +1,6 @@
 """CALCE A123 dataset loader, parser, and preprocessor.
 
-Handles Excel workbooks from the CALCE A123 26650 LFP test matrix.
+Handles Excel workbooks from the CALCE A123 1.11 Ah LFP (APR18650M1A-class) test matrix.
 Extracts low-current OCV and dynamic drive cycles (DST, US06, FUDS).
 Applies repo sign convention (discharge positive), anchors full charge,
 computes reference Coulomb-counting SOC, and verifies capacity integrals.

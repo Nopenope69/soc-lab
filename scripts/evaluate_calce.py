@@ -323,28 +323,38 @@ def main():
     for est, med in r1_medians.items():
         print(f"   {est}: median RMSE = {med:.3f} pp")
 
-    # Determine better E5 variant on gating baseline
-    e5v1_med = r1_medians["E5 v1"]
-    e5v2_med = r1_medians["E5 v2"]
-    better_e5 = "E5 v1" if e5v1_med < e5v2_med else "E5 v2"
-    print(f"\nBetter E5 variant on baseline: {better_e5} ({min(e5v1_med, e5v2_med):.3f} pp vs {max(e5v1_med, e5v2_med):.3f} pp)")
+    # Determine better E5 variant on DST training data only
+    df_dst_gating = df_raw[
+        (df_raw["profile"] == "DST") &
+        (df_raw["is_gating"]) &
+        (df_raw["fault_name"] == "baseline") &
+        (df_raw["cell_id"] == "A1-007")
+    ]
+    e5v1_dst = float(df_dst_gating[df_dst_gating["estimator"] == "E5 v1"]["rmse"].median())
+    e5v2_dst = float(df_dst_gating[df_dst_gating["estimator"] == "E5 v2"]["rmse"].median())
+    better_e5 = "E5 v1" if e5v1_dst < e5v2_dst else "E5 v2"
+    print(f"\nBetter E5 variant on DST training data: {better_e5} (E5 v1: {e5v1_dst:.3f} pp vs E5 v2: {e5v2_dst:.3f} pp)")
 
     # Rule 2 (No Harm):
-    # (a) Better E5 within 0.3 pp of E2 RMSE in >= 80% of gating cases without faults
+    # (a) Better E5 within 0.3 pp of E2 RMSE in >= 80% of gating cases without faults (Two-sided)
     # (b) Averages >= 30% lower RMSE than E2 in the +-5 mV OCV runs
     gate_cases = df_gate_base[["temp_c", "profile"]].drop_duplicates().to_dict("records")
-    within_03_count = 0
+    within_03_two_sided = 0
+    within_03_one_sided = 0
     total_base_cases = len(gate_cases)
     for c in gate_cases:
         sub_e2 = df_gate_base[(df_gate_base["temp_c"] == c["temp_c"]) & (df_gate_base["profile"] == c["profile"]) & (df_gate_base["estimator"] == "E2")]
         sub_e5 = df_gate_base[(df_gate_base["temp_c"] == c["temp_c"]) & (df_gate_base["profile"] == c["profile"]) & (df_gate_base["estimator"] == better_e5)]
         e2_val = sub_e2["rmse"].iloc[0]
         e5_val = sub_e5["rmse"].iloc[0]
-        if abs(e5_val - e2_val) <= 0.3 or (e5_val <= e2_val + 0.3):
-            within_03_count += 1
+        if abs(e5_val - e2_val) <= 0.3:
+            within_03_two_sided += 1
+        if e5_val <= e2_val + 0.3:
+            within_03_one_sided += 1
 
-    r2_no_harm_pct = (within_03_count / total_base_cases) * 100.0
-    r2_no_harm_pass = r2_no_harm_pct >= 80.0
+    r2_no_harm_two_sided_pct = (within_03_two_sided / total_base_cases) * 100.0
+    r2_no_harm_one_sided_pct = (within_03_one_sided / total_base_cases) * 100.0
+    r2_no_harm_pass = r2_no_harm_two_sided_pct >= 80.0
 
     # +-5 mV OCV runs
     df_ocv_5mv = df_faults[df_faults["is_gating"] & df_faults["fault_name"].isin(["ocv_offset_+5mV", "ocv_offset_-5mV"])]
@@ -355,7 +365,8 @@ def main():
     r2_pass = r2_no_harm_pass and r2_reduction_pass
 
     print(f"Rule 2 - No Harm & Benefit:")
-    print(f"   Part A (No harm): {better_e5} within 0.3 pp of E2 in {within_03_count}/{total_base_cases} cases ({r2_no_harm_pct:.1f}%, Threshold: >= 80%) -> {'PASS' if r2_no_harm_pass else 'FAIL'}")
+    print(f"   Part A (No harm, Two-sided): {better_e5} within 0.3 pp of E2 in {within_03_two_sided}/{total_base_cases} cases ({r2_no_harm_two_sided_pct:.1f}%, Threshold: >= 80%) -> {'PASS' if r2_no_harm_pass else 'FAIL'}")
+    print(f"   Part A (Old One-sided comparison): {within_03_one_sided}/{total_base_cases} cases ({r2_no_harm_one_sided_pct:.1f}%)")
     print(f"   Part B (Benefit): In +-5 mV OCV, E2 mean RMSE = {e2_ocv_mean:.3f} pp, {better_e5} mean RMSE = {e5_ocv_mean:.3f} pp (Reduction: {r2_reduction_pct:.1f}%, Threshold: >= 30%) -> {'PASS' if r2_reduction_pass else 'FAIL'}")
     print(f"   Rule 2 Overall: {'PASS' if r2_pass else 'FAIL'}")
 
@@ -364,10 +375,12 @@ def main():
     e2_soc_mean = float(df_soc_off[df_soc_off["estimator"] == "E2"]["rmse"].mean())
     e5_soc_mean = float(df_soc_off[df_soc_off["estimator"] == better_e5]["rmse"].mean())
     r3_diff = abs(e5_soc_mean - e2_soc_mean)
-    r3_pass = r3_diff <= 2.0 or (e5_soc_mean <= e2_soc_mean + 2.0)
+    r3_pass_two_sided = r3_diff <= 2.0
+    r3_pass_one_sided = (e5_soc_mean <= e2_soc_mean + 2.0)
 
     print(f"\nRule 3 - Recovery under +-10 pp offset:")
-    print(f"   E2 mean RMSE = {e2_soc_mean:.3f} pp, {better_e5} mean RMSE = {e5_soc_mean:.3f} pp (Diff = {r3_diff:.3f} pp, Threshold: <= 2.0 pp) -> {'PASS' if r3_pass else 'FAIL'}")
+    print(f"   Two-sided: E2 mean RMSE = {e2_soc_mean:.3f} pp, {better_e5} mean RMSE = {e5_soc_mean:.3f} pp (|Diff| = {r3_diff:.3f} pp, Threshold: <= 2.0 pp) -> {'PASS' if r3_pass_two_sided else 'FAIL'}")
+    print(f"   Old One-sided comparison: (e5 <= e2 + 2.0 pp) -> {'PASS' if r3_pass_one_sided else 'FAIL'}")
 
     # Rule 4 (Cell Transfer): best estimator on A1-008 with A1-007 parameters has RMSE <= 1.5x own fit
     # Best estimator from Rule 1
@@ -474,7 +487,7 @@ def generate_markdown_report(
         return "PASS" if p else "FAIL"
 
     lines = []
-    lines.append("# CALCE A123 26650 LFP Real-Data Benchmark Verdict")
+    lines.append("# CALCE A123 1.11 Ah LFP (APR18650M1A-class) Real-Data Benchmark Verdict")
     lines.append("")
     lines.append(f"**Overall Verdict: {status_badge(overall_pass)}**")
     lines.append("")
@@ -501,7 +514,7 @@ def generate_markdown_report(
     lines.append("")
 
     lines.append("## 2. Experimental Scope & Ground Truth Accounting")
-    lines.append("- **Specimens:** A123 ANR26650M1-A LiFePO4 cells (`A1-007` and `A1-008`).")
+    lines.append("- **Specimens:** A123 1.11 Ah LFP (APR18650M1A-class) cells (`A1-007` and `A1-008`).")
     lines.append("- **Gating Temperatures (enforced by pass rules):** 20, 25, 30, 40, and 50 C.")
     lines.append("- **Informational Temperatures (reported only, excluded from pass rules):** -10, 0, and 10 C.")
     lines.append("- **Profiles:** DST (Step 8, used for fitting and tuning), US06 (Step 16, sealed test), FUDS (Step 24, sealed test).")
