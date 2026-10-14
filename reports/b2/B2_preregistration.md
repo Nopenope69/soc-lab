@@ -1,7 +1,7 @@
 # Phase B2 Pre-Registration: CALCE A123 LFP Benchmark Protocol
 
 **Document Status:** FROZEN PENDING HUMAN APPROVAL  
-**Git Commit Hash:** PENDING_COMMIT  
+**Git Commit Hash:** `ba67972`  
 **Date:** October 15, 2026  
 **Cell Chemistry & Specimen:** A123 1.11 Ah LFP (APR18650M1A-class), Cells `A1-007` and `A1-008`  
 **Dataset Source:** CALCE Battery Research Group, University of Maryland  
