@@ -1,0 +1,273 @@
+plant:
+  nominal_capacity_Ah:
+    value: 1.0879
+    unit: Ah
+    status: measured
+    bounds:
+    - 0.1
+    - 500.0
+    note: Measured C/20 capacity for CALCE A123 26650 cell A1-008 at 25C
+    source: CALCE A123 dataset cell A1-008
+  temperatures_c:
+    value:
+    - -7.2
+    - 0.7
+    - 10.1
+    - 19.9
+    - 27.1
+    - 31.8
+    - 41.6
+    - 51.8
+    unit: degC
+    status: measured
+    bounds:
+    - -20.0
+    - 60.0
+    note: Measured chamber/cell temperatures for cell A1-008
+    source: CALCE A123 dataset cell A1-008
+  soc_grid:
+    value:
+    - 0.0
+    - 0.05
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    - 0.5
+    - 0.6
+    - 0.7
+    - 0.8
+    - 0.9
+    - 0.95
+    - 1.0
+    unit: fraction
+    status: measured
+    bounds:
+    - 0.0
+    - 1.0
+    note: SOC grid points for parameter tables
+    source: Standard grid
+  ocv_table_v:
+    value:
+      '-7.2':
+      - 2.2313
+      - 2.9063
+      - 3.0734
+      - 3.2171
+      - 3.2647
+      - 3.2806
+      - 3.2897
+      - 3.2989
+      - 3.3148
+      - 3.3356
+      - 3.3531
+      - 3.3747
+      - 3.5595
+      '0.7':
+      - 2.3037
+      - 3.0405
+      - 3.1787
+      - 3.2424
+      - 3.2775
+      - 3.2904
+      - 3.2963
+      - 3.3022
+      - 3.3178
+      - 3.3404
+      - 3.352
+      - 3.3699
+      - 3.5546
+      '10.1':
+      - 2.3287
+      - 3.0956
+      - 3.2037
+      - 3.2474
+      - 3.2802
+      - 3.2962
+      - 3.3007
+      - 3.3061
+      - 3.3202
+      - 3.3475
+      - 3.3578
+      - 3.3772
+      - 3.5369
+      '19.9':
+      - 2.3129
+      - 3.0978
+      - 3.2074
+      - 3.2508
+      - 3.2829
+      - 3.3012
+      - 3.305
+      - 3.3094
+      - 3.3281
+      - 3.3466
+      - 3.3553
+      - 3.3718
+      - 3.548
+      '27.1':
+      - 2.2587
+      - 3.102
+      - 3.2097
+      - 3.2528
+      - 3.2851
+      - 3.3039
+      - 3.3071
+      - 3.3105
+      - 3.3325
+      - 3.3464
+      - 3.3535
+      - 3.3683
+      - 3.5443
+      '31.8':
+      - 2.3289
+      - 3.0962
+      - 3.2085
+      - 3.2511
+      - 3.2831
+      - 3.3032
+      - 3.307
+      - 3.3105
+      - 3.3306
+      - 3.3454
+      - 3.3525
+      - 3.367
+      - 3.5654
+      '41.6':
+      - 2.2841
+      - 3.095
+      - 3.2099
+      - 3.2516
+      - 3.2834
+      - 3.3062
+      - 3.3094
+      - 3.3128
+      - 3.3344
+      - 3.346
+      - 3.3527
+      - 3.3659
+      - 3.5691
+      '51.8':
+      - 2.284
+      - 3.0939
+      - 3.2105
+      - 3.2509
+      - 3.2826
+      - 3.3079
+      - 3.3112
+      - 3.3141
+      - 3.3347
+      - 3.3457
+      - 3.3518
+      - 3.3642
+      - 3.5675
+    unit: V
+    status: measured
+    bounds:
+    - 2.0
+    - 4.0
+    note: Extracted equilibrium OCV curve from C/20 charge and discharge branches
+    source: CALCE A123 dataset cell A1-008
+  r0_table_ohm:
+    value:
+      '-7.2': 0.31297
+      '0.7': 0.22265
+      '10.1': 0.19192
+      '19.9': 0.17692
+      '27.1': 0.1988
+      '31.8': 0.17852
+      '41.6': 0.17935
+      '51.8': 0.22458
+    unit: Ohm
+    status: measured
+    bounds:
+    - 0.0001
+    - 0.5
+    note: Fitted ohmic resistance over measured temperature from DST
+    source: CALCE A123 dataset cell A1-008
+  r1_table_ohm:
+    value:
+      '-7.2': 0.01706
+      '0.7': 0.0593
+      '10.1': 0.04361
+      '19.9': 0.02805
+      '27.1': 0.02527
+      '31.8': 0.01718
+      '41.6': 0.01301
+      '51.8': 0.013
+    unit: Ohm
+    status: measured
+    bounds:
+    - 5.0e-05
+    - 0.5
+    note: Fitted first RC resistance from DST
+    source: CALCE A123 dataset cell A1-008
+  tau1_table_s:
+    value:
+      '-7.2': 3.19
+      '0.7': 32.96
+      '10.1': 30.14
+      '19.9': 24.03
+      '27.1': 24.61
+      '31.8': 13.26
+      '41.6': 12.52
+      '51.8': 14.59
+    unit: s
+    status: measured
+    bounds:
+    - 0.5
+    - 300.0
+    note: Fitted first RC time constant from DST
+    source: CALCE A123 dataset cell A1-008
+  r2_table_ohm:
+    value:
+      '-7.2': 0.17942
+      '0.7': 0.11486
+      '10.1': 0.08781
+      '19.9': 0.08508
+      '27.1': 0.06511
+      '31.8': 0.05817
+      '41.6': 0.04178
+      '51.8': 0.03212
+    unit: Ohm
+    status: measured
+    bounds:
+    - 5.0e-05
+    - 0.5
+    note: Fitted second RC resistance from DST
+    source: CALCE A123 dataset cell A1-008
+  tau2_table_s:
+    value:
+      '-7.2': 130.41
+      '0.7': 600.0
+      '10.1': 599.21
+      '19.9': 599.42
+      '27.1': 599.99
+      '31.8': 218.41
+      '41.6': 186.06
+      '51.8': 272.59
+    unit: s
+    status: measured
+    bounds:
+    - 1.0
+    - 1200.0
+    note: Fitted second RC time constant from DST
+    source: CALCE A123 dataset cell A1-008
+  hysteresis_amplitude_v:
+    value: 0.0658
+    unit: V
+    status: measured
+    bounds:
+    - 0.0
+    - 0.1
+    note: Measured half-hysteresis amplitude from C/20 charge/discharge separation
+    source: CALCE A123 dataset cell A1-008
+  hysteresis_gamma:
+    value: 50.0
+    unit: dimensionless
+    status: placeholder
+    bounds:
+    - 1.0
+    - 500.0
+    note: Minor-loop hysteresis rate gamma (unobserved in full discharges)
+    source: Unobserved placeholder

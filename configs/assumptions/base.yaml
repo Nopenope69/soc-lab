@@ -6,8 +6,9 @@ plant:
     value: 100.0
     unit: "Ah"
     status: "placeholder"
-    bounds: [1.0, 500.0]
+    bounds: [0.1, 500.0]
     note: "Placeholder nominal capacity for 100Ah prismatic LFP cell"
+    reason: "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 26650 delivering 0.4-1.1 Ah at sub-zero temperatures)."
   initial_soc:
     value: 0.80
     unit: "fraction"
@@ -48,8 +49,9 @@ plant:
       "35.0": 0.0008
     unit: "Ohm"
     status: "placeholder"
-    bounds: [0.0001, 0.05]
+    bounds: [0.0001, 0.50]
     note: "Ohmic resistance over temperature"
+    reason: "Support small cylindrical cells (e.g. A123 26650 with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm)."
   r1_table_ohm:
     value:
       "15.0": 0.0008
@@ -57,8 +59,9 @@ plant:
       "35.0": 0.0005
     unit: "Ohm"
     status: "placeholder"
-    bounds: [0.00005, 0.05]
+    bounds: [0.00005, 0.50]
     note: "First RC branch resistance"
+    reason: "Support small cylindrical cells with higher polarization resistance R1 up to 100-200 mOhm."
   tau1_table_s:
     value:
       "15.0": 18.0
@@ -75,8 +78,9 @@ plant:
       "35.0": 0.0007
     unit: "Ohm"
     status: "placeholder"
-    bounds: [0.00005, 0.05]
+    bounds: [0.00005, 0.50]
     note: "Second RC branch resistance"
+    reason: "Support small cylindrical cells with second RC polarization resistance R2 up to 100-200 mOhm."
   tau2_table_s:
     value:
       "15.0": 75.0
