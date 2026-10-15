@@ -1,18 +1,16 @@
 """Parameter identification script v2 for CALCE A123 dataset.
 
-Fits 2RC parameters on DST only, per temperature, with hysteresis state inside
-the residual:
-  v_model = v_ocv + M * h - R0 * i - v1 - v2
-where:
-  - v_ocv is the symmetric mean of charge and discharge branches (monotonized)
-  - M is the C/20 plateau-median half-gap corrected for 55 mA from Task A1
-  - gamma = 50.0 is unobservable (UNIDENTIFIED)
-  - v1, v2, and h are initialized from rest: v1(0)=0, v2(0)=0, h(0)=0.0 (neutral rest convention)
-
-Also fits a second variant:
-  - M = 0
-  - OCV taken from the C/20 discharge branch only (monotonized)
-  - v_model = v_ocv_dis - R0 * i - v1 - v2
+Performs parameter identification strictly on DST data only.
+Implements the amendments from Task A1b:
+  - Uses independent R0 (conservative step-based estimate from A1b) as fixed prior
+    and tight bound in the DST fit.
+  - Checks and reports whether fitted R0 moves > 30% from independent R0.
+  - Incorporates amended M(T) plateau-median half-gaps (with 25 C flagged suspect).
+  - Includes hysteresis state inside the residual:
+      v_model = v_ocv + M(T) * h - R0 * i - v1 - v2
+    where v_ocv is symmetric mean of C/20 branches (monotonized).
+  - Evaluates Variant 2: Reference M=0 with discharge OCV branch.
+  - Evaluates Variant 3 (Diagnostic): M bounded in [0, 40 mV] with R0 fixed to R0_ind.
 
 Outputs:
   - configs/assumptions/profiles/calce_a123_v2.yaml
@@ -38,29 +36,55 @@ TEMPS = [-10, 0, 10, 20, 25, 30, 40, 50]
 GATING_TEMPS = [20, 25, 30, 40, 50]
 SOC_GRID = [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0]
 
-# M(T) corrected plateau-median half-gap from A1 audit (V)
+# Independent R0 from discrete current steps (conservative upper bound, from A1b)
+R0_INDEPENDENT = {
+    "A1-007": {
+        -10: 0.25012,
+        0: 0.19387,
+        10: 0.16857,
+        20: 0.15782,
+        25: 0.15700,
+        30: 0.15312,
+        40: 0.15240,
+        50: 0.15245,
+    },
+    "A1-008": {
+        -10: 0.30598,
+        0: 0.21391,
+        10: 0.18633,
+        20: 0.17387,
+        25: 0.19577,
+        30: 0.17463,
+        40: 0.17662,
+        50: 0.22220,
+    },
+}
+
+# Amended M(T) corrected plateau-median half-gap from A1b (V)
+# 25 C is marked as 'unexplained, treated as suspect'
 M_CORRECTED_HALF_GAP = {
     "A1-007": {
         -10: 0.0592,
         0: 0.0436,
         10: 0.0381,
-        20: 0.02685,
-        25: 0.01701,
-        30: 0.02421,
-        40: 0.02143,
-        50: 0.01977,
+        20: 0.02701,
+        25: 0.01719,  # Flagged suspect
+        30: 0.02436,
+        40: 0.02155,
+        50: 0.01988,
     },
     "A1-008": {
         -10: 0.0607,
         0: 0.0418,
         10: 0.0370,
-        20: 0.02421,
-        25: 0.01551,
-        30: 0.02173,
-        40: 0.01902,
-        50: 0.01442,
-    }
+        20: 0.02438,
+        25: 0.01568,  # Flagged suspect
+        30: 0.02194,
+        40: 0.01917,
+        50: 0.01456,
+    },
 }
+
 
 def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
     raw_dir = get_raw_dir(repo_root)
@@ -74,18 +98,20 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
         "nominal_capacity_ah": {},
         "ocv_table": {},
         "r0_table": {},
+        "r0_ind_table": {},
         "r1_table": {},
         "tau1_table": {},
         "r2_table": {},
         "tau2_table": {},
         "m_hyst_table": {},
         "fit_rmse_mv": {},
+        "r0_movement_pct": {},
     }
 
     m_table = M_CORRECTED_HALF_GAP[cell_id]
+    r0_ind_table = R0_INDEPENDENT[cell_id]
 
     for t in TEMPS:
-        print(f"\n--- Temperature {t} C ---")
         ocv_p, dyn_p = get_file_paths(raw_dir, t, cell_id)
         ocv = load_ocv_file(ocv_p, float(t), cell_id)
 
@@ -110,11 +136,11 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
         v_chg_grid = np.interp(SOC_GRID, chg_soc_sorted, chg_v_sorted)
 
         if m_zero_variant:
-            # Variant: M=0, OCV from discharge branch only
+            # Variant 2: M=0, OCV from discharge branch only
             v_ocv_base = np.copy(v_dis_grid)
             m_eff = 0.0
         else:
-            # Primary v2: symmetric mean OCV, M from A1
+            # Primary v2: symmetric mean OCV, M from amended A1
             v_ocv_base = 0.5 * (v_dis_grid + v_chg_grid)
             m_eff = m_table[t]
 
@@ -123,11 +149,11 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
         if v_ocv_mono[0] < 2.0:
             v_ocv_mono[0] = 2.0
         for i in range(len(v_ocv_mono) - 1):
-            if v_ocv_mono[i+1] <= v_ocv_mono[i]:
-                v_ocv_mono[i+1] = v_ocv_mono[i] + 0.001
+            if v_ocv_mono[i + 1] <= v_ocv_mono[i]:
+                v_ocv_mono[i + 1] = v_ocv_mono[i] + 0.001
         for i in range(len(v_ocv_mono) - 2, -1, -1):
-            if v_ocv_mono[i] >= v_ocv_mono[i+1]:
-                v_ocv_mono[i] = v_ocv_mono[i+1] - 0.001
+            if v_ocv_mono[i] >= v_ocv_mono[i + 1]:
+                v_ocv_mono[i] = v_ocv_mono[i + 1] - 0.001
         if v_ocv_mono[0] < 2.0:
             diff = 2.0 - v_ocv_mono[0]
             v_ocv_mono += diff
@@ -147,7 +173,7 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
 
         v_ocv_stream = np.interp(z_stream, SOC_GRID, v_ocv_mono)
 
-        # Precompute hysteresis state trajectory h(t) with h(0) = 0.0
+        # Precompute hysteresis state trajectory h(t) with h(0) = 0.0 (neutral rest convention)
         gamma = 50.0  # UNIDENTIFIED
         cap_ah = ocv.c20_capacity_ah
         eta = 0.998
@@ -160,7 +186,7 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
                 h_val, float(i_stream[k]), float(dt_full[k]), cap_ah, gamma, eta
             )
 
-        # Residual function with hysteresis state inside the loop
+        # Residual function with hysteresis state inside the residual
         def residuals(p):
             r0, r1, tau1, r2, tau2 = p
             alpha1 = np.exp(-dt_full / tau1)
@@ -168,39 +194,137 @@ def fit_cell_parameters_v2(cell_id: str, m_zero_variant: bool = False):
             v1 = np.zeros_like(i_stream)
             v2 = np.zeros_like(i_stream)
             for k in range(len(i_stream) - 1):
-                v1[k+1] = alpha1[k+1] * v1[k] + r1 * (1.0 - alpha1[k+1]) * i_stream[k]
-                v2[k+1] = alpha2[k+1] * v2[k] + r2 * (1.0 - alpha2[k+1]) * i_stream[k]
+                v1[k + 1] = alpha1[k + 1] * v1[k] + r1 * (1.0 - alpha1[k + 1]) * i_stream[k]
+                v2[k + 1] = alpha2[k + 1] * v2[k] + r2 * (1.0 - alpha2[k + 1]) * i_stream[k]
             v_model = v_ocv_stream + (m_eff * h_arr) - (r0 * i_stream) - v1 - v2
             return (v_stream - v_model)[idx_sub]
 
-        init_p = [0.10, 0.03, 15.0, 0.04, 80.0]
+        r0_prior = r0_ind_table[t]
+        init_p = [r0_prior, 0.02, 12.0, 0.03, 70.0]
         if t <= 0:
-            init_p = [0.15, 0.05, 20.0, 0.08, 120.0]
+            init_p = [r0_prior, 0.04, 20.0, 0.06, 100.0]
+
+        # Use tight bounds around independent R0 (+- 30%)
+        r0_lb = 0.70 * r0_prior
+        r0_ub = 1.30 * r0_prior
 
         bnds = (
-            [0.01, 0.001, 2.0, 0.001, 10.0],
-            [0.45, 0.30, 100.0, 0.30, 600.0]
+            [r0_lb, 0.001, 2.0, 0.001, 10.0],
+            [r0_ub, 0.30, 100.0, 0.30, 600.0]
         )
 
         res = opt.least_squares(residuals, init_p, bounds=bnds, xtol=1e-3, ftol=1e-3)
         r0, r1, tau1, r2, tau2 = res.x
         v_rmse_mv = float(np.sqrt(np.mean(res.fun**2)) * 1000.0)
 
-        print(f"Fitted 2RC (T={t_meas}°C): R0={r0:.5f}Ω, R1={r1:.5f}Ω, tau1={tau1:.1f}s, R2={r2:.5f}Ω, tau2={tau2:.1f}s")
-        print(f"Fit RMSE on DST: {v_rmse_mv:.2f} mV (M={m_eff*1000:.1f} mV)")
+        r0_pct_move = ((r0 - r0_prior) / r0_prior) * 100.0
+        suspect_tag = " [SUSPECT 25C]" if t == 25 and not m_zero_variant else ""
+        print(f"T={t_meas}°C{suspect_tag}: R0_ind={r0_prior:.5f}Ω -> Fitted R0={r0:.5f}Ω ({r0_pct_move:+.2f}%), "
+              f"R1={r1:.5f}Ω, tau1={tau1:.1f}s, R2={r2:.5f}Ω, tau2={tau2:.1f}s | RMSE={v_rmse_mv:.2f}mV")
+
+        if abs(r0_pct_move) > 30.0:
+            print(f"  WARNING: Fit moved R0 by {r0_pct_move:+.1f}% (> 30% threshold)!")
 
         results["temps_measured"].append(t_meas)
         results["nominal_capacity_ah"][t_key] = round(float(ocv.c20_capacity_ah), 4)
         results["ocv_table"][t_key] = [round(float(x), 4) for x in v_ocv_mono]
         results["r0_table"][t_key] = round(float(r0), 5)
+        results["r0_ind_table"][t_key] = round(float(r0_prior), 5)
         results["r1_table"][t_key] = round(float(r1), 5)
         results["tau1_table"][t_key] = round(float(tau1), 2)
         results["r2_table"][t_key] = round(float(r2), 5)
         results["tau2_table"][t_key] = round(float(tau2), 2)
         results["m_hyst_table"][t_key] = round(float(m_eff), 5)
         results["fit_rmse_mv"][t_key] = round(v_rmse_mv, 2)
+        results["r0_movement_pct"][t_key] = round(r0_pct_move, 2)
 
     return results
+
+
+def run_diagnostic_variant_3(cell_id: str):
+    """Diagnostic Variant 3: M as free bounded parameter [0, 40 mV] with R0 fixed to R0_ind."""
+    raw_dir = get_raw_dir(repo_root)
+    print(f"\n========================================================")
+    print(f"DIAGNOSTIC VARIANT 3 (Free M, Fixed R0_ind) FOR {cell_id}")
+    print(f"========================================================")
+
+    diag_rows = []
+    r0_ind_table = R0_INDEPENDENT[cell_id]
+    m_a1_table = M_CORRECTED_HALF_GAP[cell_id]
+
+    for t in GATING_TEMPS:
+        ocv_p, dyn_p = get_file_paths(raw_dir, t, cell_id)
+        ocv = load_ocv_file(ocv_p, float(t), cell_id)
+
+        dis_soc, dis_v = ocv.discharge_soc, ocv.discharge_v
+        chg_soc, chg_v = ocv.charge_soc, ocv.charge_v
+
+        idx_dis = np.argsort(dis_soc)
+        idx_chg = np.argsort(chg_soc)
+        v_dis_grid = np.interp(SOC_GRID, dis_soc[idx_dis], dis_v[idx_dis])
+        v_chg_grid = np.interp(SOC_GRID, chg_soc[idx_chg], chg_v[idx_chg])
+        v_ocv_base = 0.5 * (v_dis_grid + v_chg_grid)
+        v_ocv_mono = np.maximum.accumulate(v_ocv_base)
+
+        dst = load_dynamic_cycle(dyn_p, float(t), cell_id, "DST", ocv.c20_capacity_ah)
+        time_s = dst.time_s
+        i_stream = dst.current_a
+        v_stream = dst.voltage_v
+        z_stream = dst.truth_soc
+        dt_full = np.diff(time_s, prepend=time_s[0])
+        stride = 4 if len(time_s) > 2000 else 2
+        idx_sub = np.arange(0, len(time_s), stride)
+
+        v_ocv_stream = np.interp(z_stream, SOC_GRID, v_ocv_mono)
+        r0_fixed = r0_ind_table[t]
+        m_a1 = m_a1_table[t]
+
+        gamma = 50.0
+        cap_ah = ocv.c20_capacity_ah
+        eta = 0.998
+
+        h_arr = np.zeros_like(i_stream)
+        h_val = 0.0
+        for k in range(len(i_stream)):
+            h_arr[k] = h_val
+            h_val = Cell2RCModel.step_hysteresis(h_val, float(i_stream[k]), float(dt_full[k]), cap_ah, gamma, eta)
+
+        def res_diag(p):
+            m_val, r1, tau1, r2, tau2 = p
+            alpha1 = np.exp(-dt_full / tau1)
+            alpha2 = np.exp(-dt_full / tau2)
+            v1 = np.zeros_like(i_stream)
+            v2 = np.zeros_like(i_stream)
+            for k in range(len(i_stream) - 1):
+                v1[k + 1] = alpha1[k + 1] * v1[k] + r1 * (1.0 - alpha1[k + 1]) * i_stream[k]
+                v2[k + 1] = alpha2[k + 1] * v2[k] + r2 * (1.0 - alpha2[k + 1]) * i_stream[k]
+            v_model = v_ocv_stream + (m_val * h_arr) - (r0_fixed * i_stream) - v1 - v2
+            return (v_stream - v_model)[idx_sub]
+
+        init_p = [m_a1, 0.02, 12.0, 0.03, 70.0]
+        bnds = (
+            [0.0, 0.001, 2.0, 0.001, 10.0],
+            [0.040, 0.30, 100.0, 0.30, 600.0]
+        )
+
+        res = opt.least_squares(res_diag, init_p, bounds=bnds, xtol=1e-3, ftol=1e-3)
+        m_fit, r1, tau1, r2, tau2 = res.x
+        v_rmse_mv = float(np.sqrt(np.mean(res.fun**2)) * 1000.0)
+
+        diag_rows.append({
+            "cell": cell_id,
+            "temp_c": t,
+            "r0_fixed": r0_fixed,
+            "m_a1_mv": m_a1 * 1000.0,
+            "m_fit_diag_mv": m_fit * 1000.0,
+            "r1_ohm": r1,
+            "r2_ohm": r2,
+            "rmse_mv": v_rmse_mv,
+        })
+        print(f"Diag3 T={t}°C: R0_fixed={r0_fixed:.5f}Ω | M_A1={m_a1*1000:.2f}mV -> M_fit={m_fit*1000:.2f}mV | RMSE={v_rmse_mv:.2f}mV")
+
+    return diag_rows
+
 
 def write_profile_yaml_v2(results: dict, output_path: Path, cell_id: str, m_zero_variant: bool = False):
     t_meas_sorted = sorted(results["temps_measured"])
@@ -213,12 +337,11 @@ def write_profile_yaml_v2(results: dict, output_path: Path, cell_id: str, m_zero
         m_note = "Hysteresis disabled (M=0 reference variant with discharge OCV branch)"
         ocv_note = "Extracted OCV curve from C/20 discharge branch only (monotonized)"
     else:
-        # Gating median half-gap
         gating_keys = [k for k in results["m_hyst_table"].keys() if 18.0 <= float(k) <= 55.0]
         gating_m = [results["m_hyst_table"][k] for k in gating_keys]
         m_hyst_profile = float(np.median(gating_m))
         m_status = "measured"
-        m_note = "Plateau-median half-gap corrected for 55 mA ohmic drop across gating temperatures (Task A1)"
+        m_note = "Plateau-median half-gap corrected for 55 mA ohmic drop with independent R0 (Task A1b)"
         ocv_note = "Extracted equilibrium OCV curve from symmetric mean of C/20 charge and discharge branches"
 
     profile_dict = {
@@ -260,7 +383,7 @@ def write_profile_yaml_v2(results: dict, output_path: Path, cell_id: str, m_zero
                 "unit": "Ohm",
                 "status": "measured",
                 "bounds": [0.0001, 0.50],
-                "note": "Fitted ohmic resistance over measured temperature from DST with hysteresis in residual",
+                "note": "Fitted ohmic resistance over measured temperature from DST (bounded around independent R0 from A1b)",
                 "source": f"CALCE A123 dataset cell {cell_id}",
             },
             "r1_table_ohm": {
@@ -319,6 +442,7 @@ def write_profile_yaml_v2(results: dict, output_path: Path, cell_id: str, m_zero
         yaml.dump(profile_dict, f, sort_keys=False)
     print(f"Successfully wrote profile to {output_path}")
 
+
 def run_identification_v2():
     profiles_dir = repo_root / "configs" / "assumptions" / "profiles"
 
@@ -330,13 +454,20 @@ def run_identification_v2():
     res_007_m0 = fit_cell_parameters_v2("A1-007", m_zero_variant=True)
     write_profile_yaml_v2(res_007_m0, profiles_dir / "calce_a123_v2_m0.yaml", "A1-007", m_zero_variant=True)
 
-    # 3. Primary v2 for A1-008
+    # 3. Diagnostic Variant 3 for A1-007
+    diag_007 = run_diagnostic_variant_3("A1-007")
+
+    # 4. Primary v2 for A1-008
     res_008_v2 = fit_cell_parameters_v2("A1-008", m_zero_variant=False)
     write_profile_yaml_v2(res_008_v2, profiles_dir / "calce_a123_a1008_v2.yaml", "A1-008", m_zero_variant=False)
 
-    # 4. Reference M=0 for A1-008
+    # 5. Reference M=0 for A1-008
     res_008_m0 = fit_cell_parameters_v2("A1-008", m_zero_variant=True)
     write_profile_yaml_v2(res_008_m0, profiles_dir / "calce_a123_a1008_v2_m0.yaml", "A1-008", m_zero_variant=True)
+
+    # 6. Diagnostic Variant 3 for A1-008
+    diag_008 = run_diagnostic_variant_3("A1-008")
+
 
 if __name__ == "__main__":
     run_identification_v2()

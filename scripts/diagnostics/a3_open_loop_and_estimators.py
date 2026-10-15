@@ -312,6 +312,122 @@ def main():
     df_est_m0 = run_estimator_evaluation("calce_a123_v2_m0", "M=0")
 
     df_est = pd.concat([df_est_v2, df_est_m0], ignore_index=True)
+def run_cutoff_diagnosis():
+    raw_dir = get_raw_dir(repo_root)
+    print("\n========================================================")
+    print("CUTOFF DIAGNOSIS FOR A1-007 ON DST (20, 25, 30 C)")
+    print("Comparing OLD baseline (calce_a123) vs NEW v2 (calce_a123_v2)")
+    print("========================================================")
+
+    diag_rows = []
+    for param_label, prof_yaml in [("OLD (calce_a123)", "calce_a123"), ("v2 (calce_a123_v2)", "calce_a123_v2")]:
+        assumptions, _, _ = load_assumptions(profile=prof_yaml)
+        p = ParamSet.from_assumptions(assumptions, matched=True)
+        temps = list(p.temperatures_c)
+        socs = list(p.soc_grid)
+        ocv_tab = InterpolatedTable2D(temps, socs, p.ocv_table)
+        r0_tab = InterpolatedTable2D(temps, socs, p.r0_table)
+        r1_tab = InterpolatedTable2D(temps, socs, p.r1_table)
+        tau1_tab = InterpolatedTable2D(temps, socs, p.tau1_table)
+        r2_tab = InterpolatedTable2D(temps, socs, p.r2_table)
+        tau2_tab = InterpolatedTable2D(temps, socs, p.tau2_table)
+        m_eff = p.hysteresis_amplitude_v
+        gamma = p.hysteresis_gamma
+        cap_ah = p.nominal_capacity_ah
+        eta = p.coulombic_efficiency
+
+        for temp in [20, 25, 30]:
+            ocv_p, dyn_p = get_file_paths(raw_dir, temp, "A1-007")
+            ocv_data = load_ocv_file(ocv_p, float(temp), "A1-007")
+            cyc = load_dynamic_cycle(dyn_p, float(temp), "A1-007", "DST", ocv_data.c20_capacity_ah)
+
+            time_s = cyc.time_s
+            n = len(time_s)
+            dt_arr = np.diff(time_s, prepend=time_s[0])
+            i_arr = cyc.current_a
+            v_meas = cyc.voltage_v
+            z_truth = cyc.truth_soc
+            t_meas = cyc.temperature_measured_c
+
+            v_model = np.empty(n, dtype=float)
+            i1 = i2 = h = 0.0
+
+            for k in range(n):
+                dt = float(dt_arr[k]) if k > 0 else 1.0
+                cur_t = float(t_meas[k])
+                cur_i = float(i_arr[k])
+                cur_z = float(z_truth[k])
+
+                r0 = r0_tab.lookup(cur_z, cur_t)
+                r1 = r1_tab.lookup(cur_z, cur_t)
+                r2 = r2_tab.lookup(cur_z, cur_t)
+                tau1 = tau1_tab.lookup(cur_z, cur_t)
+                tau2 = tau2_tab.lookup(cur_z, cur_t)
+                ocv = ocv_tab.lookup(cur_z, cur_t)
+
+                v_mod = ocv + m_eff * h - r1 * i1 - r2 * i2 - r0 * cur_i
+                v_model[k] = v_mod
+
+                i1 = Cell2RCModel.step_rc_current(i1, cur_i, dt, tau1)
+                i2 = Cell2RCModel.step_rc_current(i2, cur_i, dt, tau2)
+                h = Cell2RCModel.step_hysteresis(h, cur_i, dt, cap_ah, gamma, eta)
+
+            min_v = float(np.min(v_model))
+            min_soc = float(z_truth[np.argmin(v_model)])
+            crosses_2v = bool(np.any(v_model <= 2.0))
+            ocv_at_0 = float(ocv_tab.lookup(0.0, float(temp)))
+            v_mod_at_cutoff = float(v_model[-1])
+            v_meas_at_cutoff = float(v_meas[-1])
+            v_err_at_cutoff = (v_meas_at_cutoff - v_mod_at_cutoff) * 1000.0  # mV
+            final_soc = float(z_truth[-1])
+            cutoff_t = float(time_s[-1])
+
+            diag_rows.append({
+                "params": param_label,
+                "temp_c": temp,
+                "cutoff_time_s": cutoff_t,
+                "final_truth_soc_pct": final_soc * 100.0,
+                "min_v_model_v": min_v,
+                "soc_at_min_v_pct": min_soc * 100.0,
+                "crosses_2v": crosses_2v,
+                "ocv_at_soc_0_v": ocv_at_0,
+                "v_model_at_cutoff_v": v_mod_at_cutoff,
+                "v_meas_at_cutoff_v": v_meas_at_cutoff,
+                "v_err_at_cutoff_mv": v_err_at_cutoff,
+            })
+
+    df_diag = pd.DataFrame(diag_rows)
+    print(df_diag.to_string(index=False))
+    return df_diag
+
+def main():
+    print("=== Task A3: Running Open-Loop Gate and Estimator Evaluation ===")
+    out_dir = repo_root / "reports" / "b2"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Open-loop simulations
+    print("\n[1/4] Running open-loop simulation: (i) v2 parameters...")
+    df_ol_v2 = run_open_loop_simulation("calce_a123_v2", "v2")
+
+    print("\n[2/4] Running open-loop simulation: (ii) M=0 variant...")
+    df_ol_m0 = run_open_loop_simulation("calce_a123_v2_m0", "M=0")
+
+    df_ol = pd.concat([df_ol_v2, df_ol_m0], ignore_index=True)
+    ol_csv = out_dir / "a3_open_loop_voltage_summary.csv"
+    df_ol.to_csv(ol_csv, index=False)
+    print(f"Saved open loop summary to: {ol_csv}")
+
+    # 2. Cutoff diagnosis
+    run_cutoff_diagnosis()
+
+    # 3. Estimator evaluations
+    print("\n[3/4] Running estimators: (i) v2 parameters...")
+    df_est_v2 = run_estimator_evaluation("calce_a123_v2", "v2")
+
+    print("\n[4/4] Running estimators: (ii) M=0 variant...")
+    df_est_m0 = run_estimator_evaluation("calce_a123_v2_m0", "M=0")
+
+    df_est = pd.concat([df_est_v2, df_est_m0], ignore_index=True)
     est_csv = out_dir / "a3_estimator_soc_summary.csv"
     df_est.to_csv(est_csv, index=False)
     print(f"Saved estimator summary to: {est_csv}")
@@ -345,3 +461,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -172,32 +172,32 @@ plant:
     source: CALCE A123 dataset cell A1-008
   r0_table_ohm:
     value:
-      '-7.2': 0.31045
-      '0.7': 0.22107
-      '10.1': 0.19088
+      '-7.2': 0.31055
+      '0.7': 0.22169
+      '10.1': 0.191
       '19.9': 0.17645
-      '27.1': 0.19853
+      '27.1': 0.19848
       '31.8': 0.17807
-      '41.6': 0.17891
-      '51.8': 0.22426
+      '41.6': 0.17888
+      '51.8': 0.22431
     unit: Ohm
     status: measured
     bounds:
     - 0.0001
     - 0.5
-    note: Fitted ohmic resistance over measured temperature from DST with hysteresis
-      in residual
+    note: Fitted ohmic resistance over measured temperature from DST (bounded around
+      independent R0 from A1b)
     source: CALCE A123 dataset cell A1-008
   r1_table_ohm:
     value:
-      '-7.2': 0.01251
-      '0.7': 0.0235
-      '10.1': 0.01985
-      '19.9': 0.02387
-      '27.1': 0.02276
-      '31.8': 0.01184
-      '41.6': 0.00895
-      '51.8': 0.0071
+      '-7.2': 0.0124
+      '0.7': 0.0359
+      '10.1': 0.02228
+      '19.9': 0.02386
+      '27.1': 0.01848
+      '31.8': 0.01193
+      '41.6': 0.00882
+      '51.8': 0.00733
     unit: Ohm
     status: measured
     bounds:
@@ -207,14 +207,14 @@ plant:
     source: CALCE A123 dataset cell A1-008
   tau1_table_s:
     value:
-      '-7.2': 2.02
-      '0.7': 15.29
-      '10.1': 17.09
-      '19.9': 24.7
-      '27.1': 25.45
-      '31.8': 10.35
-      '41.6': 10.16
-      '51.8': 8.71
+      '-7.2': 2.08
+      '0.7': 25.1
+      '10.1': 19.7
+      '19.9': 24.73
+      '27.1': 20.01
+      '31.8': 10.47
+      '41.6': 9.87
+      '51.8': 9.21
     unit: s
     status: measured
     bounds:
@@ -224,14 +224,14 @@ plant:
     source: CALCE A123 dataset cell A1-008
   r2_table_ohm:
     value:
-      '-7.2': 0.11071
-      '0.7': 0.09215
-      '10.1': 0.06135
-      '19.9': 0.05829
-      '27.1': 0.04769
-      '31.8': 0.03619
-      '41.6': 0.02248
-      '51.8': 0.01949
+      '-7.2': 0.11065
+      '0.7': 0.07986
+      '10.1': 0.05892
+      '19.9': 0.05808
+      '27.1': 0.04975
+      '31.8': 0.03586
+      '41.6': 0.02245
+      '51.8': 0.01909
     unit: Ohm
     status: measured
     bounds:
@@ -241,14 +241,14 @@ plant:
     source: CALCE A123 dataset cell A1-008
   tau2_table_s:
     value:
-      '-7.2': 98.07
-      '0.7': 144.08
-      '10.1': 152.71
-      '19.9': 599.98
-      '27.1': 599.71
-      '31.8': 125.53
-      '41.6': 100.44
-      '51.8': 86.6
+      '-7.2': 97.57
+      '0.7': 207.37
+      '10.1': 168.14
+      '19.9': 599.96
+      '27.1': 295.01
+      '31.8': 126.15
+      '41.6': 99.11
+      '51.8': 93.05
     unit: s
     status: measured
     bounds:
@@ -257,14 +257,14 @@ plant:
     note: Fitted second RC time constant from DST with hysteresis in residual
     source: CALCE A123 dataset cell A1-008
   hysteresis_amplitude_v:
-    value: 0.01902
+    value: 0.01917
     unit: V
     status: measured
     bounds:
     - 0.0
     - 0.1
-    note: Plateau-median half-gap corrected for 55 mA ohmic drop across gating temperatures
-      (Task A1)
+    note: Plateau-median half-gap corrected for 55 mA ohmic drop with independent
+      R0 (Task A1b)
     source: CALCE A123 dataset cell A1-008
   hysteresis_gamma:
     value: 50.0
