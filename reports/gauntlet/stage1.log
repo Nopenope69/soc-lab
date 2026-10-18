@@ -1,0 +1,31 @@
+=================================================================
+GAUNTLET STAGE 1: MODEL GATE EVALUATION & LADDER
+R3 Guarantee line: truth_soc = start_soc - (np.cumsum(unmodified_current * dt) / (3600.0 * q_c20))
+=================================================================
+
+--- Evaluating Rung 1: Current v2 parameters (unfitted) ---
+Rung 1 T=20C: W-mid Bias=+14.16 mV, RMSE=16.90 mV | Gate Pass: False (Suspect: False)
+Rung 1 T=25C: W-mid Bias=+11.13 mV, RMSE=12.88 mV | Gate Pass: False (Suspect: True)
+Rung 1 T=30C: W-mid Bias= +9.49 mV, RMSE=11.94 mV | Gate Pass: False (Suspect: False)
+Rung 1 T=40C: W-mid Bias= +4.05 mV, RMSE= 7.47 mV | Gate Pass: True (Suspect: False)
+Rung 1 T=50C: W-mid Bias= +4.93 mV, RMSE= 8.28 mV | Gate Pass: True (Suspect: False)
+Rung 1 Decision Pass: False
+
+--- Fitting and Evaluating Rung 2 (Residuals restricted to W-mid only) ---
+Rung 2 T=20C: W-mid Bias= +0.48 mV, RMSE= 6.92 mV | Gate Pass: True (Suspect: False)
+Rung 2 T=25C: W-mid Bias= +0.35 mV, RMSE= 4.32 mV | Gate Pass: True (Suspect: True)
+Rung 2 T=30C: W-mid Bias= +0.54 mV, RMSE= 5.94 mV | Gate Pass: True (Suspect: False)
+Rung 2 T=40C: W-mid Bias= +0.49 mV, RMSE= 5.28 mV | Gate Pass: True (Suspect: False)
+Rung 2 T=50C: W-mid Bias= +0.55 mV, RMSE= 5.81 mV | Gate Pass: True (Suspect: False)
+Rung 2 Decision Pass: True
+Saved new parameter profile to /Users/tecbusiness/Desktop/random/SOC/configs/assumptions/profiles/calce_a123_v3.yaml
+
+--- Transfer Check: Applying Selected Parameters (v3) to A1-008 DST ---
+Transfer A1-008 T=20C: W-mid Bias= -6.74 mV, RMSE=20.51 mV
+Transfer A1-008 T=25C: W-mid Bias=-19.55 mV, RMSE=41.48 mV
+Transfer A1-008 T=30C: W-mid Bias= -7.96 mV, RMSE=22.56 mV
+Transfer A1-008 T=40C: W-mid Bias= -8.11 mV, RMSE=24.25 mV
+Transfer A1-008 T=50C: W-mid Bias=-29.32 mV, RMSE=72.17 mV
+
+Saved CSV results to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage1_model_gate.csv
+Saved Markdown report to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage1_model_gate.md
