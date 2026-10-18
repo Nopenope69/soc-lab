@@ -11,6 +11,7 @@ from soc.estimators.e0_coulomb import E0CoulombCounting
 from soc.estimators.e1_ekf import E1ExtendedKalmanFilter
 from soc.estimators.e2_ekf_hysteresis import E2EKFHysteresis
 from soc.estimators.e3_ukf import E3UnscentedKalmanFilter
+from soc.estimators.e4_rls_r0 import E4RLSR0EKF
 from soc.estimators.e5_observability_ekf import E5ObservabilityEKF
 from soc.estimators.e6_rbc_dekf import E6RBCDEKF
 
@@ -49,7 +50,7 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "E1": E1ExtendedKalmanFilter,
     "E2": E2EKFHysteresis,
     "E3": E3UnscentedKalmanFilter,
-    "E4": _create_stub("E4"),
+    "E4": E4RLSR0EKF,
     "E5": E5ObservabilityEKF,
     "E6": E6RBCDEKF,
     "E7": _create_stub("E7"),

@@ -80,6 +80,9 @@ class ParamSet:
     e5_cap_plateau: float = float(0)
     e5_cap_knee: float = float(0)
 
+    # Online R0 adaptation (E4) tunings
+    e4_rls_forgetting_factor: float = float("0.999")
+
     @classmethod
     def from_assumptions(cls, assumptions: Assumptions, matched: bool = True) -> "ParamSet":
         """Construct estimator parameter set from resolved assumptions."""
@@ -204,6 +207,11 @@ class ParamSet:
             e5_use_observability_cap=e5_use_obs_cap,
             e5_cap_plateau=e5_cap_plat,
             e5_cap_knee=e5_cap_kn,
+            e4_rls_forgetting_factor=(
+                float(f_cfg.e4_rls_forgetting_factor.value)
+                if hasattr(f_cfg, "e4_rls_forgetting_factor") and f_cfg.e4_rls_forgetting_factor is not None
+                else float("0.999")
+            ),
         )
 
 

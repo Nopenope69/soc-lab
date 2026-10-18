@@ -20,3 +20,4 @@ Otherwise, it is **DROPPED**.
 | Round | Component | Implementation | BCD Mean RMSE (pp) | Delta BCD (pp) | S-A Mean RMSE (pp) | Delta S-A (pp) | S-F Worst Error (pp) | Delta S-F (pp) | Decision | Reason / Notes |
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
 | 1 | C1 (E3 UKF) | 4-state UKF (`e3_ukf.py`) | 3.209 | -0.078 | 1.597 | -0.103 | 13.540 | -2.987 | **DROP** | BCD improvement of 0.078 pp misses the required $\ge 1.0\text{ pp}$ threshold. Runtime: 0.228 ms/step. |
+| 2 | C2 (E4 RLS R0) | Online RLS scalar multiplier on R0 (`e4_rls_r0.py`) | 3.002 | -0.285 | 1.473 | -0.227 | 16.491 | -0.036 | **DROP** | BCD improvement of 0.285 pp misses the required $\ge 1.0\text{ pp}$ threshold. Runtime: 0.073 ms/step. |
