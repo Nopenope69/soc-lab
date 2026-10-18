@@ -2,11 +2,14 @@
 
 **Status:** RUNNING  
 **Current Stage:** Stage 1.5 (Component Development)  
-**Last Completed Step:** Stage 1 Model Gate Passed (Rung 2 selected)  
+**Last Completed Step:** Round C1 evaluated (E3 UKF DROPPED)  
 **Budget Used:**
-- Configurations tested: 0 / 400
+- Configurations tested: 1 / 400
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
-- Component development rounds: 0 / 3 per component
+- Component development rounds: 1 / 3 for C1 (E3 UKF complete)
+
+## Active Estimator Reference
+- Best estimator so far: **E2 Baseline** (BCD: 3.287 pp, S-A: 1.700 pp, S-F: 16.527 pp)
 
 ## Active Rules & Parameters
 - **R1:** DST only for fitting, tuning, selection, and gate decisions in Stages 1 to 3. US06 and FUDS read ONLY in Stage 4 once after freeze.

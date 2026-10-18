@@ -8,6 +8,7 @@ from soc.estimators.base import Estimator, ParamSet, SocEstimate
 from soc.estimators.e0_coulomb import E0CoulombCounting
 from soc.estimators.e1_ekf import E1ExtendedKalmanFilter
 from soc.estimators.e2_ekf_hysteresis import E2EKFHysteresis
+from soc.estimators.e3_ukf import E3UnscentedKalmanFilter
 from soc.estimators.e5_observability_ekf import E5ObservabilityEKF
 from soc.estimators.e6_rbc_dekf import E6RBCDEKF
 from soc.estimators.registry import (
@@ -25,22 +26,22 @@ def params() -> ParamSet:
 
 
 def test_estimators_conform_to_protocol(params):
-    """Verify that E0, E1, E2, E5, and E6 satisfy the runtime Estimator Protocol."""
-    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E5ObservabilityEKF, E6RBCDEKF]:
+    """Verify that E0, E1, E2, E3, E5, and E6 satisfy the runtime Estimator Protocol."""
+    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E3UnscentedKalmanFilter, E5ObservabilityEKF, E6RBCDEKF]:
         est = cls(params)
         assert isinstance(est, Estimator)
 
 
 def test_registry_instantiates_implemented_estimators(params):
-    """Verify that get_estimator instantiates E0, E1, E2, E5, and E6 cleanly."""
-    for name in ["E0", "E1", "E2", "E5", "E6"]:
+    """Verify that get_estimator instantiates E0, E1, E2, E3, E5, and E6 cleanly."""
+    for name in ["E0", "E1", "E2", "E3", "E5", "E6"]:
         est = get_estimator(name, params)
         assert isinstance(est, Estimator)
 
 
 def test_registry_stubs_raise_not_implemented_error(params):
-    """Verify that E3, E4, and E7 raise NotImplementedError at construction."""
-    for name in ["E3", "E4", "E7"]:
+    """Verify that E4 and E7 raise NotImplementedError at construction."""
+    for name in ["E4", "E7"]:
         with pytest.raises(NotImplementedError, match="scheduled for Phase 4"):
             get_estimator(name, params)
 
