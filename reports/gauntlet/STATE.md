@@ -1,12 +1,12 @@
 # Gauntlet State: CALCE A123 SOC Algorithm Development
 
 **Status:** RUNNING  
-**Current Stage:** Stage 1.5 (Component Development)  
-**Last Completed Step:** Round C5 evaluated (E2Anchored DROPPED)  
+**Current Stage:** Stage 2 (Estimator Ladder)  
+**Last Completed Step:** Round C6 evaluated (E2RateHyst DROPPED). Stage 1.5 complete (all 6 components C1-C6 evaluated and dropped).  
 **Budget Used:**
-- Configurations tested: 5 / 400
+- Configurations tested: 6 / 400
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
-- Component development rounds: 1 / 3 for C1, C2, C3, C4, C5 (all evaluated)
+- Component development rounds: 1 / 3 for C1, C2, C3, C4, C5, C6 (all 6 completed)
 
 ## Active Estimator Reference
 - Best estimator so far: **E2 Baseline** (BCD: 3.287 pp, S-A: 1.700 pp, S-F: 16.527 pp)
