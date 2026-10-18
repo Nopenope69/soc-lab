@@ -1,15 +1,15 @@
 # Gauntlet State: CALCE A123 SOC Algorithm Development
 
 **Status:** RUNNING  
-**Current Stage:** Stage 2 (Estimator Ladder)  
-**Last Completed Step:** Round C6 evaluated (E2RateHyst DROPPED). Stage 1.5 complete (all 6 components C1-C6 evaluated and dropped).  
+**Current Stage:** Stage 2.5 (E7 Composite)  
+**Last Completed Step:** Stage 2 Complete (E2 selected via simplicity tie-break, Held-out BCD 2.578 pp; Gate 2 failed on Clause ii individual win rate 78.9% vs 80.0%).  
 **Budget Used:**
-- Configurations tested: 6 / 400
+- Configurations tested: 50 / 400 (6 in Stage 1.5, 44 in Stage 2)
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
-- Component development rounds: 1 / 3 for C1, C2, C3, C4, C5, C6 (all 6 completed)
+- Component development rounds: 1 / 3 for C1, C2, C3, C4, C5, C6 (all 6 completed and dropped)
 
 ## Active Estimator Reference
-- Best estimator so far: **E2 Baseline** (BCD: 3.287 pp, S-A: 1.700 pp, S-F: 16.527 pp)
+- Selected Standalone Estimator: **E2 (tune_2)** (Tune BCD: 2.351 pp, Held-out BCD: 2.578 pp, Held-out S-A: 1.209 pp, Held-out S-F Worst: 4.648 pp)
 
 ## Active Rules & Parameters
 - **R1:** DST only for fitting, tuning, selection, and gate decisions in Stages 1 to 3. US06 and FUDS read ONLY in Stage 4 once after freeze.
@@ -35,3 +35,28 @@
   - `reports/gauntlet/stage1_model_gate.csv`
   - `reports/gauntlet/stage1_model_gate.md`
   - `reports/gauntlet/stage1.log`
+
+## Stage 2 Summary: Estimator Ladder & Tuning
+- **Standalone Candidates Tested:** E0, E0_recal, E1, E2, E3, E4, e5v3, e6v2 (44 total configs).
+- **Candidate Standings (Held-out BCD 40 & 50 °C):**
+  - E0 baseline: 6.236 pp
+  - E0_recal baseline: 6.236 pp
+  - E1 baseline: 5.335 pp (Tune: 6.400 pp, S-A: 4.021 pp)
+  - E2 (tune_2): 2.578 pp (Tune: 2.351 pp, S-A: 1.209 pp)
+  - E3 (tune_6): 2.656 pp (Tune: 2.626 pp, S-A: 1.464 pp)
+  - E4 (tune_6): 2.482 pp (Tune: 2.589 pp, S-A: 1.447 pp)
+  - e5v3 (tune_1): 2.362 pp (Tune: 2.432 pp, S-A: 1.394 pp)
+  - e6v2 (tune_2): 2.974 pp (Tune: 2.624 pp, S-A: 3.281 pp)
+- **Selection Decision:** Under SELECTION RULE ("lowest held-out mean RMSE over S-B, S-C, S-D; ties within 0.5 pp go to the simpler estimator in the order E1 < E2 < E3 < E4 < e5v3 < e6v2"), `e5v3` was lowest at 2.362 pp; `E2 (tune_2)` at 2.578 pp was within 0.5 pp ($2.578 - 2.362 = 0.216\text{ pp} \le 0.5\text{ pp}$) and won on simplicity tie-break.
+- **GATE 2 Evaluation on Selected Winner (E2 tune_2):**
+  - Clause (i) S-A Non-Inferiority: win = 1.209 pp <= 5.918 pp (E0+5) and <= 5.021 pp (E1+1) -> **PASS**
+  - Clause (ii) BCD Recovery: win = 2.578 pp <= 0.70*E0 (4.365 pp) -> PASS on mean; Individual case wins: 30 / 38 (78.9% vs >= 80.0% requirement) -> **FAIL**
+  - Clause (iii) S-F Fault Robustness: win SF mean = 1.570 pp <= 7.013 pp (E0 SF mean + 5) -> **PASS**
+  - Overall GATE 2: **FAIL** (triggers Stage 2.5 evaluation / Optional E7b residual consideration).
+- **Hysteresis Ablation:** With M(T) BCD = 2.578 pp vs With M=0 BCD = 5.417 pp ($\Delta = -2.839\text{ pp}$, hysteresis strongly helps on DST).
+- **Output Artifacts:**
+  - `reports/gauntlet/stage2_ladder.csv`
+  - `reports/gauntlet/stage2_ladder.md`
+  - `reports/gauntlet/stage2_tuning_log.csv`
+  - `reports/gauntlet/stage2.log`
+

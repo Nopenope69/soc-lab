@@ -1,0 +1,99 @@
+=== STARTING GAUNTLET STAGE 2: ESTIMATOR LADDER ===
+Preloading DST datasets for 20, 25, 30, 40, 50 C...
+Loaded 20 C DST (7303 steps)
+Loaded 25 C DST (7368 steps)
+Loaded 30 C DST (7440 steps)
+Loaded 40 C DST (7446 steps)
+Loaded 50 C DST (7464 steps)
+
+--- Evaluating Untuned Baselines ---
+Evaluating baseline E0...
+  E0: Tune BCD=6.170 pp | Held-out BCD=6.236 pp | S-A=0.918 pp | S-F worst=10.468 pp
+Evaluating baseline E0_recal...
+  E0_recal: Tune BCD=6.170 pp | Held-out BCD=6.236 pp | S-A=0.918 pp | S-F worst=10.468 pp
+Evaluating baseline E1...
+  E1: Tune BCD=6.400 pp | Held-out BCD=5.335 pp | S-A=4.021 pp | S-F worst=12.820 pp
+Evaluating baseline E2...
+  E2: Tune BCD=2.707 pp | Held-out BCD=3.287 pp | S-A=1.700 pp | S-F worst=16.527 pp
+Evaluating baseline E3...
+  E3: Tune BCD=3.475 pp | Held-out BCD=3.209 pp | S-A=1.597 pp | S-F worst=13.540 pp
+Evaluating baseline E4...
+  E4: Tune BCD=2.831 pp | Held-out BCD=3.002 pp | S-A=1.473 pp | S-F worst=16.491 pp
+Evaluating baseline e5v3...
+  e5v3: Tune BCD=2.571 pp | Held-out BCD=2.693 pp | S-A=1.477 pp | S-F worst=11.683 pp
+Evaluating baseline e6v2...
+  e6v2: Tune BCD=2.866 pp | Held-out BCD=3.494 pp | S-A=2.367 pp | S-F worst=9.172 pp
+
+--- Running Random Search Tuning (Fixed Seed 42, 6 configs/estimator) ---
+
+Tuning E1 (6 random configs)...
+
+Tuning E2 (6 random configs)...
+  [E2 New Best tune_2] Held-out BCD: 2.578 pp (prev: 3.287 pp, Tune: 2.351 pp)
+
+Tuning E3 (6 random configs)...
+  [E3 New Best tune_2] Held-out BCD: 3.129 pp (prev: 3.209 pp, Tune: 2.748 pp)
+  [E3 New Best tune_6] Held-out BCD: 2.656 pp (prev: 3.129 pp, Tune: 2.626 pp)
+
+Tuning E4 (6 random configs)...
+  [E4 New Best tune_6] Held-out BCD: 2.482 pp (prev: 3.002 pp, Tune: 2.589 pp)
+
+Tuning e5v3 (6 random configs)...
+  [e5v3 New Best tune_1] Held-out BCD: 2.362 pp (prev: 2.693 pp, Tune: 2.432 pp)
+
+Tuning e6v2 (6 random configs)...
+  [e6v2 New Best tune_2] Held-out BCD: 2.974 pp (prev: 3.494 pp, Tune: 2.624 pp)
+
+Total Configurations Tested in Stage 2: 44
+
+--- Running Full Scenario Evaluation on Selected Best Configs ---
+  E0 (baseline) full evaluation loaded from checkpoint.
+  E0_recal (baseline) full evaluation loaded from checkpoint.
+  E1 (baseline) full evaluation loaded from checkpoint.
+Running full evaluation for winning E2 (tune_2)...
+Running full evaluation for winning E3 (tune_6)...
+Running full evaluation for winning E4 (tune_6)...
+Running full evaluation for winning e5v3 (tune_1)...
+Running full evaluation for winning e6v2 (tune_2)...
+
+--- Best Configurations Per Estimator ---
+  E0         (cfg: baseline): Held-out BCD=6.236 pp | Tune BCD=6.170 pp | Gap=+0.066 pp | S-A=0.918 pp | S-F worst=10.468 pp
+  E0_recal   (cfg: baseline): Held-out BCD=6.236 pp | Tune BCD=6.170 pp | Gap=+0.066 pp | S-A=0.918 pp | S-F worst=10.468 pp
+  E1         (cfg: baseline): Held-out BCD=5.335 pp | Tune BCD=6.400 pp | Gap=-1.065 pp | S-A=4.021 pp | S-F worst=12.820 pp
+  E2         (cfg: tune_2  ): Held-out BCD=2.578 pp | Tune BCD=2.351 pp | Gap=+0.226 pp | S-A=1.209 pp | S-F worst=4.648 pp
+  E3         (cfg: tune_6  ): Held-out BCD=2.656 pp | Tune BCD=2.626 pp | Gap=+0.030 pp | S-A=1.464 pp | S-F worst=7.859 pp
+  E4         (cfg: tune_6  ): Held-out BCD=2.482 pp | Tune BCD=2.589 pp | Gap=-0.107 pp | S-A=1.447 pp | S-F worst=5.235 pp
+  e5v3       (cfg: tune_1  ): Held-out BCD=2.362 pp | Tune BCD=2.432 pp | Gap=-0.069 pp | S-A=1.394 pp | S-F worst=5.060 pp
+  e6v2       (cfg: tune_2  ): Held-out BCD=2.974 pp | Tune BCD=2.624 pp | Gap=+0.350 pp | S-A=3.281 pp | S-F worst=11.111 pp
+
+>>> WINNING ESTIMATOR SELECTED: E2 (Held-out BCD = 2.578 pp, min across all was 2.362 pp) <<<
+
+--- GATE 2 EVALUATION ---
+Clause (i) S-A Non-Inferiority: win=1.209 pp, E0=0.918 pp (+5=5.918), E1=4.021 pp (+1=5.021) -> PASS
+Clause (ii) BCD Superiority: win=2.578 pp vs 0.70*E0=4.365 pp (ratio=0.413) | Beat E0 in 30/38 (78.9%) -> FAIL
+Clause (iii) S-F Robustness: win SF mean=1.570 pp vs E0 SF mean=2.013 pp (+5=7.013) -> PASS
+
+--- Individual Case Beat-E0 Rates on Held-Out (40 & 50 °C) ---
+  E1 (baseline): 25/38 (65.8%) wins against E0
+  E2 (tune_2): 30/38 (78.9%) wins against E0
+  E3 (tune_6): 29/38 (76.3%) wins against E0
+  E4 (tune_6): 31/38 (81.6%) wins against E0
+  e5v3 (tune_1): 31/38 (81.6%) wins against E0
+  e6v2 (tune_2): 28/38 (73.7%) wins against E0
+
+OVERALL GATE 2 STATUS: FAIL
+
+--- Hysteresis Ablation on Winning Architecture ---
+With M(T): Held-out BCD = 2.578 pp, S-A = 1.209 pp
+With M = 0: Held-out BCD = 5.417 pp, S-A = 3.547 pp
+Does hysteresis help on DST? YES (Delta BCD = -2.839 pp)
+
+--- Voltage-Implied Floor on Operating Plateau ---
+  20 C: W-mid Bias=0.48 mV, Mean dOCV/dz=178.3 mV/unit | Implied Floor=0.269 pp | S-A RMSE=1.640 pp
+  25 C: W-mid Bias=0.35 mV, Mean dOCV/dz=176.7 mV/unit | Implied Floor=0.198 pp | S-A RMSE=0.606 pp
+  30 C: W-mid Bias=0.54 mV, Mean dOCV/dz=174.0 mV/unit | Implied Floor=0.310 pp | S-A RMSE=1.544 pp
+  40 C: W-mid Bias=0.49 mV, Mean dOCV/dz=175.4 mV/unit | Implied Floor=0.279 pp | S-A RMSE=1.343 pp
+  50 C: W-mid Bias=0.55 mV, Mean dOCV/dz=178.4 mV/unit | Implied Floor=0.308 pp | S-A RMSE=1.075 pp
+
+Artifacts saved to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage2_ladder.csv and /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage2_ladder.md
+Total time: 2156.1s

@@ -387,3 +387,71 @@ def evaluate_estimator_on_scenarios(
         "sf_worst_err_pp": worst_case_sf_pp,
         "sf_cases": sf_cases,
     }
+
+
+def evaluate_bcd_only(
+    estimator_factory: Callable[[ParamSet], Estimator],
+    base_params: ParamSet,
+    data: ScenarioDataSet,
+) -> float:
+    """Fast evaluation of BCD scenarios (S-B, S-C, S-D) only for tuning."""
+    n = len(data.time_s)
+    sb_target_socs = [0.80, 0.60, 0.40, 0.20]
+    sb_offsets_pp = [-10.0, -5.0, +5.0, +10.0]
+    sb_rmse_list = []
+
+    for z_target in sb_target_socs:
+        cross_idx = np.where(data.truth_soc <= z_target)[0]
+        if len(cross_idx) == 0:
+            continue
+        k0 = int(cross_idx[0])
+
+        for off_pp in sb_offsets_pp:
+            off_frac = off_pp / 100.0
+            z_init = min(max(float(data.truth_soc[k0] + off_frac), 0.0), 1.0)
+            est_sb = estimator_factory(base_params)
+            init_estimator_state(
+                est_sb,
+                soc0=z_init,
+                i1=data.i1_truth[k0],
+                i2=data.i2_truth[k0],
+                h=data.h_truth[k0],
+            )
+            soc_sb = run_stream_slice(est_sb, data, k0, n)
+            err_sb_pp = (soc_sb - data.truth_soc[k0:]) * 100.0
+            sb_rmse_list.append(float(np.sqrt(np.mean(err_sb_pp ** 2))))
+
+    sc_windows = [(0.80, 0.30), (0.90, 0.40)]
+    sc_rmse_list = []
+    for z_start, z_end in sc_windows:
+        idx_start = np.where(data.truth_soc <= z_start)[0]
+        idx_end = np.where(data.truth_soc <= z_end)[0]
+        if len(idx_start) == 0 or len(idx_end) == 0:
+            continue
+        k_s = int(idx_start[0])
+        k_e = int(idx_end[0])
+        if k_e <= k_s:
+            continue
+        est_sc = estimator_factory(base_params)
+        init_estimator_state(
+            est_sc,
+            soc0=data.truth_soc[k_s],
+            i1=data.i1_truth[k_s],
+            i2=data.i2_truth[k_s],
+            h=data.h_truth[k_s],
+        )
+        soc_sc = run_stream_slice(est_sc, data, k_s, k_e)
+        err_sc_pp = (soc_sc - data.truth_soc[k_s:k_e]) * 100.0
+        sc_rmse_list.append(float(np.sqrt(np.mean(err_sc_pp ** 2))))
+
+    v_rest = float(data.voltage_v[0])
+    z_inv = invert_ocv_table(v_rest, data.ocv_mono)
+    est_sd = estimator_factory(base_params)
+    init_estimator_state(est_sd, z_inv, 0.0, 0.0, 0.0)
+    soc_sd = run_stream_slice(est_sd, data, 0, n)
+    err_sd_pp = (soc_sd - data.truth_soc) * 100.0
+    rmse_sd = float(np.sqrt(np.mean(err_sd_pp ** 2)))
+
+    bcd_list = sb_rmse_list + sc_rmse_list + [rmse_sd]
+    return float(np.mean(bcd_list))
+
