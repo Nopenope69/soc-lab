@@ -2,11 +2,11 @@
 
 **Status:** RUNNING  
 **Current Stage:** Stage 1.5 (Component Development)  
-**Last Completed Step:** Round C2 evaluated (E4 RLS R0 DROPPED)  
+**Last Completed Step:** Round C3 evaluated (e5v3 DROPPED)  
 **Budget Used:**
-- Configurations tested: 2 / 400
+- Configurations tested: 3 / 400
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
-- Component development rounds: 1 / 3 for C1 (complete), 1 / 3 for C2 (complete)
+- Component development rounds: 1 / 3 for C1, C2, C3 (all evaluated)
 
 ## Active Estimator Reference
 - Best estimator so far: **E2 Baseline** (BCD: 3.287 pp, S-A: 1.700 pp, S-F: 16.527 pp)

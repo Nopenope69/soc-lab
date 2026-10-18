@@ -21,3 +21,4 @@ Otherwise, it is **DROPPED**.
 |---|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---|
 | 1 | C1 (E3 UKF) | 4-state UKF (`e3_ukf.py`) | 3.209 | -0.078 | 1.597 | -0.103 | 13.540 | -2.987 | **DROP** | BCD improvement of 0.078 pp misses the required $\ge 1.0\text{ pp}$ threshold. Runtime: 0.228 ms/step. |
 | 2 | C2 (E4 RLS R0) | Online RLS scalar multiplier on R0 (`e4_rls_r0.py`) | 3.002 | -0.285 | 1.473 | -0.227 | 16.491 | -0.036 | **DROP** | BCD improvement of 0.285 pp misses the required $\ge 1.0\text{ pp}$ threshold. Runtime: 0.073 ms/step. |
+| 3 | C3 (e5v3) | Observability-gated EKF (`e5v3.py`) | 2.693 | -0.594 | 1.477 | -0.223 | 11.683 | -4.844 | **DROP** | BCD improvement of 0.594 pp misses the required $\ge 1.0\text{ pp}$ threshold, despite strong S-F robustness (+4.84 pp). Runtime: 0.074 ms/step. |
