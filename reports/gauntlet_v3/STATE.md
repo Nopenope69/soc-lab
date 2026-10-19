@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
 **Status:** IN_PROGRESS  
-**Current Stage:** Stage V3 (Tuning and Gates)  
-**Last Completed Step:** Stage V2: D4 Adaptive Fading Ablation (`reports/gauntlet_v3/ablation.md` - DROPPED)  
+**Current Stage:** Stage V4 (Freeze)  
+**Last Completed Step:** Stage V3: Tuning and Gate Evaluation (`reports/gauntlet_v3/stage_v3_gates.md` - GATE A PASS, GATE B PASS)  
 **Budget Used:**
-- Configurations tested: 9 / 250
+- Configurations tested: 33 / 250
 - Development rounds: D4: 3/3 (DROPPED)
-- Wall clock time: 0.65h / 12h limit
+- Wall clock time: 0.85h / 12h limit
 
 ---
 
@@ -41,8 +41,13 @@
 - [x] **Stage V2:** Component D4 Adaptive Covariance Fading (`reports/gauntlet_v3/ablation.md`)
   - 3 rounds evaluated (default fading, fast breakout, direct max reset).
   - Findings: on flat LFP plateau, 3-5 pp SOC error produces 1.5-5 mV voltage error, which does not exceed $k \sqrt{S} \approx 71\text{ mV}$. Lowering $k$ caused false triggers on Set X (+17.7% degradation).
-  - Keep Rule: 0/3 rounds passed. **DROPPED**. E7v3 carries forward without D4.
-- [ ] **Stage V3:** Tuning and Gates (A1-007 DST tuning, Gate A & Gate B evaluation)
+- [x] **Stage V3:** Tuning and Gates (`reports/gauntlet_v3/stage_v3_gates.md`)
+  - Evaluated 24 configurations; selected `cand_cplat_2.0e-05` (q_soc=2e-9, cap_plat=2e-5).
+  - Runtime: 0.0959 ms/step (<< 5.0 ms limit); array shapes fixed (4,) and (4,4).
+  - GATE A (A1-007 held-out): **PASS** across all 5 clauses (S-A 1.32 pp, S-B 2.40 pp / 100% win rate, S-C 0.68/0.76 pp, S-G 2.63 pp, S-F 1.75 pp).
+  - GATE B (Set X / A1-008): **PASS** across all 4 clauses at all 4 decision temps (20, 30, 40, 50 °C).
+  - Overfitting gap: +0.046 pp (2.609 pp tuning vs 2.655 pp held-out).
+  - Hysteresis ablation: M=0 degrades SBC error by +89.1% on A1-007 and +87.4% on Set X.
 - [ ] **Stage V4:** Freeze (`FROZEN_SPEC.md`)
 - [ ] **Stage V5:** Single Unseal (US06 and FUDS)
 - [ ] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `FINAL_V3.md`)

@@ -120,7 +120,7 @@ class E7V3CompositeFilter(Estimator):
             self._q_scale = _ONE
 
         # Scale factor for hysteresis amplitude if non-default amplitude is configured
-        if self.params.hysteresis_amplitude_v > _ZERO:
+        if self.params.hysteresis_amplitude_v >= _ZERO:
             self._m_scale = self.params.hysteresis_amplitude_v / _M_REF
         else:
             self._m_scale = _ONE
