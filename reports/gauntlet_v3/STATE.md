@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
 **Status:** IN_PROGRESS  
-**Current Stage:** Stage V1 (Implement P1 to P4, Baselines)  
-**Last Completed Step:** Stage V0: Pre-Change Audits (`reports/gauntlet_v3/audit.md`)  
+**Current Stage:** Stage V2 (Component D4 Adaptive Covariance Fading)  
+**Last Completed Step:** Stage V1: P1-P4 Implementation & Baselines (`reports/gauntlet_v3/baselines.md`)  
 **Budget Used:**
-- Configurations tested: 0 / 250
+- Configurations tested: 6 / 250
 - Development rounds: D4: 0/3
-- Wall clock time: 0.1h / 12h limit
+- Wall clock time: 0.35h / 12h limit
 
 ---
 
@@ -35,7 +35,9 @@
   - (b) Variant test: Joint $R_0 + R_1$ wins on SBC (41.3% improvement on Set X). Kept.
   - (c) Deliverable audit: zero bad imports; lacks $Q(T)/M(T)$ tables and `reset(soc0, soc_std)`.
   - (d) $\tau_2$ bound audit: clamping degrades voltage RMSE & bias. Calibrated 600s model kept.
-- [ ] **Stage V1:** Implement P1 to P4 (`e7v3.py`, scenario builder v3, baselines)
+- [x] **Stage V1:** Implement P1 to P4 (`e7v3.py`, scenario builder v3, baselines)
+  - E7v3 reduces S-C held-out drift by **-39.1%** on A1-007 (3.725 pp -> 2.270 pp) and **-34.1%** on Set X (4.638 pp -> 3.057 pp).
+  - S-G baseline confirmed: E7v3 achieves 2.36 - 2.98 pp (better than E0 3.98 pp, but slow to breakout of false plateau lock).
 - [ ] **Stage V2:** Component D4 Adaptive Covariance Fading (`ablation.md`)
 - [ ] **Stage V3:** Tuning and Gates (A1-007 DST tuning, Gate A & Gate B evaluation)
 - [ ] **Stage V4:** Freeze (`FROZEN_SPEC.md`)
