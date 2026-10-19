@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
 **Status:** IN_PROGRESS  
-**Current Stage:** Stage V4 (Freeze)  
-**Last Completed Step:** Stage V3: Tuning and Gate Evaluation (`reports/gauntlet_v3/stage_v3_gates.md` - GATE A PASS, GATE B PASS)  
+**Current Stage:** Stage V5 (Single Unseal)  
+**Last Completed Step:** Stage V4: Freeze (`reports/gauntlet_v3/FROZEN_SPEC.md` - FROZEN)  
 **Budget Used:**
 - Configurations tested: 33 / 250
 - Development rounds: D4: 3/3 (DROPPED)
-- Wall clock time: 0.85h / 12h limit
+- Wall clock time: 0.95h / 12h limit
 
 ---
 
@@ -47,7 +47,9 @@
   - GATE A (A1-007 held-out): **PASS** across all 5 clauses (S-A 1.32 pp, S-B 2.40 pp / 100% win rate, S-C 0.68/0.76 pp, S-G 2.63 pp, S-F 1.75 pp).
   - GATE B (Set X / A1-008): **PASS** across all 4 clauses at all 4 decision temps (20, 30, 40, 50 °C).
   - Overfitting gap: +0.046 pp (2.609 pp tuning vs 2.655 pp held-out).
-  - Hysteresis ablation: M=0 degrades SBC error by +89.1% on A1-007 and +87.4% on Set X.
-- [ ] **Stage V4:** Freeze (`FROZEN_SPEC.md`)
+- [x] **Stage V4:** Freeze (`reports/gauntlet_v3/FROZEN_SPEC.md`)
+  - Full test suite verified green (205 passed in 375.17s).
+  - SHA-256 hashes generated for all model profiles, tables, and scripts.
+  - Frozen candidate: `cand_cplat_2.0e-05` (q_soc=2e-9, cap_plat=2e-5, ff=0.999, sl_ref=0.20).
 - [ ] **Stage V5:** Single Unseal (US06 and FUDS)
 - [ ] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `FINAL_V3.md`)
