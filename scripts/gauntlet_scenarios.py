@@ -229,10 +229,18 @@ def evaluate_estimator_on_scenarios(
     """Run full evaluation suite across S-A, S-B, S-C, S-D, and S-F for a single temperature."""
     n = len(data.time_s)
 
+    # Reference fix: Ensure pure Coulomb counting reference E0 uses temperature-scheduled Q(T)
+    est_probe = estimator_factory(base_params)
+    from soc.estimators.e0_coulomb import E0CoulombCounting
+    if isinstance(est_probe, E0CoulombCounting):
+        eval_params = replace(base_params, nominal_capacity_ah=data.cap_c20)
+    else:
+        eval_params = base_params
+
     # -------------------------------------------------------------
     # S-A: Matched full profile
     # -------------------------------------------------------------
-    est_sa = estimator_factory(base_params)
+    est_sa = estimator_factory(eval_params)
     init_estimator_state(est_sa, data.truth_soc[0], 0.0, 0.0, 0.0)
     soc_sa = run_stream_slice(est_sa, data, 0, n)
     err_sa_pp = (soc_sa - data.truth_soc) * 100.0
@@ -257,7 +265,7 @@ def evaluate_estimator_on_scenarios(
         for off_pp in sb_offsets_pp:
             off_frac = off_pp / 100.0
             z_init = min(max(float(data.truth_soc[k0] + off_frac), 0.0), 1.0)
-            est_sb = estimator_factory(base_params)
+            est_sb = estimator_factory(eval_params)
             init_estimator_state(
                 est_sb,
                 soc0=z_init,
@@ -293,7 +301,7 @@ def evaluate_estimator_on_scenarios(
         if k_e <= k_s:
             continue
 
-        est_sc = estimator_factory(base_params)
+        est_sc = estimator_factory(eval_params)
         init_estimator_state(
             est_sc,
             soc0=data.truth_soc[k_s],
@@ -316,7 +324,7 @@ def evaluate_estimator_on_scenarios(
     # -------------------------------------------------------------
     v_rest = float(data.voltage_v[0])
     z_inv = invert_ocv_table(v_rest, data.ocv_mono)
-    est_sd = estimator_factory(base_params)
+    est_sd = estimator_factory(eval_params)
     init_estimator_state(est_sd, z_inv, 0.0, 0.0, 0.0)
     soc_sd = run_stream_slice(est_sd, data, 0, n)
     err_sd_pp = (soc_sd - data.truth_soc) * 100.0
@@ -336,7 +344,7 @@ def evaluate_estimator_on_scenarios(
 
     # Current biases
     for i_b in [-0.050, -0.010, +0.010, +0.050]:
-        est_sf = estimator_factory(base_params)
+        est_sf = estimator_factory(eval_params)
         init_estimator_state(est_sf, data.truth_soc[0], 0.0, 0.0, 0.0)
         soc_sf = run_stream_slice(est_sf, data, 0, n, i_bias=i_b)
         err = (soc_sf - data.truth_soc) * 100.0
@@ -348,7 +356,7 @@ def evaluate_estimator_on_scenarios(
 
     # Voltage offsets
     for v_off in [-0.010, -0.005, +0.005, +0.010]:
-        est_sf = estimator_factory(base_params)
+        est_sf = estimator_factory(eval_params)
         init_estimator_state(est_sf, data.truth_soc[0], 0.0, 0.0, 0.0)
         soc_sf = run_stream_slice(est_sf, data, 0, n, v_offset=v_off)
         err = (soc_sf - data.truth_soc) * 100.0
@@ -360,7 +368,7 @@ def evaluate_estimator_on_scenarios(
 
     # Capacity errors (+- 3%)
     for cap_err_ratio in [-0.03, +0.03]:
-        p_cap = replace(base_params, nominal_capacity_ah=base_params.nominal_capacity_ah * (1.0 + cap_err_ratio))
+        p_cap = replace(eval_params, nominal_capacity_ah=eval_params.nominal_capacity_ah * (1.0 + cap_err_ratio))
         est_sf = estimator_factory(p_cap)
         init_estimator_state(est_sf, data.truth_soc[0], 0.0, 0.0, 0.0)
         soc_sf = run_stream_slice(est_sf, data, 0, n)
@@ -396,6 +404,15 @@ def evaluate_bcd_only(
 ) -> float:
     """Fast evaluation of BCD scenarios (S-B, S-C, S-D) only for tuning."""
     n = len(data.time_s)
+
+    # Reference fix: Ensure pure Coulomb counting reference E0 uses temperature-scheduled Q(T)
+    est_probe = estimator_factory(base_params)
+    from soc.estimators.e0_coulomb import E0CoulombCounting
+    if isinstance(est_probe, E0CoulombCounting):
+        eval_params = replace(base_params, nominal_capacity_ah=data.cap_c20)
+    else:
+        eval_params = base_params
+
     sb_target_socs = [0.80, 0.60, 0.40, 0.20]
     sb_offsets_pp = [-10.0, -5.0, +5.0, +10.0]
     sb_rmse_list = []
@@ -409,7 +426,7 @@ def evaluate_bcd_only(
         for off_pp in sb_offsets_pp:
             off_frac = off_pp / 100.0
             z_init = min(max(float(data.truth_soc[k0] + off_frac), 0.0), 1.0)
-            est_sb = estimator_factory(base_params)
+            est_sb = estimator_factory(eval_params)
             init_estimator_state(
                 est_sb,
                 soc0=z_init,
@@ -432,7 +449,7 @@ def evaluate_bcd_only(
         k_e = int(idx_end[0])
         if k_e <= k_s:
             continue
-        est_sc = estimator_factory(base_params)
+        est_sc = estimator_factory(eval_params)
         init_estimator_state(
             est_sc,
             soc0=data.truth_soc[k_s],
@@ -446,7 +463,7 @@ def evaluate_bcd_only(
 
     v_rest = float(data.voltage_v[0])
     z_inv = invert_ocv_table(v_rest, data.ocv_mono)
-    est_sd = estimator_factory(base_params)
+    est_sd = estimator_factory(eval_params)
     init_estimator_state(est_sd, z_inv, 0.0, 0.0, 0.0)
     soc_sd = run_stream_slice(est_sd, data, 0, n)
     err_sd_pp = (soc_sd - data.truth_soc) * 100.0
