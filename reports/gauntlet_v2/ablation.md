@@ -40,4 +40,21 @@ A component is **KEPT** if:
   - Clause 4 (S-F worst diff $\le +2.00\text{ pp}$): **PASS** (-1.1016 pp)
 - **Verdict:** **KEEP** (Kept on Round 1)
 
+### Round D2: `e4v2` (Online RLS Impedance Adaptation on R0 and R1)
+- **Implementation:** `src/soc/estimators/e4v2_rls.py` (Class `E4V2RLSEKF`)
+- **Unit Tests:** `tests/test_e4v2.py` (9/9 passed, per-step runtime 0.15 ms < 5 ms)
+- **Measured Metrics:**
+  - A1-007 Held-out Mean SBC RMSE: `2.7089 pp` (**-4.12%** relative vs reference, improvement)
+  - Cross-Cell Set X Held-out Mean SBC RMSE: `6.0337 pp` (**-41.32%** relative vs reference, **PASSES $\ge 10\%$ criterion**)
+  - A1-007 Held-out Mean S-A RMSE: `1.2651 pp` (**+0.0210 pp** diff vs reference, **PASSES $\le +0.30$ pp**)
+  - A1-007 Held-out S-F Worst-Case Error: `6.1509 pp` (**-0.2850 pp** diff vs reference, **PASSES $\le +2.00$ pp**)
+  - Set X Held-out Mean S-A RMSE: `1.5435 pp` (massive drop from 7.0968 pp)
+  - Set X Held-out S-F Worst-Case Error: `7.961 pp` (massive drop from 25.253 pp)
+- **Clause Checks:**
+  - Clause 1 ($\ge 10\%$ gain on 007 or X): **PASS** (-41.32% on Set X)
+  - Clause 2 ($\le 5\%$ worsening on other): **PASS** (-4.12% on A1-007, strictly improved)
+  - Clause 3 (S-A diff $\le +0.30\text{ pp}$): **PASS** (+0.0210 pp)
+  - Clause 4 (S-F worst diff $\le +2.00\text{ pp}$): **PASS** (-0.2850 pp)
+- **Verdict:** **KEEP** (Kept on Round 1)
+
 ---
