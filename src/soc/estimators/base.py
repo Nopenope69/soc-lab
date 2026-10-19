@@ -83,6 +83,14 @@ class ParamSet:
     # Online R0 adaptation (E4) tunings
     e4_rls_forgetting_factor: float = float("0.999")
 
+    # Component D4 adaptive covariance fading tunings
+    d4_enabled: bool = False
+    d4_k: float = float("3.0")
+    d4_duration_s: float = float("60.0")
+    d4_lambda_f: float = float("1.05")
+    d4_p_max: float = float("0.01")
+    d4_mode: str = "step_factor"
+
     @classmethod
     def from_assumptions(cls, assumptions: Assumptions, matched: bool = True) -> "ParamSet":
         """Construct estimator parameter set from resolved assumptions."""

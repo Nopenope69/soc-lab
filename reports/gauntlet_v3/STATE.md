@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
 **Status:** IN_PROGRESS  
-**Current Stage:** Stage V2 (Component D4 Adaptive Covariance Fading)  
-**Last Completed Step:** Stage V1: P1-P4 Implementation & Baselines (`reports/gauntlet_v3/baselines.md`)  
+**Current Stage:** Stage V3 (Tuning and Gates)  
+**Last Completed Step:** Stage V2: D4 Adaptive Fading Ablation (`reports/gauntlet_v3/ablation.md` - DROPPED)  
 **Budget Used:**
-- Configurations tested: 6 / 250
-- Development rounds: D4: 0/3
-- Wall clock time: 0.35h / 12h limit
+- Configurations tested: 9 / 250
+- Development rounds: D4: 3/3 (DROPPED)
+- Wall clock time: 0.65h / 12h limit
 
 ---
 
@@ -38,7 +38,10 @@
 - [x] **Stage V1:** Implement P1 to P4 (`e7v3.py`, scenario builder v3, baselines)
   - E7v3 reduces S-C held-out drift by **-39.1%** on A1-007 (3.725 pp -> 2.270 pp) and **-34.1%** on Set X (4.638 pp -> 3.057 pp).
   - S-G baseline confirmed: E7v3 achieves 2.36 - 2.98 pp (better than E0 3.98 pp, but slow to breakout of false plateau lock).
-- [ ] **Stage V2:** Component D4 Adaptive Covariance Fading (`ablation.md`)
+- [x] **Stage V2:** Component D4 Adaptive Covariance Fading (`reports/gauntlet_v3/ablation.md`)
+  - 3 rounds evaluated (default fading, fast breakout, direct max reset).
+  - Findings: on flat LFP plateau, 3-5 pp SOC error produces 1.5-5 mV voltage error, which does not exceed $k \sqrt{S} \approx 71\text{ mV}$. Lowering $k$ caused false triggers on Set X (+17.7% degradation).
+  - Keep Rule: 0/3 rounds passed. **DROPPED**. E7v3 carries forward without D4.
 - [ ] **Stage V3:** Tuning and Gates (A1-007 DST tuning, Gate A & Gate B evaluation)
 - [ ] **Stage V4:** Freeze (`FROZEN_SPEC.md`)
 - [ ] **Stage V5:** Single Unseal (US06 and FUDS)

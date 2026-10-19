@@ -28,6 +28,7 @@ from soc.estimators.e6_rbc_dekf import E6RBCDEKF
 from soc.estimators.e6v2 import E6V2ResidualBiasFilter
 from soc.estimators.e7v2 import E7V2CompositeFilter
 from soc.estimators.e7v3 import E7V3CompositeFilter
+from soc.estimators.e7v3_d4 import E7V3D4Filter
 from soc.models.plant import Measurement
 
 
@@ -39,7 +40,7 @@ def estimator_params() -> ParamSet:
 
 def test_estimator_step_signature_accepts_only_measurement():
     """Verify that Estimator.step takes strictly (self, measurement: Measurement)."""
-    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter]:
+    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter, E7V3D4Filter]:
         hints = get_type_hints(cls.step)
         params = list(inspect.signature(cls.step).parameters.keys())
 
@@ -57,7 +58,7 @@ def test_estimator_step_signature_accepts_only_measurement():
 
 def test_estimator_constructor_signature_accepts_only_paramset():
     """Verify that estimator constructor takes strictly (self, params: ParamSet)."""
-    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter]:
+    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter, E7V3D4Filter]:
         params = list(inspect.signature(cls.__init__).parameters.keys())
         assert params == ["self", "params"], (
             f"{cls.__name__}.__init__ has non-isolated parameter list: {params}"
@@ -77,7 +78,7 @@ def test_estimators_step_with_stripped_measurement(estimator_params):
         dropout=False,
     )
 
-    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter]:
+    for cls in [E0CoulombCounting, E1ExtendedKalmanFilter, E2EKFHysteresis, E2AnchoredEstimator, E2RateHystEstimator, E3UnscentedKalmanFilter, E4RLSR0EKF, E5ObservabilityEKF, E5V3ObservabilityEKF, E5V4ObservabilityEKF, E4V2RLSEKF, D3InnovationGatedEKF, E6RBCDEKF, E6V2ResidualBiasFilter, E7V2CompositeFilter, E7V3CompositeFilter, E7V3D4Filter]:
         est = cls(estimator_params)
         est.reset(0.80)
         out = est.step(stripped_meas)
