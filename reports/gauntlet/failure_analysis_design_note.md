@@ -34,8 +34,9 @@ In contrast, an Extended Kalman Filter operating on the flat plateau receives ti
 
 ### C. Thermal Generalization Breakdown at Elevated Temperatures
 On held-out selection temperatures ($40^\circ\text{C}$ and $50^\circ\text{C}$), internal cell resistance decreases, further compressing the voltage excitation envelope. Furthermore, cell-to-cell transfer evaluation on cell `A1-008` revealed catastrophic divergence at $50^\circ\text{C}$:
-- A1-007 (50 °C DST): S-A RMSE = $1.075\text{ pp}$, BCD Mean = $2.901\text{ pp}$.
+- A1-007 (50 °C DST): S-A RMSE = $1.075\text{ pp}$ [Truth uncertainty floor: $0.363\text{ pp}$], BCD Mean = $2.901\text{ pp}$.
 - A1-008 (50 °C DST): S-A RMSE = $6.488\text{ pp}$, BCD Mean = $13.447\text{ pp}$ (Worst fault error = $24.785\text{ pp}$).
+*(Note: US06 and FUDS profiles were development data read in earlier diagnostics, but were not read in this run per Rule R1).*
 This divergence indicates that at elevated temperatures, subtle manufacturing differences in capacity degradation and SEI resistance create severe model mismatch that static parameter scheduling cannot accommodate.
 
 ---

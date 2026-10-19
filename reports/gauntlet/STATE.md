@@ -1,13 +1,13 @@
 # Gauntlet State: CALCE A123 SOC Algorithm Development
 
-**Status:** NO-GO(estimator) (Finished)  
-**Current Stage:** Stage 2.5 (E7 Composite) - END OF RUN  
-**Final Outcome:** NO-GO(estimator). E7 failed GATE 2 Clause (ii) individual case win rate (78.9% vs >= 80.0%, 30/38 cases, short by 1 case). Optional E7b failed Keep Rule (+8.35% relative improvement vs >= 20.0% required) and was dropped. Stages 3 and 4 strictly bypassed. US06 and FUDS remain sealed and unread.  
+**Status:** NO-GO(estimator) (Finished & Verified Post-E0 Audit)  
+**Current Stage:** Stage 2.5 Resolution - FINAL END OF RUN  
+**Final Outcome:** NO-GO(estimator). Following E0 Fairness Audit, E0 was fixed in the scenario runner to use temperature-scheduled capacity Q(T). Re-evaluation of GATE 2 for frozen winner E7 confirmed identical failure on Clause (ii) individual case win rate: 30 / 38 cases = 78.95% vs mandatory >= 80.0% (short by 1 case). Stages 3 and 4 strictly bypassed. US06 and FUDS were not read in this run (they were development data read in earlier diagnostics).  
 **Budget Used:**
 - Configurations tested: 50 / 400 (6 in Stage 1.5, 44 in Stage 2)
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
 - Component development rounds: 1 / 3 for C1, C2, C3, C4, C5, C6 (all 6 completed and dropped)
-- Wall clock time: < 3 hours (well within 16-hour limit)
+- Wall clock time: < 3.5 hours (well within 16-hour limit)
 
 ## Active Estimator Reference
 - Selected Standalone Estimator: **E2 (tune_2)** (Tune BCD: 2.351 pp, Held-out BCD: 2.578 pp, Held-out S-A: 1.209 pp, Held-out S-F Worst: 4.648 pp)
@@ -75,7 +75,7 @@
   - Result: E7b **DROPPED**.
 - **Protocol Mandate Action:**
   - Per protocol: *"If E7 (or E7b) fails GATE 2: END as NO-GO(estimator). Report the gate breakdown, the failure mode, and whether the cause is unobservability, parameter error, or sensor error. Do not proceed."*
-  - Stages 3 (Uncertainty Bar) and 4 (The Unseal) are strictly bypassed. US06 and FUDS are preserved pristine and sealed.
+  - Stages 3 (Uncertainty Bar) and 4 (The Unseal) are strictly bypassed. US06 and FUDS were not read in this run (they were development data read in earlier diagnostics).
   - `deliverable/bms_soc_ref.py` is NOT written; instead, `reports/gauntlet/failure_analysis_design_note.md` documents the architectural and physical causes.
 - **Output Artifacts:**
   - `scripts/stage2_5_e7.py`
