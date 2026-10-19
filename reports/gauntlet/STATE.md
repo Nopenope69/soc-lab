@@ -1,12 +1,13 @@
 # Gauntlet State: CALCE A123 SOC Algorithm Development
 
-**Status:** RUNNING  
-**Current Stage:** Stage 2.5 (E7 Composite)  
-**Last Completed Step:** Stage 2 Complete (E2 selected via simplicity tie-break, Held-out BCD 2.578 pp; Gate 2 failed on Clause ii individual win rate 78.9% vs 80.0%).  
+**Status:** NO-GO(estimator) (Finished)  
+**Current Stage:** Stage 2.5 (E7 Composite) - END OF RUN  
+**Final Outcome:** NO-GO(estimator). E7 failed GATE 2 Clause (ii) individual case win rate (78.9% vs >= 80.0%, 30/38 cases, short by 1 case). Optional E7b failed Keep Rule (+8.35% relative improvement vs >= 20.0% required) and was dropped. Stages 3 and 4 strictly bypassed. US06 and FUDS remain sealed and unread.  
 **Budget Used:**
 - Configurations tested: 50 / 400 (6 in Stage 1.5, 44 in Stage 2)
 - Stage 1 Ladder iterations: 2 / 3 per rung (Rung 1 evaluated, Rung 2 fitted and passed)
 - Component development rounds: 1 / 3 for C1, C2, C3, C4, C5, C6 (all 6 completed and dropped)
+- Wall clock time: < 3 hours (well within 16-hour limit)
 
 ## Active Estimator Reference
 - Selected Standalone Estimator: **E2 (tune_2)** (Tune BCD: 2.351 pp, Held-out BCD: 2.578 pp, Held-out S-A: 1.209 pp, Held-out S-F Worst: 4.648 pp)
@@ -60,3 +61,26 @@
   - `reports/gauntlet/stage2_tuning_log.csv`
   - `reports/gauntlet/stage2.log`
 
+## Stage 2.5 Summary: E7 Composite & Optional E7b
+- **Candidate Filter:** E7 (core filter of winning standalone E2 tune_2; no Stage 1.5 components added because C1–C6 all failed the Keep Rule).
+- **Runtime Benchmark:** 0.0740 ms/step (execution is 67x faster than the 5.0 ms/step limit). Static memory allocations: 4-state vector, 4x4 covariance matrix.
+- **GATE 2 Verification on E7:**
+  - Clause (i) Matched S-A: 1.209 pp <= E0 (5.918 pp) and <= E1 (5.021 pp) -> **PASS**
+  - Clause (ii) S-B, S-C, S-D Recovery: Group mean RMSE = 2.578 pp <= 0.70 * E0 (4.365 pp) -> PASS. Individual case win rate: 30 / 38 cases = 78.9% (Threshold: >= 80.0%, 31/38 needed) -> **FAIL** (short by exactly 1 case).
+  - Clause (iii) S-F Faults: Mean RMSE = 1.570 pp <= E0 + 5 pp (7.013 pp) -> **PASS**.
+  - Overall Gate 2: **FAIL**.
+- **Optional E7b (Learned Residual):**
+  - Model: Ridge regression / shallow nonlinear residual trained on DST 20 & 30 °C.
+  - Held-out Evaluation (40 & 50 °C): Relative improvement over E7 was +8.35% (peak +15.53% with extreme regularisation), failing the mandatory Keep Rule requirement of >= 20.0% relative improvement.
+  - Result: E7b **DROPPED**.
+- **Protocol Mandate Action:**
+  - Per protocol: *"If E7 (or E7b) fails GATE 2: END as NO-GO(estimator). Report the gate breakdown, the failure mode, and whether the cause is unobservability, parameter error, or sensor error. Do not proceed."*
+  - Stages 3 (Uncertainty Bar) and 4 (The Unseal) are strictly bypassed. US06 and FUDS are preserved pristine and sealed.
+  - `deliverable/bms_soc_ref.py` is NOT written; instead, `reports/gauntlet/failure_analysis_design_note.md` documents the architectural and physical causes.
+- **Output Artifacts:**
+  - `scripts/stage2_5_e7.py`
+  - `scripts/test_e7b_learned_residual.py`
+  - `reports/gauntlet/stage2_5.log`
+  - `reports/gauntlet/stage2_5_e7.csv`
+  - `reports/gauntlet/stage2_5_e7.md`
+  - `reports/gauntlet/failure_analysis_design_note.md`

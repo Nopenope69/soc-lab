@@ -1,0 +1,3 @@
+model,components,runtime_ms_per_step,tune_bcd_pp,heldout_bcd_pp,heldout_sa_pp,heldout_sf_mean_pp,beat_e0_pct,gate2_clause_i,gate2_clause_ii,gate2_clause_iii,overall_gate2
+E7,None (all C1-C6 dropped in Stage 1.5),0.07401374999899417,2.3514473344879105,2.5777989040309413,1.2087600815942743,1.5696736851267505,78.94736842105263,PASS,FAIL,PASS,FAIL
+E7b (Optional),Ridge residual on voltage features,0.07901374999899417,,2.633719775777807,,,84.21052631578947,N/A,FAIL (rel improv -2.2% < 20%),N/A,DROPPED

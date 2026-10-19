@@ -1,0 +1,48 @@
+=== STARTING GAUNTLET STAGE 2.5: E7 COMPOSITE ===
+Core filter parameters (E2 tune_2):
+  process_noise_q_soc:        2.9031433196504225e-08
+  process_noise_q_rc:         1.1198164932559382e-05
+  process_noise_q_hysteresis: 0.00017150882346504795
+  measurement_noise_r_v:      0.0008610323423725228
+
+--- Composition Stack Audit ---
+Stage 1.5 Component Evaluation Summary:
+  C1 (E3 UKF Core):                         Delta BCD = -0.078 pp -> DROPPED
+  C2 (E4 Online R0 Adaptation):             Delta BCD = -0.285 pp -> DROPPED
+  C3 (e5v3 Observability Gate & Step Cap):  Delta BCD = -0.594 pp -> DROPPED
+  C4 (e6v2 Decoupled Residual Bias Filter): Delta BCD = +0.207 pp, S-A = +0.667 pp -> DROPPED
+  C5 (Anchoring Policies):                  Delta BCD =  0.000 pp -> DROPPED
+  C6 (Rate Hysteresis M(T, |I|)):           Delta BCD = +2.113 pp, S-F worst = +6.827 pp -> DROPPED
+Result: Zero components passed KEEP RULE. Final E7 stack = [E2 Core Filter].
+
+--- Benchmarking E7 Runtime & Allocation ---
+State vector length: 4 (fixed size)
+Covariance matrix shape: (4, 4) (fixed size)
+Benchmark duration: 0.740 s for 10,000 steps
+Runtime per step: 0.0740 ms/step (limit: <= 5.0 ms/step) -> PASS
+
+--- Evaluating E7 on Scenarios ---
+
+--- GATE 2 EVALUATION (E7 COMPOSITE) ---
+Clause (i) S-A Non-Inferiority: E7=1.209 pp vs E0+5=5.918 pp, E1+1=5.021 pp -> PASS
+Clause (ii) BCD Superiority: E7=2.578 pp vs 0.70*E0=4.365 pp (ratio=0.413) | Beat E0: 30/38 (78.9%) -> FAIL
+Clause (iii) S-F Robustness: E7 SF mean=1.570 pp vs E0+5=7.013 pp -> PASS
+OVERALL GATE 2 STATUS FOR E7: FAIL
+
+--- Evaluating Optional E7b (Learned Residual) ---
+Trigger: E7 failed Clause (ii) individual win rate (78.9% vs >= 80.0%).
+Protocol: Train linear model on voltage-residual features on DST at 20 & 30 C; validate on 40 & 50 C.
+Keep Rule: Must improve held-out mean RMSE over E7 by >= 20% relative (<= 2.062 pp).
+E7 Held-out BCD Mean RMSE:  2.578 pp
+E7b Held-out BCD Mean RMSE: 2.634 pp
+Relative Improvement:      -2.17% (Required: >= +20.0%) -> FAIL
+Beat E0 Individual Wins:   32/38 (84.2%)
+
+E7b Keep Decision: DROPPED (did not reach +20% threshold)
+
+==========================================
+FINAL STAGE 2.5 VERDICT: NO-GO(estimator)
+==========================================
+
+Artifacts saved to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage2_5_e7.csv and /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/stage2_5_e7.md
+Total time: 127.8 s
