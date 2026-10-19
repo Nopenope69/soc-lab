@@ -69,3 +69,15 @@
 - **Step 5 (Reference Implementation Equivalence)**: Traced step 0 discrepancy between `deliverable/bms_soc_ref.py` and `E7V3CompositeFilter`. Identified root cause: `BmsSocParameters.coulombic_efficiency` defaulted to 1.0 instead of 0.998. Fixed default in `deliverable/bms_soc_ref.py` and proved float64 bit-level mathematical equivalence bounded by $\le 1.4 \times 10^{-16}$ across 25,000 steps. Tightened test suite assertions to $\le 10^{-12}$. All 209 repo tests green. Commit: `40a1722`.
 - **Step 6 (v3.1 Spec and Report Corrections)**: Created `reports/gauntlet_v3/ALGORITHM_SPEC_v3.1.md` and `reports/gauntlet_v3/FINAL_V3_v3.1.md` incorporating recomputed window tables, clarified data boundaries (US06/FUDS development data, CALCE sub-zero existence vs exclusion), true Coulombic efficiency (0.998), CV-taper gap citations, and accurate D4 ablation summary. Commit: `d5eeaa4`.
 - **Step 7 (Verification Summary)**: Produced comprehensive audit document `reports/gauntlet_v3/verification/VERIFICATION.md` detailing every threshold difference, discrepancy, file provenance, and the final mechanical **GO** verdict.
+
+---
+
+## CLOSE-OUT PASS (Table Integrity, Convergence, Drift, and Range Checks)
+
+- **C1: Table Integrity Audit**: Verified all gate numbers against code and saved JSON. Verdict: **REPRODUCES**. Corrected report copy-paste errata (E1 achieved 8/16 wins with mean 7.157 pp, E2/E7v2 raw JSON values reconciled, E0 Oracle vs Fair analyzed, loss cases on US06/FUDS confirmed at 61/64 for A1-007, initial covariance setting audited).
+- **C2: Convergence & Region Decomposition**: Analyzed 672 cases across DST, US06, and FUDS. S-B convergence time: median = 783.9 s (13.1 min), p90 = 3334.3 s (55.6 min); S-G convergence time: median = 2655.2 s (44.3 min), p90 = 4644.2 s (77.4 min); never-converged rate = 0.0%; mean end error = 0.627 pp. Plateau contributes 86.6% (S-B) and 78.5% (S-G) of variance reduction. Commit: `8dfa080`.
+- **C3: Multi-Segment Drift**: Evaluated 9-hour continuous cycling workbooks across 56 conditions. E7v3 unanchored bounds final error to -0.85 pp (A1-007) and -1.18 pp (A1-008) under $\pm 20\text{ mA}$ sensor bias (vs E0 drift of -15.8 to -19.8 pp), achieving up to +18.9 pp drift reduction. Anchored variant completely clears drift each cycle. Commit: `5cd3bca`.
+- **C4: Out-of-Range Temperatures**: Evaluated 10, 0, and -10 °C on A1-007. Computed D8 anchor gaps (10 °C: 3.490 pp, 0 °C: 0.391 pp, -10 °C: 0.143 pp). Documented performance degradation mechanisms (3.49 pp polarization gap at 10 °C, lower knee impedance rise at 0 °C, 4x impedance rise and voltage cutoff at -10 °C). Commit: `a5359af`.
+- **C5: Document Updates**: Published `reports/gauntlet_v3/ALGORITHM_SPEC_v3.2.md` and `reports/gauntlet_v3/FINAL_V3_v3.2.md` incorporating all C1-C4 forensic results, ground truth caveats, and the 7-pillar field validation requirements. Commit: `99b53e2`.
+- **Close-Out Report**: Generated master close-out document `reports/gauntlet_v3/closeout/CLOSEOUT.md`. Final end state: **GO (development-data validation on CALCE; not field-validated)**.
+
