@@ -1,0 +1,132 @@
+{
+  "S-B": {
+    "total_cases": 384,
+    "converged_cases": 384,
+    "never_converged_cases": 0,
+    "never_converged_frac": 0.0,
+    "overall_median_conv_time_s": 783.9437978480901,
+    "overall_p90_conv_time_s": 3334.339744982922,
+    "mean_end_err_pp": 0.6266617125471184,
+    "p95_end_err_pp": 1.3376040072314754,
+    "by_offset_size": {
+      "5.0": {
+        "count": 192,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 387.86569992056457,
+        "p90_conv_time_s": 3277.538561287119,
+        "mean_end_err_pp": 0.6263830694329676
+      },
+      "10.0": {
+        "count": 192,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 946.0052857962582,
+        "p90_conv_time_s": 3545.5642792375115,
+        "mean_end_err_pp": 0.6269403556612693
+      }
+    },
+    "by_start_soc": {
+      "0.80": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 365.3261314603037,
+        "p90_conv_time_s": 4164.388944298937,
+        "mean_end_err_pp": 0.6259737660594186
+      },
+      "0.60": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 1684.7210956687882,
+        "p90_conv_time_s": 2614.870216681027,
+        "mean_end_err_pp": 0.6282612866716449
+      },
+      "0.40": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 245.37321316177076,
+        "p90_conv_time_s": 2555.5200621836275,
+        "mean_end_err_pp": 0.6273898521929203
+      },
+      "0.20": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 858.4870440874729,
+        "p90_conv_time_s": 1094.9134819623723,
+        "mean_end_err_pp": 0.62502194526449
+      }
+    },
+    "variance_reduction_decomposition": {
+      "total_delta_sum_squares": 65797379.017928116,
+      "plateau_delta_sum_squares": 57004030.36120927,
+      "knee_delta_sum_squares": 8793348.656718845,
+      "plateau_share_pct": 86.63571590849709,
+      "knee_share_pct": 13.364284091502915
+    }
+  },
+  "S-G": {
+    "total_cases": 288,
+    "converged_cases": 288,
+    "never_converged_cases": 0,
+    "never_converged_frac": 0.0,
+    "overall_median_conv_time_s": 2655.1566033521976,
+    "overall_p90_conv_time_s": 4644.173559423686,
+    "mean_end_err_pp": 0.6266264829089903,
+    "p95_end_err_pp": 1.3415178598946462,
+    "by_offset_size": {
+      "3.0": {
+        "count": 144,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 2258.23141184435,
+        "p90_conv_time_s": 4082.8910268178042,
+        "mean_end_err_pp": 0.6265655664796417
+      },
+      "5.0": {
+        "count": 144,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 3115.913968216529,
+        "p90_conv_time_s": 5244.866031923058,
+        "mean_end_err_pp": 0.6266873993383387
+      }
+    },
+    "by_start_soc": {
+      "0.80": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 4089.5695941348495,
+        "p90_conv_time_s": 5543.483087375602,
+        "mean_end_err_pp": 0.6267597519230387
+      },
+      "0.60": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 3004.8384056088753,
+        "p90_conv_time_s": 4123.0518821846035,
+        "mean_end_err_pp": 0.6274962719558453
+      },
+      "0.40": {
+        "count": 96,
+        "never_converged_count": 0,
+        "never_converged_frac": 0.0,
+        "median_conv_time_s": 1696.1981173002641,
+        "p90_conv_time_s": 2569.588064649094,
+        "mean_end_err_pp": 0.6256234248480866
+      }
+    },
+    "variance_reduction_decomposition": {
+      "total_delta_sum_squares": 10397116.515491938,
+      "plateau_delta_sum_squares": 8161351.596229298,
+      "knee_delta_sum_squares": 2235764.9192626406,
+      "plateau_share_pct": 78.49629831567916,
+      "knee_share_pct": 21.503701684320845
+    }
+  }
+}
