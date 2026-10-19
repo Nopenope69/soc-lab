@@ -2,11 +2,11 @@
 
 **Status:** RUNNING  
 **Current Stage:** Stage V2 (Component Development)  
-**Last Completed Step:** Stage V1: Model Calibration (calce_a123_v4.yaml chosen)  
+**Last Completed Step:** Stage V2 Component D1: e5v4 (KEPT: Set X SBC -12.04%, A1-007 SBC -7.77%)  
 **Budget Used:**
-- Configurations tested: 0 / 300
-- Development rounds: 0 / 3 per component
-- Wall clock time: 0.5h / 14h limit
+- Configurations tested: 1 / 300
+- Development rounds: 1 / 3 for D1; 0 / 3 for D2; 0 / 3 for D3
+- Wall clock time: 1.0h / 14h limit
 
 ---
 

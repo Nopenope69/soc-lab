@@ -34,8 +34,8 @@ def test_estimators_conform_to_protocol(params):
 
 
 def test_registry_instantiates_implemented_estimators(params):
-    """Verify that get_estimator instantiates E0, E1, E2, E3, E4, E5, and E6 cleanly."""
-    for name in ["E0", "E1", "E2", "E3", "E4", "E5", "E6"]:
+    """Verify that get_estimator instantiates implemented estimators cleanly."""
+    for name in ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "e5v4", "e4v2", "d3"]:
         est = get_estimator(name, params)
         assert isinstance(est, Estimator)
 
@@ -53,10 +53,10 @@ def test_registry_rejects_unknown_estimator_name(params):
         get_estimator("E99", params)
 
 
-def test_registry_lists_all_e0_to_e7():
-    """Verify that registry contains exactly E0 through E7."""
+def test_registry_lists_all_registered():
+    """Verify that registry contains all registered estimators."""
     registered = list_registered_estimators()
-    expected = ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7"]
+    expected = ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "d3", "e4v2", "e5v4"]
     assert sorted(registered) == sorted(expected)
 
 

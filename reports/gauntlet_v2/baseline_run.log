@@ -1,0 +1,59 @@
+================================================================================
+GAUNTLET V2: COMPUTING REFERENCE BASELINE (TUNED E2 & E0)
+R3 Guarantee: truth_soc = start_soc - (np.cumsum(unmodified_current * dt) / (3600.0 * q_c20))
+================================================================================
+
+--- Evaluating A1-007 (Primary Cell) ---
+
+Loading A1-007 DST at 20C...
+  [A1-007 20C E0] S-A: 0.021 pp | S-B: 7.290 pp | S-C: 0.048 pp | SBC: 6.146 pp | S-F worst: 9.505 pp
+  [A1-007 20C E2] S-A: 1.661 pp | S-B: 2.915 pp | S-C: 1.372 pp | SBC: 2.671 pp | S-F worst: 6.058 pp
+
+Loading A1-007 DST at 25C (SUSPECT - REPORT ONLY)...
+  [A1-007 25C E0] S-A: 0.021 pp | S-B: 7.209 pp | S-C: 0.073 pp | SBC: 6.082 pp | S-F worst: 9.605 pp
+  [A1-007 25C E2] S-A: 1.156 pp | S-B: 2.684 pp | S-C: 3.604 pp | SBC: 2.829 pp | S-F worst: 5.049 pp
+
+Loading A1-007 DST at 30C...
+  [A1-007 30C E0] S-A: 0.021 pp | S-B: 7.280 pp | S-C: 0.035 pp | SBC: 6.136 pp | S-F worst: 9.614 pp
+  [A1-007 30C E2] S-A: 1.485 pp | S-B: 2.552 pp | S-C: 2.126 pp | SBC: 2.484 pp | S-F worst: 6.532 pp
+
+Loading A1-007 DST at 40C...
+  [A1-007 40C E0] S-A: 0.021 pp | S-B: 7.313 pp | S-C: 0.031 pp | SBC: 6.163 pp | S-F worst: 9.560 pp
+  [A1-007 40C E2] S-A: 1.249 pp | S-B: 2.429 pp | S-C: 2.870 pp | SBC: 2.499 pp | S-F worst: 6.422 pp
+
+Loading A1-007 DST at 50C...
+  [A1-007 50C E0] S-A: 0.021 pp | S-B: 7.345 pp | S-C: 0.027 pp | SBC: 6.189 pp | S-F worst: 9.573 pp
+  [A1-007 50C E2] S-A: 1.239 pp | S-B: 3.012 pp | S-C: 3.895 pp | SBC: 3.152 pp | S-F worst: 6.436 pp
+
+--- Evaluating Cross-cell Set X (A1-008 DST with A1-007 parameters) ---
+
+Loading A1-008 DST at 20C...
+  [Set X 20C E0] S-A: 0.021 pp | S-B: 7.325 pp | S-C: 0.035 pp | SBC: 6.173 pp | S-F worst: 9.492 pp
+  [Set X 20C E2] S-A: 2.920 pp | S-B: 5.203 pp | S-C: 2.363 pp | SBC: 4.755 pp | S-F worst: 8.759 pp
+
+Loading A1-008 DST at 25C (SUSPECT - REPORT ONLY)...
+  [Set X 25C E0] S-A: 0.021 pp | S-B: 7.258 pp | S-C: 0.060 pp | SBC: 6.122 pp | S-F worst: 9.483 pp
+  [Set X 25C E2] S-A: 3.643 pp | S-B: 8.468 pp | S-C: 7.560 pp | SBC: 8.325 pp | S-F worst: 11.424 pp
+
+Loading A1-008 DST at 30C...
+  [Set X 30C E0] S-A: 0.021 pp | S-B: 7.371 pp | S-C: 0.034 pp | SBC: 6.213 pp | S-F worst: 9.426 pp
+  [Set X 30C E2] S-A: 3.595 pp | S-B: 5.830 pp | S-C: 3.234 pp | SBC: 5.420 pp | S-F worst: 11.509 pp
+
+Loading A1-008 DST at 40C...
+  [Set X 40C E0] S-A: 0.021 pp | S-B: 7.263 pp | S-C: 0.026 pp | SBC: 6.121 pp | S-F worst: 9.627 pp
+  [Set X 40C E2] S-A: 3.668 pp | S-B: 5.310 pp | S-C: 4.103 pp | SBC: 5.120 pp | S-F worst: 11.684 pp
+
+Loading A1-008 DST at 50C...
+  [Set X 50C E0] S-A: 0.021 pp | S-B: 7.254 pp | S-C: 0.026 pp | SBC: 6.113 pp | S-F worst: 9.706 pp
+  [Set X 50C E2] S-A: 10.525 pp | S-B: 14.056 pp | S-C: 22.846 pp | SBC: 15.444 pp | S-F worst: 25.253 pp
+
+================================================================================
+SUMMARY KEEP RULE REFERENCE (TUNED E2 ON V1 MODEL):
+  A1-007 Held-out (40, 50C) Mean SBC RMSE : 2.8253 pp
+  A1-007 Held-out (40, 50C) Mean S-A RMSE : 1.2442 pp
+  A1-007 Held-out (40, 50C) S-F Worst Err : 6.4360 pp
+  Set X  Held-out (40, 50C) Mean SBC RMSE : 10.2816 pp
+  Set X  Held-out (40, 50C) Mean S-A RMSE : 7.0968 pp
+  Set X  Held-out (40, 50C) S-F Worst Err : 25.2526 pp
+Saved baseline reference to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/baseline_reference.json
+================================================================================

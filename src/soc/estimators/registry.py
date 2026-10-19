@@ -14,6 +14,9 @@ from soc.estimators.e3_ukf import E3UnscentedKalmanFilter
 from soc.estimators.e4_rls_r0 import E4RLSR0EKF
 from soc.estimators.e5_observability_ekf import E5ObservabilityEKF
 from soc.estimators.e6_rbc_dekf import E6RBCDEKF
+from soc.estimators.e5v4 import E5V4ObservabilityEKF
+from soc.estimators.e4v2_rls import E4V2RLSEKF
+from soc.estimators.innovation_gating import D3InnovationGatedEKF
 
 
 class _StubEstimator(Estimator):
@@ -54,6 +57,9 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "E5": E5ObservabilityEKF,
     "E6": E6RBCDEKF,
     "E7": _create_stub("E7"),
+    "e5v4": E5V4ObservabilityEKF,
+    "e4v2": E4V2RLSEKF,
+    "d3": D3InnovationGatedEKF,
 }
 
 
