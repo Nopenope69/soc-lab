@@ -1,0 +1,54 @@
+============================================================
+STAGE V0: RECONCILE AND ERRATA
+============================================================
+
+--- 1. E0 S-F Evaluation ---
+T=20C: S-F Mean RMSE = 1.633 pp, Worst Error = 9.505 pp
+T=25C: S-F Mean RMSE = 1.625 pp, Worst Error = 9.605 pp
+T=30C: S-F Mean RMSE = 1.648 pp, Worst Error = 9.614 pp
+T=40C: S-F Mean RMSE = 1.644 pp, Worst Error = 9.560 pp
+T=50C: S-F Mean RMSE = 1.647 pp, Worst Error = 9.573 pp
+E0 Held-out (40, 50 C) S-F Worst Error: 9.573 pp
+E0 All Decision Temps S-F Worst Error: 9.614 pp
+
+--- 2. Stage 1 Model Gate Table ---
+ temp_nominal  mid_bias_mv  mid_rmse_mv  gate_pass
+           20     0.477039     6.922971       True
+           25     0.352627     4.315575       True
+           30     0.544498     5.944567       True
+           40     0.487408     5.284137       True
+           50     0.552798     5.812963       True
+
+--- 3. Gamma Sensitivity Analysis ---
+gamma= 1.0 | T=20C | S-A RMSE=1.694 pp | S-B Mean RMSE=2.724 pp
+gamma= 1.0 | T=25C | S-A RMSE=0.380 pp | S-B Mean RMSE=3.504 pp
+gamma= 1.0 | T=30C | S-A RMSE=1.994 pp | S-B Mean RMSE=2.411 pp
+gamma= 1.0 | T=40C | S-A RMSE=2.384 pp | S-B Mean RMSE=1.879 pp
+gamma= 1.0 | T=50C | S-A RMSE=2.218 pp | S-B Mean RMSE=2.543 pp
+gamma=10.0 | T=20C | S-A RMSE=1.732 pp | S-B Mean RMSE=2.663 pp
+gamma=10.0 | T=25C | S-A RMSE=0.357 pp | S-B Mean RMSE=3.083 pp
+gamma=10.0 | T=30C | S-A RMSE=1.862 pp | S-B Mean RMSE=2.185 pp
+gamma=10.0 | T=40C | S-A RMSE=2.007 pp | S-B Mean RMSE=1.965 pp
+gamma=10.0 | T=50C | S-A RMSE=1.744 pp | S-B Mean RMSE=2.712 pp
+gamma=50.0 | T=20C | S-A RMSE=1.640 pp | S-B Mean RMSE=2.763 pp
+gamma=50.0 | T=25C | S-A RMSE=0.606 pp | S-B Mean RMSE=2.477 pp
+gamma=50.0 | T=30C | S-A RMSE=1.544 pp | S-B Mean RMSE=2.381 pp
+gamma=50.0 | T=40C | S-A RMSE=1.343 pp | S-B Mean RMSE=2.329 pp
+gamma=50.0 | T=50C | S-A RMSE=1.075 pp | S-B Mean RMSE=2.926 pp
+
+--- 4. S-B Convergence Time Analysis (E2 tune_2) ---
+Convergence for +/-10 pp offsets (all cases):
+  Reached <= 2.0 pp within 600s: 26/40 cases
+  Reached <= 1.0 pp within 600s: 25/40 cases
+  Median time to <= 2.0 pp: 70.3 s
+  Median time to <= 1.0 pp: 117.1 s
+
+--- 5. Local Plateau Slope vs Mean Slope ---
+Traceback (most recent call last):
+  File "/Users/tecbusiness/Desktop/random/SOC/scripts/stage_v0_errata.py", line 251, in <module>
+    run_v0()
+    ~~~~~~^^
+  File "/Users/tecbusiness/Desktop/random/SOC/scripts/stage_v0_errata.py", line 208, in run_v0
+    v_pts = np.interp(soc_pts, ocv_pts[:, 0], ocv_pts[:, 1])
+                               ~~~~~~~^^^^^^
+IndexError: too many indices for array: array is 1-dimensional, but 2 were indexed
