@@ -1,12 +1,12 @@
 # Gauntlet V2 State: CALCE A123 SOC Algorithm Development
 
 **Status:** RUNNING  
-**Current Stage:** Stage V1 (Model Identifiability and Cross-Cell Calibration)  
-**Last Completed Step:** Stage V0: Reconcile and Errata  
+**Current Stage:** Stage V2 (Component Development)  
+**Last Completed Step:** Stage V1: Model Calibration (calce_a123_v4.yaml chosen)  
 **Budget Used:**
 - Configurations tested: 0 / 300
 - Development rounds: 0 / 3 per component
-- Wall clock time: 0.2h / 14h limit
+- Wall clock time: 0.5h / 14h limit
 
 ---
 
@@ -24,7 +24,7 @@
 
 ## Stage Progress Log
 - [x] **Stage V0:** Reconcile and Errata (`reports/gauntlet_v2/errata.md`)
-- [ ] **Stage V1:** Model Identifiability and Cross-Cell Calibration (`calce_a123_v4.yaml` evaluation)
+- [x] **Stage V1:** Model Identifiability and Cross-Cell Calibration (`calce_a123_v4.yaml` chosen)
 - [ ] **Stage V2:** Component Development (D1: e5v4, D2: E4v2, D3: Innovation Gating)
 - [ ] **Stage V3:** Composite and Tuning (E7v2, GATE A & GATE B evaluation)
 - [ ] **Stage V4:** Freeze (`reports/gauntlet_v2/FROZEN_SPEC.md`)

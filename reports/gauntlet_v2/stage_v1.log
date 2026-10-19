@@ -1,0 +1,57 @@
+=================================================================
+GAUNTLET V2 STAGE V1: MODEL IDENTIFIABILITY & CROSS-CELL CALIBRATION
+Rule R3 Guarantee: truth_soc = start_soc - (np.cumsum(unmodified_current * dt) / (3600.0 * q_c20))
+=================================================================
+
+--- Step a: Refitting Rung 2 on A1-007 DST with tau2 <= 600 s ---
+A1-007 T=-10C: R0=0.26464 R1=0.05039 tau1=39.5 R2=0.09463 tau2=600.0 | W-mid Bias= +0.84 mV, RMSE=32.26 mV | Gate 1: FAIL
+A1-007 T=  0C: R0=0.19804 R1=0.04068 tau1=23.6 R2=0.10817 tau2=600.0 | W-mid Bias= +0.84 mV, RMSE=72.16 mV | Gate 1: FAIL
+A1-007 T= 10C: R0=0.17281 R1=0.02288 tau1=27.9 R2=0.04175 tau2=210.4 | W-mid Bias= +0.13 mV, RMSE=16.50 mV | Gate 1: FAIL
+A1-007 T= 20C: R0=0.15951 R1=0.02116 tau1=24.9 R2=0.02722 tau2=600.0 | W-mid Bias= +0.22 mV, RMSE= 7.65 mV | Gate 1: PASS
+A1-007 T= 25C: R0=0.15851 R1=0.01960 tau1=22.5 R2=0.02651 tau2=600.0 | W-mid Bias= +0.20 mV, RMSE= 5.10 mV | Gate 1: PASS
+A1-007 T= 30C: R0=0.15500 R1=0.01392 tau1=18.6 R2=0.01899 tau2=218.2 | W-mid Bias= +0.05 mV, RMSE= 6.69 mV | Gate 1: PASS
+A1-007 T= 40C: R0=0.15359 R1=0.01130 tau1=16.5 R2=0.01462 tau2=207.3 | W-mid Bias= +0.05 mV, RMSE= 5.85 mV | Gate 1: PASS
+A1-007 T= 50C: R0=0.15371 R1=0.00977 tau1=16.8 R2=0.01128 tau2=600.0 | W-mid Bias= +0.21 mV, RMSE= 6.19 mV | Gate 1: PASS
+
+A1-007 tau2<=600s GATE 1 Pass across all 4 decision temperatures: True
+Saved profile to /Users/tecbusiness/Desktop/random/SOC/configs/assumptions/profiles/calce_a123_v4.yaml
+Chosen Model Profile: calce_a123_v4.yaml
+Status Note: Passed Gate 1 at all four decision temperatures with tau2 <= 600 s. Selected calce_a123_v4.yaml.
+
+--- Step b: Fitting Rung 2 on A1-008 DST with its own data (informational) ---
+A1-008 Own T=-10C: R0=0.31484 R1=0.03151 tau1=40.2 R2=0.08391 tau2=262.4 | W-mid Bias= +0.02 mV, RMSE=14.01 mV | Gate 1: PASS
+A1-008 Own T=  0C: R0=0.22266 R1=0.04441 tau1=33.1 R2=0.07615 tau2=599.9 | W-mid Bias= +0.88 mV, RMSE=41.31 mV | Gate 1: FAIL
+A1-008 Own T= 10C: R0=0.19170 R1=0.01956 tau1=23.2 R2=0.04315 tau2=157.0 | W-mid Bias= +0.11 mV, RMSE=17.42 mV | Gate 1: FAIL
+A1-008 Own T= 20C: R0=0.17561 R1=0.01608 tau1=16.7 R2=0.03481 tau2=156.2 | W-mid Bias= -0.05 mV, RMSE= 9.73 mV | Gate 1: PASS
+A1-008 Own T= 25C: R0=0.19680 R1=0.01998 tau1=20.6 R2=0.02773 tau2=600.0 | W-mid Bias= +0.17 mV, RMSE= 5.19 mV | Gate 1: PASS
+A1-008 Own T= 30C: R0=0.17633 R1=0.01689 tau1=22.4 R2=0.02001 tau2=600.0 | W-mid Bias= +0.23 mV, RMSE= 7.09 mV | Gate 1: PASS
+A1-008 Own T= 40C: R0=0.17777 R1=0.01266 tau1=19.1 R2=0.01626 tau2=600.0 | W-mid Bias= +0.17 mV, RMSE= 5.77 mV | Gate 1: PASS
+A1-008 Own T= 50C: R0=0.22449 R1=0.00901 tau1=15.4 R2=0.01320 tau2=600.0 | W-mid Bias= +0.34 mV, RMSE=13.97 mV | Gate 1: PASS
+A1-008 Own Fit GATE 1 Pass across decision temperatures: True
+
+--- Parameter Percentage Differences: (A1-008 - A1-007) / A1-007 * 100% ---
+T=-10C: dR0= +19.0% | dR1= -37.5% | dR2= -11.3% | dM=  +2.5% | dCap=  +1.8%
+T=  0C: dR0= +12.4% | dR1=  +9.2% | dR2= -29.6% | dM=  -4.1% | dCap=  +2.2%
+T= 10C: dR0= +10.9% | dR1= -14.5% | dR2=  +3.4% | dM=  -2.9% | dCap=  +1.5%
+T= 20C: dR0= +10.1% | dR1= -24.0% | dR2= +27.9% | dM=  -9.7% | dCap=  +2.0%
+T= 25C: dR0= +24.2% | dR1=  +1.9% | dR2=  +4.6% | dM=  -8.8% | dCap=  +2.3%
+T= 30C: dR0= +13.8% | dR1= +21.3% | dR2=  +5.3% | dM=  -9.9% | dCap=  +2.4%
+T= 40C: dR0= +15.7% | dR1= +12.1% | dR2= +11.2% | dM= -11.0% | dCap=  +2.3%
+T= 50C: dR0= +46.0% | dR1=  -7.8% | dR2= +17.0% | dM= -26.8% | dCap=  +2.2%
+
+--- Step c: Transfer Check of Chosen Model (calce_a123_v4) on Cell A1-008 ---
+Transfer A1-008 T=20C: W-mid Bias= -4.81 mV, RMSE=19.13 mV | W-low RMSE=123.53 mV | W-high RMSE=35.91 mV
+Transfer A1-008 T=25C: W-mid Bias=-15.42 mV, RMSE=39.43 mV | W-low RMSE=93.00 mV | W-high RMSE=40.59 mV
+Transfer A1-008 T=30C: W-mid Bias= -7.25 mV, RMSE=22.12 mV | W-low RMSE=93.03 mV | W-high RMSE=42.51 mV
+Transfer A1-008 T=40C: W-mid Bias= -8.16 mV, RMSE=24.15 mV | W-low RMSE=58.34 mV | W-high RMSE=49.31 mV
+Transfer A1-008 T=50C: W-mid Bias=-28.70 mV, RMSE=71.30 mV | W-low RMSE=96.73 mV | W-high RMSE=70.22 mV
+
+Saved combined evaluation CSV to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/stage_v1_model_gate.csv
+Traceback (most recent call last):
+  File "/Users/tecbusiness/Desktop/random/SOC/scripts/stage_v1_model.py", line 695, in <module>
+    run_stage_v1()
+    ~~~~~~~~~~~~^^
+  File "/Users/tecbusiness/Desktop/random/SOC/scripts/stage_v1_model.py", line 641, in run_stage_v1
+    f.write(f"- **Protocol Objective:** Address unidentifiability in v1 where $\\tau_2$ saturated at its 1200 s bound at every temperature. Refit Rung 2 with $\\tau_2 \\le 600\\text{ s}$ and apply GATE 1 ($|\\text{bias}| \\le 5.0\\text{ mV}$, $\\text{RMSE} \\le 15.0\\text{ mV}$ on W-mid at 20, 30, 40, 50 °C).\n")
+                                                                                                                                                                                       ^
+NameError: name 's' is not defined
