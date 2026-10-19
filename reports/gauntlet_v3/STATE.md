@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
-**Status:** IN_PROGRESS  
-**Current Stage:** Stage V6 (Deliverable and Final Report)  
-**Last Completed Step:** Stage V5: Single Unseal (`reports/gauntlet_v3/stage_v5_unseal.md` - VERDICT: GO)  
+**Status:** COMPLETED (END STATE: GO)  
+**Current Stage:** Completed  
+**Last Completed Step:** Stage V6: Deliverable and Final Report (`deliverable/bms_soc_ref.py`, `ALGORITHM_SPEC.md`, `FINAL_V3.md`)  
 **Budget Used:**
 - Configurations tested: 33 / 250
 - Development rounds: D4: 3/3 (DROPPED)
-- Wall clock time: 1.55h / 12h limit
+- Wall clock time: 1.85h / 12h limit
 
 ---
 
@@ -56,4 +56,4 @@
   - US06: GATE A PASS, GATE B PASS.
   - FUDS: GATE A PASS, GATE B PASS.
   - VERDICT: **GO**.
-- [ ] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `FINAL_V3.md`)
+- [x] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `tests/test_bms_soc_ref.py`, `FINAL_V3.md` - END STATE: GO)
