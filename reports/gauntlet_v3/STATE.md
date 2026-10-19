@@ -57,3 +57,15 @@
   - FUDS: GATE A PASS, GATE B PASS.
   - VERDICT: **GO**.
 - [x] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `tests/test_bms_soc_ref.py`, `FINAL_V3.md` - END STATE: GO)
+
+---
+
+## VERIFICATION PASS (Post-Stage V6 Audit & Reconciliation)
+
+- **Step 1 (Pre-Registered Gates Audit)**: Audited verbatim pre-registered gate clauses against saved JSON. Confirmed that all clauses of GATE A and GATE B pass across DST, US06, and FUDS at all decision temperatures (20, 30, 40, 50 °C). Mechanical end-state verdict: **GO**.
+- **Step 2 (Baseline Table Reconciliation)**: Rebuilt Estimator Family Comparison table from `reports/gauntlet_v3/baselines_results.json`. Corrected E0 to fair start ($0.021\text{ pp}$ S-A, $0.048\text{ pp}$ S-C, $7.290\text{ pp}$ S-B, $3.979\text{ pp}$ S-G, $1.633\text{ pp}$ mean S-F). Clarified that legacy 5.918 pp was a Gauntlet V1 configuration artifact, mapped E1 correctly to 2RC EKF without hysteresis, and confirmed E0 non-zero S-F error due to current bias and capacity mismatch.
+- **Step 3 (Case Counts & Pattern Audit)**: Verified case counts across all scenarios. S-B evaluated 16 cases/temp (32 cases on DST held-out 40/50 °C with 32/32 wins; 64 cases on US06/FUDS). Corrected copy-pasted Gate B win rates to true counts: US06 = 60/64 (93.8%), FUDS = 59/64 (92.2%). Verified near-constant S-C and S-G means across temperatures as genuine physical plateau dynamics.
+- **Step 4 (Protocol Windows Computation)**: Recomputed sample-weighted error metrics for W-low ($<10\%$), W-mid ($10-90\%$), W-high ($>90\%$), and Plateau ($40-80\%$) across all 30 conditions in `reports/gauntlet_v3/verification/window_splits.json`. Verified exact reconstruction $\text{RMSE}_{\text{full}} = \sqrt{\sum N_w \text{RMSE}_w^2 / N_{\text{tot}}}$ to machine precision ($\le 4.44 \times 10^{-16}$). Commit: `233eec4`.
+- **Step 5 (Reference Implementation Equivalence)**: Traced step 0 discrepancy between `deliverable/bms_soc_ref.py` and `E7V3CompositeFilter`. Identified root cause: `BmsSocParameters.coulombic_efficiency` defaulted to 1.0 instead of 0.998. Fixed default in `deliverable/bms_soc_ref.py` and proved float64 bit-level mathematical equivalence bounded by $\le 1.4 \times 10^{-16}$ across 25,000 steps. Tightened test suite assertions to $\le 10^{-12}$. All 209 repo tests green. Commit: `40a1722`.
+- **Step 6 (v3.1 Spec and Report Corrections)**: Created `reports/gauntlet_v3/ALGORITHM_SPEC_v3.1.md` and `reports/gauntlet_v3/FINAL_V3_v3.1.md` incorporating recomputed window tables, clarified data boundaries (US06/FUDS development data, CALCE sub-zero existence vs exclusion), true Coulombic efficiency (0.998), CV-taper gap citations, and accurate D4 ablation summary. Commit: `d5eeaa4`.
+- **Step 7 (Verification Summary)**: Produced comprehensive audit document `reports/gauntlet_v3/verification/VERIFICATION.md` detailing every threshold difference, discrepancy, file provenance, and the final mechanical **GO** verdict.
