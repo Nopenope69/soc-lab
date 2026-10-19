@@ -134,7 +134,7 @@ class BmsSocParameters:
 
     # Nominal calibration anchors
     nominal_capacity_ah: float = 1.0635616695823449
-    coulombic_efficiency: float = 1.0
+    coulombic_efficiency: float = 0.998
     hysteresis_gamma: float = 50.0
 
     # Frozen Noise Covariances

@@ -118,7 +118,7 @@ def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
             max_single_step = diff
 
     print(f"Max single-step |dSOC|: {max_single_step:.4e} ({max_single_step * 100:.4e} pp)")
-    assert max_single_step <= 1.5e-6, f"Single-step diff {max_single_step} exceeds 1.5e-6 (0.00015 pp)!"
+    assert max_single_step <= 1.0e-12, f"Single-step diff {max_single_step} exceeds 1e-12!"
 
     # 2. Full DST 25,000-step simulation
     z0 = float(sc.truth_soc[0])
@@ -147,8 +147,8 @@ def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
     print(f"Full DST Max |dSOC|: {max_dsoc:.4e} ({max_dsoc * 100:.4e} pp)")
     print(f"Full DST Final |dSOC|: {final_diff:.4e} ({final_diff * 100:.4e} pp)")
 
-    assert final_diff <= 1.0e-5, f"Final SOC diff {final_diff} exceeds 1e-5 (0.001 pp)!"
-    assert max_dsoc <= 5.0e-4, f"Accumulated trajectory diff {max_dsoc} exceeds 0.05 pp!"
+    assert final_diff <= 1.0e-12, f"Final SOC diff {final_diff} exceeds 1e-12!"
+    assert max_dsoc <= 1.0e-12, f"Accumulated trajectory diff {max_dsoc} exceeds 1e-12!"
 
 
 def test_bms_soc_ref_runtime_limit():
