@@ -1,12 +1,12 @@
 # Gauntlet V3 State: CALCE A123 SOC Algorithm Development (Confidence-Aware)
 
 **Status:** IN_PROGRESS  
-**Current Stage:** Stage V5 (Single Unseal)  
-**Last Completed Step:** Stage V4: Freeze (`reports/gauntlet_v3/FROZEN_SPEC.md` - FROZEN)  
+**Current Stage:** Stage V6 (Deliverable and Final Report)  
+**Last Completed Step:** Stage V5: Single Unseal (`reports/gauntlet_v3/stage_v5_unseal.md` - VERDICT: GO)  
 **Budget Used:**
 - Configurations tested: 33 / 250
 - Development rounds: D4: 3/3 (DROPPED)
-- Wall clock time: 0.95h / 12h limit
+- Wall clock time: 1.55h / 12h limit
 
 ---
 
@@ -51,5 +51,9 @@
   - Full test suite verified green (205 passed in 375.17s).
   - SHA-256 hashes generated for all model profiles, tables, and scripts.
   - Frozen candidate: `cand_cplat_2.0e-05` (q_soc=2e-9, cap_plat=2e-5, ff=0.999, sl_ref=0.20).
-- [ ] **Stage V5:** Single Unseal (US06 and FUDS)
+- [x] **Stage V5:** Single Unseal (`reports/gauntlet_v3/stage_v5_unseal.md`)
+  - Evaluated on US06 (highway dynamic) and FUDS (urban dynamic) across 20, 30, 40, 50 °C (25 °C reported).
+  - US06: GATE A PASS, GATE B PASS.
+  - FUDS: GATE A PASS, GATE B PASS.
+  - VERDICT: **GO**.
 - [ ] **Stage V6:** Deliverable & Final Report (`ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `FINAL_V3.md`)
