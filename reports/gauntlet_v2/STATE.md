@@ -1,12 +1,12 @@
 # Gauntlet V2 State: CALCE A123 SOC Algorithm Development
 
 **Status:** RUNNING  
-**Current Stage:** Stage V2 (Component Development)  
-**Last Completed Step:** Stage V2 Component D2: E4v2 (KEPT: Set X SBC -41.32%, A1-007 SBC -4.12%)  
+**Current Stage:** Stage V3 (Composite and Tuning)  
+**Last Completed Step:** Stage V2 Component D3: Innovation Gating (DROPPED: failed Clause 1, -4.0% < 10%)  
 **Budget Used:**
-- Configurations tested: 2 / 300
-- Development rounds: 1 / 3 for D1; 1 / 3 for D2; 0 / 3 for D3
-- Wall clock time: 1.2h / 14h limit
+- Configurations tested: 4 / 300
+- Development rounds: 1 / 3 for D1; 1 / 3 for D2; 2 / 3 for D3 (Stage V2 Complete)
+- Wall clock time: 1.3h / 14h limit
 
 ---
 
@@ -24,8 +24,7 @@
 
 ## Stage Progress Log
 - [x] **Stage V0:** Reconcile and Errata (`reports/gauntlet_v2/errata.md`)
-- [x] **Stage V1:** Model Identifiability and Cross-Cell Calibration (`calce_a123_v4.yaml` chosen)
-- [ ] **Stage V2:** Component Development (D1: e5v4, D2: E4v2, D3: Innovation Gating)
+- [x] **Stage V2:** Component Development (D1: e5v4 [KEPT], D2: E4v2 [KEPT], D3: Innovation Gating [DROPPED])
 - [ ] **Stage V3:** Composite and Tuning (E7v2, GATE A & GATE B evaluation)
 - [ ] **Stage V4:** Freeze (`reports/gauntlet_v2/FROZEN_SPEC.md`)
 - [ ] **Stage V5:** Single Unseal (US06 and FUDS evaluation)

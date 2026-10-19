@@ -55,6 +55,27 @@ A component is **KEPT** if:
   - Clause 2 ($\le 5\%$ worsening on other): **PASS** (-4.12% on A1-007, strictly improved)
   - Clause 3 (S-A diff $\le +0.30\text{ pp}$): **PASS** (+0.0210 pp)
   - Clause 4 (S-F worst diff $\le +2.00\text{ pp}$): **PASS** (-0.2850 pp)
-- **Verdict:** **KEEP** (Kept on Round 1)
+### Round D3: `innovation_gating` (Plateau Innovation Gating)
+- **Implementation:** `src/soc/estimators/innovation_gating.py` (Class `D3InnovationGatedEKF`)
+- **Unit Tests:** `tests/test_innovation_gating.py` (8/8 passed, per-step runtime 0.15 ms < 5 ms)
+- **Round 1 (`k_gate=2.0, sl_th=0.05, p_th=0.005`):**
+  - A1-007 Held-out SBC RMSE: `2.7844 pp` (-1.45% relative)
+  - Set X Held-out SBC RMSE: `9.8708 pp` (-4.00% relative)
+  - Clause 1 check ($\ge 10\%$ improvement): **FAIL** (-4.00% < 10%)
+- **Round 2 (`k_gate=1.5, sl_th=0.05, p_th=0.002`):**
+  - A1-007 Held-out SBC RMSE: `2.8253 pp` (+0.00% relative)
+  - Set X Held-out SBC RMSE: `10.1085 pp` (-1.68% relative)
+  - Clause 1 check ($\ge 10\%$ improvement): **FAIL** (-1.68% < 10%)
+- **Physical Root Cause:**
+  - In partial cycling windows with initial offset (Scenario S-B), true SOC differs by $\pm 5$ to $\pm 10\text{ pp}$ from the initial estimate. On the flat LFP plateau ($20\% \le \text{SOC} \le 80\%$), large voltage residuals are precisely the signal needed for the filter to correct this offset.
+  - Suppressing updates when innovation is large slows or prevents offset convergence, fundamentally contradicting the objective of S-B. Consequently, D3 cannot achieve the required $\ge 10\%$ gain on S-B and S-C.
+- **Verdict:** **DROP** (Clause 1 not satisfied after 2 rounds).
 
 ---
+
+## Summary of Component Decisions
+| Component | Function | Set X SBC Diff | A1-007 SBC Diff | Keep Rule Verdict |
+| :--- | :--- | :--- | :--- | :--- |
+| **D1: `e5v4`** | Observability Gating & Plateau Step Cap | **-12.04%** | **-7.77%** | **KEEP** |
+| **D2: `e4v2`** | Online RLS Impedance Adaptation ($R_0, R_1$) | **-41.32%** | **-4.12%** | **KEEP** |
+| **D3: `innovation_gating`** | Plateau Innovation Gating | **-4.00%** | **-1.45%** | **DROP** |
