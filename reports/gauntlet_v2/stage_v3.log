@@ -1,0 +1,85 @@
+================================================================================
+STAGE V3: COMPOSITE (E7v2) & TUNING
+R3 Guarantee: truth_soc = start_soc - (np.cumsum(unmodified_current * dt) / (3600.0 * q_c20))
+================================================================================
+
+--- Step 1: Incremental Keep Rule Check (E7v2 vs D2) ---
+Previous combination (D2):
+  A1-007 Held-out SBC: 2.7089 pp
+  Set X  Held-out SBC: 6.0337 pp
+  A1-007 Held-out S-A: 1.2651 pp
+  A1-007 Held-out S-F: 6.1509 pp
+
+Default E7v2 (D2 + D1):
+  A1-007 Held-out SBC: 2.5388 pp (-6.28%)
+  Set X  Held-out SBC: 3.3520 pp (-44.45%)
+  A1-007 Held-out S-A: 1.2228 pp (-0.0424 pp)
+  A1-007 Held-out S-F: 5.5442 pp (-0.6068 pp)
+  Addition hurts composite? False
+  SUCCESS: Adding D1 preserves/improves D2 performance without harm. E7v2 retains D2 + D1.
+
+--- Step 2: Tuning E7v2 on DST 20 C and 30 C ---
+Total candidate configurations to evaluate: 23 (budget: <= 100)
+Loading cached tuning results from /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/stage_v3_tuning.json...
+WARNING: No candidate satisfied strict tuning constraints! Falling back to all candidates.
+
+================================================================================
+SELECTED BEST CANDIDATE: cand_sl_0.3
+  Tuning SBC (20, 30 C): 2.6988 pp
+  Held-out Score       : 2.8534 pp
+  Parameters: {
+  "id": "cand_sl_0.3",
+  "process_noise_q_soc": 2.9031433196504225e-08,
+  "process_noise_q_rc": 1.1198164932559382e-05,
+  "process_noise_q_hysteresis": 0.00017150882346504795,
+  "measurement_noise_r_v": 0.0008610323423725228,
+  "e4_rls_forgetting_factor": 0.999,
+  "e5_slope_ref": 0.3,
+  "e5_cap_plateau": 1e-05,
+  "e5_cap_knee": 0.01,
+  "e5_sigma_ocv_model_v": 0.02
+}
+================================================================================
+
+--- Step 3: Full Gate Evaluation (GATE A & GATE B) ---
+Evaluating 20 C...
+Evaluating 25 C...
+Evaluating 30 C...
+Evaluating 40 C...
+Evaluating 50 C...
+
+--- Verifying GATE A (A1-007 Held-out: 40 C, 50 C) ---
+  GATE A (i) 40C S-A: E7v2=1.3308 pp | E0=0.0210 pp (limit <= 2.0210) | E1=7.7943 pp (limit <= 8.7943) -> Pass=True
+  GATE A (i) 50C S-A: E7v2=1.1446 pp | E0=0.0212 pp (limit <= 2.0212) | E1=5.7693 pp (limit <= 6.7693) -> Pass=True
+  GATE A (ii-a) 40C S-B Mean: E7v2=2.3762 pp | E0=7.3129 pp (70% limit <= 5.1190 pp) -> Pass=True
+  GATE A (ii-a) 50C S-B Mean: E7v2=2.5716 pp | E0=7.3450 pp (70% limit <= 5.1415 pp) -> Pass=True
+  GATE A (ii-a) S-B Win Rate vs E0: 32/32 (100.0%) [Threshold: >= 26/32 = 80%] -> Pass=True
+  GATE A (ii-b) 40C S-C [90->40]: E7v2=2.6429 pp | E0=0.0352 pp (limit <= 1.5352 pp) -> Pass=False
+  GATE A (ii-b) 40C S-C [80->30]: E7v2=2.0732 pp | E0=0.0346 pp (limit <= 1.5346 pp) -> Pass=False
+  GATE A (ii-b) 40C S-C [70->20]: E7v2=1.8099 pp | E0=0.0223 pp (limit <= 1.5223 pp) -> Pass=False
+  GATE A (ii-b) 50C S-C [90->40]: E7v2=3.5092 pp | E0=0.0353 pp (limit <= 1.5353 pp) -> Pass=False
+  GATE A (ii-b) 50C S-C [80->30]: E7v2=3.1894 pp | E0=0.0225 pp (limit <= 1.5225 pp) -> Pass=False
+  GATE A (ii-b) 50C S-C [70->20]: E7v2=2.9730 pp | E0=0.0225 pp (limit <= 1.5225 pp) -> Pass=False
+  GATE A (iii) 40C S-F Worst: E7v2=5.4892 pp | E0=9.5603 pp (limit <= 14.5603 pp) -> Pass=True
+  GATE A (iii) 50C S-F Worst: E7v2=4.8752 pp | E0=9.5734 pp (limit <= 14.5734 pp) -> Pass=True
+
+OVERALL GATE A VERDICT: FAIL
+
+--- Verifying GATE B (Cross-Cell Set X: 20, 30, 40, 50 C) ---
+  GATE B (i) 20C S-A: E7v2=1.5250 pp | E0=0.0209 pp (limit <= 3.0209) -> Pass=True
+  GATE B (i) 30C S-A: E7v2=1.3518 pp | E0=0.0208 pp (limit <= 3.0208) -> Pass=True
+  GATE B (i) 40C S-A: E7v2=1.1871 pp | E0=0.0212 pp (limit <= 3.0212) -> Pass=True
+  GATE B (i) 50C S-A: E7v2=1.2782 pp | E0=0.0214 pp (limit <= 3.0214) -> Pass=True
+  GATE B (ii) 20C S-B Mean: E7v2=3.2343 pp | E0=7.3245 pp -> Pass=True
+  GATE B (ii) 30C S-B Mean: E7v2=3.1025 pp | E0=7.3715 pp -> Pass=True
+  GATE B (ii) 40C S-B Mean: E7v2=2.5443 pp | E0=7.2632 pp -> Pass=True
+  GATE B (ii) 50C S-B Mean: E7v2=3.9774 pp | E0=7.2539 pp -> Pass=True
+  GATE B (iii) 20C S-C Mean: E7v2=1.6984 pp | E0=0.0346 pp (limit <= 3.0346 pp) -> Pass=True
+  GATE B (iii) 30C S-C Mean: E7v2=2.0017 pp | E0=0.0344 pp (limit <= 3.0344 pp) -> Pass=True
+  GATE B (iii) 40C S-C Mean: E7v2=1.9161 pp | E0=0.0262 pp (limit <= 3.0262 pp) -> Pass=True
+  GATE B (iii) 50C S-C Mean: E7v2=3.7987 pp | E0=0.0262 pp (limit <= 3.0262 pp) -> Pass=False
+
+OVERALL GATE B VERDICT: FAIL
+
+Saved Stage V3 full results to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/stage_v3_results.json
+Written Gate report to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/stage_v3_gates.md

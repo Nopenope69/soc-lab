@@ -1,0 +1,33 @@
+================================================================================
+EVALUATING COMPONENT D3 AGAINST KEEP RULE
+R3 Guarantee: truth_soc = start_soc - (np.cumsum(unmodified_current * dt) / (3600.0 * q_c20))
+Extra config: {'k_gate': 1.5, 'sl_th': 0.05, 'p_th': 0.002}
+================================================================================
+
+--- Evaluating on A1-007 ---
+  [A1-007 20C] S-A: 1.661 pp | S-B: 2.915 pp | S-C: 1.372 pp | SBC: 2.671 pp | S-F worst: 6.058 pp
+  [A1-007 25C (SUSPECT - REPORT ONLY)] S-A: 1.156 pp | S-B: 2.684 pp | S-C: 3.604 pp | SBC: 2.829 pp | S-F worst: 5.049 pp
+  [A1-007 30C] S-A: 1.485 pp | S-B: 2.552 pp | S-C: 2.126 pp | SBC: 2.484 pp | S-F worst: 6.532 pp
+  [A1-007 40C] S-A: 1.249 pp | S-B: 2.429 pp | S-C: 2.870 pp | SBC: 2.499 pp | S-F worst: 6.422 pp
+  [A1-007 50C] S-A: 1.239 pp | S-B: 3.012 pp | S-C: 3.895 pp | SBC: 3.152 pp | S-F worst: 6.436 pp
+
+--- Evaluating on Set X (A1-008 with A1-007 params) ---
+  [Set X 20C] S-A: 2.865 pp | S-B: 5.035 pp | S-C: 2.248 pp | SBC: 4.595 pp | S-F worst: 8.630 pp
+  [Set X 25C (SUSPECT - REPORT ONLY)] S-A: 3.263 pp | S-B: 8.265 pp | S-C: 6.802 pp | SBC: 8.034 pp | S-F worst: 11.644 pp
+  [Set X 30C] S-A: 3.544 pp | S-B: 5.798 pp | S-C: 3.033 pp | SBC: 5.362 pp | S-F worst: 11.176 pp
+  [Set X 40C] S-A: 3.563 pp | S-B: 5.272 pp | S-C: 4.786 pp | SBC: 5.195 pp | S-F worst: 11.201 pp
+  [Set X 50C] S-A: 8.740 pp | S-B: 13.615 pp | S-C: 22.529 pp | SBC: 15.022 pp | S-F worst: 25.268 pp
+
+================================================================================
+KEEP RULE VERDICT FOR D3: DROP
+================================================================================
+  Reference A1-007 Held-out SBC: 2.8253 pp | Candidate: 2.8253 pp (change: +0.00%)
+  Reference Set X  Held-out SBC: 10.2816 pp | Candidate: 10.1085 pp (change: -1.68%)
+  Reference A1-007 S-A         : 1.2442 pp | Candidate: 1.2442 pp (diff: +0.0000 pp, limit: <= +0.30 pp)
+  Reference A1-007 S-F Worst   : 6.4360 pp | Candidate: 6.4360 pp (diff: -0.0000 pp, limit: <= +2.00 pp)
+  Clause (1) >= 10% on 007 or X: False (007: False, X: False)
+  Clause (2) <= +5% on other   : True
+  Clause (3) S-A diff <= 0.3 pp: True
+  Clause (4) S-F worst <= 2 pp : True
+================================================================================
+Saved evaluation result to /Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v2/component_D3_eval.json
