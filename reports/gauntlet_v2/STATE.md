@@ -1,12 +1,12 @@
 # Gauntlet V2 State: CALCE A123 SOC Algorithm Development
 
-**Status:** RUNNING  
-**Current Stage:** Stage V3 (Composite and Tuning)  
-**Last Completed Step:** Stage V2 Component D3: Innovation Gating (DROPPED: failed Clause 1, -4.0% < 10%)  
+**Status:** NO-GO(stage: Stage V3)  
+**Current Stage:** Stage V6 (Deliverables & Final Report)  
+**Last Completed Step:** Stage V3 Composite & Tuning: E7v2 (GATE A FAIL: Clause ii-b S-C 1.8-3.5 pp vs <= 1.5 pp; GATE B FAIL: 50 C S-C 3.80 pp vs <= 3.03 pp)  
 **Budget Used:**
-- Configurations tested: 4 / 300
-- Development rounds: 1 / 3 for D1; 1 / 3 for D2; 2 / 3 for D3 (Stage V2 Complete)
-- Wall clock time: 1.3h / 14h limit
+- Configurations tested: 27 / 300
+- Development rounds: D1: 1/3 (KEPT); D2: 1/3 (KEPT); D3: 2/3 (DROPPED); Stage V3: 23 configs evaluated
+- Wall clock time: 2.2h / 14h limit
 
 ---
 
@@ -24,8 +24,9 @@
 
 ## Stage Progress Log
 - [x] **Stage V0:** Reconcile and Errata (`reports/gauntlet_v2/errata.md`)
+- [x] **Stage V1:** Model Identifiability and Cross-Cell Calibration (`calce_a123_v4.yaml` chosen)
 - [x] **Stage V2:** Component Development (D1: e5v4 [KEPT], D2: E4v2 [KEPT], D3: Innovation Gating [DROPPED])
-- [ ] **Stage V3:** Composite and Tuning (E7v2, GATE A & GATE B evaluation)
-- [ ] **Stage V4:** Freeze (`reports/gauntlet_v2/FROZEN_SPEC.md`)
-- [ ] **Stage V5:** Single Unseal (US06 and FUDS evaluation)
+- [x] **Stage V3:** Composite and Tuning (E7v2, GATE A FAIL: Clause ii-b, GATE B FAIL: 50 C S-C)
+- [ ] **Stage V4:** Freeze (SKIPPED due to Stage V3 NO-GO)
+- [ ] **Stage V5:** Single Unseal (SKIPPED due to Stage V3 NO-GO; US06 & FUDS unread)
 - [ ] **Stage V6:** Deliverable & Final Report (`reports/gauntlet_v2/ALGORITHM_SPEC.md`, `deliverable/bms_soc_ref.py`, `reports/gauntlet_v2/FINAL_V2.md`)

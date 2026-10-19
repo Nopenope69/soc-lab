@@ -1,0 +1,462 @@
+[
+  {
+    "cand_id": "cand_00_baseline",
+    "params": {
+      "id": "cand_00_baseline",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6789,
+    "max_sa_tuning": 1.868,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.9454
+  },
+  {
+    "cand_id": "cand_ff_0.995",
+    "params": {
+      "id": "cand_ff_0.995",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.995,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6783,
+    "max_sa_tuning": 1.865,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.9317
+  },
+  {
+    "cand_id": "cand_ff_0.998",
+    "params": {
+      "id": "cand_ff_0.998",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.998,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6787,
+    "max_sa_tuning": 1.868,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.9416
+  },
+  {
+    "cand_id": "cand_ff_0.9995",
+    "params": {
+      "id": "cand_ff_0.9995",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.9995,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6789,
+    "max_sa_tuning": 1.869,
+    "max_sf_tuning": 6.591,
+    "passes_constraints": false,
+    "heldout_score": 2.9485
+  },
+  {
+    "cand_id": "cand_sl_0.1",
+    "params": {
+      "id": "cand_sl_0.1",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.1,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6118,
+    "max_sa_tuning": 1.856,
+    "max_sf_tuning": 6.691,
+    "passes_constraints": false,
+    "heldout_score": 2.9725
+  },
+  {
+    "cand_id": "cand_sl_0.15",
+    "params": {
+      "id": "cand_sl_0.15",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.15,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6511,
+    "max_sa_tuning": 1.865,
+    "max_sf_tuning": 6.624,
+    "passes_constraints": false,
+    "heldout_score": 2.9561
+  },
+  {
+    "cand_id": "cand_sl_0.3",
+    "params": {
+      "id": "cand_sl_0.3",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.3,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6988,
+    "max_sa_tuning": 1.827,
+    "max_sf_tuning": 6.353,
+    "passes_constraints": false,
+    "heldout_score": 2.8534
+  },
+  {
+    "cand_id": "cand_cplat_5e-06",
+    "params": {
+      "id": "cand_cplat_5e-06",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 5e-06,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6789,
+    "max_sa_tuning": 1.868,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.9459
+  },
+  {
+    "cand_id": "cand_cplat_2e-05",
+    "params": {
+      "id": "cand_cplat_2e-05",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 2e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6789,
+    "max_sa_tuning": 1.868,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.9468
+  },
+  {
+    "cand_id": "cand_cplat_5e-05",
+    "params": {
+      "id": "cand_cplat_5e-05",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 5e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6789,
+    "max_sa_tuning": 1.868,
+    "max_sf_tuning": 6.592,
+    "passes_constraints": false,
+    "heldout_score": 2.945
+  },
+  {
+    "cand_id": "cand_qsoc_0.3",
+    "params": {
+      "id": "cand_qsoc_0.3",
+      "process_noise_q_soc": 8.709429958951267e-09,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6537,
+    "max_sa_tuning": 1.737,
+    "max_sf_tuning": 5.724,
+    "passes_constraints": false,
+    "heldout_score": 2.9723
+  },
+  {
+    "cand_id": "cand_qsoc_0.5",
+    "params": {
+      "id": "cand_qsoc_0.5",
+      "process_noise_q_soc": 1.4515716598252113e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6615,
+    "max_sa_tuning": 1.806,
+    "max_sf_tuning": 6.024,
+    "passes_constraints": false,
+    "heldout_score": 2.96
+  },
+  {
+    "cand_id": "cand_qsoc_2.0",
+    "params": {
+      "id": "cand_qsoc_2.0",
+      "process_noise_q_soc": 5.806286639300845e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.7018,
+    "max_sa_tuning": 1.887,
+    "max_sf_tuning": 6.99,
+    "passes_constraints": false,
+    "heldout_score": 2.9365
+  },
+  {
+    "cand_id": "cand_qsoc_3.0",
+    "params": {
+      "id": "cand_qsoc_3.0",
+      "process_noise_q_soc": 8.709429958951267e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0008610323423725228,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.719,
+    "max_sa_tuning": 1.902,
+    "max_sf_tuning": 7.293,
+    "passes_constraints": false,
+    "heldout_score": 2.9326
+  },
+  {
+    "cand_id": "cand_rv_0.5",
+    "params": {
+      "id": "cand_rv_0.5",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.0004305161711862614,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6864,
+    "max_sa_tuning": 1.892,
+    "max_sf_tuning": 6.771,
+    "passes_constraints": false,
+    "heldout_score": 2.9614
+  },
+  {
+    "cand_id": "cand_rv_1.5",
+    "params": {
+      "id": "cand_rv_1.5",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.001291548513558784,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6821,
+    "max_sa_tuning": 1.851,
+    "max_sf_tuning": 6.438,
+    "passes_constraints": false,
+    "heldout_score": 2.9193
+  },
+  {
+    "cand_id": "cand_rv_2.5",
+    "params": {
+      "id": "cand_rv_2.5",
+      "process_noise_q_soc": 2.9031433196504225e-08,
+      "process_noise_q_rc": 1.1198164932559382e-05,
+      "process_noise_q_hysteresis": 0.00017150882346504795,
+      "measurement_noise_r_v": 0.002152580855931307,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.2,
+      "e5_cap_plateau": 1e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.7036,
+    "max_sa_tuning": 1.824,
+    "max_sf_tuning": 6.209,
+    "passes_constraints": false,
+    "heldout_score": 2.9343
+  },
+  {
+    "cand_id": "cand_rand_1",
+    "params": {
+      "id": "cand_rand_1",
+      "process_noise_q_soc": 2.174746272056958e-08,
+      "process_noise_q_rc": 2.087254680385555e-05,
+      "process_noise_q_hysteresis": 0.0002363103986370916,
+      "measurement_noise_r_v": 0.0009867668596717615,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.18,
+      "e5_cap_plateau": 6.680294616134536e-06,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.66,
+    "max_sa_tuning": 1.804,
+    "max_sf_tuning": 6.196,
+    "passes_constraints": false,
+    "heldout_score": 2.9695
+  },
+  {
+    "cand_id": "cand_rand_2",
+    "params": {
+      "id": "cand_rand_2",
+      "process_noise_q_soc": 1.0494266488852024e-08,
+      "process_noise_q_rc": 1.857173795491974e-05,
+      "process_noise_q_hysteresis": 0.00019722205275234437,
+      "measurement_noise_r_v": 0.0011477915192992997,
+      "e4_rls_forgetting_factor": 0.998,
+      "e5_slope_ref": 0.12,
+      "e5_cap_plateau": 2.9917677870217595e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.5992,
+    "max_sa_tuning": 1.706,
+    "max_sf_tuning": 5.729,
+    "passes_constraints": false,
+    "heldout_score": 2.9805
+  },
+  {
+    "cand_id": "cand_rand_3",
+    "params": {
+      "id": "cand_rand_3",
+      "process_noise_q_soc": 6.241818225963608e-08,
+      "process_noise_q_rc": 7.5257593377566e-06,
+      "process_noise_q_hysteresis": 0.00011050487764587759,
+      "measurement_noise_r_v": 0.0005559838426136888,
+      "e4_rls_forgetting_factor": 0.9995,
+      "e5_slope_ref": 0.18,
+      "e5_cap_plateau": 1.3176654096114991e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6891,
+    "max_sa_tuning": 1.904,
+    "max_sf_tuning": 7.316,
+    "passes_constraints": false,
+    "heldout_score": 2.934
+  },
+  {
+    "cand_id": "cand_rand_4",
+    "params": {
+      "id": "cand_rand_4",
+      "process_noise_q_soc": 2.4820669676461653e-08,
+      "process_noise_q_rc": 8.392364612600287e-06,
+      "process_noise_q_hysteresis": 0.0002001696383638601,
+      "measurement_noise_r_v": 0.0005232578847514539,
+      "e4_rls_forgetting_factor": 0.9995,
+      "e5_slope_ref": 0.25,
+      "e5_cap_plateau": 1.1610635397881781e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6967,
+    "max_sa_tuning": 1.861,
+    "max_sf_tuning": 6.506,
+    "passes_constraints": false,
+    "heldout_score": 2.9486
+  },
+  {
+    "cand_id": "cand_rand_5",
+    "params": {
+      "id": "cand_rand_5",
+      "process_noise_q_soc": 5.5981487957628864e-08,
+      "process_noise_q_rc": 7.3952205226650586e-06,
+      "process_noise_q_hysteresis": 0.0001749150307565193,
+      "measurement_noise_r_v": 0.0009782913334472761,
+      "e4_rls_forgetting_factor": 0.999,
+      "e5_slope_ref": 0.12,
+      "e5_cap_plateau": 1.5347437784847125e-05,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6608,
+    "max_sa_tuning": 1.888,
+    "max_sf_tuning": 7.129,
+    "passes_constraints": false,
+    "heldout_score": 2.9347
+  },
+  {
+    "cand_id": "cand_rand_6",
+    "params": {
+      "id": "cand_rand_6",
+      "process_noise_q_soc": 1.3595419098598854e-08,
+      "process_noise_q_rc": 6.140133524854576e-06,
+      "process_noise_q_hysteresis": 0.00031887303111891355,
+      "measurement_noise_r_v": 0.0016383198178714525,
+      "e4_rls_forgetting_factor": 0.998,
+      "e5_slope_ref": 0.18,
+      "e5_cap_plateau": 8.783973468355652e-06,
+      "e5_cap_knee": 0.01,
+      "e5_sigma_ocv_model_v": 0.02
+    },
+    "mean_sbc_tuning": 2.6937,
+    "max_sa_tuning": 1.755,
+    "max_sf_tuning": 5.803,
+    "passes_constraints": false,
+    "heldout_score": 2.9527
+  }
+]

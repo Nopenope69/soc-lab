@@ -17,6 +17,7 @@ from soc.estimators.e6_rbc_dekf import E6RBCDEKF
 from soc.estimators.e5v4 import E5V4ObservabilityEKF
 from soc.estimators.e4v2_rls import E4V2RLSEKF
 from soc.estimators.innovation_gating import D3InnovationGatedEKF
+from soc.estimators.e7v2 import E7V2CompositeFilter
 
 
 class _StubEstimator(Estimator):
@@ -60,6 +61,7 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "e5v4": E5V4ObservabilityEKF,
     "e4v2": E4V2RLSEKF,
     "d3": D3InnovationGatedEKF,
+    "e7v2": E7V2CompositeFilter,
 }
 
 
