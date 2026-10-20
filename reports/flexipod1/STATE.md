@@ -44,5 +44,10 @@
     3. *Implied SOC error amplification*: Ultra-flat plateau ($0.12\text{--}0.25\text{ mV/pp}$) magnifies modest voltage errors into $>80\text{--}230\text{ pp}$ implied SOC error.
     4. *RC unobservability*: Saturated RC branches in CC discharge cannot decouple dynamic time constants without pulse relaxation.
   - Formulated primary finding and field-logging recommendations for Phase 2.
-- [ ] **Step 5: Estimator Scenarios on CC Curves** (`reports/flexipod1/scenarios.md`)
+- [x] **Step 5: Estimator Scenarios on CC Curves** (`scripts/flexipod/scenarios_fp.py`, `reports/flexipod1/scenarios.md`)
+  - Evaluated E0 fair, E1, E2, and frozen E7v3 across S-A (nominal), S-B (wrong start -20 pp & -50 pp), S-G (+2% current gain), and S-F (+50 mV bias) on all 7 curves.
+  - Demonstrated that E0 fair is unbeatable on undisturbed constant current ($0.03\text{ to }0.11\text{ pp}$ RMSE in S-A), confirming that EKFs derive their advantage from dynamic drive cycles with resting intervals.
+  - Demonstrated that E7v3 recovers from uncalibrated S-B wrong starts (-50 pp offset) without rest, cutting RMSE from $40.9\text{ pp}$ (E0) down to $17.1\text{--}33.3\text{ pp}$ and recovering to $\le 5\text{ pp}$ in $288\text{--}1648\text{ s}$.
+  - Evaluated lower knee observability: in nominal and S-B discharges, all estimators converge to $0.0\text{ pp}$ end error at 2.5 V cutoff.
+  - Documented suspect curve `T5_150A` separately with clear caveat.
 - [ ] **Step 6: Summary Report** (`reports/flexipod1/FLEXIPOD1_SUMMARY.md`)
