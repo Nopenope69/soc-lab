@@ -1,0 +1,544 @@
+{
+  "curves": {
+    "T5_100A": {
+      "temperature_c": 5.0,
+      "nominal_rate_a": 100.0,
+      "rows": 3110,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4999,
+      "v_max": 3.3359,
+      "t0_voltage_v": 3.3359,
+      "t1_voltage_v": 3.1353,
+      "v_drop_1s_v": 0.2006000000000001,
+      "v_end_v": 2.4999,
+      "q_end_ah": 86.3521,
+      "mean_current_a": 100.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "T5_150A": {
+      "temperature_c": 5.0,
+      "nominal_rate_a": 150.0,
+      "rows": 2101,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4998,
+      "v_max": 3.1546,
+      "t0_voltage_v": 3.1546,
+      "t1_voltage_v": 3.0667,
+      "v_drop_1s_v": 0.08789999999999987,
+      "v_end_v": 2.4998,
+      "q_end_ah": 87.501,
+      "mean_current_a": 150.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": true,
+      "suspect_reason": "Starts at 3.155 V (vs ~3.33 V expected at 100% rest SOC); indicates pre-discharge or incomplete charge."
+    },
+    "T10_100A": {
+      "temperature_c": 10.0,
+      "nominal_rate_a": 100.0,
+      "rows": 3203,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4999,
+      "v_max": 3.3274,
+      "t0_voltage_v": 3.3274,
+      "t1_voltage_v": 3.1686,
+      "v_drop_1s_v": 0.15879999999999983,
+      "v_end_v": 2.4999,
+      "q_end_ah": 88.9267,
+      "mean_current_a": 100.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "T10_150A": {
+      "temperature_c": 10.0,
+      "nominal_rate_a": 150.0,
+      "rows": 2158,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4999,
+      "v_max": 3.3379,
+      "t0_voltage_v": 3.3379,
+      "t1_voltage_v": 3.1045,
+      "v_drop_1s_v": 0.23340000000000005,
+      "v_end_v": 2.4999,
+      "q_end_ah": 89.86,
+      "mean_current_a": 150.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "T20_100A": {
+      "temperature_c": 20.0,
+      "nominal_rate_a": 100.0,
+      "rows": 3432,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4998,
+      "v_max": 3.3365,
+      "t0_voltage_v": 3.3365,
+      "t1_voltage_v": 3.2408,
+      "v_drop_1s_v": 0.0956999999999999,
+      "v_end_v": 2.4998,
+      "q_end_ah": 95.1521,
+      "mean_current_a": 100.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "T20_150A": {
+      "temperature_c": 20.0,
+      "nominal_rate_a": 150.0,
+      "rows": 2294,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": true,
+      "capacity_monotonic": true,
+      "v_min": 2.4996,
+      "v_max": 3.3364,
+      "t0_voltage_v": 3.3364,
+      "t1_voltage_v": 3.1956,
+      "v_drop_1s_v": 0.1407999999999996,
+      "v_end_v": 2.4996,
+      "q_end_ah": 95.4604,
+      "mean_current_a": 150.0,
+      "std_current_a": 0.0,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "T15_100A": {
+      "temperature_c": 15.0,
+      "nominal_rate_a": 100.0,
+      "rows": 3187,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4999,
+      "v_max": 3.3356,
+      "t0_voltage_v": 3.3356,
+      "t1_voltage_v": 3.2014,
+      "v_drop_1s_v": 0.13419999999999987,
+      "v_end_v": 2.4999,
+      "q_end_ah": 88.3557,
+      "mean_current_a": 99.86195538123627,
+      "std_current_a": 0.006885958737996192,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false,
+      "suspect_reason": null
+    },
+    "Ganfeng_100Ah_Voltagecurves_150A": {
+      "temperature_c": "Unknown (Ambient)",
+      "nominal_rate_a": 150.0,
+      "rows": 2143,
+      "sampling_dt_median": 1.0,
+      "sampling_dt_p10": 1.0,
+      "sampling_dt_p90": 1.0,
+      "time_monotonic": true,
+      "time_strictly_monotonic": false,
+      "capacity_monotonic": true,
+      "v_min": 2.4999,
+      "v_max": 3.1964,
+      "t0_voltage_v": 3.1964,
+      "t1_voltage_v": 3.1491,
+      "v_drop_1s_v": 0.04730000000000034,
+      "v_end_v": 2.4999,
+      "q_end_ah": 89.1497,
+      "mean_current_a": 149.86630942603827,
+      "std_current_a": 0.012992944163557979,
+      "current_sign": "positive (discharge, repo convention)",
+      "is_suspect": false
+    }
+  },
+  "ocv_sheets": {
+    "GOTION_50Ah": {
+      "cell_count": 3,
+      "is_discharge_only": false,
+      "soc_points": 28,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0,
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0
+      ],
+      "has_charge_branch": true,
+      "cells": [
+        "Cell_1",
+        "Cell_2",
+        "Cell_3"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    },
+    "Ganfeng_100Ah": {
+      "cell_count": 2,
+      "is_discharge_only": false,
+      "soc_points": 28,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0
+      ],
+      "has_charge_branch": true,
+      "cells": [
+        "Cell_1",
+        "Cell_2"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    },
+    "CALB_100Ah": {
+      "cell_count": 2,
+      "is_discharge_only": false,
+      "soc_points": 21,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0
+      ],
+      "has_charge_branch": true,
+      "cells": [
+        "Cell_1",
+        "Cell_2"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    },
+    "Ganfeng_125Ah": {
+      "cell_count": 1,
+      "is_discharge_only": false,
+      "soc_points": 21,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0
+      ],
+      "has_charge_branch": true,
+      "cells": [
+        "Cell_1"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    },
+    "Ganfeng_206Ah": {
+      "cell_count": 2,
+      "is_discharge_only": false,
+      "soc_points": 21,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0
+      ],
+      "has_charge_branch": true,
+      "cells": [
+        "Cell_1",
+        "Cell_2"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    },
+    "Ganfeng_230Ah": {
+      "cell_count": 2,
+      "is_discharge_only": true,
+      "soc_points": 21,
+      "soc_grid": [
+        0.0,
+        5.0,
+        10.0,
+        15.0,
+        20.0,
+        25.0,
+        30.0,
+        35.0,
+        40.0,
+        45.0,
+        50.0,
+        55.0,
+        60.0,
+        65.0,
+        70.0,
+        75.0,
+        80.0,
+        85.0,
+        90.0,
+        95.0,
+        100.0
+      ],
+      "has_charge_branch": false,
+      "cells": [
+        "Cell_1",
+        "Cell_2"
+      ],
+      "non_equilibrium_endpoints": [
+        0.0,
+        100.0
+      ]
+    }
+  },
+  "policy_table": {
+    "corrections": [
+      {
+        "row": 4,
+        "col": 4,
+        "original_value": "2026-07-03 00:00:00",
+        "restored_text": "3-7",
+        "meaning": "Temperature range 3 to 7 \u00b0C"
+      },
+      {
+        "row": 5,
+        "col": 4,
+        "original_value": "2026-12-08 00:00:00",
+        "restored_text": "8-12",
+        "meaning": "Temperature range 8 to 12 \u00b0C"
+      }
+    ],
+    "hard_cutoff_table": [
+      {
+        "Temperature Range (\u00b0C)": "3-7",
+        "Hard Cutoff": "2.8 V",
+        "Usable Capacity Multiplier": 0.85,
+        "Samples": 5
+      },
+      {
+        "Temperature Range (\u00b0C)": "8-12",
+        "Hard Cutoff": "2.8 V",
+        "Usable Capacity Multiplier": 0.9,
+        "Samples": 5
+      },
+      {
+        "Temperature Range (\u00b0C)": "13-17",
+        "Hard Cutoff": "2.8 V",
+        "Usable Capacity Multiplier": 0.95,
+        "Samples": 5
+      },
+      {
+        "Temperature Range (\u00b0C)": "18-22",
+        "Hard Cutoff": "2.95 V",
+        "Usable Capacity Multiplier": 1.0,
+        "Samples": 5
+      }
+    ],
+    "reserve_feature_table": [
+      {
+        "Temp Range": ">25 C",
+        "Current Reserve V": 3.09,
+        "Current Cap Factor": 1.0,
+        "Current UV Limit": 2.7,
+        "Planned Reserve": "SoC-based",
+        "Planned Cap Factor": 1.0,
+        "Planned UV": 2.8
+      },
+      {
+        "Temp Range": ">15 & <25 C",
+        "Current Reserve V": 3.09,
+        "Current Cap Factor": 1.0,
+        "Current UV Limit": 2.7,
+        "Planned Reserve": "SoC-based",
+        "Planned Cap Factor": 1.0,
+        "Planned UV": 2.8
+      },
+      {
+        "Temp Range": ">10 & <15 C",
+        "Current Reserve V": 3.09,
+        "Current Cap Factor": 1.0,
+        "Current UV Limit": 2.7,
+        "Planned Reserve": "SoC-based",
+        "Planned Cap Factor": 0.9,
+        "Planned UV": 2.7
+      },
+      {
+        "Temp Range": ">0 & <10 C",
+        "Current Reserve V": 3.09,
+        "Current Cap Factor": 1.0,
+        "Current UV Limit": 2.7,
+        "Planned Reserve": "SoC-based",
+        "Planned Cap Factor": 0.85,
+        "Planned UV": 2.7
+      }
+    ],
+    "inverter_derating_table": [
+      {
+        "Temperature": "-10 degC",
+        "UV Cutoff (V)": 2.0,
+        "Usable Capacity (%)": 70.0,
+        "Max Charge Current": "0A",
+        "Max Discharge Current": "0.5C, 1.2C @ 30s"
+      },
+      {
+        "Temperature": "-5 degC",
+        "UV Cutoff (V)": 2.0,
+        "Usable Capacity (%)": 75.0,
+        "Max Charge Current": "0A",
+        "Max Discharge Current": "0.5C, 2.0C @ 30s"
+      },
+      {
+        "Temperature": "0 degC",
+        "UV Cutoff (V)": 2.0,
+        "Usable Capacity (%)": 80.0,
+        "Max Charge Current": "0A",
+        "Max Discharge Current": "0.5C, 2.0C @ 30s"
+      },
+      {
+        "Temperature": "5 degC",
+        "UV Cutoff (V)": 2.5,
+        "Usable Capacity (%)": 90.0,
+        "Max Charge Current": "0.3C, 0.4C @ 30s",
+        "Max Discharge Current": "0.7C, 2.25C @ 30s"
+      },
+      {
+        "Temperature": "10 degC",
+        "UV Cutoff (V)": 2.5,
+        "Usable Capacity (%)": 95.0,
+        "Max Charge Current": "0.4C, 0.8C @ 30s",
+        "Max Discharge Current": "0.8C, 2.4C @ 30s"
+      }
+    ]
+  }
+}
