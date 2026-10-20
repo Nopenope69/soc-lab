@@ -347,6 +347,8 @@ class FlexiPodLoader:
                             if chg_col is not None:
                                 c_val = ws.cell(r, chg_col).value
                                 chg_list.append(float(c_val) if c_val is not None else float("nan"))
+                            if soc_val >= 100.0 or len(soc_list) == 21:
+                                break
 
                 soc_arr = np.array(soc_list)
                 dchg_arr = np.array(dchg_list)
