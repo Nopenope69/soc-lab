@@ -81,3 +81,14 @@
 - **C5: Document Updates**: Published `reports/gauntlet_v3/ALGORITHM_SPEC_v3.2.md` and `reports/gauntlet_v3/FINAL_V3_v3.2.md` incorporating all C1-C4 forensic results, ground truth caveats, and the 7-pillar field validation requirements. Commit: `99b53e2`.
 - **Close-Out Report**: Generated master close-out document `reports/gauntlet_v3/closeout/CLOSEOUT.md`. Final end state: **GO (development-data validation on CALCE; not field-validated)**.
 
+---
+
+## FINAL CLOSE-OUT PASS (Ablation, Real Baseline Drift, Sub-20 C Gates, Final Docs)
+
+- **F1: Component Ablation**: Evaluated 5 architectural variants (V-a to V-e) across 24 conditions (2 cells x 3 profiles x 4 temps). Identified simplest variant passing all Gate A clauses on A1-007 (V-c: confidence-aware reset + observability gate/cap) and proved that V-e (Frozen E7v3) is the ONLY variant passing Gate B across cells due to RLS impedance adaptation. Commit: `8eb2af6`.
+- **F2: Drift with Real Baseline & No-Top-Knee Test**: Evaluated 9-hour continuous cycling with anchored/unanchored E0/E7v3 and isolated single discharge tests without top knees under 7 fault conditions. Proved that E7v3 recovers +2.5 to +6.5 pp of error in the lower knee over anchored E0, and confirmed plateau drift equivalence (-0.8 to -1.0 pp/hr) due to intentional observability gating. Commit: `c1860d2`.
+- **F3: Sub-20 C Clause Table**: Evaluated all pre-registered Gate A clauses at 10, 0, and -10 C on A1-007 across DST, US06, and FUDS. Identified soft margin breaches at 10 C (3.49 pp CV-taper gap) and impedance-driven convergence delays at 0 and -10 C (2.6x to 4.5x R0 surge). Lowest temperature passing all clauses: None (certified envelope strictly 20 to 50 C). Commit: `e8a5b6f`.
+- **F4: Final Documents Update**: Generated `reports/gauntlet_v3/ALGORITHM_SPEC_v3.3.md` and `reports/gauntlet_v3/FINAL_V3_v3.3.md` directly via `scripts/generate_final_documents.py` from saved JSON records. Verified S-B (0.626662 pp) and S-G (0.626626 pp) mean end errors to 6 decimal places and explained the 35.2 ppb residual. Commit: `b2e74f6`.
+- **Final Master Closeout**: Produced `reports/gauntlet_v3/final/FINAL_CLOSEOUT.md`. Final End State: **GO (development-data validation on CALCE; not field-validated)**.
+
+
