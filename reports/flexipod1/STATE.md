@@ -29,7 +29,12 @@
   - Found plateau half-gap $M \approx 9.58\text{ to }10.62\text{ mV}$ across all 5 bi-directional cell types (~50% of CALCE A123 $20\text{--}27\text{ mV}$).
   - Characterized ultra-flat plateau: central plateau slope $0.12\text{ to }0.26\text{ mV/pp}$ (3-5x flatter than CALCE), min slope $\le 0.05\text{ mV/pp}$ near 75-80% SOC knee, resulting in implied SOC error $\ge 20\text{ to }40\text{ pp/mV}$.
   - Verified cell-to-cell spread in plateau is tiny ($0.26\text{ to }1.56\text{ mV}$ mean spread across cells of same type).
-- [ ] **Step 3: Parameter Identification** (`scripts/flexipod/identify_fp.py`, `configs/assumptions/profiles/flexipod_100ah_v1.yaml`)
+- [x] **Step 3: Parameter Identification** (`scripts/flexipod/identify_fp.py`, `configs/assumptions/profiles/flexipod_100ah_v1.yaml`, `reports/flexipod1/parameter_identification.md`)
+  - Identified 2RC + hysteresis parameters on 100 A CC curves at 5, 10, 20 °C using W-mid residuals (10% to 90% truth SOC).
+  - Derived 15 °C parameters via linear interpolation between 10 °C and 20 °C ($R_0=1.316\text{ m}\Omega$, total $R=2.017\text{ m}\Omega$).
+  - Performed sensitivity evaluation with Ganfeng_206Ah OCV ($\Delta R < 0.02\text{ m}\Omega$, $\Delta\text{RMSE} < 2.2\text{ mV}$).
+  - Confirmed 100 Ah $R_0$ matches capacity-scaled $2.06\times R_{206\text{Ah}}$ ($1.59\text{ m}\Omega$ vs $1.62\text{ m}\Omega$ at 10 °C).
+  - Generated and validated `configs/assumptions/profiles/flexipod_100ah_v1.yaml` with schema-compliant 13-point standard grid.
 - [ ] **Step 4: Open-Loop Model Gate** (`reports/flexipod1/model_gate.md`)
 - [ ] **Step 5: Estimator Scenarios on CC Curves** (`reports/flexipod1/scenarios.md`)
 - [ ] **Step 6: Summary Report** (`reports/flexipod1/FLEXIPOD1_SUMMARY.md`)

@@ -1,0 +1,172 @@
+plant:
+  nominal_capacity_Ah:
+    value: 95.1521
+    unit: Ah
+    status: measured
+    bounds:
+    - 50.0
+    - 150.0
+    note: Measured capacity delivered to 2.5 V cutoff at 20 degC (100 A)
+    source: Temperature_based_V_curves.xlsx
+  temperatures_c:
+    value:
+    - 5.0
+    - 10.0
+    - 15.0
+    - 20.0
+    - 25.0
+    - 35.0
+    unit: degC
+    status: measured
+    bounds:
+    - 0.0
+    - 50.0
+    note: Temperatures with measured discharge curves (5, 10, 15, 20 degC)
+    source: Temperature_based_V_curves.xlsx
+  soc_grid:
+    value:
+    - 0.0
+    - 0.05
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    - 0.5
+    - 0.6
+    - 0.7
+    - 0.8
+    - 0.9
+    - 0.95
+    - 1.0
+    unit: fraction
+    status: measured
+    bounds:
+    - 0.0
+    - 1.0
+    note: 5% SOC grid points from OCV characterization (21 points)
+    source: OCV_and_HPPC_data_of_cells.xlsx (Ganfeng_100Ah)
+  ocv_table_v:
+    value:
+      '5.0': &id001
+      - 2.8361
+      - 3.1643
+      - 3.2128
+      - 3.25203
+      - 3.28593
+      - 3.29663
+      - 3.29908
+      - 3.30127
+      - 3.32115
+      - 3.33525
+      - 3.33565
+      - 3.33575
+      - 3.33795
+      '10.0': *id001
+      '15.0': *id001
+      '20.0': *id001
+      '25.0': *id001
+      '35.0': *id001
+    unit: V
+    status: measured
+    bounds:
+    - 2.0
+    - 4.0
+    note: Symmetric mean of Ganfeng_100Ah OCV branches (monotonized)
+    source: OCV_and_HPPC_data_of_cells.xlsx
+  r0_table_ohm:
+    value:
+      '5.0': 0.00205
+      '10.0': 0.001692
+      '15.0': 0.001316
+      '20.0': 0.000941
+      '25.0': 0.000894
+      '35.0': 0.000846
+    unit: Ohm
+    status: measured
+    bounds:
+    - 0.0001
+    - 0.005
+    note: Fitted ohmic resistance from 100A discharge curves (1s drop init, W-mid
+      fit; 15C interpolated)
+    source: Temperature_based_V_curves.xlsx
+  r1_table_ohm:
+    value:
+      '5.0': 0.000255
+      '10.0': 0.000553
+      '15.0': 0.000357
+      '20.0': 0.000161
+      '25.0': 0.000161
+      '35.0': 0.000161
+    unit: Ohm
+    status: measured
+    bounds:
+    - 0.0
+    - 0.005
+    note: Fitted first RC resistance from 100A discharge curves (W-mid fit; 15C interpolated)
+    source: Temperature_based_V_curves.xlsx
+  tau1_table_s:
+    value:
+      '5.0': 66.76
+      '10.0': 15.23
+      '15.0': 8.65
+      '20.0': 2.08
+      '25.0': 2.08
+      '35.0': 2.08
+    unit: s
+    status: measured
+    bounds:
+    - 2.0
+    - 100.0
+    note: Fitted first RC time constant from 100A discharge curves (W-mid fit; 15C
+      interpolated)
+    source: Temperature_based_V_curves.xlsx
+  r2_table_ohm:
+    value:
+      '5.0': 0.00028
+      '10.0': 8.7e-05
+      '15.0': 0.000344
+      '20.0': 0.0006
+      '25.0': 0.0006
+      '35.0': 0.0006
+    unit: Ohm
+    status: measured
+    bounds:
+    - 0.0
+    - 0.005
+    note: Fitted second RC resistance from 100A discharge curves (W-mid fit; 15C interpolated)
+    source: Temperature_based_V_curves.xlsx
+  tau2_table_s:
+    value:
+      '5.0': 58.96
+      '10.0': 149.02
+      '15.0': 374.51
+      '20.0': 600.0
+      '25.0': 600.0
+      '35.0': 600.0
+    unit: s
+    status: measured
+    bounds:
+    - 20.0
+    - 600.0
+    note: Fitted second RC time constant from 100A discharge curves (W-mid fit; 15C
+      interpolated)
+    source: Temperature_based_V_curves.xlsx
+  hysteresis_amplitude_v:
+    value: 0.00958
+    unit: V
+    status: measured
+    bounds:
+    - 0.0
+    - 0.05
+    note: Plateau-median half-gap from Ganfeng_100Ah OCV
+    source: OCV_and_HPPC_data_of_cells.xlsx
+  hysteresis_gamma:
+    value: 50.0
+    unit: dimensionless
+    status: placeholder
+    bounds:
+    - 1.0
+    - 500.0
+    note: 'UNIDENTIFIED: Minor-loop hysteresis rate gamma unobserved in monotonic
+      discharges'
+    source: Unobserved placeholder
