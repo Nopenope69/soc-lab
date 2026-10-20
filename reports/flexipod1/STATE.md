@@ -23,7 +23,12 @@
   - Restored date-converted cells `3-7` and `8-12` in `reports/flexipod1/policy_table_corrected.csv`.
   - Excluded 0% and 100% non-equilibrium endpoints from OCV fitting.
   - Recorded cell counts and verified `Ganfeng_230Ah` is discharge-only.
-- [ ] **Step 2: OCV & Hysteresis Analysis Per Cell Type** (`reports/flexipod1/ocv_hysteresis.md`)
+- [x] **Step 2: OCV & Hysteresis Analysis Per Cell Type** (`scripts/flexipod/ocv_hysteresis_fp.py`, `reports/flexipod1/ocv_hysteresis.md`)
+  - Full 21-point grid analysis across all 6 cell types (GOTION 50Ah, Ganfeng 100Ah, CALB 100Ah, Ganfeng 125Ah, Ganfeng 206Ah, Ganfeng 230Ah).
+  - Flagged Ganfeng_230Ah as discharge-only (no charge branch).
+  - Found plateau half-gap $M \approx 9.58\text{ to }10.62\text{ mV}$ across all 5 bi-directional cell types (~50% of CALCE A123 $20\text{--}27\text{ mV}$).
+  - Characterized ultra-flat plateau: central plateau slope $0.12\text{ to }0.26\text{ mV/pp}$ (3-5x flatter than CALCE), min slope $\le 0.05\text{ mV/pp}$ near 75-80% SOC knee, resulting in implied SOC error $\ge 20\text{ to }40\text{ pp/mV}$.
+  - Verified cell-to-cell spread in plateau is tiny ($0.26\text{ to }1.56\text{ mV}$ mean spread across cells of same type).
 - [ ] **Step 3: Parameter Identification** (`scripts/flexipod/identify_fp.py`, `configs/assumptions/profiles/flexipod_100ah_v1.yaml`)
 - [ ] **Step 4: Open-Loop Model Gate** (`reports/flexipod1/model_gate.md`)
 - [ ] **Step 5: Estimator Scenarios on CC Curves** (`reports/flexipod1/scenarios.md`)
