@@ -35,6 +35,14 @@
   - Performed sensitivity evaluation with Ganfeng_206Ah OCV ($\Delta R < 0.02\text{ m}\Omega$, $\Delta\text{RMSE} < 2.2\text{ mV}$).
   - Confirmed 100 Ah $R_0$ matches capacity-scaled $2.06\times R_{206\text{Ah}}$ ($1.59\text{ m}\Omega$ vs $1.62\text{ m}\Omega$ at 10 °C).
   - Generated and validated `configs/assumptions/profiles/flexipod_100ah_v1.yaml` with schema-compliant 13-point standard grid.
-- [ ] **Step 4: Open-Loop Model Gate** (`reports/flexipod1/model_gate.md`)
+- [x] **Step 4: Open-Loop Model Gate** (`scripts/flexipod/model_gate_fp.py`, `reports/flexipod1/model_gate.md`)
+  - Evaluated open-loop 2RC voltage prediction on W-mid (10% to 90% truth SOC) across held-out curves (150 A at 10, 20 °C; 100 A at 15 °C; suspect 150 A at 5 °C) and fit curves (100 A at 5, 10, 20 °C).
+  - Outcome: **FAIL / NO-GO** against pre-registered thresholds ($|\text{bias}| \le 2\text{ mV}$, $\text{RMSE} \le 6\text{ mV}$, implied SOC error $\le 2.5\text{ pp}$).
+  - Conducted root-cause diagnosis across 4 failure modes:
+    1. *Non-linear kinetics / self-heating at 150 A*: $45\text{ W}$ Joule heating and Butler-Volmer Tafel scaling lower internal resistance, causing linear model to overpredict drop by 35 to 81 mV.
+    2. *Truth-definition mismatch*: Usable cutoff capacity $Q_{end}(T, I)$ initiates diffusion starvation knee earlier in Ah than C/20 quasi-equilibrium OCV curve.
+    3. *Implied SOC error amplification*: Ultra-flat plateau ($0.12\text{--}0.25\text{ mV/pp}$) magnifies modest voltage errors into $>80\text{--}230\text{ pp}$ implied SOC error.
+    4. *RC unobservability*: Saturated RC branches in CC discharge cannot decouple dynamic time constants without pulse relaxation.
+  - Formulated primary finding and field-logging recommendations for Phase 2.
 - [ ] **Step 5: Estimator Scenarios on CC Curves** (`reports/flexipod1/scenarios.md`)
 - [ ] **Step 6: Summary Report** (`reports/flexipod1/FLEXIPOD1_SUMMARY.md`)
