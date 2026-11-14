@@ -194,29 +194,30 @@ def train_model():
         val_features = list(loaded["val_features"])
         val_targets = list(loaded["val_targets"])
     else:
-        print("\n=== 1. Generating Training Data (DST & FUDS @ 20C, 25C, 30C) ===")
-        train_features, train_targets = generate_all_episodes(
+        print("\n=== 1. Generating Training Data (DST & FUDS @ 20C, 25C, 30C on Cell A1-007) ===")
+        all_train_features, all_train_targets = generate_all_episodes(
             params=params,
             temps=[20, 25, 30],
             profiles=["DST", "FUDS"],
             include_perturbations=True,
         )
 
-        print("\n=== 2. Generating Validation Data (US06 @ 20C, 30C & DST @ 40C) ===")
-        val_features, val_targets = generate_all_episodes(
-            params=params,
-            temps=[20, 30],
-            profiles=["US06"],
-            include_perturbations=False,
-        )
-        val_features_40, val_targets_40 = generate_all_episodes(
-            params=params,
-            temps=[40],
-            profiles=["DST"],
-            include_perturbations=False,
-        )
-        val_features.extend(val_features_40)
-        val_targets.extend(val_targets_40)
+        print("\n=== 2. Creating Inner Validation Split of TRAINING Data Only ===")
+        # L3+: Strict split holds out 50C and A1-008 entirely.
+        # Early stopping must use an inner split of the TRAINING data only (not US06 or DST 40C).
+        n_episodes = len(all_train_features)
+        rng = np.random.RandomState(42)
+        perm = rng.permutation(n_episodes)
+        split_point = int(0.80 * n_episodes)
+        train_idx = perm[:split_point]
+        val_idx = perm[split_point:]
+
+        train_features = [all_train_features[i] for i in train_idx]
+        train_targets = [all_train_targets[i] for i in train_idx]
+        val_features = [all_train_features[i] for i in val_idx]
+        val_targets = [all_train_targets[i] for i in val_idx]
+
+        print(f"Split {n_episodes} training episodes into {len(train_features)} train and {len(val_features)} inner validation.")
 
         np.savez_compressed(
             cache_file,

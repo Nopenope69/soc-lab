@@ -98,10 +98,12 @@ The frozen candidate `cand_cplat_2.0e-05` passed every clause of **GATE A** and 
 
 ---
 
-## 4. Production Field-Validation Checklist
+## 4. Production Field-Validation Checklist & READY Criteria
 
 1. **Pack-Level Thermal Gradients**: Validate filter behavior when cell temperatures diverge across modules ($\Delta T > 5\text{ }^\circ\text{C}$ across pack). Enforce module-level or cell-level parameter scheduling.
 2. **Cell Aging Beyond Fresh Baseline**: Characterize capacity fade ($Q < 80\%\text{ SOH}$), internal resistance growth ($R_0 > 2\times\text{ BOL}$), and subtle OCV flattening in aged cells. Couple E7v3 with an online SOH/capacity tracking loop.
 3. **Sustained Partial-SOC Cycling**: Validate packs cycled strictly between 30% and 70% SOC for 3+ weeks without top or bottom knee entry under realistic AFE sensor noise.
 4. **Real BMS Current Sensor Imperfections**: Validate performance against production shunt or Hall-effect sensors exhibiting $\pm 10\text{ to } 50\text{ mA}$ thermal zero-point drift, 1/f noise, and ADC quantization.
 5. **High-Frequency Inverter Ripple**: Characterize filter response to 100 Hz - 20 kHz current ripple from traction inverters or power electronics, verifying that anti-aliasing hardware filters protect terminal voltage sampling.
+6. **No Silent Fallback (Operational Status Transparency)**: Estimators must never fail silently or fallback unobserved. The estimation output record must explicitly surface `model_loaded: bool` and `fallback_active: bool` at every step. Transparent or unflagged fallback to physics integration is strictly prohibited.
+7. **Input-Range Guardrails (Out-of-Distribution Protection)**: All observable telemetry inputs ($I_k, V_k, T_k$) must be guarded against certified training envelopes (e.g. $[-2.5, 4.5]\text{ A}$, $[1.90, 3.75]\text{ V}$, $[15.0, 35.0]^\circ\text{C}$ for CALCE A123). When telemetry breaches these bounds, the estimator must immediately assert `fallback_active=True` and revert to the physical filter backbone.

@@ -20,10 +20,37 @@ from scripts.train_e8_residual_gru import generate_all_episodes
 def train_and_export_lgbm():
     cache_file = repo_root / "data" / "cache" / "e8_episodes.npz"
     if not cache_file.exists():
-        print("Generating training episodes...")
+        print("Cache not found. Generating training episodes on clean checkout...")
         assumptions, _, _ = load_assumptions(profile="calce_a123_v4")
         params = ParamSet.from_assumptions(assumptions, matched=True)
-        generate_all_episodes(params, temps=[20, 25, 30], cache_path=cache_file)
+        all_features, all_targets = generate_all_episodes(
+            params=params,
+            temps=[20, 25, 30],
+            profiles=["DST", "FUDS"],
+            include_perturbations=True,
+        )
+        # L3+: Inner split of TRAINING data only (50C and A1-008 held out entirely; no US06 or 40C)
+        n_episodes = len(all_features)
+        rng = np.random.RandomState(42)
+        perm = rng.permutation(n_episodes)
+        split_point = int(0.80 * n_episodes)
+        train_idx = perm[:split_point]
+        val_idx = perm[split_point:]
+
+        train_features = [all_features[i] for i in train_idx]
+        train_targets = [all_targets[i] for i in train_idx]
+        val_features = [all_features[i] for i in val_idx]
+        val_targets = [all_targets[i] for i in val_idx]
+
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(
+            cache_file,
+            train_features=np.array(train_features, dtype=object),
+            train_targets=np.array(train_targets, dtype=object),
+            val_features=np.array(val_features, dtype=object),
+            val_targets=np.array(val_targets, dtype=object),
+        )
+        print(f"Cached {n_episodes} generated episodes to {cache_file}.")
 
     print("Loading cached episodes from", cache_file)
     loaded = np.load(cache_file, allow_pickle=True)

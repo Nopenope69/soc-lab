@@ -24,6 +24,13 @@ _PARENT_LEVEL = int("3")
 _IN_FEATURES = int("13")
 _HIDDEN_SIZE = int("32")
 _MAX_RESIDUAL = float("0.25")
+_I_MIN = float("-2.5")
+_I_MAX = float("4.5")
+_V_MIN = float("1.90")
+_V_MAX = float("3.75")
+_TEMP_MIN = float("15.0")
+_TEMP_MAX = float("35.0")
+_K_SIGMA = float("3.0")  # [PROPOSED dynamic clamp factor tied to soc_std]
 
 _DEFAULT_WEIGHTS_PATH = Path(__file__).resolve().parents[_PARENT_LEVEL] / "deliverable" / "e8_residual_gru.pt"
 
@@ -84,16 +91,54 @@ class E8ResidualGRUEstimator(Estimator):
 
         # If measurement was dropped, hold and propagate without neural correction
         if measurement.dropout or math.isnan(measurement.v) or math.isnan(measurement.i):
-            return phys_est
+            return SocEstimate(
+                soc=phys_est.soc,
+                soc_std=phys_est.soc_std,
+                anchor_used=phys_est.anchor_used,
+                voltage_residual=phys_est.voltage_residual,
+                innovation_variance=phys_est.innovation_variance,
+                kalman_gain_soc=phys_est.kalman_gain_soc,
+                theta=phys_est.theta,
+                theta_std=phys_est.theta_std,
+                model_loaded=self.weights_loaded,
+                fallback_active=True,
+            )
 
-        # If weights are not loaded, fallback transparently to physics filter
+        # If weights are not loaded, fallback with explicit flags
         if not self.weights_loaded:
-            return phys_est
+            return SocEstimate(
+                soc=phys_est.soc,
+                soc_std=phys_est.soc_std,
+                anchor_used=phys_est.anchor_used,
+                voltage_residual=phys_est.voltage_residual,
+                innovation_variance=phys_est.innovation_variance,
+                kalman_gain_soc=phys_est.kalman_gain_soc,
+                theta=phys_est.theta,
+                theta_std=phys_est.theta_std,
+                model_loaded=False,
+                fallback_active=True,
+            )
+
+        curr = float(measurement.i)
+        v = float(measurement.v)
+        temp_c = float(measurement.temp_c)
+
+        # Input-range guard against training feature envelope
+        if curr < _I_MIN or curr > _I_MAX or v < _V_MIN or v > _V_MAX or temp_c < _TEMP_MIN or temp_c > _TEMP_MAX:
+            return SocEstimate(
+                soc=phys_est.soc,
+                soc_std=phys_est.soc_std,
+                anchor_used=phys_est.anchor_used,
+                voltage_residual=phys_est.voltage_residual,
+                innovation_variance=phys_est.innovation_variance,
+                kalman_gain_soc=phys_est.kalman_gain_soc,
+                theta=phys_est.theta,
+                theta_std=phys_est.theta_std,
+                model_loaded=self.weights_loaded,
+                fallback_active=True,
+            )
 
         # 2. Assemble 13-dimensional physics feature vector
-        curr = measurement.i
-        v = measurement.v
-        temp_c = measurement.temp_c
         phys_soc = phys_est.soc
         soc_std = phys_est.soc_std
         v_res = phys_est.voltage_residual if phys_est.voltage_residual is not None else 0.0
@@ -111,8 +156,12 @@ class E8ResidualGRUEstimator(Estimator):
         ], dtype=torch.float32, device=self.device)
 
         # 3. GRU residual inference
-        delta_z, self.gru_h = self.gru_model.step_single(feat_tensor, self.gru_h, normalize=True)
-        self.last_applied_residual = delta_z * self.blend_alpha
+        raw_delta_z, self.gru_h = self.gru_model.step_single(feat_tensor, self.gru_h, normalize=True)
+
+        # [PROPOSED]: Dynamic residual clamp tied to physics filter uncertainty
+        clamp_bound = min(_MAX_RESIDUAL, _K_SIGMA * phys_est.soc_std)
+        clamped_delta_z = min(max(raw_delta_z, -clamp_bound), clamp_bound)
+        self.last_applied_residual = clamped_delta_z * self.blend_alpha
 
         # 4. Corrected SOC state bounded in [0, 1]
         z_final = min(max(phys_soc + self.last_applied_residual, 0.0), 1.0)
@@ -125,4 +174,7 @@ class E8ResidualGRUEstimator(Estimator):
             innovation_variance=phys_est.innovation_variance,
             kalman_gain_soc=phys_est.kalman_gain_soc,
             theta=phys_est.theta,
+            theta_std=phys_est.theta_std,
+            model_loaded=True,
+            fallback_active=False,
         )

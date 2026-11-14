@@ -48,7 +48,8 @@ reports/*.png
 reports/*.csv
 !reports/.gitkeep
 data/raw/
-data/cache/
+data/cache/*
+!data/cache/.gitkeep
 *.pem
 .env
 .DS_Store
