@@ -35,7 +35,11 @@ def test_estimators_conform_to_protocol(params):
 
 def test_registry_instantiates_implemented_estimators(params):
     """Verify that get_estimator instantiates implemented estimators cleanly."""
-    for name in ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "e5v4", "e4v2", "d3", "e7v2"]:
+    for name in [
+        "E0", "E1", "E2", "E3", "E4", "E5", "E6", "e5v4", "e4v2", "d3",
+        "e7v2", "e7v3", "E8", "e8", "E8-LGBM", "e8-lgbm", "e8_lgbm",
+        "E9", "e9", "e9_tcn_ukf", "E10", "e10", "e10_pinn_aekf"
+    ]:
         est = get_estimator(name, params)
         assert isinstance(est, Estimator)
 
@@ -56,7 +60,11 @@ def test_registry_rejects_unknown_estimator_name(params):
 def test_registry_lists_all_registered():
     """Verify that registry contains all registered estimators."""
     registered = list_registered_estimators()
-    expected = ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "d3", "e4v2", "e5v4", "e7v2"]
+    expected = [
+        "E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E8-LGBM", "E9", "E10",
+        "d3", "e4v2", "e5v4", "e7v2", "e7v3", "e8", "e8-lgbm", "e8_lgbm",
+        "e9", "e9_tcn_ukf", "e10", "e10_pinn_aekf"
+    ]
     assert sorted(registered) == sorted(expected)
 
 

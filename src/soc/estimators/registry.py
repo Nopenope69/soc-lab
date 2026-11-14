@@ -18,6 +18,11 @@ from soc.estimators.e5v4 import E5V4ObservabilityEKF
 from soc.estimators.e4v2_rls import E4V2RLSEKF
 from soc.estimators.innovation_gating import D3InnovationGatedEKF
 from soc.estimators.e7v2 import E7V2CompositeFilter
+from soc.estimators.e7v3 import E7V3CompositeFilter
+from soc.estimators.e8_residual_gru import E8ResidualGRUEstimator
+from soc.estimators.e8_residual_lgbm import E8ResidualLGBMEstimator
+from soc.estimators.e9_tcn_ukf import E9TCNUKFEstimator
+from soc.estimators.e10_pinn_aekf import E10PINNAEKFEstimator
 
 
 class _StubEstimator(Estimator):
@@ -58,10 +63,22 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "E5": E5ObservabilityEKF,
     "E6": E6RBCDEKF,
     "E7": _create_stub("E7"),
+    "E8": E8ResidualGRUEstimator,
     "e5v4": E5V4ObservabilityEKF,
     "e4v2": E4V2RLSEKF,
     "d3": D3InnovationGatedEKF,
     "e7v2": E7V2CompositeFilter,
+    "e7v3": E7V3CompositeFilter,
+    "e8": E8ResidualGRUEstimator,
+    "E8-LGBM": E8ResidualLGBMEstimator,
+    "e8-lgbm": E8ResidualLGBMEstimator,
+    "e8_lgbm": E8ResidualLGBMEstimator,
+    "E9": E9TCNUKFEstimator,
+    "e9": E9TCNUKFEstimator,
+    "e9_tcn_ukf": E9TCNUKFEstimator,
+    "E10": E10PINNAEKFEstimator,
+    "e10": E10PINNAEKFEstimator,
+    "e10_pinn_aekf": E10PINNAEKFEstimator,
 }
 
 
