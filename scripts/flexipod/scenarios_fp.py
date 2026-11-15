@@ -175,10 +175,22 @@ def run_all_scenarios() -> Dict[str, Any]:
                 "estimators": {},
             }
 
-            # 1. E0 Fair
+            # 1. E0 Fair (oracle Q_end)
             e0_est = E0CoulombCounting(params_e0)
             soc_e0 = simulate_stream(e0_est, c, soc0, soc_std=e7_soc_std, current_gain=i_gain, voltage_bias_v=v_bias)
             scen_res["estimators"]["E0_fair"] = compute_metrics(soc_e0, soc_truth, c.time_s)
+
+            # 4. E7v3 Frozen Composite Filter
+            e7_est = E7V3CompositeFilter(base_params)
+            soc_e7 = simulate_stream(e7_est, c, soc0, soc_std=e7_soc_std, current_gain=i_gain, voltage_bias_v=v_bias)
+            scen_res["estimators"]["E7v3"] = compute_metrics(soc_e7, soc_truth, c.time_s)
+
+            # 1b. E0 Nominal (shares E7v3 CALCE-derived capacity clamped at 20 C)
+            q_e7 = e7_est.get_capacity_ah(temp_c)
+            params_e0_nom = replace(base_params, nominal_capacity_ah=q_e7)
+            e0_nom_est = E0CoulombCounting(params_e0_nom)
+            soc_e0_nom = simulate_stream(e0_nom_est, c, soc0, soc_std=e7_soc_std, current_gain=i_gain, voltage_bias_v=v_bias)
+            scen_res["estimators"]["E0_nominal"] = compute_metrics(soc_e0_nom, soc_truth, c.time_s)
 
             # 2. E1 Standard EKF
             e1_est = E1ExtendedKalmanFilter(params_ekf_large_p0)
@@ -189,11 +201,6 @@ def run_all_scenarios() -> Dict[str, Any]:
             e2_est = E2AnchoredEstimator(params_ekf_large_p0)
             soc_e2 = simulate_stream(e2_est, c, soc0, soc_std=0.20, current_gain=i_gain, voltage_bias_v=v_bias)
             scen_res["estimators"]["E2"] = compute_metrics(soc_e2, soc_truth, c.time_s)
-
-            # 4. E7v3 Frozen Composite Filter
-            e7_est = E7V3CompositeFilter(base_params)
-            soc_e7 = simulate_stream(e7_est, c, soc0, soc_std=e7_soc_std, current_gain=i_gain, voltage_bias_v=v_bias)
-            scen_res["estimators"]["E7v3"] = compute_metrics(soc_e7, soc_truth, c.time_s)
 
             curve_res["scenarios"][s_code] = scen_res
 
@@ -216,7 +223,7 @@ def generate_markdown_report(results: Dict[str, Any]) -> str:
     md.append("This diagnostic evaluation runs the frozen CALCE estimator suite (E0 fair, E1, E2, E7v3) on the FlexiPod constant-current discharge curves. It directly addresses the three core operational questions:\n\n")
 
     md.append("### Question 1: On constant current, E0 is a pure line; can any EKF beat it?\n")
-    md.append("**Answer: NO.** On pure constant-current discharge starting from known 100% SOC (Scenario S-A), Coulomb counting with fair $Q(T)$ produces a virtually zero-error line ($0.10\\text{ to }0.11\\text{ pp}$ RMSE). Because current is invariant, any Kalman filter attempting to use voltage in the flat plateau ($0.12\\text{--}0.25\\text{ mV/pp}$) corrupts state estimation with dynamic overpotential errors, yielding $13\\text{ to }17\\text{ pp}$ RMSE. **E0 is mathematically unbeatable on undisturbed constant current.**\n\n")
+    md.append("**Answer: NO.** On pure constant-current discharge starting from known 100% SOC (Scenario S-A), Coulomb counting with fair oracle $Q(T)$ produces a virtually zero-error line ($0.10\\text{ to }0.11\\text{ pp}$ RMSE). However, if Coulomb counting lacks oracle end-capacity knowledge and uses the same 20 °C CALCE-derived capacity as E7v3 ($95.30\\text{ Ah}$), capacity mismatch at lower temperatures (e.g. 5 °C where true delivered capacity is $86.35\\text{ Ah}$) induces up to $4.9\\text{ pp}$ RMSE and $9.4\\text{ pp}$ end error. Meanwhile, any Kalman filter attempting to use voltage in the flat plateau ($0.12\\text{--}0.25\\text{ mV/pp}$) corrupts state estimation with dynamic overpotential errors, yielding $13\\text{ to }17\\text{ pp}$ RMSE. **E0 with known capacity is mathematically unbeatable on undisturbed constant current.**\n\n")
 
     md.append("### Question 2: Does E7v3's observability gate protect it from drifting in the plateau when voltage has a bias (S-F)?\n")
     md.append("**Answer: PARTIALLY, with clear boundaries.** When a $+50\\text{ mV}$ sensor bias is applied, un-gated EKFs in this ultra-flat plateau ($0.15\\text{ mV/pp}$) face an implied SOC error of $333\\text{ pp}$. E7v3's plateau step cap ($1\\times 10^{-5}\\text{ /step}$) prevents explosive divergence. However, because constant-current discharge never rests or pulses, the $+50\\text{ mV}$ bias persists continuously for $>3000\\text{ seconds}$, slowly integrating to an offset. Full plateau immunity under permanent sensor bias requires dynamic pulse cycles where current transitions reveal $R_0$.\n\n")
@@ -232,78 +239,83 @@ def generate_markdown_report(results: Dict[str, Any]) -> str:
 
     # Scenario S-A Table
     md.append("### 2.1 Scenario S-A: Nominal Start (Truth 100%, Est 100%, Zero Offset)\n")
-    md.append("| Curve | Temp (°C) | Current (A) | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error (All) (pp) |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Curve | Temp (°C) | Current (A) | E0 Fair (Oracle) RMSE (pp) | E0 Nom (CALCE Q) RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error E7v3 (pp) |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for ckey in primary_curves:
         c = results["curves"][ckey]
         sa = c["scenarios"]["S-A"]["estimators"]
         e0_r = f"{sa['E0_fair']['full_rmse_pp']:.3f}"
+        e0_nom_r = f"{sa.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.3f}"
         e1_r = f"{sa['E1']['full_rmse_pp']:.3f}"
         e2_r = f"{sa['E2']['full_rmse_pp']:.3f}"
         e7_r = f"{sa['E7v3']['full_rmse_pp']:.3f}"
         e7_w = f"{sa['E7v3']['w_mid_rmse_pp']:.3f}"
         end_e = f"{sa['E7v3']['end_err_pp']:.3f}"
-        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
+        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e0_nom_r} | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
 
     # Scenario S-B Tables
     md.append("\n### 2.2 Scenario S-B: Wrong Start Recovery\n")
     md.append("#### S-B Case 1: Start 80% (-20 pp offset)\n")
-    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E0 Recovery Time | E7v3 Recovery Time |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E0 Nom RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E0 Fair Rec | E7v3 Rec |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for ckey in primary_curves:
         c = results["curves"][ckey]
         sb = c["scenarios"]["S-B_80"]["estimators"]
         e0_r = f"{sb['E0_fair']['full_rmse_pp']:.2f}"
+        e0_nom_r = f"{sb.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.2f}"
         e1_r = f"{sb['E1']['full_rmse_pp']:.2f}"
         e2_r = f"{sb['E2']['full_rmse_pp']:.2f}"
         e7_r = f"{sb['E7v3']['full_rmse_pp']:.2f}"
         e0_t = f"{sb['E0_fair']['recovery_time_s']:.0f} s" if not np.isnan(sb['E0_fair']['recovery_time_s']) else "Never"
         e7_t = f"{sb['E7v3']['recovery_time_s']:.0f} s" if not np.isnan(sb['E7v3']['recovery_time_s']) else "Never"
-        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | {e0_r} | {e1_r} | {e2_r} | **{e7_r}** | {e0_t} | **{e7_t}** |")
+        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | {e0_r} | {e0_nom_r} | {e1_r} | {e2_r} | **{e7_r}** | {e0_t} | **{e7_t}** |")
 
     md.append("\n#### S-B Case 2: Start 50% (-50 pp offset)\n")
-    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E0 Recovery Time | E7v3 Recovery Time |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E0 Nom RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E0 Fair Rec | E7v3 Rec |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for ckey in primary_curves:
         c = results["curves"][ckey]
         sb = c["scenarios"]["S-B_50"]["estimators"]
         e0_r = f"{sb['E0_fair']['full_rmse_pp']:.2f}"
+        e0_nom_r = f"{sb.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.2f}"
         e1_r = f"{sb['E1']['full_rmse_pp']:.2f}"
         e2_r = f"{sb['E2']['full_rmse_pp']:.2f}"
         e7_r = f"{sb['E7v3']['full_rmse_pp']:.2f}"
         e0_t = f"{sb['E0_fair']['recovery_time_s']:.0f} s" if not np.isnan(sb['E0_fair']['recovery_time_s']) else "Never"
         e7_t = f"{sb['E7v3']['recovery_time_s']:.0f} s" if not np.isnan(sb['E7v3']['recovery_time_s']) else "Never"
-        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | {e0_r} | {e1_r} | {e2_r} | **{e7_r}** | {e0_t} | **{e7_t}** |")
+        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | {e0_r} | {e0_nom_r} | {e1_r} | {e2_r} | **{e7_r}** | {e0_t} | **{e7_t}** |")
 
     # Scenario S-G Table
     md.append("\n### 2.3 Scenario S-G: Current Sensor Gain Error (+2%)\n")
-    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error (All) (pp) |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E0 Nom RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error E7v3 (pp) |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for ckey in primary_curves:
         c = results["curves"][ckey]
         sg = c["scenarios"]["S-G"]["estimators"]
         e0_r = f"{sg['E0_fair']['full_rmse_pp']:.2f}"
+        e0_nom_r = f"{sg.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.2f}"
         e1_r = f"{sg['E1']['full_rmse_pp']:.2f}"
         e2_r = f"{sg['E2']['full_rmse_pp']:.2f}"
         e7_r = f"{sg['E7v3']['full_rmse_pp']:.2f}"
         e7_w = f"{sg['E7v3']['w_mid_rmse_pp']:.2f}"
         end_e = f"{sg['E7v3']['end_err_pp']:.2f}"
-        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
+        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e0_nom_r} | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
 
     # Scenario S-F Table
     md.append("\n### 2.4 Scenario S-F: Voltage Sensor Bias Fault (+50 mV)\n")
-    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error (All) (pp) |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Curve | Temp (°C) | Rate (A) | E0 Fair RMSE (pp) | E0 Nom RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error E7v3 (pp) |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for ckey in primary_curves:
         c = results["curves"][ckey]
         sf = c["scenarios"]["S-F"]["estimators"]
         e0_r = f"{sf['E0_fair']['full_rmse_pp']:.2f}"
+        e0_nom_r = f"{sf.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.2f}"
         e1_r = f"{sf['E1']['full_rmse_pp']:.2f}"
         e2_r = f"{sf['E2']['full_rmse_pp']:.2f}"
         e7_r = f"{sf['E7v3']['full_rmse_pp']:.2f}"
         e7_w = f"{sf['E7v3']['w_mid_rmse_pp']:.2f}"
         end_e = f"{sf['E7v3']['end_err_pp']:.2f}"
-        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
+        md.append(f"| `{ckey}` | {c['temp_c']:.0f} | {c['nominal_rate_a']:.0f} | **{e0_r}** | {e0_nom_r} | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
 
     # Suspect Curve Section
     md.append("\n---\n")
@@ -312,17 +324,18 @@ def generate_markdown_report(results: Dict[str, Any]) -> str:
     md.append("> **Data Quality Flag**: `T5_150A` (5 °C, 150 A) starts at $V_0 = 3.1546\\text{ V}$ instead of the expected ~3.33 V rest equilibrium, and exhibits only an $87.9\\text{ mV}$ drop in the first second (vs $200.6\\text{ mV}$ on 100 A at 5 °C). This curve represents an unrelaxed or pre-discharged cell state.\n\n")
 
     suspect_c = results["curves"]["T5_150A"]
-    md.append("| Scenario | E0 Fair RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error (All) (pp) |")
-    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|")
+    md.append("| Scenario | E0 Fair RMSE (pp) | E0 Nom RMSE (pp) | E1 RMSE (pp) | E2 RMSE (pp) | E7v3 RMSE (pp) | E7v3 W-mid RMSE (pp) | End Error E7v3 (pp) |")
+    md.append("|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|")
     for scode in ["S-A", "S-B_80", "S-B_50", "S-G", "S-F"]:
         sdata = suspect_c["scenarios"][scode]["estimators"]
         e0_r = f"{sdata['E0_fair']['full_rmse_pp']:.2f}"
+        e0_nom_r = f"{sdata.get('E0_nominal', {}).get('full_rmse_pp', float('nan')):.2f}"
         e1_r = f"{sdata['E1']['full_rmse_pp']:.2f}"
         e2_r = f"{sdata['E2']['full_rmse_pp']:.2f}"
         e7_r = f"{sdata['E7v3']['full_rmse_pp']:.2f}"
         e7_w = f"{sdata['E7v3']['w_mid_rmse_pp']:.2f}"
         end_e = f"{sdata['E7v3']['end_err_pp']:.2f}"
-        md.append(f"| **{scode}** | {e0_r} | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
+        md.append(f"| **{scode}** | {e0_r} | {e0_nom_r} | {e1_r} | {e2_r} | {e7_r} | {e7_w} | {end_e} |")
 
     md.append("\n---\n")
     md.append("## 4. Key Engineering Takeaways\n")
