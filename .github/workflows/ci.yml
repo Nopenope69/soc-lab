@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "handover/*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-core:
+    name: Core Test Suite (no torch, no data)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies (core + dev only)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Verify zero torch / lightgbm in environment
+        run: |
+          python -c "
+          import sys
+          for mod in ['torch', 'lightgbm']:
+              try:
+                  __import__(mod)
+                  sys.exit(f'Error: {mod} should not be installed in core job')
+              except ImportError:
+                  pass
+          print('Clean core environment confirmed: zero torch/lightgbm.')
+          "
+
+      - name: Import and construction check
+        run: |
+          python -c "
+          import soc.estimators
+          from soc.assumptions.loader import load_assumptions
+          from soc.estimators.base import ParamSet
+          assumptions, _, _ = load_assumptions()
+          params = ParamSet.from_assumptions(assumptions)
+          est = soc.estimators.get_estimator('e7v3', params)
+          print('Successfully instantiated:', est.__class__.__name__)
+          "
+
+      - name: Run test suite (non-data tests pass, data tests skip)
+        run: |
+          pytest -v -p no:cacheprovider -m "not requires_data"
+
+  lint-imports:
+    name: Lint & Import Hygiene Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install core + dev
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Run AST hygiene scanner
+        run: |
+          pytest tests/test_no_hardcoded_constants.py -v
+
+      - name: Verify deliverable stdlib isolation
+        run: |
+          pytest tests/test_bms_soc_ref.py -k "test_bms_soc_ref_has_zero_forbidden_imports" -v
+
+  test-neural:
+    name: Neural Estimators (optional / manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install with neural extra
+        run: |
+          pip install -e ".[dev,neural]"
+
+      - name: Run neural tests
+        run: |
+          pytest tests/test_e8_estimator.py tests/test_e8_lgbm_estimator.py tests/test_e9_estimator.py tests/test_e10_estimator.py -v
+
+  test-data:
+    name: Full Evaluation on CALCE Data (optional / manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install all extras
+        run: |
+          pip install -e ".[all]"
+
+      - name: Run parity and benchmark tests
+        run: |
+          pytest tests/test_bms_soc_ref.py -v
