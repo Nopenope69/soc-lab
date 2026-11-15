@@ -1,0 +1,360 @@
+{
+  "src/soc/data/calce_loader.py": {
+    "justification": "CALCE raw data loader; workbook column indices and physical voltage/current bounds",
+    "allowed_calls": [
+      "float(\"0.001\")",
+      "float(\"0.005\")",
+      "float(\"0.75\")",
+      "float(\"0.78\")",
+      "float(\"2.0\")",
+      "float(\"3.6\")",
+      "int(\"10\")",
+      "int(\"16\")",
+      "int(\"24\")",
+      "int(\"5\")",
+      "int(\"7\")",
+      "int(\"8\")"
+    ]
+  },
+  "src/soc/estimators/base.py": {
+    "justification": "Estimator base interface; default filter tunings and thresholds",
+    "allowed_calls": [
+      "float(\"0.01\")",
+      "float(\"0.999\")",
+      "float(\"1.05\")",
+      "float(\"3.0\")",
+      "float(\"60.0\")"
+    ]
+  },
+  "src/soc/estimators/e10_pinn_aekf.py": {
+    "justification": "Experimental neural estimator E10 (PINN-AEKF); dimensions, pinn hyperparams, and bounds",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.0001\")",
+      "float(\"0.01\")",
+      "float(\"0.04\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-12\")",
+      "float(\"1e-5\")",
+      "float(\"2.0\")",
+      "int(\"3\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e2_anchored.py": {
+    "justification": "Baseline estimator E2 Anchored; dimensions and anchor thresholds",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.010\")",
+      "float(\"0.055\")",
+      "float(\"0.10\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-4\")",
+      "float(\"1e-6\")",
+      "float(\"3.58\")",
+      "float(\"60.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e2_rate_hyst.py": {
+    "justification": "Exploratory estimator E2 rate hysteresis; dimensions and hysteresis tables",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01482\")",
+      "float(\"0.01719\")",
+      "float(\"0.01805\")",
+      "float(\"0.01988\")",
+      "float(\"0.02012\")",
+      "float(\"0.02155\")",
+      "float(\"0.02242\")",
+      "float(\"0.02436\")",
+      "float(\"0.02510\")",
+      "float(\"0.02582\")",
+      "float(\"0.02701\")",
+      "float(\"0.02827\")",
+      "float(\"0.02993\")",
+      "float(\"0.03278\")",
+      "float(\"0.03569\")",
+      "float(\"0.055\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"20.0\")",
+      "float(\"25.0\")",
+      "float(\"30.0\")",
+      "float(\"40.0\")",
+      "float(\"50.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e3_ukf.py": {
+    "justification": "Baseline estimator E3 UKF; state dimensions and sigma-point parameters",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-9\")",
+      "float(\"2.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e4_rls_r0.py": {
+    "justification": "Baseline estimator E4; dimensions and RLS constants",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"2.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e4v2_rls.py": {
+    "justification": "Baseline estimator E4v2; dimensions and RLS constants",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"2.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e5v3.py": {
+    "justification": "Intermediate research prototype e5v3; observability thresholds",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01\")",
+      "float(\"0.02\")",
+      "float(\"0.2\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-12\")",
+      "float(\"1e-5\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e5v4.py": {
+    "justification": "Intermediate research prototype e5v4; observability thresholds",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01\")",
+      "float(\"0.02\")",
+      "float(\"0.2\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-12\")",
+      "float(\"1e-5\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e6v2.py": {
+    "justification": "Exploratory estimator E6 RBC; dimensions and noise covariances",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.005\")",
+      "float(\"0.050\")",
+      "float(\"0.10\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-10\")",
+      "float(\"1e-4\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e7v2.py": {
+    "justification": "Intermediate research prototype e7v2; embedded thresholds and dimensions",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01\")",
+      "float(\"0.02\")",
+      "float(\"0.2\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-12\")",
+      "float(\"1e-5\")",
+      "float(\"2.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e7v3.py": {
+    "justification": "Frozen reference candidate E7v3 under Rule R1; embedded state dimensions, thresholds, and CALCE Q/M calibrations",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01\")",
+      "float(\"0.01719\")",
+      "float(\"0.01988\")",
+      "float(\"0.02\")",
+      "float(\"0.02155\")",
+      "float(\"0.02436\")",
+      "float(\"0.02701\")",
+      "float(\"0.2\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1.0635616695823449\")",
+      "float(\"1.065214687790664\")",
+      "float(\"1.0730061548855323\")",
+      "float(\"1.0801900610401025\")",
+      "float(\"1.0809567995408316\")",
+      "float(\"1e-12\")",
+      "float(\"1e-5\")",
+      "float(\"2.0\")",
+      "float(\"20.0\")",
+      "float(\"25.0\")",
+      "float(\"30.0\")",
+      "float(\"40.0\")",
+      "float(\"50.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e7v3_d4.py": {
+    "justification": "Branch exploration e7v3_d4; embedded thresholds and dimensions",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.01\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1.05\")",
+      "float(\"1e-12\")",
+      "float(\"2.0\")",
+      "float(\"3.0\")",
+      "float(\"3600.0\")",
+      "float(\"60.0\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/estimators/e8_residual_gru.py": {
+    "justification": "Experimental neural estimator E8 (GRU); window size, bounds, and feature scales",
+    "allowed_calls": [
+      "float(\"-2.5\")",
+      "float(\"0.25\")",
+      "float(\"1.90\")",
+      "float(\"15.0\")",
+      "float(\"3.0\")",
+      "float(\"3.75\")",
+      "float(\"35.0\")",
+      "float(\"4.5\")",
+      "int(\"13\")",
+      "int(\"3\")",
+      "int(\"32\")"
+    ]
+  },
+  "src/soc/estimators/e8_residual_lgbm.py": {
+    "justification": "Experimental neural estimator E8 (LGBM); bounds and feature scales",
+    "allowed_calls": [
+      "float(\"-2.5\")",
+      "float(\"0.25\")",
+      "float(\"1.90\")",
+      "float(\"15.0\")",
+      "float(\"3.0\")",
+      "float(\"3.75\")",
+      "float(\"35.0\")",
+      "float(\"4.5\")",
+      "int(\"3\")"
+    ]
+  },
+  "src/soc/estimators/e9_tcn_ukf.py": {
+    "justification": "Experimental neural estimator E9 (TCN-UKF); dimensions, network hyperparams, and scaling",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.0001\")",
+      "float(\"0.0004\")",
+      "float(\"0.1\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"10.0\")",
+      "float(\"1e-9\")",
+      "float(\"2.0\")",
+      "float(\"3.3\")",
+      "float(\"3600.0\")",
+      "int(\"3\")",
+      "int(\"32\")",
+      "int(\"4\")",
+      "int(\"5\")"
+    ]
+  },
+  "src/soc/estimators/innovation_gating.py": {
+    "justification": "Observability gating module d3; dimensions and gating thresholds",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.0004\")",
+      "float(\"0.1\")",
+      "float(\"0.5\")",
+      "float(\"1.0\")",
+      "float(\"1e-12\")",
+      "float(\"2.5\")",
+      "int(\"4\")"
+    ]
+  },
+  "src/soc/eval/metrics.py": {
+    "justification": "Evaluation metrics; inf and NaN sentinels",
+    "allowed_calls": [
+      "float(\"inf\")",
+      "float(\"nan\")"
+    ]
+  },
+  "src/soc/eval/report.py": {
+    "justification": "Report generation; NaN sentinel initializations",
+    "allowed_calls": [
+      "float(\"nan\")"
+    ]
+  },
+  "src/soc/harness/runner.py": {
+    "justification": "Harness evaluation runner; NaN sentinel initializations",
+    "allowed_calls": [
+      "float(\"nan\")"
+    ]
+  },
+  "src/soc/models/neural/gru_residual.py": {
+    "justification": "Experimental GRU architecture definitions",
+    "allowed_calls": [
+      "float(\"0.1\")",
+      "float(\"0.25\")",
+      "float(\"1e-6\")",
+      "int(\"13\")",
+      "int(\"32\")"
+    ]
+  },
+  "src/soc/models/neural/pinn.py": {
+    "justification": "Experimental PINN architecture definitions",
+    "allowed_calls": [
+      "float(\"-1.0\")",
+      "float(\"0.0\")",
+      "float(\"0.15\")",
+      "float(\"1.0\")",
+      "float(\"1e-6\")",
+      "int(\"32\")",
+      "int(\"6\")"
+    ]
+  },
+  "src/soc/models/neural/tcn.py": {
+    "justification": "Experimental TCN architecture definitions",
+    "allowed_calls": [
+      "float(\"0.05\")",
+      "float(\"1e-6\")",
+      "int(\"16\")",
+      "int(\"3\")",
+      "int(\"32\")",
+      "int(\"5\")"
+    ]
+  },
+  "src/soc/models/plant.py": {
+    "justification": "Measurement plant model; NaN sentinel initializations",
+    "allowed_calls": [
+      "float(\"nan\")"
+    ]
+  }
+}
