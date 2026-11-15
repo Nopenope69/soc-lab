@@ -1,3 +1,5 @@
+> **SUPERSEDED:** This historical specification has been superseded by the canonical specification at [docs/ALGORITHM_SPEC.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/ALGORITHM_SPEC.md).
+
 STATUS: GO (development-data validation on CALCE; not field-validated)
 
 # E7v3 Confidence-Aware Composite Adaptive Estimator: Algorithm Specification (v3.2 Close-Out)
