@@ -16,11 +16,30 @@ dependencies = [
     "scipy>=1.14.0",
     "pydantic>=2.10.0",
     "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
     "pytest>=8.0.0",
+]
+research = [
     "matplotlib>=3.9.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
+    "scikit-learn>=1.9.0",
+]
+neural = [
     "torch>=2.0.0",
     "lightgbm>=4.0.0",
+]
+all = [
+    "pytest>=8.0.0",
+    "matplotlib>=3.9.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
     "scikit-learn>=1.9.0",
+    "torch>=2.0.0",
+    "lightgbm>=4.0.0",
 ]
 
 [project.scripts]
