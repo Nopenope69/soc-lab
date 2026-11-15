@@ -170,13 +170,15 @@ def handle_report(args: argparse.Namespace) -> int:
         print(f"Error: CSV file not found: {csv_path}", file=sys.stderr)
         return 1
 
-    # Load results from CSV
     print(f"Generating report from {csv_path}...")
-    # Run runner to refresh report
-    runner = ScenarioRunner()
-    results = runner.run_scenario(scenario_name="smoke", profile=args.profile)
-    assumptions, _, _ = load_assumptions(profile=args.profile)
-    report_md = ReportGenerator.generate_report(results, assumptions=assumptions, profile_name=args.profile)
+    results = ReportGenerator.load_results_from_csv(csv_path)
+    if not results:
+        print(f"Error: No results found in CSV: {csv_path}", file=sys.stderr)
+        return 1
+
+    profile_name = args.profile or results[0].profile
+    assumptions, _, _ = load_assumptions(profile=profile_name)
+    report_md = ReportGenerator.generate_report(results, assumptions=assumptions, profile_name=profile_name)
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)

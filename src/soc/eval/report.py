@@ -1,6 +1,8 @@
 """Benchmark report generator producing GitHub Flavored Markdown reports."""
 
+import ast
 import copy
+import csv
 import math
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -954,3 +956,103 @@ class ReportGenerator:
         lines.append(f"*Report generated for SOC Benchmark Lab.*")
         lines.append("")
         return "\n".join(lines)
+
+    @staticmethod
+    def load_results_from_csv(csv_path: Path) -> List[RunResult]:
+        """Load RunResult records from benchmark results CSV."""
+        results: List[RunResult] = []
+        path = Path(csv_path)
+        if not path.exists():
+            return results
+
+        def _to_float(v: Any) -> float:
+            try:
+                return float(v)
+            except (ValueError, TypeError):
+                return float("nan")
+
+        def _to_int(v: Any) -> int:
+            try:
+                return int(float(v))
+            except (ValueError, TypeError):
+                return 0
+
+        def _to_bool(v: Any) -> bool:
+            return str(v).strip().lower() in ("true", "1", "yes")
+
+        def _to_opt_bool(v: Any) -> Optional[bool]:
+            if v is None or str(v).strip().lower() in ("none", "", "nan"):
+                return None
+            return _to_bool(v)
+
+        def _to_telemetry(v: Any) -> Optional[Dict[str, Any]]:
+            if not v or str(v).strip().lower() in ("none", "", "nan"):
+                return None
+            try:
+                return ast.literal_eval(str(v))
+            except Exception:
+                return None
+
+        with open(path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                rr = RunResult(
+                    scenario=row.get("scenario", ""),
+                    estimator=row.get("estimator", ""),
+                    variant=row.get("variant", "matched"),
+                    profile=row.get("profile", "automotive"),
+                    config_hash=row.get("config_hash", ""),
+                    git_commit=row.get("git_commit", ""),
+                    noise_seed=_to_int(row.get("noise_seed", 0)),
+                    seed_index=_to_int(row.get("seed_index", 0)),
+                    duration_s=_to_float(row.get("duration_s", 0.0)),
+                    n_samples_kept=_to_int(row.get("n_samples_kept", 0)),
+                    n_dropped=_to_int(row.get("n_dropped", 0)),
+                    drift_evaluated=_to_bool(row.get("drift_evaluated", False)),
+                    placeholder_count=_to_int(row.get("placeholder_count", 0)),
+                    assumed_count=_to_int(row.get("assumed_count", 0)),
+                    temp_clamp_warnings=_to_int(row.get("temp_clamp_warnings", 0)),
+                    rmse=_to_float(row.get("rmse", "nan")),
+                    mae=_to_float(row.get("mae", "nan")),
+                    max_abs_error=_to_float(row.get("max_abs_error", "nan")),
+                    p95_error=_to_float(row.get("p95_error", "nan")),
+                    plateau_rmse_20_80=_to_float(row.get("plateau_rmse_20_80", "nan")),
+                    converge_time_2pct=_to_float(row.get("converge_time_2pct", "nan")),
+                    converge_time_5pct=_to_float(row.get("converge_time_5pct", "nan")),
+                    drift_24h=_to_float(row.get("drift_24h", "nan")),
+                    post_reversal_error_60s=_to_float(row.get("post_reversal_error_60s", "nan")),
+                    ms_per_step_mean=_to_float(row.get("ms_per_step_mean", "nan")),
+                    ms_per_step_median=_to_float(row.get("ms_per_step_median", "nan")),
+                    voltage_residual_rmse=_to_float(row.get("voltage_residual_rmse", "nan")),
+                    mean_nis=_to_float(row.get("mean_nis", "nan")),
+                    pass_all_bars=_to_opt_bool(row.get("pass_all_bars")),
+                    failed_bars=row.get("failed_bars", ""),
+                    dirty=_to_bool(row.get("dirty", False)),
+                    reversal_count=_to_int(row.get("reversal_count", 0)),
+                    error_rise=_to_float(row.get("error_rise", "nan")),
+                    anchor_count=_to_int(row.get("anchor_count", 0)),
+                    samples_anchored=_to_int(row.get("samples_anchored", 0)),
+                    first_anchor_time_s=_to_float(row.get("first_anchor_time_s", "nan")),
+                    err_pre_anchor=_to_float(row.get("err_pre_anchor", "nan")),
+                    err_post_anchor=_to_float(row.get("err_post_anchor", "nan")),
+                    clean_rmse=_to_float(row.get("clean_rmse", "nan")),
+                    signed_rmse_rise=_to_float(row.get("signed_rmse_rise", "nan")),
+                    rmse_rise=_to_float(row.get("rmse_rise", "nan")),
+                    clean_max_error=_to_float(row.get("clean_max_error", "nan")),
+                    max_error_rise=_to_float(row.get("max_error_rise", "nan")),
+                    max_abs_error_post_warmup=_to_float(row.get("max_abs_error_post_warmup", "nan")),
+                    soc_min=_to_float(row.get("soc_min", "nan")),
+                    soc_max=_to_float(row.get("soc_max", "nan")),
+                    fraction_on_plateau=_to_float(row.get("fraction_on_plateau", "nan")),
+                    spike_detected=_to_bool(row.get("spike_detected", False)),
+                    spike_time_s=_to_float(row.get("spike_time_s", "nan")),
+                    spike_true_soc=_to_float(row.get("spike_true_soc", "nan")),
+                    spike_error=_to_float(row.get("spike_error", "nan")),
+                    mean_signed_error=_to_float(row.get("mean_signed_error", "nan")),
+                    truth_soc_min=_to_float(row.get("truth_soc_min", "nan")),
+                    truth_soc_max=_to_float(row.get("truth_soc_max", "nan")),
+                    is_invalid_extreme=_to_bool(row.get("is_invalid_extreme", False)),
+                    diagnostic_telemetry=_to_telemetry(row.get("diagnostic_telemetry")),
+                )
+                results.append(rr)
+        return results
