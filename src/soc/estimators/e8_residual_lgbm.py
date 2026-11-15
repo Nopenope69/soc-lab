@@ -12,6 +12,7 @@ Conforms strictly to the Estimator Protocol and zero-hardcoded-constants rule.
 
 import math
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 import numpy as np
@@ -43,6 +44,13 @@ _DEFAULT_MODEL_PATH = (
     / "deliverable"
     / "e8_residual_lgbm.txt"
 )
+
+
+@dataclass(frozen=True)
+class ResidualSocEstimate(SocEstimate):
+    """Extended SOC estimate record for residual estimators with fallback telemetry."""
+    model_loaded: bool = True
+    fallback_active: bool = False
 
 
 class E8ResidualLGBMEstimator(Estimator):
@@ -85,7 +93,7 @@ class E8ResidualLGBMEstimator(Estimator):
 
         # If measurement was dropped, hold and propagate without tree correction
         if measurement.dropout or math.isnan(measurement.v) or math.isnan(measurement.i):
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -100,7 +108,7 @@ class E8ResidualLGBMEstimator(Estimator):
 
         # If model is not loaded, fallback with explicit flags
         if not self.model_loaded or self.booster is None:
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -119,7 +127,7 @@ class E8ResidualLGBMEstimator(Estimator):
 
         # Input-range guard against training feature envelope
         if curr < _I_MIN or curr > _I_MAX or v < _V_MIN or v > _V_MAX or temp_c < _TEMP_MIN or temp_c > _TEMP_MAX:
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -171,7 +179,7 @@ class E8ResidualLGBMEstimator(Estimator):
         # 4. Corrected SOC bounded in [0, 1]
         z_final = min(max(phys_soc + self.last_applied_residual, 0.0), 1.0)
 
-        return SocEstimate(
+        return ResidualSocEstimate(
             soc=float(z_final),
             soc_std=phys_est.soc_std,
             anchor_used=phys_est.anchor_used,

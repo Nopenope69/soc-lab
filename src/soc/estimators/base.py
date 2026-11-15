@@ -235,8 +235,6 @@ class SocEstimate:
     kalman_gain_soc: Optional[float] = None
     theta: Optional[float] = None
     theta_std: Optional[float] = None
-    model_loaded: bool = True
-    fallback_active: bool = False
 
 
 @runtime_checkable

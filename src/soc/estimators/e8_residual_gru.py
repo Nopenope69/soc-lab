@@ -10,6 +10,7 @@ Conforms strictly to the Estimator Protocol and zero-hardcoded-constants rule.
 """
 
 import math
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 import numpy as np
@@ -33,6 +34,13 @@ _TEMP_MAX = float("35.0")
 _K_SIGMA = float("3.0")  # [PROPOSED dynamic clamp factor tied to soc_std]
 
 _DEFAULT_WEIGHTS_PATH = Path(__file__).resolve().parents[_PARENT_LEVEL] / "deliverable" / "e8_residual_gru.pt"
+
+
+@dataclass(frozen=True)
+class ResidualSocEstimate(SocEstimate):
+    """Extended SOC estimate record for residual estimators with fallback telemetry."""
+    model_loaded: bool = True
+    fallback_active: bool = False
 
 
 class E8ResidualGRUEstimator(Estimator):
@@ -91,7 +99,7 @@ class E8ResidualGRUEstimator(Estimator):
 
         # If measurement was dropped, hold and propagate without neural correction
         if measurement.dropout or math.isnan(measurement.v) or math.isnan(measurement.i):
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -106,7 +114,7 @@ class E8ResidualGRUEstimator(Estimator):
 
         # If weights are not loaded, fallback with explicit flags
         if not self.weights_loaded:
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -125,7 +133,7 @@ class E8ResidualGRUEstimator(Estimator):
 
         # Input-range guard against training feature envelope
         if curr < _I_MIN or curr > _I_MAX or v < _V_MIN or v > _V_MAX or temp_c < _TEMP_MIN or temp_c > _TEMP_MAX:
-            return SocEstimate(
+            return ResidualSocEstimate(
                 soc=phys_est.soc,
                 soc_std=phys_est.soc_std,
                 anchor_used=phys_est.anchor_used,
@@ -166,7 +174,7 @@ class E8ResidualGRUEstimator(Estimator):
         # 4. Corrected SOC state bounded in [0, 1]
         z_final = min(max(phys_soc + self.last_applied_residual, 0.0), 1.0)
 
-        return SocEstimate(
+        return ResidualSocEstimate(
             soc=float(z_final),
             soc_std=phys_est.soc_std,
             anchor_used=phys_est.anchor_used,
