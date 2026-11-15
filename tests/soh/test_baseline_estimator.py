@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 
+pytest.importorskip("sklearn")
 from soh.common.contracts import EstimationStatus, PartialWindow
 from soh.data.synthetic_aging import SyntheticAgingGenerator
 from soh.estimators.baseline_ridge import BaselineRidgeEstimator

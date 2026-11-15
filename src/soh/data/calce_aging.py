@@ -9,7 +9,11 @@ BOL and rated ground-truth SOH labels.
 from pathlib import Path
 from typing import Dict, List, Optional
 import numpy as np
-import pandas as pd
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 from soh.common.contracts import CycleRecord
 from soh.common.protocols import CellReferenceSpec
@@ -42,6 +46,11 @@ class CalceAgingDataLoader(AbstractAgingDataLoader):
         max_rows: Optional[int] = None,
     ) -> SohBatteryData:
         """Parse single CALCE Arbin Excel file into an SohBatteryData object."""
+        if pd is None:
+            raise ImportError(
+                "pandas and openpyxl are required to parse CALCE Excel files. "
+                "Install with 'pip install .[research]'"
+            )
         xl = pd.ExcelFile(file_path)
         # Select data channel sheet (typically Channel_1-006 or second sheet)
         sheet = None

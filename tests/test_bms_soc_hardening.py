@@ -11,7 +11,13 @@ Verifications:
 """
 
 import math
+from pathlib import Path
+import sys
 import pytest
+
+repo_root = Path(__file__).resolve().parents[1]
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 from deliverable.bms_soc_ref import BmsSocEstimatorRef, SocEstimateRef
 from deliverable.calibration import default_calce_calibration

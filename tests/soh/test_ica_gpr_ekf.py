@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 
+pytest.importorskip("sklearn")
 from soh.common.contracts import EstimationStatus, FeatureQualityRecord, SOHState, SohEstimate
 from soh.data.synthetic_aging import SyntheticAgingGenerator
 from soh.estimators.ica_gpr_ekf import IcaGprEkfEstimator

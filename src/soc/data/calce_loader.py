@@ -13,7 +13,11 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import numpy as np
-import pandas as pd
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 @dataclass(frozen=True)
@@ -107,6 +111,12 @@ def load_ocv_file(
     cell_id: str,
 ) -> CalceOcvData:
     """Load low-current OCV file, extract C/20 discharge & charge branches."""
+    if pd is None:
+        raise ImportError(
+            "pandas is required to load CALCE Excel files. "
+            "Install research dependencies with: pip install .[research]"
+        )
+
     import openpyxl
 
     wb = openpyxl.load_workbook(file_path, read_only=True)
@@ -173,6 +183,12 @@ def load_dynamic_cycle(
     c20_capacity_ah: float,
 ) -> CalceCycleData:
     """Extract a single dynamic drive cycle (DST, US06, FUDS) from dynamic workbook."""
+    if pd is None:
+        raise ImportError(
+            "pandas is required to load CALCE Excel files. "
+            "Install research dependencies with: pip install .[research]"
+        )
+
     import openpyxl
 
     wb = openpyxl.load_workbook(file_path, read_only=True)

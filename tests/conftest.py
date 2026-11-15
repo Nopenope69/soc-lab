@@ -2,6 +2,12 @@
 
 import os
 from pathlib import Path
+import sys
+
+# Ensure repository root is on sys.path so 'deliverable' and other root packages are importable
+repo_root = Path(__file__).resolve().parent.parent
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 # Prevent macOS OpenMP abort and multi-threading deadlock
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -16,7 +22,6 @@ except Exception:
 
 try:
     import lightgbm as lgb
-    repo_root = Path(__file__).resolve().parent.parent
     model_txt = repo_root / "models" / "experimental" / "e8_residual_lgbm.txt"
     if not model_txt.exists():
         model_txt = repo_root / "deliverable" / "e8_residual_lgbm.txt"

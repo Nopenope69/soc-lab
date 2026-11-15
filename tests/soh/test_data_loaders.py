@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 
+pytest.importorskip("pandas")
 from soh.data import (
     CalceAgingDataLoader,
     PartialChargeWindowExtractor,

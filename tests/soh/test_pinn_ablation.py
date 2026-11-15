@@ -3,7 +3,8 @@
 import math
 import numpy as np
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 
 from soh.data.base_loader import SohDataset
 from soh.data.synthetic_aging import NonlinearAgingGenerator

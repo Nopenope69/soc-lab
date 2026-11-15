@@ -83,6 +83,7 @@ def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
     - Final SOC on full DST (25k steps): <= 1e-3 pp (1.0e-5 fractional SOC).
     - Max trajectory discrepancy: <= 0.05 pp (5.0e-4 fractional SOC) due to 25k-step float accumulation.
     """
+    pytest.importorskip("pandas")
     raw_dir = get_raw_dir()
     if not raw_dir.exists():
         pytest.skip(f"Raw CALCE data path does not exist: {raw_dir}")

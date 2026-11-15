@@ -26,6 +26,8 @@ from soh.data.real_cell_adapters import (
     DatasetSource,
 )
 from soh.data.synthetic_aging import SyntheticAgingGenerator
+
+pytest.importorskip("torch")
 from soh.estimators.gru import BatteryDegradationGRU, GruNetworkConfig, GruSohEstimator, GruTrainingConfig
 from soh.shadow.engine import ShadowEstimatorRecord, ShadowInferenceEngine, ShadowTelemetryFrame
 from soh.validation.harness import (

@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+pytest.importorskip("sklearn")
 from soh.common.contracts import EstimationStatus
 from soh.data.synthetic_aging import SyntheticAgingGenerator
 from soh.estimators.pulse_elastic_net import PulseElasticNetEstimator

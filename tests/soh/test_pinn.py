@@ -4,7 +4,8 @@ import copy
 import math
 import numpy as np
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 
 from soh.common.contracts import CycleRecord, EstimationStatus
 from soh.data.synthetic_aging import SyntheticAgingGenerator

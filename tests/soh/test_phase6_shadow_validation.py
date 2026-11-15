@@ -9,7 +9,8 @@ Tests cover:
 
 import numpy as np
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 
 from soh.common.contracts import (
     CycleRecord,

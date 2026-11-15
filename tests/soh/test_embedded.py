@@ -1,6 +1,9 @@
 """Unit tests for embedded C export and resource profiling."""
 
 from pathlib import Path
+import pytest
+
+pytest.importorskip("sklearn")
 from soh.embedded import EmbeddedProfiler, export_estimator_to_c
 from soh.estimators.pulse_elastic_net import PulseElasticNetEstimator
 from soh.data.synthetic_aging import SyntheticAgingGenerator
