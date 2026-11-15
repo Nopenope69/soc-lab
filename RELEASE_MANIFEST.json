@@ -1,0 +1,1278 @@
+{
+  "algorithm_id": "E7v3",
+  "calibrations": {
+    "calce_a123_v4_yaml": {
+      "path": "configs/assumptions/profiles/calce_a123_v4.yaml",
+      "sha256": "3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375",
+      "status": "DEVELOPMENT_VALIDATED_CALCE_20_50C"
+    },
+    "flexipod_100ah_v1_yaml": {
+      "path": "configs/assumptions/profiles/flexipod_100ah_v1.yaml",
+      "sha256": "c118b86f6f54a159c47749c5717fc10df38aeca290ccba6149fc7acca57ce184",
+      "status": "NOT_VALIDATED: open-loop model gate FAIL"
+    }
+  },
+  "combined_config_hash": "18902f2c61efc3b36f0d62e2e424e298c6b886c19398a433bf9f7861eced2a70",
+  "dataset_manifests": {
+    "calce_a123": {
+      "file_count": 52,
+      "path": "data/MANIFEST_calce_a123.sha256",
+      "sha256": "29810368e1620edf24e85d09e5b00513987a3de9088fbe067f9a5bca5265943a"
+    }
+  },
+  "effective_resolved_parameters": {
+    "bars": {
+      "t10_reversal_spike_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for error spike after direction reversal",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.03
+      },
+      "t12_mismatch_rmse_rise_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for RMSE rise under parameter mismatch",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.015
+      },
+      "t14_auto_max_ms_per_step": {
+        "bounds": [
+          0.1,
+          100.0
+        ],
+        "note": "Pass bar for computation time per step",
+        "status": "assumed",
+        "unit": "ms",
+        "value": 5.0
+      },
+      "t1_ocv_error_max_mv": {
+        "bounds": [
+          0.5,
+          50.0
+        ],
+        "note": "Pass bar for static OCV model error",
+        "status": "assumed",
+        "unit": "mV",
+        "value": 5.0
+      },
+      "t2_dynamic_max_error": {
+        "bounds": [
+          0.005,
+          0.2
+        ],
+        "note": "Pass bar for dynamic cycle max error",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.05
+      },
+      "t2_dynamic_rmse_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for dynamic cycle RMSE",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.02
+      },
+      "t3_bess_rmse_24h_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for BESS 24h duty cycle RMSE",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.02
+      },
+      "t4_plateau_p95_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for plateau stress 95th-percentile error",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.03
+      },
+      "t5_converge_time_s": {
+        "bounds": [
+          1.0,
+          3600.0
+        ],
+        "note": "Pass bar for initial offset convergence time",
+        "status": "assumed",
+        "unit": "s",
+        "value": 60.0
+      },
+      "t6_drift_bess_per_day_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for 24h drift without anchor",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.01
+      },
+      "t6_mean_error_bar_pp": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for 24h mean signed error",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.01
+      },
+      "t7_error_rise_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for error rise due to quantization/noise",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.01
+      },
+      "t9_post_rest_step_error_max": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Pass bar for error after rest resumption",
+        "status": "assumed",
+        "unit": "fraction",
+        "value": 0.02
+      }
+    },
+    "duty": {
+      "allow_extremes": {
+        "note": "Whether scenario explicitly explores extreme SOC states outside [0.02, 0.98]",
+        "status": "placeholder",
+        "unit": "boolean",
+        "value": false
+      },
+      "ambient_temperature_c": {
+        "bounds": [
+          -20.0,
+          60.0
+        ],
+        "note": "Ambient operating temperature",
+        "status": "placeholder",
+        "unit": "degC",
+        "value": 25.0
+      },
+      "charge_discharge_ratio": {
+        "bounds": [
+          0.1,
+          10.0
+        ],
+        "note": "Charge to discharge duration ratio",
+        "status": "placeholder",
+        "unit": "dimensionless",
+        "value": 1.0
+      },
+      "cycle_type": {
+        "note": "Type of duty cycle generator",
+        "status": "placeholder",
+        "unit": "string",
+        "value": "pulse"
+      },
+      "initial_soc": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Duty profile initial SOC",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.8
+      },
+      "pulse_c_rate": {
+        "bounds": [
+          0.01,
+          10.0
+        ],
+        "note": "Pulse current magnitude in C-rate",
+        "source": "profile",
+        "status": "placeholder",
+        "unit": "C",
+        "value": 1.0
+      },
+      "pulse_duration_s": {
+        "bounds": [
+          1.0,
+          3600.0
+        ],
+        "note": "Pulse event duration",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 60.0
+      },
+      "rest_duration_s": {
+        "bounds": [
+          1.0,
+          86400.0
+        ],
+        "note": "Rest period between active events",
+        "source": "profile",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 300.0
+      },
+      "soc_max_limit": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Upper SOC limit for partial cycles",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.6
+      },
+      "soc_min_limit": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Lower SOC limit for partial cycles",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.4
+      },
+      "total_duration_s": {
+        "bounds": [
+          10.0,
+          604800.0
+        ],
+        "note": "Total test profile duration",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 3600.0
+      }
+    },
+    "estimator_model": {
+      "mismatch": {
+        "capacity_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated capacity mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": -5.0
+        },
+        "hysteresis_amplitude_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated hysteresis amplitude mismatch",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 10.0
+        },
+        "hysteresis_gamma_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated hysteresis gamma mismatch",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 10.0
+        },
+        "ocv_offset_mv": {
+          "bounds": [
+            -100.0,
+            100.0
+          ],
+          "note": "Estimated OCV offset mismatch in mV",
+          "status": "placeholder",
+          "unit": "mV",
+          "value": 5.0
+        },
+        "r0_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated R0 mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 10.0
+        },
+        "r1_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated R1 mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 10.0
+        },
+        "r2_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated R2 mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 10.0
+        },
+        "tau1_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated tau1 mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 0.0
+        },
+        "tau2_pct": {
+          "bounds": [
+            -50.0,
+            50.0
+          ],
+          "note": "Estimated tau2 mismatch percentage",
+          "status": "placeholder",
+          "unit": "%",
+          "value": 0.0
+        }
+      }
+    },
+    "filter": {
+      "convergence_threshold_2pct": {
+        "bounds": [
+          0.001,
+          0.1
+        ],
+        "note": "Threshold for 2% convergence verification",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.02
+      },
+      "convergence_threshold_5pct": {
+        "bounds": [
+          0.001,
+          0.2
+        ],
+        "note": "Threshold for 5% convergence verification",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.05
+      },
+      "e5_cap_knee": {
+        "bounds": [
+          0.001,
+          1.0
+        ],
+        "note": "Per-step SOC correction cap at the steep knees in E5 v2",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.05
+      },
+      "e5_cap_plateau": {
+        "bounds": [
+          1e-06,
+          0.05
+        ],
+        "note": "Per-step SOC correction cap on the flat plateau in E5 v2",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.0001
+      },
+      "e5_enable_r_inflation": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Enable measurement variance inflation by model uncertainty in E5",
+        "status": "placeholder",
+        "unit": "bool",
+        "value": true
+      },
+      "e5_enable_slope_gating": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Enable OCV slope gating of voltage-driven SOC correction in E5",
+        "status": "placeholder",
+        "unit": "bool",
+        "value": true
+      },
+      "e5_enable_step_cap": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Enable per-step cap on voltage-driven SOC correction in E5",
+        "status": "placeholder",
+        "unit": "bool",
+        "value": true
+      },
+      "e5_max_soc_step": {
+        "bounds": [
+          1e-05,
+          0.1
+        ],
+        "note": "Maximum allowed SOC correction magnitude per step in E5",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.001
+      },
+      "e5_sigma_ocv_model_v": {
+        "bounds": [
+          0.0001,
+          0.1
+        ],
+        "note": "OCV model uncertainty standard deviation for variance inflation in E5",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 0.005
+      },
+      "e5_slope_ref": {
+        "bounds": [
+          0.01,
+          5.0
+        ],
+        "note": "Reference OCV slope for observability gating in E5",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 0.2
+      },
+      "e5_use_observability_cap": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Toggle observability-dependent per-step cap vs fixed cap in E5",
+        "status": "placeholder",
+        "unit": "bool",
+        "value": true
+      },
+      "initial_hysteresis_std": {
+        "bounds": [
+          0.001,
+          1.0
+        ],
+        "note": "Filter initial hysteresis state standard deviation",
+        "status": "placeholder",
+        "unit": "dimensionless",
+        "value": 0.1
+      },
+      "initial_rc_current_std_a": {
+        "bounds": [
+          0.001,
+          10.0
+        ],
+        "note": "Filter initial RC branch currents standard deviation",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 0.1
+      },
+      "initial_soc_offset": {
+        "bounds": [
+          -0.5,
+          0.5
+        ],
+        "note": "Simulated starting SOC offset error",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.0
+      },
+      "initial_soc_std": {
+        "bounds": [
+          0.001,
+          1.0
+        ],
+        "note": "Filter initial SOC standard deviation (sqrt of P0[0,0])",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.1
+      },
+      "measurement_noise_r_v": {
+        "bounds": [
+          1e-08,
+          0.1
+        ],
+        "note": "Measurement noise covariance R for terminal voltage",
+        "status": "placeholder",
+        "unit": "V^2",
+        "value": 2.5e-05
+      },
+      "ocv_slope_weighting_gain": {
+        "bounds": [
+          0.0,
+          100.0
+        ],
+        "note": "Observability weighting gain for plateau suppression",
+        "status": "placeholder",
+        "unit": "dimensionless",
+        "value": 1.0
+      },
+      "process_noise_q_hysteresis": {
+        "bounds": [
+          1e-10,
+          0.1
+        ],
+        "note": "Process noise covariance Q for hysteresis state",
+        "status": "placeholder",
+        "unit": "dimensionless",
+        "value": 1e-06
+      },
+      "process_noise_q_rc": {
+        "bounds": [
+          1e-10,
+          0.1
+        ],
+        "note": "Process noise covariance Q for RC branch current states",
+        "status": "placeholder",
+        "unit": "A^2",
+        "value": 1e-05
+      },
+      "process_noise_q_soc": {
+        "bounds": [
+          1e-12,
+          0.01
+        ],
+        "note": "Process noise covariance Q for SOC state",
+        "status": "placeholder",
+        "unit": "fraction^2",
+        "value": 1e-07
+      },
+      "rbc_initial_theta_std": {
+        "bounds": [
+          0.001,
+          1.0
+        ],
+        "note": "Initial standard deviation for residual voltage bias in E6",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 0.05
+      },
+      "rbc_q_theta": {
+        "bounds": [
+          1e-12,
+          0.1
+        ],
+        "note": "Process noise covariance Q for residual voltage bias in E6",
+        "status": "placeholder",
+        "unit": "V^2",
+        "value": 1e-06
+      },
+      "rbc_r_theta": {
+        "bounds": [
+          1e-08,
+          0.1
+        ],
+        "note": "Measurement noise covariance R for residual voltage bias filter in E6",
+        "status": "placeholder",
+        "unit": "V^2",
+        "value": 0.0001
+      },
+      "rbc_use_hysteresis_state": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Toggle hysteresis state in E6 RBC DEKF (true: 4 states, false: 3 states)",
+        "status": "placeholder",
+        "unit": "bool",
+        "value": true
+      },
+      "reversal_min_current_a": {
+        "bounds": [
+          0.1,
+          50.0
+        ],
+        "note": "Current threshold deadband for direction reversal detection",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 2.0
+      }
+    },
+    "metrics": {
+      "drift_min_run_s": {
+        "bounds": [
+          60.0,
+          86400.0
+        ],
+        "note": "Minimum duration required to evaluate 24-hour drift",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 86400.0
+      }
+    },
+    "plant": {
+      "coulombic_efficiency": {
+        "bounds": [
+          0.8,
+          1.0
+        ],
+        "note": "Coulombic efficiency during charging",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.998
+      },
+      "hysteresis_amplitude_v": {
+        "bounds": [
+          0.0,
+          0.1
+        ],
+        "note": "Plateau-median half-gap corrected for 55 mA ohmic drop with independent R0 (Task A1b)",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "V",
+        "value": 0.02155
+      },
+      "hysteresis_gamma": {
+        "bounds": [
+          1.0,
+          500.0
+        ],
+        "note": "UNIDENTIFIED: Minor-loop hysteresis rate gamma unobserved in monotonic discharges",
+        "source": "Unobserved placeholder (UNIDENTIFIED)",
+        "status": "placeholder",
+        "unit": "dimensionless",
+        "value": 50.0
+      },
+      "initial_soc": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Default true initial cell SOC",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.8
+      },
+      "nominal_capacity_Ah": {
+        "bounds": [
+          0.1,
+          500.0
+        ],
+        "note": "Measured C/20 capacity for A123 1.11 Ah LFP (APR18650M1A-class) cell A1-007 at 25C",
+        "reason": "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 26650 delivering 0.4-1.1 Ah at sub-zero temperatures).",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "Ah",
+        "value": 1.0635616695823449
+      },
+      "ocv_table_v": {
+        "bounds": [
+          2.0,
+          4.0
+        ],
+        "note": "Extracted equilibrium OCV curve from symmetric mean of C/20 charge and discharge branches (monotonized)",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "V",
+        "value": {
+          "-7.4": [
+            2.278,
+            2.9689,
+            3.1292,
+            3.2251,
+            3.2653,
+            3.2807,
+            3.289,
+            3.2964,
+            3.3082,
+            3.3297,
+            3.3472,
+            3.3661,
+            3.5594
+          ],
+          "0.6": [
+            2.3369,
+            3.074,
+            3.1898,
+            3.2416,
+            3.2753,
+            3.2902,
+            3.296,
+            3.301,
+            3.3108,
+            3.3362,
+            3.3474,
+            3.3619,
+            3.5551
+          ],
+          "10.3": [
+            2.3131,
+            3.0843,
+            3.2024,
+            3.2444,
+            3.2771,
+            3.2954,
+            3.3005,
+            3.3053,
+            3.3128,
+            3.3432,
+            3.3529,
+            3.3699,
+            3.5381
+          ],
+          "15.0": [
+            2.5,
+            3.05,
+            3.14,
+            3.24,
+            3.275,
+            3.285,
+            3.292,
+            3.297,
+            3.305,
+            3.325,
+            3.355,
+            3.42,
+            3.65
+          ],
+          "20.1": [
+            2.2935,
+            3.0866,
+            3.2066,
+            3.2471,
+            3.2795,
+            3.3001,
+            3.3043,
+            3.3081,
+            3.3164,
+            3.3439,
+            3.3511,
+            3.3655,
+            3.5498
+          ],
+          "25.0": [
+            2.5,
+            3.06,
+            3.15,
+            3.25,
+            3.28,
+            3.29,
+            3.295,
+            3.3,
+            3.31,
+            3.33,
+            3.36,
+            3.43,
+            3.65
+          ],
+          "27.3": [
+            2.2544,
+            3.0936,
+            3.2089,
+            3.2488,
+            3.281,
+            3.3027,
+            3.3062,
+            3.3093,
+            3.3184,
+            3.3447,
+            3.3502,
+            3.3632,
+            3.5488
+          ],
+          "32.0": [
+            2.32,
+            3.0854,
+            3.2074,
+            3.2474,
+            3.2795,
+            3.3021,
+            3.3062,
+            3.3097,
+            3.3176,
+            3.3434,
+            3.349,
+            3.3616,
+            3.564
+          ],
+          "35.0": [
+            2.5,
+            3.07,
+            3.16,
+            3.26,
+            3.285,
+            3.295,
+            3.3,
+            3.305,
+            3.315,
+            3.335,
+            3.365,
+            3.44,
+            3.65
+          ],
+          "41.9": [
+            2.2826,
+            3.0849,
+            3.2085,
+            3.2477,
+            3.2793,
+            3.3048,
+            3.3086,
+            3.3116,
+            3.32,
+            3.3444,
+            3.3496,
+            3.3614,
+            3.5694
+          ],
+          "52.4": [
+            2.2823,
+            3.0834,
+            3.2085,
+            3.2467,
+            3.2787,
+            3.3065,
+            3.3104,
+            3.3131,
+            3.321,
+            3.3441,
+            3.3489,
+            3.3601,
+            3.5678
+          ]
+        }
+      },
+      "r0_table_ohm": {
+        "bounds": [
+          0.0001,
+          0.5
+        ],
+        "note": "Fitted ohmic resistance from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
+        "reason": "Support small cylindrical cells (e.g. A123 26650 with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm).",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "Ohm",
+        "value": {
+          "-7.4": 0.26464,
+          "0.6": 0.19804,
+          "10.3": 0.17281,
+          "15.0": 0.0014,
+          "20.1": 0.15951,
+          "25.0": 0.001,
+          "27.3": 0.15851,
+          "32.0": 0.155,
+          "35.0": 0.0008,
+          "41.9": 0.15359,
+          "52.4": 0.15371
+        }
+      },
+      "r1_table_ohm": {
+        "bounds": [
+          5e-05,
+          0.5
+        ],
+        "note": "Fitted first RC resistance from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
+        "reason": "Support small cylindrical cells with higher polarization resistance R1 up to 100-200 mOhm.",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "Ohm",
+        "value": {
+          "-7.4": 0.05039,
+          "0.6": 0.04068,
+          "10.3": 0.02288,
+          "15.0": 0.0008,
+          "20.1": 0.02116,
+          "25.0": 0.0006,
+          "27.3": 0.0196,
+          "32.0": 0.01392,
+          "35.0": 0.0005,
+          "41.9": 0.0113,
+          "52.4": 0.00977
+        }
+      },
+      "r2_table_ohm": {
+        "bounds": [
+          5e-05,
+          0.5
+        ],
+        "note": "Fitted second RC resistance from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
+        "reason": "Support small cylindrical cells with second RC polarization resistance R2 up to 100-200 mOhm.",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "Ohm",
+        "value": {
+          "-7.4": 0.09463,
+          "0.6": 0.10817,
+          "10.3": 0.04175,
+          "15.0": 0.0012,
+          "20.1": 0.02722,
+          "25.0": 0.0009,
+          "27.3": 0.02651,
+          "32.0": 0.01899,
+          "35.0": 0.0007,
+          "41.9": 0.01462,
+          "52.4": 0.01128
+        }
+      },
+      "soc_grid": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "SOC grid points for parameter tables",
+        "source": "Standard grid",
+        "status": "measured",
+        "unit": "fraction",
+        "value": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9,
+          0.95,
+          1.0
+        ]
+      },
+      "tau1_table_s": {
+        "bounds": [
+          0.5,
+          300.0
+        ],
+        "note": "Fitted first RC time constant from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "s",
+        "value": {
+          "-7.4": 39.45,
+          "0.6": 23.57,
+          "10.3": 27.9,
+          "15.0": 18.0,
+          "20.1": 24.9,
+          "25.0": 15.0,
+          "27.3": 22.51,
+          "32.0": 18.6,
+          "35.0": 12.0,
+          "41.9": 16.53,
+          "52.4": 16.75
+        }
+      },
+      "tau2_table_s": {
+        "bounds": [
+          1.0,
+          1200.0
+        ],
+        "note": "Fitted second RC time constant from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "s",
+        "value": {
+          "-7.4": 600.0,
+          "0.6": 600.0,
+          "10.3": 210.41,
+          "15.0": 75.0,
+          "20.1": 599.98,
+          "25.0": 60.0,
+          "27.3": 600.0,
+          "32.0": 218.24,
+          "35.0": 50.0,
+          "41.9": 207.27,
+          "52.4": 600.0
+        }
+      },
+      "temperatures_c": {
+        "bounds": [
+          -20.0,
+          60.0
+        ],
+        "note": "Measured chamber/cell temperatures for cell A1-007",
+        "source": "CALCE A123 dataset cell A1-007",
+        "status": "measured",
+        "unit": "degC",
+        "value": [
+          -7.4,
+          0.6,
+          10.3,
+          20.1,
+          27.3,
+          32.0,
+          41.9,
+          52.4
+        ]
+      }
+    },
+    "run": {
+      "dataset_names": {
+        "note": "Active dataset names",
+        "status": "assumed",
+        "unit": "list",
+        "value": [
+          "synthetic_lfp_v1"
+        ]
+      },
+      "full_charge_hold_s": {
+        "bounds": [
+          0.0,
+          3600.0
+        ],
+        "note": "Required continuous hold duration for full charge anchor condition",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 60.0
+      },
+      "metric_warmup_s": {
+        "bounds": [
+          0.0,
+          3600.0
+        ],
+        "note": "Warmup window in seconds to exclude initial settling transients from metric evaluation",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 10.0
+      },
+      "num_seeds": {
+        "bounds": [
+          1.0,
+          100.0
+        ],
+        "note": "Number of random seeds evaluated per scenario",
+        "status": "assumed",
+        "unit": "count",
+        "value": 1
+      },
+      "random_seed": {
+        "bounds": [
+          0.0,
+          1000000.0
+        ],
+        "note": "Master random seed for reproducible synthetic generation",
+        "status": "assumed",
+        "unit": "integer",
+        "value": 42
+      },
+      "splits_file": {
+        "note": "Path to sealed dataset splits",
+        "status": "assumed",
+        "unit": "path",
+        "value": "data/splits.lock"
+      },
+      "t6_mean_error_bar_pp": {
+        "bounds": [
+          0.1,
+          10.0
+        ],
+        "note": "Pass bar for 24h mean signed error in pp",
+        "status": "placeholder",
+        "unit": "pp",
+        "value": 1.0
+      },
+      "tie_band_pp": {
+        "bounds": [
+          0.0,
+          10.0
+        ],
+        "note": "Deadband threshold in percentage points for E2 vs E1 tie outcome",
+        "status": "placeholder",
+        "unit": "pp",
+        "value": 0.5
+      },
+      "warmup_steps": {
+        "bounds": [
+          0.0,
+          1000.0
+        ],
+        "note": "Number of steps discarded as warm-up when timing ms_per_step",
+        "status": "assumed",
+        "unit": "count",
+        "value": 10
+      }
+    },
+    "sensors": {
+      "current_gain_error": {
+        "bounds": [
+          -0.1,
+          0.1
+        ],
+        "note": "Current sensor gain scale error",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.0
+      },
+      "current_noise_sigma_a": {
+        "bounds": [
+          0.0,
+          2.0
+        ],
+        "note": "Current sensor Gaussian noise standard deviation",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 0.05
+      },
+      "current_offset_a": {
+        "bounds": [
+          -5.0,
+          5.0
+        ],
+        "note": "Current sensor DC bias offset",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 0.0
+      },
+      "dropout_rate": {
+        "bounds": [
+          0.0,
+          1.0
+        ],
+        "note": "Measurement transmission dropout probability",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 0.0
+      },
+      "sample_period_s": {
+        "bounds": [
+          0.01,
+          60.0
+        ],
+        "note": "Sampling time step dt",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 1.0
+      },
+      "temperature_noise_sigma_c": {
+        "bounds": [
+          0.0,
+          5.0
+        ],
+        "note": "Temperature sensor noise standard deviation",
+        "status": "placeholder",
+        "unit": "degC",
+        "value": 0.2
+      },
+      "voltage_noise_sigma_v": {
+        "bounds": [
+          0.0,
+          0.05
+        ],
+        "note": "Voltage sensor Gaussian noise standard deviation",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 0.002
+      },
+      "voltage_quantisation_v": {
+        "bounds": [
+          0.0,
+          0.05
+        ],
+        "note": "Analog front-end ADC LSB voltage step",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 0.001
+      }
+    },
+    "soc_definition": {
+      "anchor_enabled": {
+        "note": "Enable recalibration anchors when conditions are met",
+        "status": "assumed",
+        "unit": "bool",
+        "value": true
+      },
+      "basis": {
+        "note": "SOC defined relative to present usable capacity, not nameplate",
+        "status": "assumed",
+        "unit": "string",
+        "value": "present_capacity"
+      },
+      "full_charge_anchor_enabled": {
+        "note": "Enable full-charge voltage taper anchor when conditions are met",
+        "status": "assumed",
+        "unit": "bool",
+        "value": true
+      },
+      "full_charge_anchor_soc": {
+        "bounds": [
+          0.9,
+          1.0
+        ],
+        "note": "Target SOC assigned upon full-charge anchor trigger",
+        "status": "placeholder",
+        "unit": "fraction",
+        "value": 1.0
+      },
+      "full_charge_current_threshold_a": {
+        "bounds": [
+          0.01,
+          5.0
+        ],
+        "note": "Current taper threshold for full-charge anchor",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 0.5
+      },
+      "full_charge_voltage_threshold_v": {
+        "bounds": [
+          3.4,
+          3.7
+        ],
+        "note": "Cell terminal voltage threshold for full-charge anchor",
+        "status": "placeholder",
+        "unit": "V",
+        "value": 3.6
+      },
+      "rest_anchor_enabled": {
+        "note": "Enable rest OCV inversion anchor when rest conditions are met",
+        "status": "assumed",
+        "unit": "bool",
+        "value": false
+      },
+      "rest_current_threshold_a": {
+        "bounds": [
+          0.001,
+          2.0
+        ],
+        "note": "Maximum current magnitude defining cell rest",
+        "status": "placeholder",
+        "unit": "A",
+        "value": 0.1
+      },
+      "rest_duration_threshold_s": {
+        "bounds": [
+          10.0,
+          86400.0
+        ],
+        "note": "Minimum rest duration before OCV anchoring triggers",
+        "status": "placeholder",
+        "unit": "s",
+        "value": 600.0
+      }
+    }
+  },
+  "git_commit": "ed02c5f5adf9745bec266ef49de29bbc2906a144",
+  "known_limitations": [
+    "Validated operating envelope is strictly 20\u00b0C to 50\u00b0C on CALCE A123 26650 LFP cells.",
+    "Sub-zero and cold-temperature (< 15\u00b0C) dynamics uncharacterized; do not deploy in freezing environments.",
+    "Capacity fade and battery degradation (SOH) are unmodeled; nominal capacity is fixed at calibrated value.",
+    "Extended flat plateau relaxation requires low-noise current measurement (< 50 mA) for reliable OCV anchoring.",
+    "High C-rate continuous discharge (> 3C) and rapid regenerative pulses may induce transient polarization errors up to ~3.5 pp.",
+    "FlexiPod 100Ah profile is uncalibrated and fails open-loop model gate; provided for schema and pipeline reference only."
+  ],
+  "release_version": "0.2.0-handover",
+  "schema_version": "1.0",
+  "test_results_summary": {
+    "baseline_summary_file": "reports/handover/baseline_tests.txt",
+    "note": "239 baseline tests passed on release commit, 337 total unit tests passed without external data dependency.",
+    "status": "PASS"
+  },
+  "validation_status": "DEVELOPMENT_VALIDATED_CALCE_20_50C"
+}
