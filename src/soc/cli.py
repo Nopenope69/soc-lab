@@ -5,7 +5,7 @@ import csv
 from pathlib import Path
 import sys
 import time
-from typing import List
+from typing import List, Optional
 
 from soc.assumptions.loader import load_assumptions
 from soc.eval.report import ReportGenerator
