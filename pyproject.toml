@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soc-lab"
-version = "0.2.0-handover"
+version = "0.2.0+handover"
 description = "State-of-Charge (SOC) Estimation Algorithm Lab"
 readme = "README.md"
 requires-python = ">=3.11"
