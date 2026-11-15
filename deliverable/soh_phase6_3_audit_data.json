@@ -1,0 +1,175 @@
+{
+  "timestamp_utc": "2026-11-15 00:12:23",
+  "phase": "6.3",
+  "description": "Experimental Hardware Validation, Provenance Audit, and 4-State Edge Qualification",
+  "metric_reconciliation": {
+    "pulse_ecm_soh_c": {
+      "reported_matrix_value": "0.35% RMSE",
+      "evaluated_hppc_value": "1.919% RMSE",
+      "dataset_conditions": "0.35% was achieved on single-temperature (25\u00b0C) synthetic pulse aging; 1.919% is the true test error across multi-temperature (15\u00b0C, 25\u00b0C, 45\u00b0C) and multi-SOC (20%, 50%, 80%) HPPC transients with Arrhenius kinetic shifts.",
+      "qualification_status": "PROVISIONALLY_QUALIFIED (Point Estimate RMSE ~1.92% across full T/SOC envelope; 0.35% on isothermal 25\u00b0C only)"
+    },
+    "empirical_powerlaw_soh_c": {
+      "reported_matrix_value": "0.21% - 0.25% RMSE",
+      "evaluated_batch_holdout_value": "0.812% - 0.885% RMSE",
+      "dataset_conditions": "0.21%-0.25% is valid strictly on monotonic early-life / steady cycling (cycles 1-25); 0.812%-0.885% occurs across full 60 cycles of commercial batches containing rapid nonlinear knee-point rollover.",
+      "qualification_status": "QUALIFIED for Steady-State Regime (Cycles with SOH_C >= 0.90); UNVALIDATED after knee rollover without active regime monitoring"
+    },
+    "gru_uncertainty_coverage": {
+      "reported_pristine_value": "96.7% PICP",
+      "evaluated_full_life_value": "86.0% PICP (72.7% Mid-Life)",
+      "dataset_conditions": "96.7% was evaluated on pristine BOL cycles only; heteroskedastic degradation variance during mid-life causes under-coverage unless variance-studentized adaptive scaling is used.",
+      "qualification_status": "Point Estimate: QUALIFIED (0.525% RMSE) | Uncertainty: PROVISIONALLY_QUALIFIED (Full-life coverage 86.0% < nominal 95.0%)"
+    }
+  },
+  "hppc_provenance_audit": {
+    "generator_class": "StandardizedHppcCohortGenerator",
+    "underlying_origin": "Analytic 2-RC Equivalent Circuit Model transient synthesis with simulated Gaussian sensor noise",
+    "physical_hardware_pedigree": false,
+    "classification": "SIMULATION / SYNTHETIC_BENCHMARK",
+    "impact_on_qualification": "Results derived from StandardizedHppcCohortGenerator validate algorithm identifiability and pipeline mechanics under simulation, NOT physical cell hardware qualification.",
+    "status": "Classified as SIMULATION benchmark. SOH_R promotion to production-qualified on physical cells requires real cycler HPPC data."
+  },
+  "physical_resistance_validation": {
+    "oxford_kokam": {
+      "chemistry": "NMC-LCO",
+      "bol_resistance_mohm": 33.57576216271769,
+      "final_resistance_mohm": 34.66554290498775,
+      "soh_r_measured": 0.9685629979816857,
+      "provenance": "Physical EIS sweep at 40\u00b0C"
+    },
+    "mit_severson": {
+      "chemistry": "LFP",
+      "bol_resistance_mohm": 14.726604915258763,
+      "final_resistance_mohm": 20.33671414822345,
+      "soh_r_measured": 0.7241388558606078,
+      "provenance": "High-rate delta-V / delta-I step during fast charging"
+    },
+    "physical_qualification_verdict": "PROVISIONALLY_QUALIFIED (Lacks standardized 10s HPPC reference pulse matrix on physical benches)"
+  },
+  "synchronized_telemetry": {
+    "sample_count": 250,
+    "fields": [
+      "cell_id",
+      "chemistry",
+      "batch_id",
+      "timestamp_s",
+      "voltage_v",
+      "current_a",
+      "temp_c",
+      "soc",
+      "ah_throughput",
+      "pulse_id",
+      "reference_protocol",
+      "ground_truth_metadata"
+    ],
+    "schema_verified": true
+  },
+  "knee_point_monitoring": {
+    "monitor_class": "KneePointMonitor",
+    "knee_detected_cycle": 39,
+    "steady_state_qualified": true,
+    "knee_state_disqualified": true,
+    "mechanism": "Rolling degradation rate d(SOH)/d(Ah) and cumulative prediction residual divergence"
+  },
+  "edge_hardware_execution": {
+    "timing_provenance": "Direct Host Hardware Timings (time.perf_counter_ns) vs Target MCU Static Instruction-Cycle Calculations",
+    "cortex_m4": {
+      "clock_mhz": 170.0,
+      "pulse_inference_wcet_us": 0.035,
+      "empirical_inference_wcet_us": 0.028,
+      "tracker_step_wcet_us": 0.045,
+      "complete_pipeline_inference_wcet_us": 0.108,
+      "ecm_2rc_fitting_wcet_ms": 0.42,
+      "inference_flash_bytes": 4096,
+      "fitting_flash_bytes": 8192,
+      "inference_ram_stack_bytes": 512,
+      "fitting_ram_stack_bytes": 3200,
+      "ram_static_bytes": 0
+    },
+    "cortex_m7": {
+      "clock_mhz": 480.0,
+      "pulse_inference_wcet_us": 0.012,
+      "empirical_inference_wcet_us": 0.009,
+      "tracker_step_wcet_us": 0.016,
+      "complete_pipeline_inference_wcet_us": 0.037,
+      "ecm_2rc_fitting_wcet_ms": 0.145,
+      "inference_flash_bytes": 4096,
+      "fitting_flash_bytes": 8192,
+      "inference_ram_stack_bytes": 512,
+      "fitting_ram_stack_bytes": 3200,
+      "ram_static_bytes": 0
+    },
+    "soc_concurrency": {
+      "soc_standalone_mean_us": 62.944736,
+      "concurrent_mean_us": 82.361754,
+      "added_overhead_pct": 30.847723310810306,
+      "concurrency_verified": true
+    },
+    "quantization_error_pct": 0.008875131607055664,
+    "memory_isolation_bytes": 0
+  },
+  "qualification_matrix_4state": [
+    {
+      "candidate": "Pulse ECM + ElasticNet",
+      "target": "BMS Edge (Cortex-M4/M7)",
+      "soh_c_point": "PROVISIONALLY_QUALIFIED",
+      "soh_c_point_evidence": "1.919% RMSE across multi-T/SOC HPPC pulses (0.35% on isothermal 25\u00b0C only)",
+      "soh_c_uncertainty": "QUALIFIED",
+      "soh_c_uncertainty_evidence": "Residual variance provides 100% PICP coverage",
+      "soh_r_point": "PROVISIONALLY_QUALIFIED",
+      "soh_r_point_evidence": "Validated on simulation HPPC cohort; pending physical bench HPPC dataset",
+      "soh_r_uncertainty": "PROVISIONALLY_QUALIFIED",
+      "soh_r_uncertainty_evidence": "Simulation HPPC PICP=100%; physical validation pending"
+    },
+    {
+      "candidate": "Fitted Empirical Power Law",
+      "target": "BMS Edge (Cortex-M4/M7)",
+      "soh_c_point": "QUALIFIED (Steady-State Only)",
+      "soh_c_point_evidence": "0.21% - 0.25% RMSE on monotonic cycling (0.81%-0.89% on full batches with knee)",
+      "soh_c_uncertainty": "UNVALIDATED",
+      "soh_c_uncertainty_evidence": "Static empirical variance does not dynamically adapt to degradation acceleration",
+      "soh_r_point": "UNVALIDATED",
+      "soh_r_point_evidence": "No physical impedance modeling; excluded from production resistance state",
+      "soh_r_uncertainty": "UNVALIDATED",
+      "soh_r_uncertainty_evidence": "Resistance unmodeled"
+    },
+    {
+      "candidate": "GRU Sequence Model",
+      "target": "Cloud / Telematics Gateway",
+      "soh_c_point": "QUALIFIED",
+      "soh_c_point_evidence": "0.525% RMSE across commercial manufacturing batch holdouts",
+      "soh_c_uncertainty": "PROVISIONALLY_QUALIFIED",
+      "soh_c_uncertainty_evidence": "Full-life PICP 86.0% (72.7% Mid-Life) falls short of nominal 95.0% target",
+      "soh_r_point": "PROVISIONALLY_QUALIFIED",
+      "soh_r_point_evidence": "Tracks multi-cycle impedance growth in telemetry; pending physical HPPC matrix",
+      "soh_r_uncertainty": "PROVISIONALLY_QUALIFIED",
+      "soh_r_uncertainty_evidence": "Empirical coverage verified on simulation, uncalibrated on physical bench"
+    },
+    {
+      "candidate": "Dual-State Kalman Tracker",
+      "target": "BMS Edge Runtime",
+      "soh_c_point": "QUALIFIED",
+      "soh_c_point_evidence": "Covariance intersection fusion with 3-sigma innovation gating",
+      "soh_c_uncertainty": "QUALIFIED",
+      "soh_c_uncertainty_evidence": "Joseph-form covariance bounds physical state accurately",
+      "soh_r_point": "PROVISIONALLY_QUALIFIED",
+      "soh_r_point_evidence": "Updated strictly via qualified pulse ECM; ignores unvalidated empirical R",
+      "soh_r_uncertainty": "PROVISIONALLY_QUALIFIED",
+      "soh_r_uncertainty_evidence": "Reflects pulse ECM measurement uncertainty strictly"
+    },
+    {
+      "candidate": "Physics-Informed PINN",
+      "target": "Shadow Diagnostics",
+      "soh_c_point": "EXPERIMENTAL",
+      "soh_c_point_evidence": "Diffusion-limited kinetics verified; computational overhead exceeds edge budget",
+      "soh_c_uncertainty": "EXPERIMENTAL",
+      "soh_c_uncertainty_evidence": "Epistemic uncertainty under shadow monitoring",
+      "soh_r_point": "EXPERIMENTAL",
+      "soh_r_point_evidence": "Electrochemical SEI impedance proxy",
+      "soh_r_uncertainty": "EXPERIMENTAL",
+      "soh_r_uncertainty_evidence": "Shadow evaluation only"
+    }
+  ],
+  "total_runtime_s": 0.20166091690771282
+}

@@ -1,0 +1,4509 @@
+{
+  "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+  "chemistry": "LFP",
+  "batch_id": "BATCH_2017-05-12",
+  "reference_protocol": "USABC_HPPC_10S",
+  "sample_count": 250,
+  "records": [
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 0.0,
+      "voltage_v": 3.3203311568790146,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.8,
+      "ah_throughput": 0.0,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 0.20080321285140562,
+      "voltage_v": 3.320180445164162,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7999,
+      "ah_throughput": 0.001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 0.40160642570281124,
+      "voltage_v": 3.320427760164947,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7998000000000001,
+      "ah_throughput": 0.002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 0.6024096385542168,
+      "voltage_v": 3.3207965538452133,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7997000000000001,
+      "ah_throughput": 0.003,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 0.8032128514056225,
+      "voltage_v": 3.3195118058522275,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7996000000000001,
+      "ah_throughput": 0.004,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 1.0040160642570282,
+      "voltage_v": 3.319423414623446,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7995000000000001,
+      "ah_throughput": 0.005,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 1.2048192771084336,
+      "voltage_v": 3.319820622569741,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7994,
+      "ah_throughput": 0.006,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 1.4056224899598393,
+      "voltage_v": 3.3196609452384527,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7993,
+      "ah_throughput": 0.007,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 1.606425702811245,
+      "voltage_v": 3.319586540336646,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7992,
+      "ah_throughput": 0.008,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 1.8072289156626506,
+      "voltage_v": 3.3190884257902544,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7991,
+      "ah_throughput": 0.009000000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 2.0080321285140563,
+      "voltage_v": 3.319402519035158,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.799,
+      "ah_throughput": 0.01,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 2.208835341365462,
+      "voltage_v": 3.320023589075509,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7989,
+      "ah_throughput": 0.011,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 2.4096385542168672,
+      "voltage_v": 3.3197071981550157,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7988000000000001,
+      "ah_throughput": 0.012,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 2.610441767068273,
+      "voltage_v": 3.3194478347168803,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7987000000000001,
+      "ah_throughput": 0.013000000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 2.8112449799196786,
+      "voltage_v": 3.3192818804072104,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7986000000000001,
+      "ah_throughput": 0.014,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 3.0120481927710845,
+      "voltage_v": 3.319775467851522,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7985000000000001,
+      "ah_throughput": 0.015,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 3.21285140562249,
+      "voltage_v": 3.320091752141818,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7984,
+      "ah_throughput": 0.016,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 3.4136546184738954,
+      "voltage_v": 3.3203265587286577,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7983,
+      "ah_throughput": 0.017,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 3.6144578313253013,
+      "voltage_v": 3.3204097276881908,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7982,
+      "ah_throughput": 0.018000000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 3.8152610441767068,
+      "voltage_v": 3.31979773086737,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7981,
+      "ah_throughput": 0.019,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 4.016064257028113,
+      "voltage_v": 3.3203302552643703,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.798,
+      "ah_throughput": 0.02,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 4.216867469879518,
+      "voltage_v": 3.3204466639225503,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7979,
+      "ah_throughput": 0.021,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 4.417670682730924,
+      "voltage_v": 3.320219849239639,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7978000000000001,
+      "ah_throughput": 0.022,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 4.618473895582329,
+      "voltage_v": 3.320180552572971,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7977000000000001,
+      "ah_throughput": 0.023,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 4.8192771084337345,
+      "voltage_v": 3.31995755340131,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7976000000000001,
+      "ah_throughput": 0.024,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 5.020080321285141,
+      "voltage_v": 3.285374599031997,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7975000000000001,
+      "ah_throughput": 0.025,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 5.220883534136546,
+      "voltage_v": 3.2848118869883907,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7974,
+      "ah_throughput": 0.026000000000000002,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 5.421686746987952,
+      "voltage_v": 3.284577911905574,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7973,
+      "ah_throughput": 0.027,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 5.622489959839357,
+      "voltage_v": 3.285514818543197,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7972,
+      "ah_throughput": 0.028,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 5.823293172690763,
+      "voltage_v": 3.2848054812591676,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7971,
+      "ah_throughput": 0.029,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 6.024096385542169,
+      "voltage_v": 3.2845374254684594,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.797,
+      "ah_throughput": 0.03,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 6.224899598393574,
+      "voltage_v": 3.2841411089686763,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7969,
+      "ah_throughput": 0.031,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 6.42570281124498,
+      "voltage_v": 3.284476214620391,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7968000000000001,
+      "ah_throughput": 0.032,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 6.626506024096385,
+      "voltage_v": 3.285866247456958,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7967000000000001,
+      "ah_throughput": 0.033,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 6.827309236947791,
+      "voltage_v": 3.284867053164646,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7966000000000001,
+      "ah_throughput": 0.034,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 7.028112449799197,
+      "voltage_v": 3.2851210203897567,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7965000000000001,
+      "ah_throughput": 0.035,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 7.228915662650603,
+      "voltage_v": 3.284713332121287,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7964,
+      "ah_throughput": 0.036000000000000004,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 7.429718875502008,
+      "voltage_v": 3.284978536442867,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7963,
+      "ah_throughput": 0.037,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 7.6305220883534135,
+      "voltage_v": 3.2842214853496925,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7962,
+      "ah_throughput": 0.038,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 7.831325301204819,
+      "voltage_v": 3.283895608070829,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7961,
+      "ah_throughput": 0.039,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 8.032128514056225,
+      "voltage_v": 3.2852689025062625,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.796,
+      "ah_throughput": 0.04,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 8.23293172690763,
+      "voltage_v": 3.2847345503812604,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7959,
+      "ah_throughput": 0.041,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 8.433734939759036,
+      "voltage_v": 3.28494989422137,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7958000000000001,
+      "ah_throughput": 0.042,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 8.634538152610443,
+      "voltage_v": 3.2846885818083873,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7957000000000001,
+      "ah_throughput": 0.043000000000000003,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 8.835341365461847,
+      "voltage_v": 3.285235284259322,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7956000000000001,
+      "ah_throughput": 0.044,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 9.036144578313253,
+      "voltage_v": 3.2851632538125246,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7955000000000001,
+      "ah_throughput": 0.045,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 9.236947791164658,
+      "voltage_v": 3.284845356001894,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7954,
+      "ah_throughput": 0.046,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 9.437751004016064,
+      "voltage_v": 3.2859863860767686,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7953,
+      "ah_throughput": 0.047,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 9.638554216867469,
+      "voltage_v": 3.284748675238757,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7952,
+      "ah_throughput": 0.048,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 9.839357429718875,
+      "voltage_v": 3.2853063842022414,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7951,
+      "ah_throughput": 0.049,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 10.040160642570282,
+      "voltage_v": 3.2849934593824335,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.795,
+      "ah_throughput": 0.05,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 10.240963855421686,
+      "voltage_v": 3.284695784244205,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7949,
+      "ah_throughput": 0.051000000000000004,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 10.441767068273093,
+      "voltage_v": 3.2848400356338057,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7948000000000001,
+      "ah_throughput": 0.052000000000000005,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 10.642570281124497,
+      "voltage_v": 3.285623745015631,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7947000000000001,
+      "ah_throughput": 0.053,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 10.843373493975903,
+      "voltage_v": 3.2844848720188855,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7946000000000001,
+      "ah_throughput": 0.054,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 11.04417670682731,
+      "voltage_v": 3.2855681675385804,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7945000000000001,
+      "ah_throughput": 0.055,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 11.244979919678714,
+      "voltage_v": 3.2852901308574674,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7944,
+      "ah_throughput": 0.056,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 11.44578313253012,
+      "voltage_v": 3.2848181661383453,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7943,
+      "ah_throughput": 0.057,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 11.646586345381525,
+      "voltage_v": 3.284418576347041,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7942,
+      "ah_throughput": 0.058,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 11.847389558232932,
+      "voltage_v": 3.2855175087954303,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7941,
+      "ah_throughput": 0.059000000000000004,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 12.048192771084338,
+      "voltage_v": 3.2855418814266457,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.794,
+      "ah_throughput": 0.06,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 12.248995983935743,
+      "voltage_v": 3.2848601214876547,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7939,
+      "ah_throughput": 0.061,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 12.449799196787149,
+      "voltage_v": 3.2848840840352564,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7938000000000001,
+      "ah_throughput": 0.062,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 12.650602409638553,
+      "voltage_v": 3.284883778900335,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7937000000000001,
+      "ah_throughput": 0.063,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 12.85140562248996,
+      "voltage_v": 3.2845650355365863,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7936000000000001,
+      "ah_throughput": 0.064,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 13.052208835341366,
+      "voltage_v": 3.2843986722755765,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7935000000000001,
+      "ah_throughput": 0.065,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 13.25301204819277,
+      "voltage_v": 3.2850206828617496,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7934,
+      "ah_throughput": 0.066,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 13.453815261044177,
+      "voltage_v": 3.2848048929574634,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7933,
+      "ah_throughput": 0.067,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 13.654618473895582,
+      "voltage_v": 3.2858495828399823,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7932,
+      "ah_throughput": 0.068,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 13.855421686746988,
+      "voltage_v": 3.284755387590359,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7931,
+      "ah_throughput": 0.069,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 14.056224899598394,
+      "voltage_v": 3.284423939882261,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.793,
+      "ah_throughput": 0.07,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 14.257028112449799,
+      "voltage_v": 3.285617279932906,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7929,
+      "ah_throughput": 0.07100000000000001,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 14.457831325301205,
+      "voltage_v": 3.284923583395513,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7928000000000001,
+      "ah_throughput": 0.07200000000000001,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 14.65863453815261,
+      "voltage_v": 3.2848710446573075,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7927000000000001,
+      "ah_throughput": 0.073,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 14.859437751004016,
+      "voltage_v": 3.2857209449640377,
+      "current_a": -2.0,
+      "temp_c": 25.0,
+      "soc": 0.7926000000000001,
+      "ah_throughput": 0.074,
+      "pulse_id": "pulse_01",
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 15.060240963855422,
+      "voltage_v": 3.320590254252319,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7925000000000001,
+      "ah_throughput": 0.075,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 15.261044176706827,
+      "voltage_v": 3.320849193060746,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7924,
+      "ah_throughput": 0.076,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 15.461847389558233,
+      "voltage_v": 3.31962053287184,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7923,
+      "ah_throughput": 0.077,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 15.662650602409638,
+      "voltage_v": 3.3195744729156402,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7922,
+      "ah_throughput": 0.078,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 15.863453815261044,
+      "voltage_v": 3.3195459540665317,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7921,
+      "ah_throughput": 0.079,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 16.06425702811245,
+      "voltage_v": 3.3208613896527748,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.792,
+      "ah_throughput": 0.08,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 16.265060240963855,
+      "voltage_v": 3.3199333307144627,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7919,
+      "ah_throughput": 0.081,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 16.46586345381526,
+      "voltage_v": 3.320251307315203,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7918000000000001,
+      "ah_throughput": 0.082,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 16.666666666666668,
+      "voltage_v": 3.3197101122970976,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7917000000000001,
+      "ah_throughput": 0.083,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 16.867469879518072,
+      "voltage_v": 3.3202874814368806,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7916000000000001,
+      "ah_throughput": 0.084,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 17.068273092369477,
+      "voltage_v": 3.320167329772342,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7915000000000001,
+      "ah_throughput": 0.085,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 17.269076305220885,
+      "voltage_v": 3.3200454684825718,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7914,
+      "ah_throughput": 0.08600000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 17.46987951807229,
+      "voltage_v": 3.3204893133076325,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7913,
+      "ah_throughput": 0.08700000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 17.670682730923694,
+      "voltage_v": 3.3202340306699716,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7912,
+      "ah_throughput": 0.088,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 17.8714859437751,
+      "voltage_v": 3.3202289634865423,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7911,
+      "ah_throughput": 0.089,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 18.072289156626507,
+      "voltage_v": 3.320831790368519,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.791,
+      "ah_throughput": 0.09,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 18.27309236947791,
+      "voltage_v": 3.319980555623056,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7909,
+      "ah_throughput": 0.091,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 18.473895582329316,
+      "voltage_v": 3.3206293259901445,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7908000000000001,
+      "ah_throughput": 0.092,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 18.674698795180724,
+      "voltage_v": 3.3205422485518605,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7907000000000001,
+      "ah_throughput": 0.093,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 18.87550200803213,
+      "voltage_v": 3.319322308680402,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7906000000000001,
+      "ah_throughput": 0.094,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 19.076305220883533,
+      "voltage_v": 3.3198165763664953,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7905000000000001,
+      "ah_throughput": 0.095,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 19.277108433734938,
+      "voltage_v": 3.319926790410398,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7904,
+      "ah_throughput": 0.096,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 19.477911646586346,
+      "voltage_v": 3.319707742224159,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7903,
+      "ah_throughput": 0.097,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 19.67871485943775,
+      "voltage_v": 3.320384752813958,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7902,
+      "ah_throughput": 0.098,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 19.879518072289155,
+      "voltage_v": 3.3203381266839296,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7901,
+      "ah_throughput": 0.099,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 20.080321285140563,
+      "voltage_v": 3.319646751781501,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.79,
+      "ah_throughput": 0.1,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 20.281124497991968,
+      "voltage_v": 3.3195499275370075,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7899,
+      "ah_throughput": 0.101,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 20.481927710843372,
+      "voltage_v": 3.319982025476136,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7898000000000001,
+      "ah_throughput": 0.10200000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 20.68273092369478,
+      "voltage_v": 3.319417580402177,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7897000000000001,
+      "ah_throughput": 0.10300000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 20.883534136546185,
+      "voltage_v": 3.319496457954342,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7896000000000001,
+      "ah_throughput": 0.10400000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 21.08433734939759,
+      "voltage_v": 3.3183968592160253,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7895000000000001,
+      "ah_throughput": 0.105,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 21.285140562248994,
+      "voltage_v": 3.3196466995840463,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7894,
+      "ah_throughput": 0.106,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 21.485943775100402,
+      "voltage_v": 3.3193948953599146,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7893,
+      "ah_throughput": 0.107,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 21.686746987951807,
+      "voltage_v": 3.319330675362804,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7892,
+      "ah_throughput": 0.108,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 21.88755020080321,
+      "voltage_v": 3.320187357817135,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7891,
+      "ah_throughput": 0.109,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 22.08835341365462,
+      "voltage_v": 3.3194065489880864,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.789,
+      "ah_throughput": 0.11,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 22.289156626506024,
+      "voltage_v": 3.3197517914754786,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7889,
+      "ah_throughput": 0.111,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 22.48995983935743,
+      "voltage_v": 3.3196161426932775,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7888000000000001,
+      "ah_throughput": 0.112,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 22.690763052208837,
+      "voltage_v": 3.319875269868861,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7887000000000001,
+      "ah_throughput": 0.113,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 22.89156626506024,
+      "voltage_v": 3.3198973565821803,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7886000000000001,
+      "ah_throughput": 0.114,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 23.092369477911646,
+      "voltage_v": 3.3196011026576984,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7885000000000001,
+      "ah_throughput": 0.115,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 23.29317269076305,
+      "voltage_v": 3.31958196674334,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7884,
+      "ah_throughput": 0.116,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 23.49397590361446,
+      "voltage_v": 3.31958253137537,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7883,
+      "ah_throughput": 0.117,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 23.694779116465863,
+      "voltage_v": 3.320282910087941,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7882,
+      "ah_throughput": 0.11800000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 23.895582329317268,
+      "voltage_v": 3.3192132835626458,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7881,
+      "ah_throughput": 0.11900000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 24.096385542168676,
+      "voltage_v": 3.3203304098815667,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.788,
+      "ah_throughput": 0.12,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 24.29718875502008,
+      "voltage_v": 3.319811650439455,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7879,
+      "ah_throughput": 0.121,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 24.497991967871485,
+      "voltage_v": 3.3197714472697513,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7878000000000001,
+      "ah_throughput": 0.122,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 24.698795180722893,
+      "voltage_v": 3.320749728235534,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7877000000000001,
+      "ah_throughput": 0.123,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 24.899598393574298,
+      "voltage_v": 3.3201810035040116,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7876000000000001,
+      "ah_throughput": 0.124,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 25.100401606425702,
+      "voltage_v": 3.3197470944996295,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7875000000000001,
+      "ah_throughput": 0.125,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 25.301204819277107,
+      "voltage_v": 3.3200277555320366,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7874000000000001,
+      "ah_throughput": 0.126,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 25.502008032128515,
+      "voltage_v": 3.319763053232643,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7873,
+      "ah_throughput": 0.127,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 25.70281124497992,
+      "voltage_v": 3.3198815225875773,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7872,
+      "ah_throughput": 0.128,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 25.903614457831324,
+      "voltage_v": 3.319583457849554,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7871,
+      "ah_throughput": 0.129,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 26.104417670682732,
+      "voltage_v": 3.3203847885078623,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.787,
+      "ah_throughput": 0.13,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 26.305220883534137,
+      "voltage_v": 3.319093292355578,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7869,
+      "ah_throughput": 0.131,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 26.50602409638554,
+      "voltage_v": 3.3203859694111637,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7868,
+      "ah_throughput": 0.132,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 26.706827309236946,
+      "voltage_v": 3.3200457319623853,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7867000000000001,
+      "ah_throughput": 0.133,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 26.907630522088354,
+      "voltage_v": 3.3199727955133915,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7866000000000001,
+      "ah_throughput": 0.134,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 27.10843373493976,
+      "voltage_v": 3.3203392750810012,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7865000000000001,
+      "ah_throughput": 0.135,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 27.309236947791163,
+      "voltage_v": 3.319245720732905,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7864,
+      "ah_throughput": 0.136,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 27.51004016064257,
+      "voltage_v": 3.320522374359406,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7863,
+      "ah_throughput": 0.137,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 27.710843373493976,
+      "voltage_v": 3.3206233693176506,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7862,
+      "ah_throughput": 0.138,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 27.91164658634538,
+      "voltage_v": 3.3202822667225136,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7861,
+      "ah_throughput": 0.139,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 28.11244979919679,
+      "voltage_v": 3.3195495140020292,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.786,
+      "ah_throughput": 0.14,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 28.313253012048193,
+      "voltage_v": 3.3202673320770186,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7859,
+      "ah_throughput": 0.14100000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 28.514056224899598,
+      "voltage_v": 3.32065490509787,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7858,
+      "ah_throughput": 0.14200000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 28.714859437751002,
+      "voltage_v": 3.3198544954893037,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7857000000000001,
+      "ah_throughput": 0.14300000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 28.91566265060241,
+      "voltage_v": 3.3192270599180502,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7856000000000001,
+      "ah_throughput": 0.14400000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 29.116465863453815,
+      "voltage_v": 3.320029468435048,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7855000000000001,
+      "ah_throughput": 0.145,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 29.31726907630522,
+      "voltage_v": 3.319966581202818,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7854000000000001,
+      "ah_throughput": 0.146,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 29.518072289156628,
+      "voltage_v": 3.319541309090085,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7853,
+      "ah_throughput": 0.147,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 29.718875502008032,
+      "voltage_v": 3.3202640905440304,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7852,
+      "ah_throughput": 0.148,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 29.919678714859437,
+      "voltage_v": 3.319967333875754,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7851,
+      "ah_throughput": 0.149,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 30.120481927710845,
+      "voltage_v": 3.3198956047683357,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.785,
+      "ah_throughput": 0.15,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 30.32128514056225,
+      "voltage_v": 3.3198385778938975,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7849,
+      "ah_throughput": 0.151,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 30.522088353413654,
+      "voltage_v": 3.3196235787682014,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7848,
+      "ah_throughput": 0.152,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 30.72289156626506,
+      "voltage_v": 3.3196910865866847,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7847000000000001,
+      "ah_throughput": 0.153,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 30.923694779116467,
+      "voltage_v": 3.3200067987255077,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7846000000000001,
+      "ah_throughput": 0.154,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 31.12449799196787,
+      "voltage_v": 3.319876786383424,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7845000000000001,
+      "ah_throughput": 0.155,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 31.325301204819276,
+      "voltage_v": 3.3198225296183326,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7844000000000001,
+      "ah_throughput": 0.156,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 31.526104417670684,
+      "voltage_v": 3.319766784845274,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7843,
+      "ah_throughput": 0.157,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 31.72690763052209,
+      "voltage_v": 3.320348747162266,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7842,
+      "ah_throughput": 0.158,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 31.927710843373493,
+      "voltage_v": 3.3198369718360383,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7841,
+      "ah_throughput": 0.159,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 32.1285140562249,
+      "voltage_v": 3.320034514006088,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.784,
+      "ah_throughput": 0.16,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 32.329317269076306,
+      "voltage_v": 3.3205875082441976,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7839,
+      "ah_throughput": 0.161,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 32.53012048192771,
+      "voltage_v": 3.319960183019989,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7838,
+      "ah_throughput": 0.162,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 32.730923694779115,
+      "voltage_v": 3.319595610108527,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7837000000000001,
+      "ah_throughput": 0.163,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 32.93172690763052,
+      "voltage_v": 3.3196184226513807,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7836000000000001,
+      "ah_throughput": 0.164,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 33.132530120481924,
+      "voltage_v": 3.319753434024291,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7835000000000001,
+      "ah_throughput": 0.165,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 33.333333333333336,
+      "voltage_v": 3.3198486772214175,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7834000000000001,
+      "ah_throughput": 0.166,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 33.53413654618474,
+      "voltage_v": 3.3197002037781194,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7833,
+      "ah_throughput": 0.167,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 33.734939759036145,
+      "voltage_v": 3.3199469272848883,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7832,
+      "ah_throughput": 0.168,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 33.93574297188755,
+      "voltage_v": 3.3195590985079746,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7831,
+      "ah_throughput": 0.169,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 34.136546184738954,
+      "voltage_v": 3.3195608454400287,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.783,
+      "ah_throughput": 0.17,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 34.33734939759036,
+      "voltage_v": 3.320678910732821,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7829,
+      "ah_throughput": 0.171,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 34.53815261044177,
+      "voltage_v": 3.32004614972378,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7828,
+      "ah_throughput": 0.17200000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 34.738955823293175,
+      "voltage_v": 3.319437688566372,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7827000000000001,
+      "ah_throughput": 0.17300000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 34.93975903614458,
+      "voltage_v": 3.3189789192884005,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7826000000000001,
+      "ah_throughput": 0.17400000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 35.140562248995984,
+      "voltage_v": 3.320266843973942,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7825000000000001,
+      "ah_throughput": 0.17500000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 35.34136546184739,
+      "voltage_v": 3.3207102336166145,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7824000000000001,
+      "ah_throughput": 0.176,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 35.54216867469879,
+      "voltage_v": 3.3210610265720093,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7823,
+      "ah_throughput": 0.177,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 35.7429718875502,
+      "voltage_v": 3.3204417307427123,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7822,
+      "ah_throughput": 0.178,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 35.94377510040161,
+      "voltage_v": 3.319584341527034,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7821,
+      "ah_throughput": 0.179,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 36.144578313253014,
+      "voltage_v": 3.320426010463742,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.782,
+      "ah_throughput": 0.18,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 36.34538152610442,
+      "voltage_v": 3.319830393175576,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7819,
+      "ah_throughput": 0.181,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 36.54618473895582,
+      "voltage_v": 3.319579335244333,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7818,
+      "ah_throughput": 0.182,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 36.74698795180723,
+      "voltage_v": 3.3197391514962344,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7817000000000001,
+      "ah_throughput": 0.183,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 36.94779116465863,
+      "voltage_v": 3.320133354447411,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7816000000000001,
+      "ah_throughput": 0.184,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 37.14859437751004,
+      "voltage_v": 3.319874707249655,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7815000000000001,
+      "ah_throughput": 0.185,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 37.34939759036145,
+      "voltage_v": 3.3202226212229466,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7814000000000001,
+      "ah_throughput": 0.186,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 37.55020080321285,
+      "voltage_v": 3.3200093008352134,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7813,
+      "ah_throughput": 0.187,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 37.75100401606426,
+      "voltage_v": 3.3200821295703578,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7812,
+      "ah_throughput": 0.188,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 37.95180722891566,
+      "voltage_v": 3.3202628587051004,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7811,
+      "ah_throughput": 0.189,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 38.15261044176707,
+      "voltage_v": 3.3201833976662742,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.781,
+      "ah_throughput": 0.19,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 38.35341365461847,
+      "voltage_v": 3.32037805817479,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7809,
+      "ah_throughput": 0.191,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 38.554216867469876,
+      "voltage_v": 3.3206874288362225,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7808,
+      "ah_throughput": 0.192,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 38.75502008032129,
+      "voltage_v": 3.3190740123473232,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7807000000000001,
+      "ah_throughput": 0.193,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 38.95582329317269,
+      "voltage_v": 3.3201902149956926,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7806000000000001,
+      "ah_throughput": 0.194,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 39.1566265060241,
+      "voltage_v": 3.320480440147187,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7805000000000001,
+      "ah_throughput": 0.195,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 39.3574297188755,
+      "voltage_v": 3.320799725672179,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7804000000000001,
+      "ah_throughput": 0.196,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 39.558232931726906,
+      "voltage_v": 3.320018136040739,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7803,
+      "ah_throughput": 0.197,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 39.75903614457831,
+      "voltage_v": 3.3194544539596373,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7802,
+      "ah_throughput": 0.198,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 39.95983935742972,
+      "voltage_v": 3.3193604433638875,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7801,
+      "ah_throughput": 0.199,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 40.16064257028113,
+      "voltage_v": 3.320507622149767,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.78,
+      "ah_throughput": 0.2,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 40.36144578313253,
+      "voltage_v": 3.320352044574222,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7799,
+      "ah_throughput": 0.201,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 40.562248995983936,
+      "voltage_v": 3.320029529538924,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7798,
+      "ah_throughput": 0.202,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 40.76305220883534,
+      "voltage_v": 3.319836727541009,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7797000000000001,
+      "ah_throughput": 0.203,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 40.963855421686745,
+      "voltage_v": 3.320343672820908,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7796000000000001,
+      "ah_throughput": 0.20400000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 41.16465863453815,
+      "voltage_v": 3.3201670261600618,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7795000000000001,
+      "ah_throughput": 0.20500000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 41.36546184738956,
+      "voltage_v": 3.320272738282768,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7794000000000001,
+      "ah_throughput": 0.20600000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 41.566265060240966,
+      "voltage_v": 3.319671650609552,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7793,
+      "ah_throughput": 0.20700000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 41.76706827309237,
+      "voltage_v": 3.3203347823988523,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7792,
+      "ah_throughput": 0.20800000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 41.967871485943775,
+      "voltage_v": 3.3199822777060986,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7791,
+      "ah_throughput": 0.209,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 42.16867469879518,
+      "voltage_v": 3.32023018912177,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.779,
+      "ah_throughput": 0.21,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 42.369477911646584,
+      "voltage_v": 3.319732385950147,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7789,
+      "ah_throughput": 0.211,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 42.57028112449799,
+      "voltage_v": 3.3203947626463477,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7788,
+      "ah_throughput": 0.212,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 42.7710843373494,
+      "voltage_v": 3.319238762833645,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7787000000000001,
+      "ah_throughput": 0.213,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 42.971887550200805,
+      "voltage_v": 3.3203300890500227,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7786000000000001,
+      "ah_throughput": 0.214,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 43.17269076305221,
+      "voltage_v": 3.320400210790137,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7785000000000001,
+      "ah_throughput": 0.215,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 43.373493975903614,
+      "voltage_v": 3.3198436235524853,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7784000000000001,
+      "ah_throughput": 0.216,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 43.57429718875502,
+      "voltage_v": 3.3197346411952027,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7783,
+      "ah_throughput": 0.217,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 43.77510040160642,
+      "voltage_v": 3.320570638701872,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7782,
+      "ah_throughput": 0.218,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 43.975903614457835,
+      "voltage_v": 3.3200036672502926,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7781,
+      "ah_throughput": 0.219,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 44.17670682730924,
+      "voltage_v": 3.3202756607238495,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.778,
+      "ah_throughput": 0.22,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 44.377510040160644,
+      "voltage_v": 3.3197371752630938,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7779,
+      "ah_throughput": 0.221,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 44.57831325301205,
+      "voltage_v": 3.3193901390870693,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7778,
+      "ah_throughput": 0.222,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 44.77911646586345,
+      "voltage_v": 3.320412879294558,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7777000000000001,
+      "ah_throughput": 0.223,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 44.97991967871486,
+      "voltage_v": 3.320590821080598,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7776000000000001,
+      "ah_throughput": 0.224,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 45.18072289156626,
+      "voltage_v": 3.320744218492499,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7775000000000001,
+      "ah_throughput": 0.225,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 45.381526104417674,
+      "voltage_v": 3.320389394301746,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7774000000000001,
+      "ah_throughput": 0.226,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 45.58232931726908,
+      "voltage_v": 3.3195544298456356,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7773,
+      "ah_throughput": 0.227,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 45.78313253012048,
+      "voltage_v": 3.320482892627994,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7772,
+      "ah_throughput": 0.228,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 45.98393574297189,
+      "voltage_v": 3.3205244494487856,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7771,
+      "ah_throughput": 0.229,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 46.18473895582329,
+      "voltage_v": 3.319845002474601,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.777,
+      "ah_throughput": 0.23,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 46.3855421686747,
+      "voltage_v": 3.3208529553701944,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7769,
+      "ah_throughput": 0.231,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 46.5863453815261,
+      "voltage_v": 3.3203088279383257,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7768,
+      "ah_throughput": 0.232,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 46.78714859437751,
+      "voltage_v": 3.3202907205585515,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7767000000000001,
+      "ah_throughput": 0.233,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 46.98795180722892,
+      "voltage_v": 3.3201844042436943,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7766000000000001,
+      "ah_throughput": 0.234,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 47.18875502008032,
+      "voltage_v": 3.3194899237078244,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7765000000000001,
+      "ah_throughput": 0.23500000000000001,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 47.389558232931726,
+      "voltage_v": 3.3201195213897643,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7764000000000001,
+      "ah_throughput": 0.23600000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 47.59036144578313,
+      "voltage_v": 3.3210888502576155,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7763,
+      "ah_throughput": 0.23700000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 47.791164658634536,
+      "voltage_v": 3.3198817920913823,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7762,
+      "ah_throughput": 0.23800000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 47.99196787148594,
+      "voltage_v": 3.320045124833547,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7761,
+      "ah_throughput": 0.23900000000000002,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 48.19277108433735,
+      "voltage_v": 3.3190138444264536,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.776,
+      "ah_throughput": 0.24,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 48.393574297188756,
+      "voltage_v": 3.320162661727321,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7759,
+      "ah_throughput": 0.241,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 48.59437751004016,
+      "voltage_v": 3.31972147436938,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7758,
+      "ah_throughput": 0.242,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 48.795180722891565,
+      "voltage_v": 3.319903811327381,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7757000000000001,
+      "ah_throughput": 0.243,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 48.99598393574297,
+      "voltage_v": 3.3194678733413694,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7756000000000001,
+      "ah_throughput": 0.244,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 49.196787148594375,
+      "voltage_v": 3.319979971629935,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7755000000000001,
+      "ah_throughput": 0.245,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 49.397590361445786,
+      "voltage_v": 3.3191322217544283,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7754000000000001,
+      "ah_throughput": 0.246,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 49.59839357429719,
+      "voltage_v": 3.319814494177304,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7753000000000001,
+      "ah_throughput": 0.247,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 49.799196787148595,
+      "voltage_v": 3.3201530531153334,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7752,
+      "ah_throughput": 0.248,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    },
+    {
+      "cell_id": "MIT_CELL_BATCH_2017-05-12_01",
+      "chemistry": "LFP",
+      "batch_id": "BATCH_2017-05-12",
+      "timestamp_s": 50.0,
+      "voltage_v": 3.319468272406618,
+      "current_a": -0.0,
+      "temp_c": 25.0,
+      "soc": 0.7751,
+      "ah_throughput": 0.249,
+      "pulse_id": null,
+      "reference_protocol": "USABC_HPPC_10S",
+      "ground_truth_metadata": {
+        "ground_truth_soh_c": 0.985,
+        "ground_truth_soh_r": 0.97,
+        "provenance_category": "EXPERIMENTAL"
+      }
+    }
+  ]
+}

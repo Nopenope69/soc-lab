@@ -54,3 +54,5 @@ data/cache/*
 .env
 .DS_Store
 *.pkl
+*.o
+deliverable/edge_pkg/test_soh_edge

@@ -1,0 +1,439 @@
+{
+  "timestamp_utc": "2026-11-14 23:27:58 UTC",
+  "provenance_registry": {
+    "LG_M50T_Chen2020": {
+      "category": "SIMULATION",
+      "chemistry": "NMC-811 / Graphite-Si",
+      "form_factor": "21700 Cylindrical",
+      "nominal_capacity_ah": 5.0,
+      "is_pristine_bol": true,
+      "is_resistance_validated": true,
+      "ground_truth_protocol": "PyBaMM DFN integration (0.5C CC-CV at 25\u00b0C to 2.5V cutoff)",
+      "qualification_notes": "ELECTROCHEMICAL SIMULATION BENCHMARK, NOT physically measured LG cell hardware. Represents physics-governed continuum model (Chen et al. 2020). Pristine factory acceptance reference.",
+      "cell_identifiers": [
+        "PYBAMM_CELL_25C_1C",
+        "PYBAMM_CELL_45C_1C",
+        "PYBAMM_CELL_15C_1C",
+        "PYBAMM_CELL_25C_05C"
+      ],
+      "batch_identifiers": [
+        "SIMULATION_CHEN2020"
+      ],
+      "citation": "Chen et al., J. Electrochem. Soc. 167 (2020) 080534"
+    },
+    "CALCE_A123_APR18650M1A": {
+      "category": "EXPERIMENTAL",
+      "chemistry": "LiFePO4 (LFP) / Graphite",
+      "form_factor": "18650 Cylindrical (APR18650M1A)",
+      "nominal_capacity_ah": 1.1,
+      "is_pristine_bol": false,
+      "is_resistance_validated": false,
+      "ground_truth_protocol": "CALCE Arbin cycler C/20 characterization cycle (2.0V - 3.6V at 25\u00b0C)",
+      "qualification_notes": "Physical commercial cells received post-formation and post-shipping with unknown calendar aging. C/20 initial cycle is a laboratory characterization baseline, NOT pristine factory BOL acceptance. Internal resistance from load perturbation is unvalidated.",
+      "cell_identifiers": [
+        "CS2_35",
+        "CS2_36",
+        "CS2_37",
+        "CS2_38"
+      ],
+      "batch_identifiers": [
+        "BATCH_CALCE_CS2"
+      ],
+      "citation": "Center for Advanced Life Cycle Engineering (CALCE), University of Maryland"
+    },
+    "Oxford_Battery_Degradation_Kokam": {
+      "category": "EXPERIMENTAL",
+      "chemistry": "NMC-LCO blend / Graphite",
+      "form_factor": "Kokam 740mAh Pouch Cell (SLPB533459H4)",
+      "nominal_capacity_ah": 0.74,
+      "is_pristine_bol": false,
+      "is_resistance_validated": true,
+      "ground_truth_protocol": "Oxford Battery Intelligence Lab 1C characterization cycle at 40\u00b0C",
+      "qualification_notes": "Physical cells tested in environmental chambers at 40\u00b0C under repeated drive cycles (Artemis urban). Characterization cycles provide reliable capacity retention; resistance requires equivalent circuit fitting.",
+      "cell_identifiers": [
+        "OXFORD_CELL_01",
+        "OXFORD_CELL_02",
+        "OXFORD_CELL_03",
+        "OXFORD_CELL_04"
+      ],
+      "batch_identifiers": [
+        "KOKAM_SLPB533459H4_2014"
+      ],
+      "citation": "Howey et al., Oxford Battery Intelligence Lab, IEEE Trans. Ind. Electron. (2014)"
+    },
+    "MIT_Stanford_FastCharging_Severson": {
+      "category": "EXPERIMENTAL",
+      "chemistry": "LiFePO4 (LFP) / Graphite",
+      "form_factor": "18650 Cylindrical (A123 APR18650M1A)",
+      "nominal_capacity_ah": 1.1,
+      "is_pristine_bol": false,
+      "is_resistance_validated": true,
+      "ground_truth_protocol": "Severson et al. 2019 high-rate fast-charging characterization protocol (A123 APR18650M1A LFP cells)",
+      "qualification_notes": "124 commercial cells cycled to failure (80% SOH_C) under 72 fast-charging policies. Commercial manufacturing batch metadata available (batches 2017-05-12, 2017-06-30). Cycle life spans 150 to 2,300 cycles.",
+      "cell_identifiers": [
+        "MIT_CELL_BATCH_2017-05-12_01",
+        "MIT_CELL_BATCH_2017-06-30_02",
+        "MIT_CELL_BATCH_2017-05-12_03",
+        "MIT_CELL_BATCH_2017-06-30_04"
+      ],
+      "batch_identifiers": [
+        "BATCH_2017-05-12",
+        "BATCH_2017-06-30"
+      ],
+      "citation": "Severson et al., Nature Energy 4 (2019) 383\u2013391"
+    }
+  },
+  "powerlaw_leakage_audit": {
+    "Baseline 25C": {
+      "fitted_rmse_pct": 0.5103773449188678,
+      "fitted_mae_pct": 0.38656174093898876,
+      "shuffled_rmse_pct": 0.5103773449188678,
+      "shuffled_mae_pct": 0.38656174093898876
+    },
+    "Cold 15C": {
+      "fitted_rmse_pct": 0.41317603555502125,
+      "fitted_mae_pct": 0.3043854605889442,
+      "shuffled_rmse_pct": 0.41317603555502125,
+      "shuffled_mae_pct": 0.3043854605889442
+    },
+    "Hot 45C": {
+      "fitted_rmse_pct": 0.7991017197794336,
+      "fitted_mae_pct": 0.6456351149146158,
+      "shuffled_rmse_pct": 0.7991017197794336,
+      "shuffled_mae_pct": 0.6456351149146158
+    },
+    "CALCE Experimental": {
+      "fitted_rmse_pct": 0.19959039128037795,
+      "fitted_mae_pct": 0.16732597972303664,
+      "shuffled_rmse_pct": 0.19959039128037795,
+      "shuffled_mae_pct": 0.16732597972303664
+    }
+  },
+  "batch_holdout_results": {
+    "BATCH_2017-05-12": {
+      "Pure MLP": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7141749561542318,
+        "mae_pct": 0.6168336853529469,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.024323420427357585
+      },
+      "GRU Sequence Model": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7031837131350309,
+        "mae_pct": 0.6071767236062218,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.024035460488935532
+      },
+      "Physics-Informed PINN": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7219030563973428,
+        "mae_pct": 0.6226198304355194,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.023443407661707723
+      },
+      "Empirical Power Law (Fitted)": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.21913817983057965,
+        "mae_pct": 0.18344194417494242,
+        "picp_95": 100.0,
+        "mpiw": 0.01960000000000004
+      },
+      "Constant Mean Baseline (Negative Control)": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7046057251051339,
+        "mae_pct": 0.6090999568768662,
+        "picp_95": 100.0,
+        "mpiw": 0.10000000000000006
+      }
+    },
+    "BATCH_2017-06-30": {
+      "Pure MLP": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7141784401850565,
+        "mae_pct": 0.6168344800815437,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.02433085658766481
+      },
+      "GRU Sequence Model": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7031808913447658,
+        "mae_pct": 0.6071713989246208,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.02405316369507055
+      },
+      "Physics-Informed PINN": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7218960365728264,
+        "mae_pct": 0.6226101943512805,
+        "picp_95": 96.66666666666667,
+        "mpiw": 0.023450001824895993
+      },
+      "Empirical Power Law (Fitted)": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.20701946851138228,
+        "mae_pct": 0.177523539821459,
+        "picp_95": 100.0,
+        "mpiw": 0.019600000000000038
+      },
+      "Constant Mean Baseline (Negative Control)": {
+        "coverage_pct": 100.0,
+        "rmse_pct": 0.7046057251051336,
+        "mae_pct": 0.609099956876866,
+        "picp_95": 100.0,
+        "mpiw": 0.10000000000000006
+      }
+    }
+  },
+  "gru_stratification": {
+    "soh_above_95": {
+      "sample_count": 30,
+      "picp_95": 96.66666666666667,
+      "mpiw": 0.0239858242290976,
+      "rmse_pct": 0.7044063521113845,
+      "winkler": 0.024020362564697122
+    },
+    "soh_90_to_95": {
+      "sample_count": 0,
+      "picp_95": 0.0,
+      "mpiw": 0.0,
+      "rmse_pct": 0.0,
+      "winkler": 0.0
+    },
+    "soh_below_90": {
+      "sample_count": 0,
+      "picp_95": 0.0,
+      "mpiw": 0.0,
+      "rmse_pct": 0.0,
+      "winkler": 0.0
+    },
+    "overall_test_battery": {
+      "sample_count": 30,
+      "picp_95": 96.66666666666667,
+      "mpiw": 0.0239858242290976,
+      "rmse_pct": 0.7044063521113845,
+      "winkler": 0.024020362564697122
+    }
+  },
+  "disagreement_analysis": {
+    "total_frames": 50,
+    "pairwise_matrix": {
+      "Baseline Ridge": {
+        "Empirical Power Law (Fitted)": {
+          "mean_abs_diff_pct": 73.57224162561687,
+          "max_abs_diff_pct": 76.86931998628567,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "GRU Sequence Model": {
+          "mean_abs_diff_pct": 75.60539265277743,
+          "max_abs_diff_pct": 76.34139935377,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "Physics-Informed PINN": {
+          "mean_abs_diff_pct": 75.7645664036548,
+          "max_abs_diff_pct": 75.81280599239228,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "Pure MLP": {
+          "mean_abs_diff_pct": 75.94038341644166,
+          "max_abs_diff_pct": 76.03330741527436,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        }
+      },
+      "Empirical Power Law (Fitted)": {
+        "Baseline Ridge": {
+          "mean_abs_diff_pct": 73.57224162561687,
+          "max_abs_diff_pct": 76.86931998628567,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "GRU Sequence Model": {
+          "mean_abs_diff_pct": 2.2314043692219503,
+          "max_abs_diff_pct": 6.286454957857012,
+          "pearson_corr": 0.9201646017751441,
+          "sample_count": 50
+        },
+        "Physics-Informed PINN": {
+          "mean_abs_diff_pct": 2.5681701078651087,
+          "max_abs_diff_pct": 7.089145940675612,
+          "pearson_corr": -0.5656806010950416,
+          "sample_count": 50
+        },
+        "Pure MLP": {
+          "mean_abs_diff_pct": 2.6502065137591133,
+          "max_abs_diff_pct": 7.22495512379634,
+          "pearson_corr": -0.445332022117055,
+          "sample_count": 50
+        }
+      },
+      "GRU Sequence Model": {
+        "Baseline Ridge": {
+          "mean_abs_diff_pct": 75.60539265277743,
+          "max_abs_diff_pct": 76.34139935377,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "Empirical Power Law (Fitted)": {
+          "mean_abs_diff_pct": 2.2314043692219503,
+          "max_abs_diff_pct": 6.286454957857012,
+          "pearson_corr": 0.9201646017751441,
+          "sample_count": 50
+        },
+        "Physics-Informed PINN": {
+          "mean_abs_diff_pct": 0.42387373447418275,
+          "max_abs_diff_pct": 0.8514818549156145,
+          "pearson_corr": -0.5935902201134745,
+          "sample_count": 50
+        },
+        "Pure MLP": {
+          "mean_abs_diff_pct": 0.4775866150856021,
+          "max_abs_diff_pct": 1.0195311903953508,
+          "pearson_corr": -0.41619059030668965,
+          "sample_count": 50
+        }
+      },
+      "Physics-Informed PINN": {
+        "Baseline Ridge": {
+          "mean_abs_diff_pct": 75.7645664036548,
+          "max_abs_diff_pct": 75.81280599239228,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "Empirical Power Law (Fitted)": {
+          "mean_abs_diff_pct": 2.5681701078651087,
+          "max_abs_diff_pct": 7.089145940675612,
+          "pearson_corr": -0.5656806010950416,
+          "sample_count": 50
+        },
+        "GRU Sequence Model": {
+          "mean_abs_diff_pct": 0.42387373447418275,
+          "max_abs_diff_pct": 0.8514818549156145,
+          "pearson_corr": -0.5935902201134745,
+          "sample_count": 50
+        },
+        "Pure MLP": {
+          "mean_abs_diff_pct": 0.17581701278686523,
+          "max_abs_diff_pct": 0.22836923599243164,
+          "pearson_corr": 0.4215327083491479,
+          "sample_count": 50
+        }
+      },
+      "Pulse ECM + ElasticNet": {},
+      "Pure MLP": {
+        "Baseline Ridge": {
+          "mean_abs_diff_pct": 75.94038341644166,
+          "max_abs_diff_pct": 76.03330741527436,
+          "pearson_corr": 1.0,
+          "sample_count": 50
+        },
+        "Empirical Power Law (Fitted)": {
+          "mean_abs_diff_pct": 2.6502065137591133,
+          "max_abs_diff_pct": 7.22495512379634,
+          "pearson_corr": -0.445332022117055,
+          "sample_count": 50
+        },
+        "GRU Sequence Model": {
+          "mean_abs_diff_pct": 0.4775866150856021,
+          "max_abs_diff_pct": 1.0195311903953508,
+          "pearson_corr": -0.41619059030668965,
+          "sample_count": 50
+        },
+        "Physics-Informed PINN": {
+          "mean_abs_diff_pct": 0.17581701278686523,
+          "max_abs_diff_pct": 0.22836923599243164,
+          "pearson_corr": 0.4215327083491479,
+          "sample_count": 50
+        }
+      }
+    },
+    "phase_stratification": {
+      "linear_phase_mean_dispersion_pct": 30.25454668439442,
+      "knee_phase_mean_dispersion_pct": 29.790291720483115,
+      "dispersion_increase_factor": 0.9846550348694938
+    },
+    "error_dispersion_correlation": 0.9520747666920967
+  },
+  "embedded_profiles": {
+    "Pulse ECM + ElasticNet": {
+      "host_latency_ms": 0.023,
+      "target_mcu_name": "ARM Cortex-M4 (STM32G474 @ 170MHz)",
+      "target_mcu_clock_mhz": 170,
+      "mcu_latency_ms": 0.035,
+      "peak_working_ram_bytes": 1024,
+      "stack_bytes": 512,
+      "flash_bytes": 3584,
+      "c_exportable": "YES (ANSI C Header)",
+      "quantization_error_pct": 0.002
+    },
+    "Empirical Power Law (Fitted)": {
+      "host_latency_ms": 0.022,
+      "target_mcu_name": "ARM Cortex-M4 (STM32G474 @ 170MHz)",
+      "target_mcu_clock_mhz": 170,
+      "mcu_latency_ms": 0.028,
+      "peak_working_ram_bytes": 512,
+      "stack_bytes": 256,
+      "flash_bytes": 2048,
+      "c_exportable": "YES (Pure math.h)",
+      "quantization_error_pct": 0.001
+    },
+    "Baseline Ridge": {
+      "host_latency_ms": 0.503,
+      "target_mcu_name": "ARM Cortex-M4 (STM32G474 @ 170MHz)",
+      "target_mcu_clock_mhz": 170,
+      "mcu_latency_ms": 0.65,
+      "peak_working_ram_bytes": 1536,
+      "stack_bytes": 512,
+      "flash_bytes": 4096,
+      "c_exportable": "YES (Matrix dot)",
+      "quantization_error_pct": 0.004
+    },
+    "ICA + GPR-EKF": {
+      "host_latency_ms": 0.901,
+      "target_mcu_name": "ARM Cortex-M7 (STM32H743 @ 480MHz)",
+      "target_mcu_clock_mhz": 480,
+      "mcu_latency_ms": 4.25,
+      "peak_working_ram_bytes": 18432,
+      "stack_bytes": 4096,
+      "flash_bytes": 46080,
+      "c_exportable": "NO (Requires Cholesky/Kernel runtime)",
+      "quantization_error_pct": 0.038
+    },
+    "Pure MLP": {
+      "host_latency_ms": 4.402,
+      "target_mcu_name": "ARM Cortex-M7 (STM32H743 @ 480MHz) / CMSIS-NN",
+      "target_mcu_clock_mhz": 480,
+      "mcu_latency_ms": 1.85,
+      "peak_working_ram_bytes": 4608,
+      "stack_bytes": 2048,
+      "flash_bytes": 65536,
+      "c_exportable": "CMSIS-NN / TFLite Micro",
+      "quantization_error_pct": 0.045
+    },
+    "GRU Sequence Model": {
+      "host_latency_ms": 3.423,
+      "target_mcu_name": "ARM Cortex-M7 (STM32H743 @ 480MHz) / CMSIS-NN",
+      "target_mcu_clock_mhz": 480,
+      "mcu_latency_ms": 3.82,
+      "peak_working_ram_bytes": 8704,
+      "stack_bytes": 2048,
+      "flash_bytes": 98304,
+      "c_exportable": "CMSIS-NN / TFLite Micro",
+      "quantization_error_pct": 0.062
+    },
+    "Physics-Informed PINN": {
+      "host_latency_ms": 4.354,
+      "target_mcu_name": "ARM Cortex-M7 (STM32H743 @ 480MHz) / CMSIS-NN",
+      "target_mcu_clock_mhz": 480,
+      "mcu_latency_ms": 4.1,
+      "peak_working_ram_bytes": 9216,
+      "stack_bytes": 2048,
+      "flash_bytes": 98304,
+      "c_exportable": "CMSIS-NN / TFLite Micro",
+      "quantization_error_pct": 0.085
+    }
+  }
+}
