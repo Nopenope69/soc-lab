@@ -31,14 +31,14 @@ make smoke    # Run smoke scenario (<60s) for E0, E1, E2
 The `soc` CLI supports running scenario benchmarks, parameter sensitivity sweeps, and rendering markdown reports:
 
 ```bash
-# Run benchmark scenarios
-soc run --scenario smoke --profile automotive --output-csv reports/smoke_results.csv --output-report reports/smoke_report.md
+# Run benchmark scenarios (flags: --csv / --output-csv, --report / --output-report)
+soc run --scenario smoke --profile automotive --csv reports/smoke_results.csv --report reports/smoke_report.md
 
 # Parameter sensitivity sweep example (evaluates E2 under varying voltage noise covariance R_v)
 soc sweep --param filter.measurement_noise_r_v --values 1e-6,2.5e-5,1e-4 --estimator E2 --scenario smoke --output-csv reports/sweep_results.csv
 
-# Render report from CSV
-soc report --csv reports/smoke_results.csv --output reports/smoke_report.md
+# Render report from CSV (flags: --csv, --output / --report / --output-report)
+soc report --csv reports/smoke_results.csv --report reports/smoke_report.md
 ```
 
 

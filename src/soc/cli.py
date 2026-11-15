@@ -43,7 +43,9 @@ def build_parser() -> argparse.ArgumentParser:
     # soc report
     report_parser = subparsers.add_parser("report", help="Generate report from CSV results")
     report_parser.add_argument("--csv", default="reports/smoke_results.csv", help="Path to input CSV")
-    report_parser.add_argument("--output", default="reports/smoke_report.md", help="Path to output markdown report")
+    report_parser.add_argument("--output", default=None, help="Path to output markdown report")
+    report_parser.add_argument("--output-report", default=None, help="Alias for --output")
+    report_parser.add_argument("--report", default=None, help="Alias for --output")
     report_parser.add_argument("--profile", default="automotive", help="Profile name")
 
     return parser
@@ -180,7 +182,8 @@ def handle_report(args: argparse.Namespace) -> int:
     assumptions, _, _ = load_assumptions(profile=profile_name)
     report_md = ReportGenerator.generate_report(results, assumptions=assumptions, profile_name=profile_name)
 
-    out_path = Path(args.output)
+    out_target = args.output or args.output_report or args.report or "reports/smoke_report.md"
+    out_path = Path(out_target)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(report_md)
