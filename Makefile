@@ -3,17 +3,21 @@ PYTHON := $(VENV)/bin/python
 PYTEST := $(VENV)/bin/pytest
 SOC := $(VENV)/bin/soc
 
-.PHONY: all install test smoke clean full
+.PHONY: all venv install test smoke clean full
 
 all: test
 
-install:
+venv:
+	@if [ ! -d "$(VENV)" ]; then python3 -m venv $(VENV); fi
+	$(PYTHON) -m pip install -e ".[dev]"
+
+install: venv
 	$(PYTHON) -m pip install -e .
 
-test:
+test: venv
 	$(PYTEST) -v
 
-smoke:
+smoke: venv
 	$(PYTHON) -m soc.cli run --scenario configs/assumptions/scenarios/smoke.yaml --report reports/smoke_report.md --csv reports/smoke_results.csv
 
 full:
