@@ -1,10 +1,20 @@
 {
   "algorithm_id": "E7v3",
   "calibrations": {
+    "calce_a123_v4_json": {
+      "path": "deliverable/calibrations/calce_a123_v4.json",
+      "sha256": "df89631036defe258f7dfd01e9c8409ba1cf4ada62e98e10dc68f5254258b7cb",
+      "status": "DEVELOPMENT_VALIDATED_CALCE_20_50C"
+    },
     "calce_a123_v4_yaml": {
       "path": "configs/assumptions/profiles/calce_a123_v4.yaml",
       "sha256": "3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375",
       "status": "DEVELOPMENT_VALIDATED_CALCE_20_50C"
+    },
+    "flexipod_100ah_v1_json": {
+      "path": "deliverable/calibrations/flexipod_100ah_v1.json",
+      "sha256": "f19b4ae9ecafbe1a57501d03082f06bd318472794efd38b1719092d38312d81b",
+      "status": "NOT_VALIDATED: open-loop model gate FAIL"
     },
     "flexipod_100ah_v1_yaml": {
       "path": "configs/assumptions/profiles/flexipod_100ah_v1.yaml",
@@ -1258,7 +1268,7 @@
       }
     }
   },
-  "git_commit": "ed02c5f5adf9745bec266ef49de29bbc2906a144",
+  "git_commit": "582dbf172101f3957f2f97c0d1070ddacfa4a4de",
   "known_limitations": [
     "Validated operating envelope is strictly 20\u00b0C to 50\u00b0C on CALCE A123 26650 LFP cells.",
     "Sub-zero and cold-temperature (< 15\u00b0C) dynamics uncharacterized; do not deploy in freezing environments.",
