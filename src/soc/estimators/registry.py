@@ -1,8 +1,26 @@
 """Estimator registry for E0 through E10.
 
-E0 through E6 and E7v3 are implemented research candidates/baselines.
-E7 is a legacy stub raising NotImplementedError.
-E8, E9, and E10 are experimental neural hybrid estimators requiring the 'neural' extra.
+Identifier classifications:
+- Research Candidate:
+  * E7v3 ('e7v3'): Primary research candidate. Confidence-aware composite EKF
+    with observability-gated voltage feedback, RLS-driven R0 tracking, and Joseph-form covariance.
+- Classical Baselines & Predecessors:
+  * E0 ('E0'): Coulomb counting with capacity scaling and resting OCV recalibration anchors.
+  * E1 ('E1'): Standard Extended Kalman Filter (Thevenin 2RC).
+  * E2 ('E2'): Anchored EKF with hysteresis state.
+  * E3 ('E3'): Unscented Kalman Filter.
+  * E4 ('E4', 'e4v2'): EKF with Recursive Least Squares (RLS) parameter tracking.
+  * E5 ('E5', 'e5v4'): Observability-gated EKF.
+  * E6 ('E6'): RBC dual EKF.
+  * e7v2: Intermediate composite filter.
+  * d3: Innovation-gated EKF.
+- Deprecated Aliases:
+  * E7: Deprecated unversioned alias; raises NotImplementedError directing to 'e7v3'.
+- Experimental Neural Hybrid Estimators (requires 'neural' extra):
+  * E8 ('E8', 'e8'): Hybrid GRU residual estimator.
+  * E8-LGBM ('E8-LGBM', 'e8-lgbm', 'e8_lgbm'): LightGBM residual estimator.
+  * E9 ('E9', 'e9', 'e9_tcn_ukf'): Temporal Convolutional Network + UKF.
+  * E10 ('E10', 'e10', 'e10_pinn_aekf'): Physics-Informed Neural Network + Adaptive EKF.
 """
 
 from typing import Any, Callable, Dict, List, Type
@@ -23,10 +41,12 @@ from soc.estimators.e7v3 import E7V3CompositeFilter
 
 
 class _StubEstimator(Estimator):
-    """Stub estimator raising NotImplementedError at construction."""
+    """Stub estimator raising NotImplementedError for deprecated or stubbed names."""
 
     def __init__(self, name: str, params: ParamSet):
-        raise NotImplementedError(f"{name} is scheduled for Phase 4")
+        raise NotImplementedError(
+            f"Estimator '{name}' is deprecated; use 'e7v3' (the research candidate) instead."
+        )
 
     def reset(self, soc0: float) -> None:
         pass
@@ -39,7 +59,9 @@ def _create_stub(name: str) -> Type[Estimator]:
     """Create a stub estimator class that raises NotImplementedError upon instantiation."""
     class Stub(Estimator):
         def __init__(self, params: ParamSet):
-            raise NotImplementedError(f"{name} is scheduled for Phase 4")
+            raise NotImplementedError(
+                f"Estimator '{name}' is deprecated; use 'e7v3' (the research candidate) instead."
+            )
 
         def reset(self, soc0: float) -> None:
             pass

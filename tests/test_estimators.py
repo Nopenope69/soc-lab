@@ -82,9 +82,9 @@ def test_estimators_lazy_imports_without_torch_or_lightgbm(params, monkeypatch):
 
 
 def test_registry_stubs_raise_not_implemented_error(params):
-    """Verify that E7 raises NotImplementedError at construction."""
+    """Verify that deprecated E7 raises NotImplementedError at construction."""
     for name in ["E7"]:
-        with pytest.raises(NotImplementedError, match="scheduled for Phase 4"):
+        with pytest.raises(NotImplementedError, match="deprecated; use 'e7v3'"):
             get_estimator(name, params)
 
 
