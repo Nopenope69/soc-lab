@@ -21,3 +21,9 @@ try:
         _warmup_booster = lgb.Booster(model_file=str(model_txt))
 except Exception:
     pass
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "requires_data: tests requiring raw datasets (skips with path if missing)"
+    )

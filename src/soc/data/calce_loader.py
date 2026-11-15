@@ -67,6 +67,14 @@ _EXCLUDED_10C_SOC_HIGH = float("0.78")
 
 def get_raw_dir(root_dir: Optional[Path] = None) -> Path:
     """Return path to data/raw/calce_a123 directory."""
+    env_dir = os.environ.get("SOC_DATA_DIR")
+    if env_dir:
+        p = Path(env_dir)
+        if p.name == "calce_a123":
+            return p
+        if (p / "calce_a123").exists():
+            return p / "calce_a123"
+        return p
     if root_dir is not None:
         return root_dir / "data" / "raw" / "calce_a123"
     this_dir = Path(__file__).resolve().parent

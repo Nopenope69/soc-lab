@@ -20,6 +20,7 @@ sys.path.insert(0, str(repo_root))
 
 from deliverable.bms_soc_ref import BmsSocEstimatorRef, BmsSocParameters
 from soc.assumptions.loader import load_assumptions
+from soc.data.calce_loader import get_raw_dir
 from soc.estimators.base import ParamSet
 from soc.estimators.e7v3 import E7V3CompositeFilter
 from soc.models.plant import Measurement
@@ -73,6 +74,7 @@ def test_bms_soc_ref_confidence_aware_reset():
     assert est.p[0][0] == pytest.approx(0.10 ** 2)
 
 
+@pytest.mark.requires_data
 def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
     """Verify numerical equivalence between BmsSocEstimatorRef and repo E7V3CompositeFilter.
 
@@ -81,7 +83,13 @@ def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
     - Final SOC on full DST (25k steps): <= 1e-3 pp (1.0e-5 fractional SOC).
     - Max trajectory discrepancy: <= 0.05 pp (5.0e-4 fractional SOC) due to 25k-step float accumulation.
     """
-    sc = prepare_scenario_data_v3(20, profile="DST", cell_id="A1-007")
+    raw_dir = get_raw_dir()
+    if not raw_dir.exists():
+        pytest.skip(f"Raw CALCE data path does not exist: {raw_dir}")
+    try:
+        sc = prepare_scenario_data_v3(20, profile="DST", cell_id="A1-007")
+    except FileNotFoundError as e:
+        pytest.skip(f"Raw dataset file missing: {e}")
 
     assumptions, _, _ = load_assumptions(profile="calce_a123_v4")
     base_params = ParamSet.from_assumptions(assumptions, matched=True)
