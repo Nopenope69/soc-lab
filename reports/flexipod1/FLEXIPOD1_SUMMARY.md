@@ -2,9 +2,13 @@
 **Repository**: `/Users/tecbusiness/Desktop/random/SOC`
 **Execution Date**: 2026-10-20
 **Input Datasets**: `OCV_and_HPPC_data_of_cells.xlsx`, `Temperature_based_V_curves.xlsx`
-**Open-Loop Model Gate Verdict**: **FAIL** (Diagnostic Analysis Completed)
+**Open-Loop Model Gate Verdict**: **FAIL (NO-GO — DEPLOYMENT NOT APPROVED)**
 **Estimator Algorithms Evaluated**: E0 fair, E1 (standard EKF), E2 (anchored EKF), frozen E7v3 (confidence-aware composite EKF)
 **Target Hardware Profile**: `configs/assumptions/profiles/flexipod_100ah_v1.yaml`
+
+> [!CAUTION]
+> **DEPLOYMENT STATUS: NO-GO / NOT APPROVED FOR FLEXIPOD INTEGRATION**
+> The open-loop 2RC model gate resulted in a definitive **FAIL** across all held-out dynamic and rate verification curves. Open-loop voltage RMSE reached up to 87.4 mV (gate bar $\le 6.0\text{ mV}$) and implied SOC errors reached up to 233.3 pp (gate bar $\le 2.5\text{ pp}$). Transfer to FlexiPod is blocked until electrochemical parameterization and thermal coupling are validated.
 
 ---
 
@@ -29,11 +33,11 @@ All five project assumptions were pre-registered in `reports/flexipod1/assumptio
 
 | ID | Assumption Statement | Validation Status | Findings & Impact |
 |:---|:---|:---:|:---|
-| **A1** | *Discharge curves in `Temperature_based_V_curves.xlsx` are 100 Ah-class cells, NOT the 206 Ah named on the IR sheet. Use Ganfeng_100Ah OCV.* | **CONFIRMED** | End capacities to 2.5 V cutoff range from $86.35\text{ to }95.46\text{ Ah}$ at 100 A. Sensitivity with 206 Ah OCV confirmed total resistance differs by $<0.02\text{ m}\Omega$. |
-| **A2** | *Discharge curves start at 100% SOC at rest; truth SOC $= 1 - \text{capacity\_Ah} / Q_{end}(T, I)$.* | **CONFIRMED** | Pre-registered truth definition adopted. Cutoff capacity $Q_{end}$ is rate- and temperature-dependent. |
-| **A3** | *Current sign convention: raw negative discharge (-99.85 A) transformed to repo positive discharge ($I > 0$).* | **CONFIRMED** | Verified in loader.py and aligned with standard repo convention ($I > 0$ discharges cell). |
-| **A4** | *Curve 5 °C / 150 A is anomalous and flagged SUSPECT.* | **CONFIRMED** | Starts at $V_0 = 3.155\text{ V}$ (vs ~3.33 V rest) with only $87.9\text{ mV}$ drop. Reported separately in all gates and scenarios. |
-| **A5** | *OCV 0% and 100% endpoints contain relaxation/cutoff artifacts and must be excluded from equilibrium fitting.* | **CONFIRMED** | At 0% SOC, charge OCV was lower than discharge OCV; at 100% SOC, identical values were manually copied. Plateau fitting used 5% to 95% data. |
+| **A1** | *Discharge curves in `Temperature_based_V_curves.xlsx` are 100 Ah-class cells, NOT the 206 Ah named on the IR sheet. Use Ganfeng_100Ah OCV.* | **supported by data inspection; owner confirmation pending** | End capacities to 2.5 V cutoff range from $86.35\text{ to }95.46\text{ Ah}$ at 100 A. Sensitivity with 206 Ah OCV confirmed total resistance differs by $<0.02\text{ m}\Omega$. |
+| **A2** | *Discharge curves start at 100% SOC at rest; truth SOC $= 1 - \text{capacity\_Ah} / Q_{end}(T, I)$.* | **supported by data inspection; owner confirmation pending** | Pre-registered truth definition adopted. Cutoff capacity $Q_{end}$ is rate- and temperature-dependent. |
+| **A3** | *Current sign convention: raw negative discharge (-99.85 A) transformed to repo positive discharge ($I > 0$).* | **supported by data inspection; owner confirmation pending** | Verified in loader.py and aligned with standard repo convention ($I > 0$ discharges cell). |
+| **A4** | *Curve 5 °C / 150 A is anomalous and flagged SUSPECT.* | **supported by data inspection; owner confirmation pending** | Starts at $V_0 = 3.155\text{ V}$ (vs ~3.33 V rest) with only $87.9\text{ mV}$ drop. Reported separately in all gates and scenarios. |
+| **A5** | *OCV 0% and 100% endpoints contain relaxation/cutoff artifacts and must be excluded from equilibrium fitting.* | **supported by data inspection; owner confirmation pending** | At 0% SOC, charge OCV was lower than discharge OCV; at 100% SOC, identical values were manually copied. Plateau fitting used 5% to 95% data. |
 ---
 ## 3. Data-Quality Audit & Workbook Integrity
 ### SHA-256 Checksums
