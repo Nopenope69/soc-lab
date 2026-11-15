@@ -16,7 +16,10 @@ except Exception:
 
 try:
     import lightgbm as lgb
-    model_txt = Path(__file__).resolve().parent.parent / "deliverable" / "e8_residual_lgbm.txt"
+    repo_root = Path(__file__).resolve().parent.parent
+    model_txt = repo_root / "models" / "experimental" / "e8_residual_lgbm.txt"
+    if not model_txt.exists():
+        model_txt = repo_root / "deliverable" / "e8_residual_lgbm.txt"
     if model_txt.exists():
         _warmup_booster = lgb.Booster(model_file=str(model_txt))
 except Exception:

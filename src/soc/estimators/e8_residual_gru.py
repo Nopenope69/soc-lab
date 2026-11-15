@@ -33,7 +33,10 @@ _TEMP_MIN = float("15.0")
 _TEMP_MAX = float("35.0")
 _K_SIGMA = float("3.0")  # [PROPOSED dynamic clamp factor tied to soc_std]
 
-_DEFAULT_WEIGHTS_PATH = Path(__file__).resolve().parents[_PARENT_LEVEL] / "deliverable" / "e8_residual_gru.pt"
+_REPO_ROOT = Path(__file__).resolve().parents[_PARENT_LEVEL]
+_DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "models" / "experimental" / "e8_residual_gru.pt"
+if not _DEFAULT_WEIGHTS_PATH.exists() and (_REPO_ROOT / "deliverable" / "e8_residual_gru.pt").exists():
+    _DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "deliverable" / "e8_residual_gru.pt"
 
 
 @dataclass(frozen=True)

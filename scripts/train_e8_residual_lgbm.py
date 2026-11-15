@@ -88,7 +88,7 @@ def train_and_export_lgbm():
         callbacks=[lgb.early_stopping(stopping_rounds=20, verbose=True)],
     )
 
-    out_dir = repo_root / "deliverable"
+    out_dir = repo_root / "models" / "experimental"
     out_dir.mkdir(parents=True, exist_ok=True)
     model_txt_path = out_dir / "e8_residual_lgbm.txt"
     booster.save_model(str(model_txt_path))

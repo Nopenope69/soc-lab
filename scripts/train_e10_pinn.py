@@ -257,7 +257,7 @@ def train_pinn():
                 "best_val_mae_mv": best_val_mae,
             }
 
-    out_dir = repo_root / "deliverable"
+    out_dir = repo_root / "models" / "experimental"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "e10_pinn.pt"
     torch.save(best_weights, out_path)

@@ -38,11 +38,10 @@ _DEFAULT_R_INIT = float("0.0001")    # (10 mV)^2 nominal measurement noise
 _HALF = float("0.5")
 _RESIDUAL_TOL = float("1e-12")
 
-_DEFAULT_WEIGHTS_PATH = (
-    Path(__file__).resolve().parents[_PARENT_LEVEL]
-    / "deliverable"
-    / "e10_pinn.pt"
-)
+_REPO_ROOT = Path(__file__).resolve().parents[_PARENT_LEVEL]
+_DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "models" / "experimental" / "e10_pinn.pt"
+if not _DEFAULT_WEIGHTS_PATH.exists() and (_REPO_ROOT / "deliverable" / "e10_pinn.pt").exists():
+    _DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "deliverable" / "e10_pinn.pt"
 
 
 class E10PINNAEKFEstimator(E7V3CompositeFilter):

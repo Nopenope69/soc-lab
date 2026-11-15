@@ -39,11 +39,10 @@ _TEMP_MIN = float("15.0")
 _TEMP_MAX = float("35.0")
 _K_SIGMA = float("3.0")  # [PROPOSED]: Dynamic clamp factor tied to soc_std
 
-_DEFAULT_MODEL_PATH = (
-    Path(__file__).resolve().parents[_PARENT_LEVEL]
-    / "deliverable"
-    / "e8_residual_lgbm.txt"
-)
+_REPO_ROOT = Path(__file__).resolve().parents[_PARENT_LEVEL]
+_DEFAULT_MODEL_PATH = _REPO_ROOT / "models" / "experimental" / "e8_residual_lgbm.txt"
+if not _DEFAULT_MODEL_PATH.exists() and (_REPO_ROOT / "deliverable" / "e8_residual_lgbm.txt").exists():
+    _DEFAULT_MODEL_PATH = _REPO_ROOT / "deliverable" / "e8_residual_lgbm.txt"
 
 
 @dataclass(frozen=True)

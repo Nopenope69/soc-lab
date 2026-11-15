@@ -28,7 +28,9 @@ def run_scale_test():
     params = ParamSet.from_assumptions(assumptions, matched=True)
 
     est_guarded = E8ResidualLGBMEstimator(params)
-    booster_model_path = repo_root / "deliverable" / "e8_residual_lgbm.txt"
+    booster_model_path = repo_root / "models" / "experimental" / "e8_residual_lgbm.txt"
+    if not booster_model_path.exists():
+        booster_model_path = repo_root / "deliverable" / "e8_residual_lgbm.txt"
     raw_booster = lgb.Booster(model_file=str(booster_model_path))
 
     test_currents_a = [50.0, 75.0, 100.0, 125.0, 150.0]

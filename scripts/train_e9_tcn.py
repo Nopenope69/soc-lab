@@ -179,7 +179,7 @@ def train_tcn():
                 "window_size": 32,
             }
 
-    out_dir = repo_root / "deliverable"
+    out_dir = repo_root / "models" / "experimental"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "e9_tcn.pt"
     torch.save(best_weights, out_path)

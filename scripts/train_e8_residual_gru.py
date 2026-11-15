@@ -261,7 +261,7 @@ def train_model():
 
     print("\n=== 3. Training Residual GRU (20 Epochs) ===")
     best_val_loss = float("inf")
-    save_path = repo_root / "deliverable" / "e8_residual_gru.pt"
+    save_path = repo_root / "models" / "experimental" / "e8_residual_gru.pt"
     save_path.parent.mkdir(parents=True, exist_ok=True)
 
     for epoch in range(1, 21):

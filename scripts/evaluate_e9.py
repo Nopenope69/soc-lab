@@ -22,7 +22,10 @@ sys.path.insert(0, str(repo_root))
 
 # Warm up LightGBM booster before Torch imports to prevent macOS libomp symbol clash
 import lightgbm as lgb
-_warmup = lgb.Booster(model_file=str(repo_root / "deliverable" / "e8_residual_lgbm.txt"))
+_lgbm_model = repo_root / "models" / "experimental" / "e8_residual_lgbm.txt"
+if not _lgbm_model.exists():
+    _lgbm_model = repo_root / "deliverable" / "e8_residual_lgbm.txt"
+_warmup = lgb.Booster(model_file=str(_lgbm_model))
 import torch
 torch.set_num_threads(1)
 

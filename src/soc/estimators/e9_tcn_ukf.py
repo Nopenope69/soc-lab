@@ -50,11 +50,10 @@ _SOC_MAX = float("1.0")
 _H_MIN = float("-1.0")
 _H_MAX = float("1.0")
 
-_DEFAULT_WEIGHTS_PATH = (
-    Path(__file__).resolve().parents[_PARENT_LEVEL]
-    / "deliverable"
-    / "e9_tcn.pt"
-)
+_REPO_ROOT = Path(__file__).resolve().parents[_PARENT_LEVEL]
+_DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "models" / "experimental" / "e9_tcn.pt"
+if not _DEFAULT_WEIGHTS_PATH.exists() and (_REPO_ROOT / "deliverable" / "e9_tcn.pt").exists():
+    _DEFAULT_WEIGHTS_PATH = _REPO_ROOT / "deliverable" / "e9_tcn.pt"
 
 
 class E9TCNUKFEstimator(Estimator):
