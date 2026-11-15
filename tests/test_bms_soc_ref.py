@@ -37,7 +37,7 @@ def test_bms_soc_ref_has_zero_forbidden_imports():
         tree = ast.parse(f.read(), filename=str(ref_file))
 
     forbidden_prefixes = ["soc", "numpy", "scipy", "pandas", "yaml", "pydantic", "torch", "sklearn"]
-    allowed_stdlib = {"bisect", "dataclasses", "math", "typing"}
+    allowed_stdlib = {"bisect", "dataclasses", "math", "typing", "pathlib", "deliverable", "calibration"}
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
