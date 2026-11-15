@@ -1,3 +1,5 @@
+> **NOTICE:** Please see [FROZEN_SPEC_ERRATA.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet_v3/FROZEN_SPEC_ERRATA.md) for errata and clarifications regarding Coulombic efficiency, initial RC/hysteresis covariances, and combined configuration hashes.
+
 # Gauntlet V3 Freeze Specification (Stage V4)
 
 **Status**: FROZEN  
