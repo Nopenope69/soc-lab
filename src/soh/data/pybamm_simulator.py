@@ -11,7 +11,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 
-import pybamm
+try:
+    import pybamm
+except ImportError:
+    pybamm = None
 
 from soh.common.contracts import CycleRecord
 from soh.common.protocols import CellReferenceSpec, ReferenceProvenance, ReferenceProvenanceType
@@ -43,6 +46,8 @@ class PybammDegradationSimulator:
         config: PybammSimulationConfig,
     ) -> SohBatteryData:
         """Simulate cycling degradation for a single cell and return SohBatteryData."""
+        if pybamm is None:
+            raise ImportError("pybamm is required for PyBaMM degradation simulation.")
         model = pybamm.lithium_ion.SPM({"SEI": config.sei_model})
         param = pybamm.ParameterValues(config.chemistry_param)
 

@@ -24,7 +24,6 @@ from soc.data.calce_loader import get_raw_dir
 from soc.estimators.base import ParamSet
 from soc.estimators.e7v3 import E7V3CompositeFilter
 from soc.models.plant import Measurement
-from scripts.gauntlet_v3_scenarios import prepare_scenario_data_v3
 
 ref_file = repo_root / "deliverable" / "bms_soc_ref.py"
 
@@ -84,6 +83,7 @@ def test_bms_soc_ref_agreement_with_repo_e7v3_on_dst():
     - Max trajectory discrepancy: <= 0.05 pp (5.0e-4 fractional SOC) due to 25k-step float accumulation.
     """
     pytest.importorskip("pandas")
+    from scripts.gauntlet_v3_scenarios import prepare_scenario_data_v3
     raw_dir = get_raw_dir()
     if not raw_dir.exists():
         pytest.skip(f"Raw CALCE data path does not exist: {raw_dir}")
