@@ -16,6 +16,7 @@ import time
 from typing import get_type_hints
 import numpy as np
 import pytest
+pytest.importorskip("torch")
 
 from soc.assumptions.loader import load_assumptions
 from soc.estimators.base import ParamSet, SocEstimate, Estimator

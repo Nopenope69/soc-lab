@@ -1,10 +1,11 @@
-"""Estimator registry for E0 through E7.
+"""Estimator registry for E0 through E10.
 
-E0, E1, and E2 are fully implemented.
-E3 through E7 raise NotImplementedError at construction (scheduled for Phase 4).
+E0 through E6 and E7v3 are implemented research candidates/baselines.
+E7 is a legacy stub raising NotImplementedError.
+E8, E9, and E10 are experimental neural hybrid estimators requiring the 'neural' extra.
 """
 
-from typing import Any, Dict, List, Type
+from typing import Any, Callable, Dict, List, Type
 
 from soc.estimators.base import Estimator, ParamSet
 from soc.estimators.e0_coulomb import E0CoulombCounting
@@ -19,10 +20,6 @@ from soc.estimators.e4v2_rls import E4V2RLSEKF
 from soc.estimators.innovation_gating import D3InnovationGatedEKF
 from soc.estimators.e7v2 import E7V2CompositeFilter
 from soc.estimators.e7v3 import E7V3CompositeFilter
-from soc.estimators.e8_residual_gru import E8ResidualGRUEstimator
-from soc.estimators.e8_residual_lgbm import E8ResidualLGBMEstimator
-from soc.estimators.e9_tcn_ukf import E9TCNUKFEstimator
-from soc.estimators.e10_pinn_aekf import E10PINNAEKFEstimator
 
 
 class _StubEstimator(Estimator):
@@ -54,7 +51,78 @@ def _create_stub(name: str) -> Type[Estimator]:
     return Stub
 
 
-ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
+def _load_e8_gru() -> Type[Estimator]:
+    try:
+        from soc.estimators.e8_residual_gru import E8ResidualGRUEstimator
+        return E8ResidualGRUEstimator
+    except ImportError as e:
+        raise ImportError(
+            "Estimator E8 (GRU) requires the 'neural' extra (torch). Install with: pip install 'soc-lab[neural]'"
+        ) from e
+
+
+def _load_e8_lgbm() -> Type[Estimator]:
+    try:
+        from soc.estimators.e8_residual_lgbm import E8ResidualLGBMEstimator, lgb
+        if lgb is None:
+            raise ImportError("lightgbm is not available")
+        return E8ResidualLGBMEstimator
+    except ImportError as e:
+        raise ImportError(
+            "Estimator E8-LGBM requires the 'neural' extra (lightgbm). Install with: pip install 'soc-lab[neural]'"
+        ) from e
+
+
+def _load_e9() -> Type[Estimator]:
+    try:
+        from soc.estimators.e9_tcn_ukf import E9TCNUKFEstimator
+        return E9TCNUKFEstimator
+    except ImportError as e:
+        raise ImportError(
+            "Estimator E9 (TCN-UKF) requires the 'neural' extra (torch). Install with: pip install 'soc-lab[neural]'"
+        ) from e
+
+
+def _load_e10() -> Type[Estimator]:
+    try:
+        from soc.estimators.e10_pinn_aekf import E10PINNAEKFEstimator
+        return E10PINNAEKFEstimator
+    except ImportError as e:
+        raise ImportError(
+            "Estimator E10 (PINN-AEKF) requires the 'neural' extra (torch). Install with: pip install 'soc-lab[neural]'"
+        ) from e
+
+
+_LAZY_LOADERS: Dict[str, Callable[[], Type[Estimator]]] = {
+    "E8": _load_e8_gru,
+    "e8": _load_e8_gru,
+    "E8-LGBM": _load_e8_lgbm,
+    "e8-lgbm": _load_e8_lgbm,
+    "e8_lgbm": _load_e8_lgbm,
+    "E9": _load_e9,
+    "e9": _load_e9,
+    "e9_tcn_ukf": _load_e9,
+    "E10": _load_e10,
+    "e10": _load_e10,
+    "e10_pinn_aekf": _load_e10,
+}
+
+
+class _EstimatorRegistryDict(dict):
+    """Registry dict supporting on-demand lazy loading of neural estimators."""
+
+    def __getitem__(self, key: str) -> Type[Estimator]:
+        if key in _LAZY_LOADERS:
+            return _LAZY_LOADERS[key]()
+        return super().__getitem__(key)
+
+    def get(self, key: str, default=None) -> Any:
+        if key in _LAZY_LOADERS:
+            return _LAZY_LOADERS[key]()
+        return super().get(key, default)
+
+
+ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = _EstimatorRegistryDict({
     "E0": E0CoulombCounting,
     "E1": E1ExtendedKalmanFilter,
     "E2": E2EKFHysteresis,
@@ -63,30 +131,31 @@ ESTIMATOR_REGISTRY: Dict[str, Type[Estimator]] = {
     "E5": E5ObservabilityEKF,
     "E6": E6RBCDEKF,
     "E7": _create_stub("E7"),
-    "E8": E8ResidualGRUEstimator,
     "e5v4": E5V4ObservabilityEKF,
     "e4v2": E4V2RLSEKF,
     "d3": D3InnovationGatedEKF,
     "e7v2": E7V2CompositeFilter,
     "e7v3": E7V3CompositeFilter,
-    "e8": E8ResidualGRUEstimator,
-    "E8-LGBM": E8ResidualLGBMEstimator,
-    "e8-lgbm": E8ResidualLGBMEstimator,
-    "e8_lgbm": E8ResidualLGBMEstimator,
-    "E9": E9TCNUKFEstimator,
-    "e9": E9TCNUKFEstimator,
-    "e9_tcn_ukf": E9TCNUKFEstimator,
-    "E10": E10PINNAEKFEstimator,
-    "e10": E10PINNAEKFEstimator,
-    "e10_pinn_aekf": E10PINNAEKFEstimator,
-}
+    # Keys for lazy neural estimators registered to enable key inspection
+    "E8": None,  # type: ignore
+    "e8": None,  # type: ignore
+    "E8-LGBM": None,  # type: ignore
+    "e8-lgbm": None,  # type: ignore
+    "e8_lgbm": None,  # type: ignore
+    "E9": None,  # type: ignore
+    "e9": None,  # type: ignore
+    "e9_tcn_ukf": None,  # type: ignore
+    "E10": None,  # type: ignore
+    "e10": None,  # type: ignore
+    "e10_pinn_aekf": None,  # type: ignore
+})
 
 
 def get_estimator(name: str, params: ParamSet) -> Estimator:
     """Instantiate an estimator by identifier from the registry.
 
     Args:
-        name: Estimator name ('E0', 'E1', ..., 'E7').
+        name: Estimator name (e.g. 'E0', 'E1', 'E2', 'e7v3', 'E8').
         params: Estimator parameter package.
 
     Returns:
@@ -94,7 +163,8 @@ def get_estimator(name: str, params: ParamSet) -> Estimator:
 
     Raises:
         KeyError: If estimator name is not recognized.
-        NotImplementedError: For E3 through E7.
+        NotImplementedError: For E7 stub.
+        ImportError: If neural estimator requested without 'neural' extra.
     """
     if name not in ESTIMATOR_REGISTRY:
         raise KeyError(

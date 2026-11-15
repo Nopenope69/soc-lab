@@ -1,6 +1,8 @@
 """Unit tests for E0, E1, E2 estimators and registry."""
 
+import importlib.util
 import math
+import sys
 import pytest
 
 from soc.assumptions.loader import load_assumptions
@@ -35,13 +37,48 @@ def test_estimators_conform_to_protocol(params):
 
 def test_registry_instantiates_implemented_estimators(params):
     """Verify that get_estimator instantiates implemented estimators cleanly."""
-    for name in [
+    base_names = [
         "E0", "E1", "E2", "E3", "E4", "E5", "E6", "e5v4", "e4v2", "d3",
-        "e7v2", "e7v3", "E8", "e8", "E8-LGBM", "e8-lgbm", "e8_lgbm",
-        "E9", "e9", "e9_tcn_ukf", "E10", "e10", "e10_pinn_aekf"
-    ]:
+        "e7v2", "e7v3"
+    ]
+    for name in base_names:
         est = get_estimator(name, params)
         assert isinstance(est, Estimator)
+
+    # Neural estimators tested conditionally if dependencies installed
+    has_torch = importlib.util.find_spec("torch") is not None
+    has_lgbm = importlib.util.find_spec("lightgbm") is not None
+
+    if has_torch:
+        for name in ["E8", "e8", "E9", "e9", "e9_tcn_ukf", "E10", "e10", "e10_pinn_aekf"]:
+            est = get_estimator(name, params)
+            assert isinstance(est, Estimator)
+    if has_lgbm:
+        for name in ["E8-LGBM", "e8-lgbm", "e8_lgbm"]:
+            est = get_estimator(name, params)
+            assert isinstance(est, Estimator)
+
+
+def test_estimators_lazy_imports_without_torch_or_lightgbm(params, monkeypatch):
+    """Verify that with sys.modules['torch']=None and sys.modules['lightgbm']=None,
+    'import soc.estimators' and E7v3 construction succeed, while neural estimators raise
+    a clear ImportError naming the 'neural' extra.
+    """
+    for mod in ["soc.estimators.e8_residual_gru", "soc.estimators.e8_residual_lgbm", "soc.estimators.e9_tcn_ukf", "soc.estimators.e10_pinn_aekf"]:
+        monkeypatch.delitem(sys.modules, mod, raising=False)
+    monkeypatch.setitem(sys.modules, "torch", None)
+    monkeypatch.setitem(sys.modules, "lightgbm", None)
+
+    # E7v3 must succeed without torch or lightgbm
+    e7v3_est = get_estimator("e7v3", params)
+    assert isinstance(e7v3_est, Estimator)
+
+    # Requesting neural estimators must raise clear ImportError naming the extra
+    with pytest.raises(ImportError, match="'neural' extra"):
+        get_estimator("E8", params)
+
+    with pytest.raises(ImportError, match="'neural' extra"):
+        get_estimator("E8-LGBM", params)
 
 
 def test_registry_stubs_raise_not_implemented_error(params):
