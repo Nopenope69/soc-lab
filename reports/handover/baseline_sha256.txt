@@ -1,0 +1,20 @@
+=== FROZEN FILES SHA256 ===
+057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e  src/soc/estimators/e7v3.py
+33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da  src/soc/estimators/base.py
+3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375  configs/assumptions/profiles/calce_a123_v4.yaml
+a2c8929bf4959217e770a14dcdacf1dee761feefed1eb17909a16e99427feceb  scripts/gauntlet_v3_scenarios.py
+
+=== GIT STATUS ===
+On branch handover/hardening
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	reports/handover/
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+=== GIT RECENT COMMITS ===
+ad5ca13 fix: restore frozen base.py and use ResidualSocEstimate in E8
+c363bf1 feat(soh): complete SOH estimation subsystem through Phase 6.3 hardware qualification
+1597287 fix(e8): clean checkout reproducibility, strict split, input guard, dynamic clamp, and READY criteria
+233e76b feat: implement and benchmark 2025-2026 hybrid LFP SOC estimators (E8-GRU, E8-LGBM, E9-TCN-UKF, E10-PINN-AEKF)
+50c7d04 flexipod1: step6 final summary report
