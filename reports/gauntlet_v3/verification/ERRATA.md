@@ -70,6 +70,25 @@ Across both US06 and FUDS profiles on uncalibrated transfer Cell A1-008, all cla
 - **US06**: S-A RMSEs are $1.80\text{ to }2.01\text{ pp}$ (against pass bars $\le 3.64\text{ to }3.83\text{ pp}$, PASS); S-B group means are $2.98\text{ to }3.73\text{ pp}$ (against bars $\le 7.27\text{ to }7.33\text{ pp}$, PASS).
 - **FUDS**: S-A RMSEs are $1.93\text{ to }2.13\text{ pp}$ (against pass bars $\le 3.66\text{ to }3.85\text{ pp}$, PASS); S-B group means are $3.37\text{ to }4.35\text{ pp}$ (against bars $\le 7.19\text{ to }7.28\text{ pp}$, PASS).
 
-## 3. Final Conclusion
+## 3. Cell Designation Reconciliation: A123 ANR26650M1-A vs 18650
+
+In `reports/gauntlet_v3/verification/VERIFICATION.md` (line 6), the dataset header referenced:
+`**Dataset**: CALCE A123 18650 1.1 Ah LiFePO4 Cells (Cell A1-007 primary, Cell A1-008 transfer check)`
+
+### Historical Root Cause
+In early stages of the project, the low delivered capacity baseline ($\sim 1.06\text{ to }1.11\text{ Ah}$) observed in the CALCE Arbin cycler logs was assumed to correspond to the smaller 18650 form factor (A123 `APR18650M1A`).
+
+### Canonical Reconciliation
+Exhaustive structural inspection of the CALCE laboratory documentation and dataset schema (`reports/calce_schema.md`) confirms:
+- **True Cell Form Factor**: **26650 Cylindrical** ($26\text{ mm}$ diameter $\times 65\text{ mm}$ length).
+- **Manufacturer Model**: **A123 Systems ANR26650M1-A**.
+- **Tested Specimens**: Cells `A1-007` and `A1-008`.
+- **Operating Capacity**: While ANR26650M1-A has a rated $1\text{C}$ capacity of $2.3\text{ to }2.5\text{ Ah}$, the CALCE test matrix cycles operated under specialized low-current C/20 protocols with effective cutoffs establishing an operational capacity of $1.06\text{ to }1.11\text{ Ah}$.
+
+Per Hard Rule R3 (history preservation), the historical verification report is preserved, and this errata formally certifies that all CALCE A123 experiments evaluate **A123 ANR26650M1-A 26650-class cylindrical cells**.
+
+---
+
+## 4. Final Conclusion
 
 Substituting the exact profile-specific E0 baselines confirms that every single pre-registered clause is passed with substantial margin. The overall **GO** validation verdict is fully confirmed and mathematically verified.

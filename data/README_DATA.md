@@ -4,7 +4,7 @@
 
 - **Source**: Center for Advanced Life Cycle Engineering (CALCE), University of Maryland.
 - **License / Access**: Public academic research data. Available from CALCE Battery Research Group repository.
-- **Cell Chemistry**: 1.11 Ah nominal capacity $\text{LiFePO}_4$ (ANR26650M1-A / APR18650M1A-class cylindrical cell).
+- **Cell Chemistry & Geometry**: 1.11 Ah calibrated capacity $\text{LiFePO}_4$ / LFP (**A123 Systems ANR26650M1-A, 26650 cylindrical form-factor**). Note: Historically mislabeled in early documentation as 18650.
 - **Tested Cells**: Primary development cell `A1-007`; held-out transfer validation cell `A1-008`.
 - **Operating Temperatures**:
   - Gating decision temperatures: $20^\circ\text{C}, 25^\circ\text{C}, 30^\circ\text{C}, 40^\circ\text{C}, 50^\circ\text{C}$.

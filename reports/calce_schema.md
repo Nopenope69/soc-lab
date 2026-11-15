@@ -12,7 +12,7 @@ All 36 data workbooks across 8 temperatures ($-10^\circ\text{C}$, $0^\circ\text{
 ### 2.1 Cell Specifications
 - **Cell Chemistry:** Lithium Iron Phosphate ($\text{LiFePO}_4$ / LFP)
 - **Cell Form Factor:** Cylindrical 26650
-- **Manufacturer / Model:** A123 Systems APR18650m1 / 26650 (rated capacity $1.11\,\text{Ah}$, nominal voltage $3.3\,\text{V}$)
+- **Manufacturer / Model:** A123 Systems ANR26650M1-A (26650 form-factor, calibrated capacity $1.11\,\text{Ah}$, nominal voltage $3.3\,\text{V}$)
 - **Tested Cells:** Two distinct cell specimens tested in parallel across all temperatures:
   - Cell 1: `A1-007`
   - Cell 2: `A1-008`
