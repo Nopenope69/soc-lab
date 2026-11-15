@@ -1,0 +1,12 @@
+........................................................................ [ 21%]
+........................................................................ [ 42%]
+........................................................................ [ 64%]
+........................................................................ [ 85%]
+.................................................                        [100%]
+=============================== warnings summary ===============================
+tests/soh/test_ica_gpr_ekf.py::test_ica_gpr_ekf_fit_and_predict
+  /Users/tecbusiness/Desktop/random/SOC/.venv/lib/python3.14/site-packages/sklearn/gaussian_process/kernels.py:455: ConvergenceWarning: The optimal value found for dimension 0 of parameter k1__k2__length_scale is close to the specified upper bound 100.0. Increasing the bound and calling fit again may find a better value.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+337 passed, 1 warning in 386.89s (0:06:26)
