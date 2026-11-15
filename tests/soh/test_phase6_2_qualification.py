@@ -16,6 +16,8 @@ import sys
 import numpy as np
 import pytest
 
+pytest.importorskip("sklearn")
+
 from soh.common.contracts import (
     CycleRecord,
     EstimationStatus,
