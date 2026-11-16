@@ -361,13 +361,8 @@
     "justification": "Real data registry metadata and buffer size constants",
     "allowed_calls": [
       "float(\"1.0636\")",
-      "float(\"1.1\")",
-      "float(\"1.11\")",
-      "float(\"1.2\")",
       "float(\"105.0\")",
       "float(\"280.0\")",
-      "float(\"30.0\")",
-      "int(\"5\")",
       "int(\"65536\")"
     ]
   }

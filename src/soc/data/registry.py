@@ -458,11 +458,11 @@ def load_dataset_with_manifest_check(
         valid, missing, corrupt = manifest.audit_dataset_directory(dataset_path)
         if corrupt:
             raise ChecksumMismatchError(
-                f"Dataset '{dataset_id}' has {len(corrupt)} corrupt files failing SHA-256 verification: {corrupt[:int('5')]}."
+                f"Dataset '{dataset_id}' has {len(corrupt)} corrupt files failing SHA-256 verification: {corrupt[:2]}."
             )
         if missing:
             raise DatasetMissingError(
-                f"Dataset '{dataset_id}' has {len(missing)} missing files from manifest: {missing[:int('5')]}."
+                f"Dataset '{dataset_id}' has {len(missing)} missing files from manifest: {missing[:2]}."
             )
 
     return {
