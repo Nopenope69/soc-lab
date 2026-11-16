@@ -25,6 +25,12 @@ class EstimationStatus(str, Enum):
 class QualificationStatus(str, Enum):
     """Independent qualification status for battery health estimates."""
 
+    # Standard qualification tiers (R5 / Hardening 2):
+    SIM_VALIDATED = "SIM_VALIDATED"              # Validated on simulation / synthetic data models
+    LAB_VALIDATED = "LAB_VALIDATED"              # Validated against real aged cells from hash-manifested files
+    FIELD_VALIDATED = "FIELD_VALIDATED"          # Validated on in-service operating field data
+
+    # Historical / compatibility tiers:
     QUALIFIED = "QUALIFIED"                      # Validated against independent reference ground truth
     PROVISIONALLY_QUALIFIED = "PROVISIONALLY_QUALIFIED"  # Validated under restricted operating conditions
     UNVALIDATED = "UNVALIDATED"                  # Lacks standardized reference measurement or unproven
@@ -102,10 +108,10 @@ class SOHState:
         if self.qualification_status_r != QualificationStatus.UNVALIDATED and self.qual_r_point == QualificationStatus.UNVALIDATED:
             self.qual_r_point = self.qualification_status_r
 
-        self.is_c_point_qualified = (self.qual_c_point == QualificationStatus.QUALIFIED)
-        self.is_c_uncertainty_qualified = (self.qual_c_uncertainty == QualificationStatus.QUALIFIED)
-        self.is_r_point_qualified = (self.qual_r_point == QualificationStatus.QUALIFIED)
-        self.is_r_uncertainty_qualified = (self.qual_r_uncertainty == QualificationStatus.QUALIFIED)
+        self.is_c_point_qualified = (self.qual_c_point in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED))
+        self.is_c_uncertainty_qualified = (self.qual_c_uncertainty in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED))
+        self.is_r_point_qualified = (self.qual_r_point in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED))
+        self.is_r_uncertainty_qualified = (self.qual_r_uncertainty in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED))
 
         self.is_c_qualified = self.is_c_point_qualified
         self.is_r_qualified = self.is_r_point_qualified
@@ -170,19 +176,19 @@ class SohEstimate:
 
     @property
     def is_c_point_qualified(self) -> bool:
-        return self.qual_c_point == QualificationStatus.QUALIFIED
+        return self.qual_c_point in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED)
 
     @property
     def is_c_uncertainty_qualified(self) -> bool:
-        return self.qual_c_uncertainty == QualificationStatus.QUALIFIED
+        return self.qual_c_uncertainty in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED)
 
     @property
     def is_r_point_qualified(self) -> bool:
-        return self.qual_r_point == QualificationStatus.QUALIFIED
+        return self.qual_r_point in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED)
 
     @property
     def is_r_uncertainty_qualified(self) -> bool:
-        return self.qual_r_uncertainty == QualificationStatus.QUALIFIED
+        return self.qual_r_uncertainty in (QualificationStatus.QUALIFIED, QualificationStatus.LAB_VALIDATED, QualificationStatus.FIELD_VALIDATED)
 
     @property
     def is_c_qualified(self) -> bool:
