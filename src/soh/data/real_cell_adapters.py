@@ -2,7 +2,7 @@
 
 Maintains strict provenance metadata and reference qualification across:
 1. LG M50T (21700 NMC-811 / Graphite-Si, 5.0 Ah)
-2. CALCE A123 (18650 LFP / Graphite, 1.1 Ah)
+2. CALCE A123 (A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified)
 3. Oxford Battery Degradation Dataset (Kokam Pouch NMC-LCO, 0.74 Ah)
 4. MIT / Stanford Fast-Charging Dataset (Severson et al. 2019, A123 LFP, 1.1 Ah)
 

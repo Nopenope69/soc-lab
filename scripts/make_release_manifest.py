@@ -105,7 +105,7 @@ def main():
         "dataset_manifests": dataset_manifest,
         "test_results_summary": tests_summary,
         "known_limitations": [
-            "Validated operating envelope is strictly 20°C to 50°C on CALCE A123 26650 LFP cells.",
+            "Validated operating envelope is strictly 20°C to 50°C on CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified.",
             "Sub-zero and cold-temperature (< 15°C) dynamics uncharacterized; do not deploy in freezing environments.",
             "Capacity fade and battery degradation (SOH) are unmodeled; nominal capacity is fixed at calibrated value.",
             "Extended flat plateau relaxation requires low-noise current measurement (< 50 mA) for reliable OCV anchoring.",

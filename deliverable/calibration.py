@@ -204,7 +204,7 @@ class CellCalibration:
 
 
 def default_calce_calibration() -> CellCalibration:
-    """Return default validated calibration for CALCE A123 26650 cells."""
+    """Return default validated calibration for CALCE A123 LiFePO4 cells (measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified)."""
     json_path = Path(__file__).resolve().parent / "calibrations" / "calce_a123_v4.json"
     if json_path.exists():
         return CellCalibration.from_json(json_path)

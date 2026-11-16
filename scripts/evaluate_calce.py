@@ -487,7 +487,7 @@ def generate_markdown_report(
         return "PASS" if p else "FAIL"
 
     lines = []
-    lines.append("# CALCE A123 1.11 Ah LFP (ANR26650M1-A 26650-class) Real-Data Benchmark Verdict")
+    lines.append("# CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified Real-Data Benchmark Verdict")
     lines.append("")
     lines.append(f"**Overall Verdict: {status_badge(overall_pass)}**")
     lines.append("")
@@ -514,7 +514,7 @@ def generate_markdown_report(
     lines.append("")
 
     lines.append("## 2. Experimental Scope & Ground Truth Accounting")
-    lines.append("- **Specimens:** A123 1.11 Ah LFP (ANR26650M1-A 26650-class) cells (`A1-007` and `A1-008`).")
+    lines.append("- **Specimens:** A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified (`A1-007` and `A1-008`).")
     lines.append("- **Gating Temperatures (enforced by pass rules):** 20, 25, 30, 40, and 50 C.")
     lines.append("- **Informational Temperatures (reported only, excluded from pass rules):** -10, 0, and 10 C.")
     lines.append("- **Profiles:** DST (Step 8, used for fitting and tuning), US06 (Step 16, sealed test), FUDS (Step 24, sealed test).")

@@ -8,7 +8,7 @@ plant:
     status: "placeholder"
     bounds: [0.1, 500.0]
     note: "Placeholder nominal capacity for 100Ah prismatic LFP cell"
-    reason: "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 26650 delivering 0.4-1.1 Ah at sub-zero temperatures)."
+    reason: "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified delivering 0.4-1.1 Ah at sub-zero temperatures)."
   initial_soc:
     value: 0.80
     unit: "fraction"
@@ -51,7 +51,7 @@ plant:
     status: "placeholder"
     bounds: [0.0001, 0.50]
     note: "Ohmic resistance over temperature"
-    reason: "Support small cylindrical cells (e.g. A123 26650 with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm)."
+    reason: "Support small cylindrical cells (e.g. A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm)."
   r1_table_ohm:
     value:
       "15.0": 0.0008

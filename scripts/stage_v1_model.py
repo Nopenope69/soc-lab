@@ -291,7 +291,7 @@ def write_profile_yaml(fit_results_list, output_path: Path, cell_id: str, note_s
                 "unit": "Ah",
                 "status": "measured",
                 "bounds": [0.1, 500.0],
-                "note": f"Measured C/20 capacity for A123 1.11 Ah LFP (APR18650M1A-class) cell {cell_id} at 25C",
+                "note": f"Measured C/20 capacity for A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified cell {cell_id} at 25C",
                 "source": f"CALCE A123 dataset cell {cell_id}",
             },
             "temperatures_c": {

@@ -524,7 +524,7 @@ In accordance with Phase 4.1 and Phase 5 audit mandates, real-cell datasets carr
    - *Status:* Validated Electrochemical Reference.
    - *Reference BOL:* Pristine simulated acceptance test under exact standardized RMP (25°C, 0.5C CC-CV).
    - *Resistance Health:* Verified against physics-based Overpotential and SEI thickness growth equations.
-2. **CALCE A123 (APR18650M1A LFP):**
+2. **CALCE A123 (A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified):**
    - *Status:* Qualified Laboratory Characterization Baseline.
    - *Audit Determination:* Cells were delivered post-formation and shipping with unknown calendar aging. Initial C/20 cycles are **disqualified from pristine factory BOL acceptance**.
    - *Resistance Ground Truth:* Cycler load perturbation delta-V readings are **NOT validated standardized DCIR HPPC measurements**. CALCE resistance ground truth is treated as unvalidated.

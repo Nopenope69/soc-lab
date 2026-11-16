@@ -282,7 +282,7 @@ def generate_markdown_report(results: Dict[str, Any]) -> str:
 
     md.append("---\n")
     md.append("## 3. Comparison with CALCE A123 Baseline\n")
-    md.append("| Metric | CALCE A123 (Cylindrical 26650) | FlexiPod Prismatic/Large Pouch Cells | Algorithm Implication |")
+    md.append("| Metric | CALCE A123 (LiFePO4, format unverified) | FlexiPod Prismatic/Large Pouch Cells | Algorithm Implication |")
     md.append("|:---|:---|:---|:---|")
     md.append("| **Hysteresis Half-Gap $M$** | $20.0\\text{ to }27.0\\text{ mV}$ | **$9.58\\text{ to }10.62\\text{ mV}$** | Hysteresis voltage offset is ~50% smaller; major polarization is dynamic $R_0 + 2RC$, not static hysteresis |")
     md.append("| **Central Plateau Slope (35-60%)** | $0.50\\text{ to }1.20\\text{ mV/pp}$ | **$0.12\\text{ to }0.25\\text{ mV/pp}$** | Slope is 3x to 5x flatter than CALCE; voltage contains near-zero SOC observability |")

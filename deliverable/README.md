@@ -12,7 +12,7 @@
 2. **`calibration.py`**:
    Strictly validated, stdlib-only cell calibration contract defining `CellCalibration`, complete with monotonicity verification, dimension assertions, and SHA-256 integrity checks.
 3. **`calibrations/`**:
-   - `calce_a123_v4.json`: Complete 2D OCV, 2RC impedance tables, and gating thresholds for CALCE A123 26650 LFP cells (`DEVELOPMENT_VALIDATED_CALCE_20_50C`).
+   - `calce_a123_v4.json`: Complete 2D OCV, 2RC impedance tables, and gating thresholds for CALCE A123 LiFePO4 cells (measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified) (`DEVELOPMENT_VALIDATED_CALCE_20_50C`).
    - `flexipod_100ah_v1.json`: Extracted profile for FlexiPod 100 Ah cells (`NOT_VALIDATED: open-loop model gate FAIL`).
 4. **`golden/`**:
    Deterministic verification vectors (`golden_synthetic_dynamic.csv`, `golden_synthetic_dropouts.csv`) providing bit-level regression tests for porting to C/Rust or target embedded BMS platforms.

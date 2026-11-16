@@ -601,7 +601,7 @@ Every dataset in the platform has been audited and cataloged with immutable meta
 | Dataset Identifier | Category | Physical Cell Chemistry & Form Factor | Ground Truth Protocol | BOL Status | DCIR Resistance Status |
 | :--- | :---: | :--- | :--- | :---: | :---: |
 | **LG_M50T_Chen2020** | `SIMULATION` | NMC-811 / Graphite-Si (21700 Cylindrical) | PyBaMM DFN model integration (0.5C CC-CV at 25°C to 2.5V) | Pristine Factory BOL | **Verified** (Electrochemical Continuum Model) |
-| **CALCE_A123_APR18650M1A** | `EXPERIMENTAL` | LiFePO4 (LFP) / Graphite (18650 Cylindrical) | Arbin Cycler C/20 characterization cycle (2.0V – 3.6V at 25°C) | **Non-Pristine** (Post-shipping baseline) | **Unvalidated** (Load perturbation $\ne$ Standardized HPPC) |
+| **CALCE_A123_UNVERIFIED** | `SIMULATION` | A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified | Arbin Cycler C/20 characterization cycle (2.0V – 3.6V at 25°C) | **Non-Pristine** (Post-shipping baseline) | **Unvalidated** (Load perturbation $\ne$ Standardized HPPC) |
 | **Oxford_Battery_Degradation** | `EXPERIMENTAL` | NMC-LCO blend / Graphite (740 mAh Pouch) | Temperature chamber 1C characterization at 40°C | **Non-Pristine** (Lab baseline) | **Qualified** (EIS frequency sweep with ECM fitting) |
 | **MIT_Stanford_FastCharging** | `EXPERIMENTAL` | LiFePO4 (LFP) / Graphite (A123 APR18650M1A) | High-rate fast-charging characterization (Severson et al. 2019) | **Non-Pristine** (Cycle 1 baseline) | **Qualified** (High-rate $\Delta V / \Delta I$ discharge drop) |
 

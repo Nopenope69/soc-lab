@@ -9,7 +9,7 @@
 
 ## 1. Operating Envelope & Cell Identification
 
-- **Cell Chemistry & Geometry**: Lithium Iron Phosphate ($\text{LiFePO}_4$ / LFP) cylindrical cells: **A123 Systems ANR26650M1-A** (26650 form-factor, $26\text{ mm}$ diameter $\times 65\text{ mm}$ length, nominal $2.3\text{ Ah}$ rated at 1C, calibrated C/20 baseline $\sim 1.064\text{ to }1.081\text{ Ah}$ in test protocols).
+- **Cell Chemistry & Geometry**: A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified.
 - **Certified Operating Temperature Envelope**: **20 °C to 50 °C** (validated across DST, US06, and FUDS dynamic driving cycles on CALCE A123 cells A1-007 and A1-008).
 - **Application Domain**: Stationary BESS and automotive auxiliary / micro-hybrid battery packs subjected to partial-SOC dynamic cycling.
 - **Cold Temperature Advisory (< 15 °C)**: Evaluated at 10 °C, 0 °C, and -7.4 °C. No divergence or state explosion occurs, but convergence rate degrades due to a $> 4\times$ ohmic resistance surge and severe hysteresis broadening. Cold deployment requires an empirical sub-zero calibration matrix.

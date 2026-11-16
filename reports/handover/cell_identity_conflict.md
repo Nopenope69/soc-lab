@@ -79,3 +79,62 @@ To guarantee scientific rigor, benchmark integrity, and zero fabrication:
 3. **Registry and Manifest Description:**
    `A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format UNVERIFIED`
 4. **Frozen Files Preserved:** Frozen files (`calce_a123_v4.yaml`, estimator baselines) retain historical references without modification to guarantee absolute determinism and reproducible regression checks.
+
+---
+
+## 6. Errata Note: Historical Reports Coverage
+
+> [!NOTE]
+> **ERRATUM — Historical CALCE Cell Identity Designations**
+>
+> Historical test and evaluation reports in `reports/` and `reports/soh/`—including:
+> - `reports/soh_phase3_ica_gpr_ekf_report.md`
+> - `reports/soh_phase4_1_audit_report.md`
+> - `reports/soh_phase5_1_pinn_audit_report.md`
+> - `reports/soh_phase6_1_production_qualification_report.md`
+> - `reports/soh_phase6_shadow_validation_report.md`
+> - `reports/handover/float32_sensitivity.md`
+> - `reports/gauntlet_v3/*`
+>
+> contain historical assertions referring to the CALCE A123 cells as "26650 cylindrical", "ANR26650M1-A", "18650 cylindrical", or "APR18650M1A". Per the frozen baseline preservation rules, these historical artifacts are kept unmodified. All future development, documentation, and production qualifications designate these cells strictly as:
+>
+> **"A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified"**.
+
+---
+
+## 7. Inventory of Harmonized Repository Files (F1)
+
+The following active files across configs, source code, scripts, and documentation were updated to replace unverified format assertions with the standardized description:
+
+1. **Configurations & Profiles:**
+   - `configs/assumptions/base.yaml`
+   - `configs/assumptions/profiles/calce_a123.yaml`
+   - `configs/assumptions/profiles/calce_a123_v2.yaml`
+   - `configs/assumptions/profiles/calce_a123_v2_m0.yaml`
+   - `configs/assumptions/profiles/calce_a123_v3.yaml`
+   - `configs/assumptions/profiles/calce_a123_a1008.yaml`
+   - `configs/assumptions/profiles/calce_a123_a1008_v2.yaml`
+   - `configs/assumptions/profiles/calce_a123_a1008_v2_m0.yaml`
+2. **Source Code & Deliverables:**
+   - `src/soc/data/calce_loader.py`
+   - `src/soh/data/calce_aging.py`
+   - `src/soh/data/real_cell_adapters.py`
+   - `deliverable/README.md`
+   - `deliverable/calibration.py`
+3. **Scripts & Pipeline Tools:**
+   - `scripts/evaluate_calce.py`
+   - `scripts/flexipod/ocv_hysteresis_fp.py`
+   - `scripts/gauntlet_stage1.py`
+   - `scripts/generate_final_documents.py`
+   - `scripts/identify_calce_params.py`
+   - `scripts/identify_calce_params_v2.py`
+   - `scripts/make_release_manifest.py`
+   - `scripts/run_soh_phase6_1_audit.py`
+   - `scripts/run_soh_phase6_shadow_validation.py`
+   - `scripts/stage_v1_model.py`
+4. **Documentation:**
+   - `README.md`
+   - `data/README_DATA.md`
+   - `docs/ALGORITHM_SPEC.md`
+   - `PLAN_ADAPTER.md`
+
