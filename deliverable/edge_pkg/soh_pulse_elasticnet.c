@@ -8,6 +8,12 @@
 
 #include "soh_pulse_elasticnet.h"
 
+/* PLACEHOLDER COEFFICIENTS: Unvalidated on physical cells.
+ * Single source of truth is exported from Python PulseElasticNetEstimator.export_c_header().
+ * Qualification status is strictly SOH_QUAL_UNQUALIFIED.
+ */
+#define SOH_PULSE_COEFFICIENTS_PLACEHOLDER 1
+
 /* Standard Scaler Means for 11 features:
    [r0_ohm, r1_ohm, c1_f, r2_ohm, c2_f, r_total_ohm, tau1_s, tau2_s, i_amplitude_a, temp_c, v_initial_v] */
 static const float SCALER_MEAN[SOH_PULSE_NUM_FEATURES] = {
