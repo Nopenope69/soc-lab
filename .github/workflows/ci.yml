@@ -58,14 +58,17 @@ jobs:
   lint-imports:
     name: Lint & Import Hygiene Check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install core + dev
         run: |
@@ -74,6 +77,10 @@ jobs:
       - name: Run AST hygiene scanner
         run: |
           pytest tests/test_no_hardcoded_constants.py -v
+
+      - name: Verify all package modules import cleanly via pkgutil
+        run: |
+          pytest tests/test_import_all_modules.py -v
 
       - name: Verify deliverable stdlib isolation
         run: |
