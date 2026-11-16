@@ -145,6 +145,8 @@ class GruSohEstimator(SohEstimator):
 
         self.model = BatteryDegradationGRU(self.network_config)
         self.is_fitted = False
+        self.n_samples_c: int = 0
+        self.n_samples_r: int = 0
         self.conformal_scale_c: float = 1.96
         self.conformal_scale_r: float = 1.96
         self.history_buffer: List[np.ndarray] = []
@@ -174,12 +176,14 @@ class GruSohEstimator(SohEstimator):
         sequences: List[np.ndarray] = []
         yc_list: List[float] = []
         yr_list: List[float] = []
+        r_mask_list: List[float] = []
 
         for cid, bdata in dataset.batteries.items():
             nom_cap = bdata.spec.nominal_capacity_ah
             feats = []
             targets_c = []
             targets_r = []
+            has_r = []
 
             for cycle in bdata.cycles:
                 if cycle.soh_c_bol_true is None:
@@ -189,8 +193,13 @@ class GruSohEstimator(SohEstimator):
                     continue
                 feats.append(feat)
                 targets_c.append(float(cycle.soh_c_bol_true))
-                true_r = float(cycle.soh_r_bol_true) if cycle.soh_r_bol_true is not None else 1.0
-                targets_r.append(true_r)
+                if cycle.soh_r_bol_true is not None:
+                    targets_r.append(float(cycle.soh_r_bol_true))
+                    has_r.append(True)
+                else:
+                    # Exclude missing SOH_R labels from SOH_R loss
+                    targets_r.append(0.0)
+                    has_r.append(False)
 
             n_cycles = len(feats)
             if n_cycles == 0:
@@ -208,17 +217,23 @@ class GruSohEstimator(SohEstimator):
                 sequences.append(window)
                 yc_list.append(targets_c[i])
                 yr_list.append(targets_r[i])
+                r_mask_list.append(1.0 if has_r[i] else 0.0)
 
         if len(sequences) < 2:
             raise ValueError(f"Insufficient sequence cycles for GRU: {len(sequences)}")
 
+        self.n_samples_c = len(yc_list)
+        self.n_samples_r = int(sum(r_mask_list))
+
         x_seq_arr = np.array(sequences, dtype=np.float32)
         yc_arr = np.array(yc_list, dtype=np.float32).reshape(-1, 1)
         yr_arr = np.array(yr_list, dtype=np.float32).reshape(-1, 1)
+        rmask_arr = np.array(r_mask_list, dtype=np.float32).reshape(-1, 1)
 
         x_tensor = torch.tensor(x_seq_arr, dtype=torch.float32)
         yc_tensor = torch.tensor(yc_arr, dtype=torch.float32)
         yr_tensor = torch.tensor(yr_arr, dtype=torch.float32)
+        rmask_tensor = torch.tensor(rmask_arr, dtype=torch.float32)
 
         optimizer = optim.AdamW(
             self.model.parameters(),
@@ -237,18 +252,24 @@ class GruSohEstimator(SohEstimator):
                 bx = x_tensor[b_idx]
                 byc = yc_tensor[b_idx]
                 byr = yr_tensor[b_idx]
+                bmask_r = rmask_tensor[b_idx]
 
                 optimizer.zero_grad()
                 sc, sr, lv_c, lv_r, _ = self.model(bx)
 
-                # Anchored heteroscedastic loss
+                # Anchored heteroscedastic loss for SOH_C
                 diff_c = (byc - sc) ** 2
                 clamped_lvc = torch.clamp(lv_c, min=-12.0, max=0.0)
                 loss_c = torch.mean(diff_c + 0.02 * (0.5 * torch.exp(-clamped_lvc) * diff_c + 0.5 * clamped_lvc))
 
-                diff_r = (byr - sr) ** 2
-                clamped_lvr = torch.clamp(lv_r, min=-12.0, max=0.0)
-                loss_r = torch.mean(diff_r + 0.02 * (0.5 * torch.exp(-clamped_lvr) * diff_r + 0.5 * clamped_lvr))
+                # Masked heteroscedastic loss for SOH_R (exclude missing labels)
+                if bmask_r.sum() > 0:
+                    diff_r = (byr - sr) ** 2
+                    clamped_lvr = torch.clamp(lv_r, min=-12.0, max=0.0)
+                    loss_r_elem = diff_r + 0.02 * (0.5 * torch.exp(-clamped_lvr) * diff_r + 0.5 * clamped_lvr)
+                    loss_r = torch.sum(loss_r_elem * bmask_r) / torch.clamp(bmask_r.sum(), min=1.0)
+                else:
+                    loss_r = 0.0 * torch.sum(sr)
 
                 loss = loss_c + loss_r
                 loss.backward()

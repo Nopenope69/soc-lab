@@ -65,6 +65,9 @@ class PulseElasticNetEstimator(SohEstimator, SupportsEmbeddedExport):
         self.model_r = ElasticNet(alpha=self.alpha_r, l1_ratio=self.l1_ratio_r, random_state=42)
 
         self.is_fitted = False
+        self._is_r_fitted: bool = False
+        self.n_samples_c: int = 0
+        self.n_samples_r: int = 0
         self._sigma2_res_c: float = 1e-4
         self._sigma2_res_r: float = 1e-4
         self._xtx_inv_c: Optional[np.ndarray] = None
@@ -93,15 +96,13 @@ class PulseElasticNetEstimator(SohEstimator, SupportsEmbeddedExport):
 
     def fit(self, dataset: SohDataset) -> "PulseElasticNetEstimator":
         """Extract pulse ECM features across training cohort and fit ElasticNet models."""
-        x_list: List[np.ndarray] = []
+        x_c_list: List[np.ndarray] = []
         y_c_list: List[float] = []
+        x_r_list: List[np.ndarray] = []
         y_r_list: List[float] = []
 
         for cid, bdata in dataset.batteries.items():
             for cycle in bdata.cycles:
-                if cycle.soh_c_bol_true is None:
-                    continue
-
                 pulses = self.segmenter.detect_pulses(
                     cycle.time_s,
                     cycle.voltage_v,
@@ -114,36 +115,50 @@ class PulseElasticNetEstimator(SohEstimator, SupportsEmbeddedExport):
                     params, quality = self.fitter.fit_pulse(p)
                     if quality.is_eligible and params is not None:
                         feats = self.extract_features_from_ecm(params, p)
-                        x_list.append(feats)
-                        y_c_list.append(cycle.soh_c_bol_true)
-                        soh_r_val = cycle.soh_r_bol_true if cycle.soh_r_bol_true is not None else 1.0
-                        y_r_list.append(soh_r_val)
+                        if cycle.soh_c_bol_true is not None:
+                            x_c_list.append(feats)
+                            y_c_list.append(float(cycle.soh_c_bol_true))
+                        # Never default SOH_R to 1.0; exclude missing labels from SOH_R training
+                        if cycle.soh_r_bol_true is not None:
+                            x_r_list.append(feats)
+                            y_r_list.append(float(cycle.soh_r_bol_true))
 
-        if len(x_list) < 5:
-            raise ValueError(f"Insufficient eligible pulse samples (found {len(x_list)}, need >= 5).")
+        self.n_samples_c = len(x_c_list)
+        self.n_samples_r = len(x_r_list)
 
-        x_arr = np.array(x_list)
+        if self.n_samples_c < 5:
+            raise ValueError(f"Insufficient eligible pulse samples for SOH_C (found {self.n_samples_c}, need >= 5).")
+
+        x_c_arr = np.array(x_c_list)
         y_c_arr = np.array(y_c_list)
-        y_r_arr = np.array(y_r_list)
 
         # Scale features strictly on training data
-        x_scaled = self.scaler.fit_transform(x_arr)
+        x_c_scaled = self.scaler.fit_transform(x_c_arr)
+        self.model_c.fit(x_c_scaled, y_c_arr)
+        preds_c = self.model_c.predict(x_c_scaled)
 
-        self.model_c.fit(x_scaled, y_c_arr)
-        self.model_r.fit(x_scaled, y_r_arr)
+        n_samples_c, n_features = x_c_scaled.shape
+        dof_c = max(1, n_samples_c - n_features)
+        self._sigma2_res_c = float(np.sum((y_c_arr - preds_c) ** 2) / dof_c)
+        xtx_c = x_c_scaled.T @ x_c_scaled
+        self._xtx_inv_c = np.linalg.pinv(xtx_c + self.alpha_c * np.eye(n_features))
 
-        preds_c = self.model_c.predict(x_scaled)
-        preds_r = self.model_r.predict(x_scaled)
-
-        n_samples, n_features = x_scaled.shape
-        dof = max(1, n_samples - n_features)
-
-        self._sigma2_res_c = float(np.sum((y_c_arr - preds_c) ** 2) / dof)
-        self._sigma2_res_r = float(np.sum((y_r_arr - preds_r) ** 2) / dof)
-
-        xtx = x_scaled.T @ x_scaled
-        self._xtx_inv_c = np.linalg.pinv(xtx + self.alpha_c * np.eye(n_features))
-        self._xtx_inv_r = np.linalg.pinv(xtx + self.alpha_r * np.eye(n_features))
+        if self.n_samples_r >= 5:
+            x_r_arr = np.array(x_r_list)
+            y_r_arr = np.array(y_r_list)
+            x_r_scaled = self.scaler.transform(x_r_arr)
+            self.model_r.fit(x_r_scaled, y_r_arr)
+            preds_r = self.model_r.predict(x_r_scaled)
+            n_samples_r = len(x_r_scaled)
+            dof_r = max(1, n_samples_r - n_features)
+            self._sigma2_res_r = float(np.sum((y_r_arr - preds_r) ** 2) / dof_r)
+            xtx_r = x_r_scaled.T @ x_r_scaled
+            self._xtx_inv_r = np.linalg.pinv(xtx_r + self.alpha_r * np.eye(n_features))
+            self._is_r_fitted = True
+        else:
+            self._is_r_fitted = False
+            self._sigma2_res_r = 1e-4
+            self._xtx_inv_r = None
 
         self.is_fitted = True
         return self
@@ -164,19 +179,21 @@ class PulseElasticNetEstimator(SohEstimator, SupportsEmbeddedExport):
         x_scaled = self.scaler.transform(raw_x.reshape(1, -1))
 
         pred_c = float(self.model_c.predict(x_scaled)[0])
-        pred_r = float(self.model_r.predict(x_scaled)[0])
-
         xtx_c = self._xtx_inv_c if self._xtx_inv_c is not None else np.eye(11)
-        xtx_r = self._xtx_inv_r if self._xtx_inv_r is not None else np.eye(11)
-
         var_c = self._sigma2_res_c * (1.0 + float((x_scaled @ xtx_c @ x_scaled.T).item()))
-        var_r = self._sigma2_res_r * (1.0 + float((x_scaled @ xtx_r @ x_scaled.T).item()))
-
         std_c = float(np.sqrt(max(1e-8, var_c)))
-        std_r = float(np.sqrt(max(1e-8, var_r)))
-
         ci_95_c = (pred_c - 1.96 * std_c, pred_c + 1.96 * std_c)
-        ci_95_r = (pred_r - 1.96 * std_r, pred_r + 1.96 * std_r)
+
+        if self._is_r_fitted:
+            pred_r = float(self.model_r.predict(x_scaled)[0])
+            xtx_r = self._xtx_inv_r if self._xtx_inv_r is not None else np.eye(11)
+            var_r = self._sigma2_res_r * (1.0 + float((x_scaled @ xtx_r @ x_scaled.T).item()))
+            std_r = float(np.sqrt(max(1e-8, var_r)))
+            ci_95_r = (pred_r - 1.96 * std_r, pred_r + 1.96 * std_r)
+        else:
+            pred_r = None
+            var_r = None
+            ci_95_r = None
 
         feats_dict = {name: float(val) for name, val in zip(self.FEATURE_NAMES, raw_x)}
 
