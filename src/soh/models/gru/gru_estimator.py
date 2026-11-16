@@ -149,7 +149,16 @@ class GruSohEstimator(SohEstimator):
         self.n_samples_r: int = 0
         self.conformal_scale_c: float = 1.96
         self.conformal_scale_r: float = 1.96
+        self.history_by_cell: Dict[str, List[np.ndarray]] = {}
         self.history_buffer: List[np.ndarray] = []
+
+    def reset(self, cell_id: Optional[str] = None) -> None:
+        """Reset sequence history buffer for a specific cell or all cells."""
+        if cell_id is not None:
+            self.history_by_cell.pop(cell_id, None)
+        else:
+            self.history_by_cell.clear()
+            self.history_buffer.clear()
 
     def _extract_cycle_features(
         self, cycle: CycleRecord, spec_nominal_capacity_ah: float = 2.30
@@ -293,11 +302,11 @@ class GruSohEstimator(SohEstimator):
         scores_r: List[float] = []
 
         for cid, bdata in calibration_dataset.batteries.items():
-            self.history_buffer = []  # Reset cell sequence buffer
+            self.reset(cid)  # Reset cell sequence buffer
             for cycle in bdata.cycles:
                 if cycle.soh_c_bol_true is None:
                     continue
-                est = self.predict_cycle(cycle)
+                est = self.predict_cycle(cycle, cell_id=cid)
                 if est.status != EstimationStatus.VALID or est.soh_c is None:
                     continue
 
@@ -324,8 +333,8 @@ class GruSohEstimator(SohEstimator):
 
         return self.conformal_scale_c, self.conformal_scale_r
 
-    def predict_cycle(self, cycle: CycleRecord) -> SohEstimate:
-        """Estimate SOH from sequential cycle record."""
+    def predict_cycle(self, cycle: CycleRecord, cell_id: Optional[str] = None) -> SohEstimate:
+        """Estimate SOH from sequential cycle record with per-cell history isolation."""
         feat = self._extract_cycle_features(cycle)
         if feat is None:
             return SohEstimate(
@@ -335,14 +344,27 @@ class GruSohEstimator(SohEstimator):
                 ),
             )
 
-        self.history_buffer.append(feat)
+        # Isolate history per cell_id
+        cid = cell_id
+        if cid is None and hasattr(cycle, "metadata") and cycle.metadata:
+            cid = cycle.metadata.get("cell_id")
+        if cid is None:
+            cid = "__default__"
+
+        if cid not in self.history_by_cell:
+            self.history_by_cell[cid] = []
+
+        buf = self.history_by_cell[cid]
+        buf.append(feat)
+        self.history_buffer = buf
+
         seq_len = self.network_config.sequence_length
 
-        if len(self.history_buffer) < seq_len:
-            pad = [self.history_buffer[0]] * (seq_len - len(self.history_buffer))
-            seq_window = np.vstack(pad + self.history_buffer)
+        if len(buf) < seq_len:
+            pad = [buf[0]] * (seq_len - len(buf))
+            seq_window = np.vstack(pad + buf)
         else:
-            seq_window = np.vstack(self.history_buffer[-seq_len:])
+            seq_window = np.vstack(buf[-seq_len:])
 
         x_seq_tensor = torch.tensor(seq_window.reshape(1, seq_len, -1), dtype=torch.float32)
 

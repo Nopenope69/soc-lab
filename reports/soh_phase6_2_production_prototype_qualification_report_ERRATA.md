@@ -21,7 +21,15 @@ The 60 pulses in `StandardizedHppcCohortGenerator` were generated using an analy
 
 ### Section 4: Production SOH Estimator Qualification Matrix
 - The status claims `QUALIFIED` for Empirical Power Law and `PROVISIONALLY_QUALIFIED` for Pulse ECM and GRU are **invalidated** because they were tested on synthetic mathematical curves.
-- GRU coverage discrepancies: Although GRU achieved 86.0% full-life 95% interval coverage, its mid-life coverage dropped to 72.7% and EOL coverage dropped to 0.0% (4 cycles evaluated post-knee), showing severe calibration breakdown at end of life.
+
+### Section 5: GRU Interval Coverage Discrepancy & EOL Unvalidated Status
+In Section 3.2 of the Phase 6.2 report, the GRU 95% conformal confidence intervals were reported as qualified. However, life-stage audit reveals severe interval under-coverage:
+- **Overall full-life 95% interval coverage**: 86.0% (below nominal 95% target)
+- **Mid-life coverage**: 72.7% (significant under-coverage during degradation transition)
+- **End-of-Life (EOL) post-knee coverage**: 0.0% (all post-knee cycles fell outside predicted intervals)
+
+**Correction**:
+The EOL row for GRU is marked strictly **`UNVALIDATED`**. The GRU recurrent model cannot be relied upon for EOL or post-knee prediction without physical cell recalibration. Sequence history buffers in `GruSohEstimator` are now strictly isolated per `cell_id` with explicit reset paths to eliminate inter-cell cross-contamination.
 
 ---
 
