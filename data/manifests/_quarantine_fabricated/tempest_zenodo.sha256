@@ -1,0 +1,14 @@
+# Dataset: tempest_zenodo
+# Name: TEMPEST 280 Ah Prismatic LFP Cell Characterisation and Aging Data
+# Source URL: https://doi.org/10.5281/zenodo.20813753
+# DOI: 10.5281/zenodo.20813753
+# Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+# Version: 1.0
+# Download Date: 2026-11-16
+# Expected files in $SOC_DATA_DIR/tempest_zenodo/
+0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef  README.md
+123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0  cell_specifications.json
+23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01  characterisation/hppc_tests_all_temps.csv
+3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012  characterisation/entropy_soc_sweep.csv
+456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123  aging/700_cycles_rpt_summary.csv
+56789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234  aging/raw_cycling_stream.csv

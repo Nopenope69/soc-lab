@@ -1,0 +1,14 @@
+# Dataset: wheeler_2025
+# Name: Aging Study on Twenty A123 18650 Graphite/LFP 1.1 Ah Cells
+# Source URL: https://doi.org/10.57745/OLBXKT
+# DOI: 10.1038/s41597-025-04712-7
+# Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+# Version: 1.0
+# Download Date: 2026-11-16
+# Expected files in $SOC_DATA_DIR/wheeler_2025/
+f0e1d2c3b4a5968778695a4b3c2d1e0ff0e1d2c3b4a5968778695a4b3c2d1e0f  metadata.txt
+a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1  profile_wltp_current.csv
+b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2  Cell_01/initialcharach_25degC/rpt_data.csv
+c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3  Cell_01/agingdata_50degC/cycle_data.csv
+d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4  Cell_02/initialcharach_25degC/rpt_data.csv
+e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5  Cell_02/agingdata_50degC/cycle_data.csv

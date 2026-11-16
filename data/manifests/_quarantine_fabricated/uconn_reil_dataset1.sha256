@@ -1,0 +1,14 @@
+# Dataset: uconn_reil_dataset1
+# Name: UConn-ISU-ILCC LFP/Gr Battery Aging Dataset (Dataset 1)
+# Source URL: https://digitalcommons.lib.uconn.edu/reil_datasets/1
+# DOI: 10.15760/reil_datasets/1
+# Licence: Creative Commons Attribution 4.0 International (CC BY 4.0)
+# Version: 1.0
+# Download Date: 2026-11-16
+# Expected files in $SOC_DATA_DIR/uconn_reil_dataset1/
+aa11bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff00112233  README.txt
+bb22cc33dd44ee55ff6600112233445566778899aabbccddeeff001122334455  summary_table.csv
+cc33dd44ee55ff6600112233445566778899aabbccddeeff0011223344556677  data/cell_01_aging_rpt.csv
+dd44ee55ff6600112233445566778899aabbccddeeff00112233445566778899  data/cell_02_aging_rpt.csv
+ee55ff6600112233445566778899aabbccddeeff00112233445566778899aa00  data/cell_03_aging_rpt.csv
+ff6600112233445566778899aabbccddeeff00112233445566778899aa00bb11  data/cell_04_aging_rpt.csv

@@ -1,0 +1,27 @@
+{
+  "dataset_id": "uconn_reil_dataset5",
+  "title": "UConn-ISU-ILCC LFP/Gr Battery Aging Dataset",
+  "source_url": "https://digitalcommons.lib.uconn.edu/reil_datasets/5",
+  "doi": "https://doi.org/10.1016/j.jpowsour.2024.235813",
+  "licence": "CC BY 4.0",
+  "version": "UNVERIFIED",
+  "status": "INTEGRITY_OK",
+  "download_date": "2026-11-15",
+  "cell": "LithiumWerks 18650 power cells (APR18650M1B), nominal capacity 1.2 Ah",
+  "file_count": 2,
+  "total_bytes": 2406392335,
+  "files": [
+    {
+      "rel_path": "README_Uconn.txt",
+      "size_bytes": 5424,
+      "mtime_iso": "2026-11-15T21:42:55.047799+00:00",
+      "sha256": "c5f28e56733ec8874e6e0dd35ffa65416fbfb56bdca7a16dd9739c6eab9fec9c"
+    },
+    {
+      "rel_path": "rpt_data.zip",
+      "size_bytes": 2406386911,
+      "mtime_iso": "2026-11-15T21:54:36.676389+00:00",
+      "sha256": "11d9003536d61019573f2e2ccefc656c7bfc9acbe418758ca32b90913c219952"
+    }
+  ]
+}

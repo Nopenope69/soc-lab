@@ -26,6 +26,7 @@ research = [
     "matplotlib>=3.9.0",
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",
+    "xlrd>=2.0.1",
     "scikit-learn>=1.9.0",
 ]
 neural = [
@@ -37,6 +38,7 @@ all = [
     "matplotlib>=3.9.0",
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",
+    "xlrd>=2.0.1",
     "scikit-learn>=1.9.0",
     "torch>=2.0.0",
     "lightgbm>=4.0.0",

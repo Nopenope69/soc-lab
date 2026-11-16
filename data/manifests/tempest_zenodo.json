@@ -1,0 +1,99 @@
+{
+  "dataset_id": "tempest_zenodo",
+  "title": "TEMPEST project 280 Ah LFP prismatic cell dataset",
+  "source_url": "https://zenodo.org/records/19632939",
+  "doi": "UNVERIFIED",
+  "licence": "UNVERIFIED",
+  "version": "UNVERIFIED",
+  "status": "INTEGRITY_OK",
+  "download_date": "2026-11-15",
+  "cell": "280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell)",
+  "file_count": 14,
+  "total_bytes": 86597556,
+  "files": [
+    {
+      "rel_path": "15C_capacity.csv",
+      "size_bytes": 3396022,
+      "mtime_iso": "2026-11-15T21:44:20.564737+00:00",
+      "sha256": "bae5fa2223ddf0b999cde54f125e0004c31b3add86d8aeb6b28d74f5466a04c6"
+    },
+    {
+      "rel_path": "15C_hppc.csv",
+      "size_bytes": 13640054,
+      "mtime_iso": "2026-11-15T21:45:07.375211+00:00",
+      "sha256": "7f967eacfcff6622b19e1fa73d1a48c1a3dd91fcc0bd0b6f13ee0dbcd4d7719d"
+    },
+    {
+      "rel_path": "20C_capacity.csv",
+      "size_bytes": 3414584,
+      "mtime_iso": "2026-11-15T21:44:31.256567+00:00",
+      "sha256": "1cfc26d91eef89ec4a5c18dbfb9273e6eb827c6c91fd34359ad1b66fccea341d"
+    },
+    {
+      "rel_path": "20C_hppc.csv",
+      "size_bytes": 14275465,
+      "mtime_iso": "2026-11-15T21:45:16.541413+00:00",
+      "sha256": "3b9af6bef8a18b653383b8a859df6f62d836d9da28cd48e25b85cad4fe0ac65b"
+    },
+    {
+      "rel_path": "25C_capacity.csv",
+      "size_bytes": 3463058,
+      "mtime_iso": "2026-11-15T21:44:28.839578+00:00",
+      "sha256": "97288b5e6e012618a13e34225fde6e68a4ea2be5d5ecaedf4682db8167685920"
+    },
+    {
+      "rel_path": "25C_hppc.csv",
+      "size_bytes": 13804725,
+      "mtime_iso": "2026-11-15T21:45:41.644046+00:00",
+      "sha256": "c7e1f5d6d773fb35ba1d0ae8983ef77b62396fbbf87aa06f7fead16d8b114b32"
+    },
+    {
+      "rel_path": "30C_capacity.csv",
+      "size_bytes": 3436603,
+      "mtime_iso": "2026-11-15T21:48:56.986257+00:00",
+      "sha256": "1090fe0e4ba61479195f7aff9ec79422e5f34887b9c7cc565b3ed6e59a345df7"
+    },
+    {
+      "rel_path": "30C_hppc.csv",
+      "size_bytes": 13483628,
+      "mtime_iso": "2026-11-15T21:49:51.491784+00:00",
+      "sha256": "cbe748658ec50bcf7a32965262b7c97c40dbb5e8e2e5d10e0d001c5e63348a71"
+    },
+    {
+      "rel_path": "35C_capacity.csv",
+      "size_bytes": 3441659,
+      "mtime_iso": "2026-11-15T21:49:01.281169+00:00",
+      "sha256": "44c5611bf83dce12e08c4e9b3e8e70d11a92d5929e79374e6c7eb4423188d435"
+    },
+    {
+      "rel_path": "35C_hppc.csv",
+      "size_bytes": 14237628,
+      "mtime_iso": "2026-11-15T21:50:03.209147+00:00",
+      "sha256": "89a85e08a7d927f9eb336816e9c0f2e8997b57a9f6ffe85273b1c200d690792b"
+    },
+    {
+      "rel_path": "LIC_capacity_analysis.csv",
+      "size_bytes": 107,
+      "mtime_iso": "2026-11-15T21:48:42.939526+00:00",
+      "sha256": "cf510a7771c5ddcc088b71fd0846d11246e82fecf8f60cdbff9635d9d56b2062"
+    },
+    {
+      "rel_path": "LIC_characterisation_readme.txt",
+      "size_bytes": 1297,
+      "mtime_iso": "2026-11-15T21:48:45.867540+00:00",
+      "sha256": "357ecab70571b76a7540b3bb714c1b8c1e0a037af5061c8e967ea436f735273b"
+    },
+    {
+      "rel_path": "LIC_entropy_analysis.csv",
+      "size_bytes": 484,
+      "mtime_iso": "2026-11-15T21:48:50.253663+00:00",
+      "sha256": "d5c82b460fd71591d56656cb6d77cbcbc5922f3d15c4c0f79ae2fd224febe168"
+    },
+    {
+      "rel_path": "LIC_hppc_analysis.csv",
+      "size_bytes": 2242,
+      "mtime_iso": "2026-11-15T21:48:52.013048+00:00",
+      "sha256": "58c02d68b32b4bcd79ada357436fc56fedb4d808a351e4aca952e91005cf8fef"
+    }
+  ]
+}
