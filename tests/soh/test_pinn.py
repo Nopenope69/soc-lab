@@ -249,6 +249,8 @@ def test_pinn_shuffled_label_negative_control():
 
 def test_pybamm_simulation_generation_and_pinn_eval():
     """Verify PyBaMM simulation cohort generation and evaluation with PINN."""
+    pytest.importorskip("pybamm")
+    pytest.importorskip("torch")
     from soh.data.pybamm_simulator import PybammDegradationSimulator, PybammSimulationConfig
     from soh.benchmarks.split_runner import GroupedBatteryEvaluator
 

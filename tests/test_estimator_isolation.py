@@ -86,3 +86,22 @@ def test_estimators_step_with_stripped_measurement(estimator_params):
         assert isinstance(out, SocEstimate)
         assert 0.0 <= out.soc <= 1.0
         assert out.soc_std >= 0.0
+
+
+def test_clean_environment_isolation_without_optional_packages(monkeypatch):
+    """Verify C2: soc.estimators, E7v3 construction, and soh.data succeed without pybamm, torch, lightgbm."""
+    import sys
+    monkeypatch.setitem(sys.modules, "pybamm", None)
+    monkeypatch.setitem(sys.modules, "torch", None)
+    monkeypatch.setitem(sys.modules, "lightgbm", None)
+
+    import soc.estimators
+    from soc.assumptions.loader import load_assumptions
+    from soc.estimators.base import ParamSet
+    assumptions, _, _ = load_assumptions()
+    params = ParamSet.from_assumptions(assumptions)
+    est = soc.estimators.get_estimator("e7v3", params)
+    assert est is not None
+
+    import soh.data
+    assert soh.data is not None
