@@ -57,7 +57,7 @@ void soh_pulse_elasticnet_predict(
     out_estimate->variance_r = 2.5e-5f; /* ~0.5% std error */
     out_estimate->status = SOH_STATUS_VALID;
     
-    /* In Phase 6.2, pulse ECM has qualified SOH_R under standardized HPPC */
-    out_estimate->qual_c = SOH_QUAL_QUALIFIED;
-    out_estimate->qual_r = SOH_QUAL_QUALIFIED;
+    /* Default qualification status is UNQUALIFIED (UNVALIDATED) until validated on physical hardware */
+    out_estimate->qual_c = SOH_QUAL_UNQUALIFIED;
+    out_estimate->qual_r = SOH_QUAL_UNQUALIFIED;
 }

@@ -26,9 +26,13 @@ typedef enum {
 
 typedef enum {
     SOH_QUAL_UNVALIDATED = 0,
+    SOH_QUAL_UNQUALIFIED = 0,
     SOH_QUAL_QUALIFIED = 1,
     SOH_QUAL_EXPERIMENTAL = 2,
-    SOH_QUAL_REJECTED = 3
+    SOH_QUAL_REJECTED = 3,
+    SOH_QUAL_SIM_VALIDATED = 4,
+    SOH_QUAL_LAB_VALIDATED = 5,
+    SOH_QUAL_FIELD_VALIDATED = 6
 } SohQualificationStatus_t;
 
 typedef struct {

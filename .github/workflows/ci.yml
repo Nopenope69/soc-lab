@@ -86,6 +86,25 @@ jobs:
         run: |
           pytest tests/test_bms_soc_ref.py -k "test_bms_soc_ref_has_zero_forbidden_imports" -v
 
+  c-edge-package:
+    name: C Edge Package Build & Test (C99, ASAN/UBSAN)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile and run C test suite with gcc C99 -Wall -Wextra -Werror and ASAN/UBSAN
+        run: |
+          cd deliverable/edge_pkg
+          gcc -std=c99 -Wall -Wextra -Werror -fsanitize=address,undefined -g \
+            soh_pulse_elasticnet.c \
+            soh_empirical_powerlaw.c \
+            soh_dual_state_tracker.c \
+            soh_edge_pipeline.c \
+            test_soh_edge.c \
+            -o test_soh_edge -lm
+          ./test_soh_edge
+
   test-neural:
     name: Neural Estimators (optional / manual)
     if: github.event_name == 'workflow_dispatch'
