@@ -280,7 +280,14 @@ class BmsSocEstimatorRef:
         self.last_valid_temp = 25.0
         self.stale_current_duration_s = 0.0
 
-    def step(self, v: float, i: float, temp_c: float, dt: float) -> SocEstimateRef:
+    def step(
+        self,
+        v: float,
+        i: float,
+        temp_c: float,
+        dt: float,
+        capacity_scale: float = 1.0,
+    ) -> SocEstimateRef:
         """Execute online adaptation, observability-gated measurement update, and time propagation."""
         flags: List[str] = []
 
@@ -334,6 +341,9 @@ class BmsSocEstimatorRef:
 
         # Lookup temperature-scheduled physical parameters
         q_t = self.get_capacity_ah(temp_eff)
+        if capacity_scale != 1.0:
+            scale_eff = min(max(float(capacity_scale), 0.10), 1.50)
+            q_t = q_t * scale_eff
         r0_base = self._lookup_1d(temp_eff, self.calib.r0_table)
         r1_base = self._lookup_1d(temp_eff, self.calib.r1_table)
         tau1 = self._lookup_1d(temp_eff, self.calib.tau1_table)
