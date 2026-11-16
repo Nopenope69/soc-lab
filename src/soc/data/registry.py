@@ -52,7 +52,7 @@ class DatasetMetadata:
     split_config_filename: str
     cell_chemistry: str
     cell_form_factor: str
-    nominal_capacity_ah: float
+    nominal_capacity_ah: Optional[float]
     description: str
 
 
@@ -309,7 +309,7 @@ DATASET_METADATA: Dict[str, DatasetMetadata] = {
         split_config_filename="uconn_reil_dataset1_splits.yaml",
         cell_chemistry="LFP/Graphite",
         cell_form_factor="18650 cylindrical",
-        nominal_capacity_ah=float("1.2"),
+        nominal_capacity_ah=None,
         description="UConn REIL laboratory dataset of 64 LithiumWerks APR18650M1B cells, 11 conditions (Status: NOT_DOWNLOADED).",
     ),
     "uconn_reil_dataset5": DatasetMetadata(
@@ -325,7 +325,7 @@ DATASET_METADATA: Dict[str, DatasetMetadata] = {
         split_config_filename="uconn_reil_dataset5_splits.yaml",
         cell_chemistry="LFP/Graphite",
         cell_form_factor="18650 cylindrical",
-        nominal_capacity_ah=float("1.2"),
+        nominal_capacity_ah=None,
         description="UConn-ISU-ILCC LFP/Gr battery aging dataset (rpt_data.zip). Citation: B. Nowacki et al., J. Power Sources 628, 235813 (2025).",
     ),
     "wheeler_2025": DatasetMetadata(
@@ -341,7 +341,7 @@ DATASET_METADATA: Dict[str, DatasetMetadata] = {
         split_config_filename="wheeler_2025_splits.yaml",
         cell_chemistry="LFP/Graphite",
         cell_form_factor="18650 cylindrical",
-        nominal_capacity_ah=float("1.1"),
+        nominal_capacity_ah=None,
         description="Wheeler, Bultel, Venet, Sari; Scientific Data 2025. Data repository and files NOT_DOWNLOADED.",
     ),
     "tempest_zenodo": DatasetMetadata(
@@ -534,7 +534,18 @@ def load_uconn_reil_dataset5(
     info = load_dataset_with_manifest_check("uconn_reil_dataset5", data_dir, verify_checksums)
     split_config = ValidationSplitConfig.load(get_split_config_path("uconn_reil_dataset5"))
     split_config.validate_cell_isolation()
-    return {**info, "split_config": split_config}
+    file_cap = None
+    readme_path = info["dataset_path"] / "README_Uconn.txt"
+    if readme_path.exists():
+        try:
+            content = readme_path.read_text(encoding="utf-8")
+            import re
+            m = re.search(r"nominal capacity of ([0-9.]+)\s*Ah", content)
+            if m:
+                file_cap = float(m.group(1))
+        except Exception:
+            pass
+    return {**info, "split_config": split_config, "file_nominal_capacity_ah": file_cap}
 
 
 def load_wheeler_2025(

@@ -79,7 +79,10 @@ def test_dataset_registry_completeness():
         meta = DATASET_METADATA[ds_id]
         assert isinstance(meta, DatasetMetadata)
         assert meta.cell_chemistry in ("LFP", "LFP/Graphite", "LFP/NMC")
-        assert meta.nominal_capacity_ah > 0.0
+        if ds_id in ("uconn_reil_dataset1", "uconn_reil_dataset5", "wheeler_2025"):
+            assert meta.nominal_capacity_ah is None
+        else:
+            assert meta.nominal_capacity_ah > 0.0
 
 
 # =============================================================================
