@@ -40,7 +40,7 @@ The following datasets are recognized in `DATASET_METADATA` and have split confi
 
 ## 3. CALCE A123 Cell Identity & Capacity Conflict
 
-A detailed investigative audit is recorded in [cell_identity_conflict.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/handover/cell_identity_conflict.md). The key facts established from the raw files on disk are:
+A detailed investigative audit is recorded in [cell_identity_conflict.md](../../../../../../reports/handover/cell_identity_conflict.md). The key facts established from the raw files on disk are:
 
 ### 3.1 Empirical Measured Capacity vs Website Contradiction
 1. **Measured Capacity on Disk:** The 52 raw spreadsheets in `data/raw/calce_a123` record quasi-static C/20 discharge tests spanning $-10^\circ\text{C}$ to $50^\circ\text{C}$. Measured C/20 capacities range from **$1.042\text{ Ah}$ to $1.105\text{ Ah}$**.
@@ -57,6 +57,14 @@ A detailed investigative audit is recorded in [cell_identity_conflict.md](file:/
 
 ### 3.3 Algorithmic Baselines
 All SOC and SOH evaluation pipelines must baseline capacity and Coulomb integration **strictly against the measured Beginning-of-Life (BOL) capacity per cell** ($1.0636\text{ Ah}$ for `A1-007` at 25°C, $1.0879\text{ Ah}$ for `A1-008` at 25°C), never against a generic catalog rating.
+
+---
+
+## 3.4 Dataset Limitations & Scope Clarifications
+
+- **Remaining Useful Life (RUL):** Design specification only (`docs/rul_subsystem_design.md`). No runnable implementation exists in `src/soh`.
+- **FlexiPod Dataset:** Contains beginning-of-life (BOL) characterization data only (`reports/flexipod1/`); no cycle degradation data or aged cell measurements.
+- **HPPC Cohort:** Analytical simulation generated via `StandardizedHppcCohortGenerator` (`src/soh/data/pulse_hppc_cohort.py`), not physically measured test-bench hardware.
 
 ---
 

@@ -87,3 +87,12 @@ The following architectural decisions were resolved during the hardening pass:
 | **Embedded BMS Integration** | Embedded Firmware Group | `deliverable/bms_soc_ref.py`, `deliverable/golden/`, MicroPython / C porting |
 | **Cell Characterization & Calibration** | Electrochemical Testing Laboratory | `deliverable/calibration.py`, `deliverable/calibrations/*.json`, HPPC / OCV extraction |
 | **Vehicle Transfer Qualification** | Vehicle Powertrain Engineering | FlexiPod 2RC re-identification, thermal coupling, field validation gates |
+
+---
+
+## 6. System Status & Scope Notes (Hardening 2)
+
+- **Remaining Useful Life (RUL):** Design specification only (`docs/rul_subsystem_design.md`). There is **zero executable code for RUL in `src/soh/`**.
+- **FlexiPod Dataset:** Contains beginning-of-life (BOL) characterization data only (`reports/flexipod1/`); no cycle degradation data or aged cell measurements.
+- **HPPC Cohort:** Analytical simulation generated via `StandardizedHppcCohortGenerator` (`src/soh/data/pulse_hppc_cohort.py`), not physically measured test-bench hardware.
+

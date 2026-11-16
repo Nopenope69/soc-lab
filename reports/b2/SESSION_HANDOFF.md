@@ -11,7 +11,7 @@
 
 ## 1. Quick Resume Guide for New Chat
 
-If resuming in a fresh session, read this document, [`reports/b2/B2_preregistration.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/b2/B2_preregistration.md), and [`reports/b2/b2_prep_summary.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/b2/b2_prep_summary.md).
+If resuming in a fresh session, read this document, [`reports/b2/B2_preregistration.md`](../../../../../../../reports/b2/B2_preregistration.md), and [`reports/b2/b2_prep_summary.md`](../../../../../../../reports/b2/b2_prep_summary.md).
 
 ### The Immediate Next Action Required:
 1. **Awaiting Human Approval:** Review the pre-registration protocol in `reports/b2/B2_preregistration.md`.
