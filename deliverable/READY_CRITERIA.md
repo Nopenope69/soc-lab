@@ -15,11 +15,9 @@
    - Transparent or unflagged degradation to physics integration or Coulomb counting without assertion of `fallback_active=True` is strictly prohibited.
 
 2. **Input-Range Guardrails (Out-of-Distribution Protection)**
-   - All incoming telemetry measurements ($I_k, V_k, T_k$) must be validated against the certified model training and parameter calibration bounds prior to inference:
-     - Current: $I \in [-2.5, 4.5]\text{ A}$ (for CALCE 1.1 Ah cell)
-     - Voltage: $V \in [1.90, 3.75]\text{ V}$
-     - Temperature: $T \in [15.0, 35.0]^\circ\text{C}$
-   - If any observable quantity falls outside this envelope (such as pack-scale currents $50\text{ to }150\text{ A}$), the algorithm must immediately assert `fallback_active=True` and route computation to the physical filter backbone.
+   - All incoming telemetry measurements ($I_k, V_k, T_k$) must be validated against the certified envelope of the loaded calibration file prior to inference.
+   - The operational bounds are defined in the calibration JSON (e.g., `calce_a123_v4.json` specifies `temp_min_c`, `temp_max_c`, `v_min_v`, `v_max_v`, `i_min_a`, `i_max_a`). Hardcoded bounds must not be used.
+   - If any observable quantity falls outside the calibration envelope, the algorithm must assert `OUT_OF_ENVELOPE` in `status_flags`. For hybrid estimators (E8–E10), this also triggers `fallback_active=True` and routes computation to the physical filter backbone.
 
 3. **Physics-Tied Residual Clamping (`PROPOSED`)**
    - Tree and neural corrections must be bounded by a dynamic confidence envelope tied directly to the physics filter's own estimation error standard deviation:
@@ -44,3 +42,12 @@
 
 8. **High-Frequency Inverter Ripple**
    - Characterize filter response to 100 Hz - 20 kHz current ripple from traction inverters or power electronics, verifying that anti-aliasing hardware filters protect terminal voltage sampling.
+
+
+---
+
+## Errata
+
+- **Envelope bounds (Hardening 2):** Earlier versions of criterion 2 cited specific E8 neural-model training bounds (15–35 °C, ±4.5 A, 1.90–3.75 V). The correct operational envelope is defined by the loaded calibration file. For `calce_a123_v4.json`, the certified E7v3 envelope is: temperature 20–50 °C, voltage 2.0–3.7 V, current −20 A to +50 A.
+- **Criteria count:** The "7 criteria" reference in historical reports (`reports/gauntlet_v3/archive/ALGORITHM_SPEC_v3.3.md`) reflects an earlier count; this document lists 8 criteria.
+- **`model_loaded` / `fallback_active` for E7v3:** E7v3 is a pure physics filter with no external weight files and no fallback path. These fields are constant `True` / `False` respectively. Criterion 1 applies primarily to hybrid estimators (E8–E10) that load trained weights and can delegate to the underlying physics filter.

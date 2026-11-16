@@ -82,6 +82,8 @@ class SocEstimateRef:
     status_flags: List[str] = field(default_factory=lambda: ["OK"])
     calibration_id: str = "calce_a123_v4"
     validation_status: str = "DEVELOPMENT_VALIDATED_CALCE_20_50C"
+    model_loaded: bool = True       # E7v3 is always loaded (pure physics, no external weights)
+    fallback_active: bool = False   # E7v3 has no fallback path (it IS the physics filter)
 
 
 # ==============================================================================
