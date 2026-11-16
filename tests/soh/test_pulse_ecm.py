@@ -79,3 +79,65 @@ def test_ecm_2rc_fitting_and_identifiability():
     assert params.r0_ohm == pytest.approx(r0_true, rel=0.10)
     assert params.r_total_ohm == pytest.approx(r0_true + r1_true + r2_true, rel=0.10)
     assert params.is_identifiable
+
+
+def test_ecm_2rc_fitting_variable_current():
+    """Verify Ecm2RcFitter handles variable current pulses via recursive state-space forward model."""
+    r0_true = 0.020
+    r1_true = 0.010
+    tau1_true = 4.0
+    r2_true = 0.015
+    tau2_true = 25.0
+    vocv_true = 3.35
+
+    # 10s pulse with 20% current ripple: I(t) = 2.0 + 0.4 * sin(2*pi*t/2.5)
+    t_pulse = np.linspace(0, 10, 100)
+    i_pulse = 2.0 + 0.4 * np.sin(2.0 * np.pi * t_pulse / 2.5)
+
+    # Simulate true physical response using recursive state-space integration
+    v_pulse = np.zeros_like(t_pulse)
+    v1 = 0.0
+    v2 = 0.0
+    v_pulse[0] = vocv_true - i_pulse[0] * r0_true
+
+    for k in range(1, len(t_pulse)):
+        dt = t_pulse[k] - t_pulse[k - 1]
+        a1 = np.exp(-dt / tau1_true)
+        a2 = np.exp(-dt / tau2_true)
+        # Discharge current drops voltage
+        v1 = v1 * a1 - i_pulse[k] * r1_true * (1.0 - a1)
+        v2 = v2 * a2 - i_pulse[k] * r2_true * (1.0 - a2)
+        v_pulse[k] = vocv_true - i_pulse[k] * r0_true + v1 + v2
+
+    t_relax = np.linspace(0, 30, 150)
+    i_relax = np.zeros_like(t_relax)
+    v_relax = np.zeros_like(t_relax)
+    for k in range(len(t_relax)):
+        tr = t_relax[k]
+        v_relax[k] = vocv_true + v1 * np.exp(-tr / tau1_true) + v2 * np.exp(-tr / tau2_true)
+
+    pulse_rec = PulseRecord(
+        pulse_id="var_p",
+        cycle_index=2,
+        t_pulse_s=t_pulse,
+        v_pulse_v=v_pulse,
+        i_pulse_a=-i_pulse,  # Sign convention: discharge negative
+        t_relax_s=t_relax,
+        v_relax_v=v_relax,
+        i_relax_a=i_relax,
+        temp_c=25.0,
+        i_amplitude_a=-float(np.mean(i_pulse)),
+        pulse_duration_s=10.0,
+        relax_duration_s=30.0,
+    )
+
+    fitter = Ecm2RcFitter()
+    params, quality = fitter.fit_pulse(pulse_rec)
+
+    assert quality.is_eligible
+    assert quality.current_stability_cv is not None
+    assert quality.current_stability_cv > 0.05  # Detected significant current variation
+    assert params is not None
+    assert params.fit_rmse_mv < 2.0  # High fidelity fit even under variable current
+    assert params.r0_ohm == pytest.approx(r0_true, rel=0.15)
+    assert params.r_total_ohm == pytest.approx(r0_true + r1_true + r2_true, rel=0.15)

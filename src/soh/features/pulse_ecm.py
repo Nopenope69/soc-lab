@@ -204,23 +204,39 @@ class Ecm2RcFitter:
         lower_bounds = np.array([1e-4, 1e-4, 0.2, 1e-4, 1.0, 1.5])
         upper_bounds = np.array([0.50, 0.50, 50.0, 0.50, 300.0, 4.5])
 
-        # Model forward simulation function
+        # Determine signed current trajectory
+        # If is_discharge, current is negative; if charge, positive.
+        i_signed = np.zeros_like(i_all)
+        for idx in range(len(i_all)):
+            if abs(i_all[idx]) > 0.02:
+                i_signed[idx] = -abs(i_all[idx]) if is_discharge else abs(i_all[idx])
+            else:
+                i_signed[idx] = 0.0
+
+        # Model forward simulation function supporting variable current profiles
         def model_voltage(theta: np.ndarray) -> np.ndarray:
             r0, r1, tau1, r2, tau2, vocv = theta
             v_sim = np.zeros_like(t_all)
 
-            for idx, t in enumerate(t_all):
-                if t <= t_pulse_end:
-                    ir0 = i_sign * i_mag * r0
-                    ir1 = i_sign * i_mag * r1 * (1.0 - np.exp(-t / max(1e-3, tau1)))
-                    ir2 = i_sign * i_mag * r2 * (1.0 - np.exp(-t / max(1e-3, tau2)))
-                    v_sim[idx] = vocv + ir0 + ir1 + ir2
-                else:
-                    # During relaxation (I = 0)
-                    t_rel = t - t_pulse_end
-                    v1_end = i_sign * i_mag * r1 * (1.0 - np.exp(-t_pulse_end / max(1e-3, tau1)))
-                    v2_end = i_sign * i_mag * r2 * (1.0 - np.exp(-t_pulse_end / max(1e-3, tau2)))
-                    v_sim[idx] = vocv + v1_end * np.exp(-t_rel / max(1e-3, tau1)) + v2_end * np.exp(-t_rel / max(1e-3, tau2))
+            # Discrete-time recursive integration matching physical 2-RC state-space
+            v1 = 0.0
+            v2 = 0.0
+            v_sim[0] = vocv + i_signed[0] * r0
+
+            tau1_safe = max(1e-3, tau1)
+            tau2_safe = max(1e-3, tau2)
+
+            for k in range(1, len(t_all)):
+                dt = max(1e-5, t_all[k] - t_all[k - 1])
+                ik = i_signed[k]
+
+                alpha1 = float(np.exp(-dt / tau1_safe))
+                alpha2 = float(np.exp(-dt / tau2_safe))
+
+                v1 = v1 * alpha1 + ik * r1 * (1.0 - alpha1)
+                v2 = v2 * alpha2 + ik * r2 * (1.0 - alpha2)
+
+                v_sim[k] = vocv + ik * r0 + v1 + v2
 
             return v_sim
 
@@ -280,10 +296,13 @@ class Ecm2RcFitter:
             is_identifiable=is_eligible,
         )
 
+        curr_cv = float(np.std(i_pulse) / max(1e-3, abs(np.mean(i_pulse)))) if len(i_pulse) > 1 else 0.0
+
         quality = FeatureQualityRecord(
             is_eligible=is_eligible,
             jacobian_condition_number=cond_num,
             fit_rmse_mv=rmse_mv,
+            current_stability_cv=curr_cv,
             failure_reasons=reasons,
         )
 
