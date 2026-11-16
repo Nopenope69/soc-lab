@@ -8,6 +8,7 @@ b. Fit Rung 2 on A1-008 DST with its own data (informational): report Gate 1 for
 c. Report open-loop W-mid, W-low, W-high bias and RMSE for chosen A1-007 model on A1-007 and A1-008 (transfer).
 """
 
+import pickle
 from pathlib import Path
 import sys
 import numpy as np
@@ -638,7 +639,7 @@ def run_stage_v1():
         f.write(f"> **Gate 1 Status (A1-007 Decision Temps):** **{'PASS' if all_decision_pass_007 else 'FAIL'}**  \n\n")
 
         f.write("## 1. Executive Summary\n")
-        f.write(f"- **Protocol Objective:** Address unidentifiability in v1 where $\\tau_2$ saturated at its 1200 s bound at every temperature. Refit Rung 2 with $\\tau_2 \\le 600\\text{ s}$ and apply GATE 1 ($|\\text{bias}| \\le 5.0\\text{ mV}$, $\\text{RMSE} \\le 15.0\\text{ mV}$ on W-mid at 20, 30, 40, 50 °C).\n")
+        f.write("- **Protocol Objective:** Address unidentifiability in v1 where $\\tau_2$ saturated at its 1200 s bound at every temperature. Refit Rung 2 with $\\tau_2 \\le 600\\text{ s}$ and apply GATE 1 ($|\\text{bias}| \\le 5.0\\text{ mV}$, $\\text{RMSE} \\le 15.0\\text{ mV}$ on W-mid at 20, 30, 40, 50 °C).\n")
         f.write(f"- **Model Selection Verdict:** `{v1_decision_note}`\n")
         f.write(f"- **A1-008 Own-Fit Gate 1 Status:** **{'PASS' if all_decision_pass_008 else 'FAIL'}** across decision temperatures.\n")
         f.write(f"- **Cross-Cell Parameter Disparity:** Severe divergence observed at elevated temperatures (e.g. $R_0$ mismatch reaches +{param_diff_rows[-1]['diff_r0_pct']:.1f}% at 50 °C; capacity differs by ~2–3%), explaining cross-cell transfer breakdown.\n\n")
