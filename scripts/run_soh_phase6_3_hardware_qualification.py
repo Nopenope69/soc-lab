@@ -180,9 +180,9 @@ def run_phase6_3_qualification():
 
     for idx, (t_s, v_s, i_s) in enumerate(zip(t_eval, v_eval, i_eval)):
         rec = SynchronizedTelemetryRecord(
-            cell_id="MIT_CELL_BATCH_2017-05-12_01",
+            cell_id="SYN_MIT_CELL_BATCH_2017-05-12_01",
             chemistry="LFP",
-            batch_id="BATCH_2017-05-12",
+            batch_id="SYN_BATCH_2017-05-12",
             timestamp_s=float(t_s),
             voltage_v=float(v_s),
             current_a=float(i_s),
