@@ -171,10 +171,10 @@ def test_standardized_hppc_pulse_generation_and_identifiability():
 def test_empirical_bidirectional_batch_holdout_and_negative_control():
     """Verify bidirectional batch holdout, disjoint IDs, and negative control responsiveness."""
     loader = RealCellDataLoader()
-    mit_ds = loader.create_mit_stanford_reference_cohort(num_cells=4, num_cycles=40)
+    mit_ds = loader.create_mit_stanford_synthetic_cohort(num_cells=4, num_cycles=40)
 
-    b12_cids = [cid for cid, b in mit_ds.batteries.items() if b.cycles[0].metadata.get("batch_id") == "BATCH_2017-05-12"]
-    b30_cids = [cid for cid, b in mit_ds.batteries.items() if b.cycles[0].metadata.get("batch_id") == "BATCH_2017-06-30"]
+    b12_cids = [cid for cid, b in mit_ds.batteries.items() if "2017-05-12" in str(b.cycles[0].metadata.get("batch_id"))]
+    b30_cids = [cid for cid, b in mit_ds.batteries.items() if "2017-06-30" in str(b.cycles[0].metadata.get("batch_id"))]
 
     assert len(b12_cids) >= 1 and len(b30_cids) >= 1
     assert set(b12_cids).isdisjoint(set(b30_cids))

@@ -151,22 +151,24 @@ def test_real_cell_loader_reference_cohorts():
     """Verify loading and synthetic adapter generation for real datasets."""
     loader = RealCellDataLoader()
 
-    # Oxford Pouch Reference Cohort
-    ox_ds = loader.create_oxford_reference_cohort(num_cells=2, num_cycles=10)
+    # Oxford Pouch Synthetic Reference Cohort
+    ox_ds = loader.create_oxford_synthetic_cohort(num_cells=2, num_cycles=10)
     assert len(ox_ds.batteries) == 2
     for cid, bdata in ox_ds.batteries.items():
         assert len(bdata.cycles) == 10
         assert bdata.spec.chemistry == "NMC-LCO blend / Graphite"
         assert bdata.spec.nominal_capacity_ah == 0.74
+        assert cid.startswith("SYN_OXFORD_")
 
-    # MIT Stanford Reference Cohort
-    mit_ds = loader.create_mit_stanford_reference_cohort(num_cells=2, num_cycles=12)
+    # MIT Stanford Synthetic Reference Cohort
+    mit_ds = loader.create_mit_stanford_synthetic_cohort(num_cells=2, num_cycles=12)
     assert len(mit_ds.batteries) == 2
     for cid, bdata in mit_ds.batteries.items():
         assert len(bdata.cycles) == 12
         assert bdata.spec.chemistry == "LiFePO4 (LFP) / Graphite"
         assert bdata.spec.nominal_capacity_ah == 1.10
         assert "batch_id" in bdata.cycles[0].metadata
+        assert cid.startswith("SYN_MIT_")
 
 
 # =====================================================================

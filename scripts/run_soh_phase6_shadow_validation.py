@@ -80,19 +80,19 @@ def run_phase6_benchmark():
     lg_dataset = data_loader.load_lg_m50t_pybamm(num_cycles=25)
     print(f"  -> LG M50T cells: {list(lg_dataset.batteries.keys())}, cycles: {[b.cycle_count for b in lg_dataset.batteries.values()]}")
 
-    # CALCE A123 (LFP, 1.1 Ah)
-    print("  Loading CALCE A123 cohort...")
-    calce_dataset = data_loader.load_calce_a123(cell_ids=["CS2_35", "CS2_36", "CS2_37", "CS2_38"])
+    # CALCE A123 (Synthetic LFP, 1.1 Ah)
+    print("  Loading CALCE A123 synthetic cohort...")
+    calce_dataset = data_loader.load_calce_a123_synthetic(cell_ids=["SYN_CALCE_CS2_35", "SYN_CALCE_CS2_36", "SYN_CALCE_CS2_37", "SYN_CALCE_CS2_38"])
     print(f"  -> CALCE A123 cells: {list(calce_dataset.batteries.keys())}, cycles: {[b.cycle_count for b in calce_dataset.batteries.values()]}")
 
     # Oxford Kokam 740mAh Pouch
-    print("  Loading Oxford Reference cohort...")
-    oxford_dataset = data_loader.create_oxford_reference_cohort(num_cells=4, num_cycles=25)
+    print("  Loading Oxford Synthetic cohort...")
+    oxford_dataset = data_loader.create_oxford_synthetic_cohort(num_cells=4, num_cycles=25)
     print(f"  -> Oxford cells: {list(oxford_dataset.batteries.keys())}, cycles: {[b.cycle_count for b in oxford_dataset.batteries.values()]}")
 
     # MIT / Stanford Fast-Charging (Severson 2019) with 2 batches
-    print("  Loading MIT / Stanford Fast-Charging cohort...")
-    mit_dataset = data_loader.create_mit_stanford_reference_cohort(num_cells=4, num_cycles=30)
+    print("  Loading MIT / Stanford Fast-Charging synthetic cohort...")
+    mit_dataset = data_loader.create_mit_stanford_synthetic_cohort(num_cells=4, num_cycles=30)
     print(f"  -> MIT Stanford cells: {list(mit_dataset.batteries.keys())}, cycles: {[b.cycle_count for b in mit_dataset.batteries.values()]}")
 
     # Multi-temperature synthetic cohorts for controlled stress tests

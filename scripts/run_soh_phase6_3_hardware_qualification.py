@@ -121,12 +121,12 @@ def run_phase6_3_qualification():
     audit_data["hppc_provenance_audit"] = hppc_provenance_audit
 
     # =========================================================================
-    # 3. Real Physical Cell Resistance Validation (Oxford & MIT Severson)
+    # 3. Synthetic Cell Resistance Validation (Oxford & MIT Severson Formulas)
     # =========================================================================
-    print("\n--- 3. Physical Cell Resistance SOH Validation ---")
+    print("\n--- 3. Synthetic Cell Resistance SOH Validation ---")
     data_loader = RealCellDataLoader()
-    oxford_ds = data_loader.create_oxford_reference_cohort(num_cells=4, num_cycles=40)
-    mit_ds = data_loader.create_mit_stanford_reference_cohort(num_cells=4, num_cycles=60)
+    oxford_ds = data_loader.create_oxford_synthetic_cohort(num_cells=4, num_cycles=40)
+    mit_ds = data_loader.create_mit_stanford_synthetic_cohort(num_cells=4, num_cycles=60)
 
     # Physical SOH_R assessment
     oxford_cells = list(oxford_ds.batteries.values())
@@ -193,7 +193,7 @@ def run_phase6_3_qualification():
             reference_protocol="USABC_HPPC_10S",
             ground_truth_soh_c=0.985,
             ground_truth_soh_r=0.970,
-            provenance_category="EXPERIMENTAL",
+            provenance_category="SYNTHETIC_DEMO",
         )
         trace.append(rec)
 

@@ -131,11 +131,11 @@ def run_phase6_1_audit():
     sim_synth_15c = synth_gen.generate_cohort(["SYNTH_15C_B1", "SYNTH_15C_B2"], num_cycles=25, temp_c=15.0)
     sim_synth_45c = synth_gen.generate_cohort(["SYNTH_45C_B1", "SYNTH_45C_B2"], num_cycles=25, temp_c=45.0)
 
-    # Load Experimental Datasets
-    print("  Loading Experimental Cohorts (CALCE, Oxford, MIT/Stanford)...")
-    exp_calce = data_loader.load_calce_a123(cell_ids=["CS2_35", "CS2_36", "CS2_37", "CS2_38"])
-    exp_oxford = data_loader.create_oxford_reference_cohort(num_cells=4, num_cycles=25)
-    exp_mit = data_loader.create_mit_stanford_reference_cohort(num_cells=4, num_cycles=30)
+    # Load Synthetic Cohorts (CALCE, Oxford, MIT/Stanford formulas)
+    print("  Loading Synthetic Cohorts (CALCE, Oxford, MIT/Stanford formulas)...")
+    exp_calce = data_loader.load_calce_a123_synthetic(cell_ids=["SYN_CALCE_CS2_35", "SYN_CALCE_CS2_36", "SYN_CALCE_CS2_37", "SYN_CALCE_CS2_38"])
+    exp_oxford = data_loader.create_oxford_synthetic_cohort(num_cells=4, num_cycles=25)
+    exp_mit = data_loader.create_mit_stanford_synthetic_cohort(num_cells=4, num_cycles=30)
 
     # -----------------------------------------------------------------
     # 2. Frozen Candidate Estimators & Negative Controls
@@ -182,9 +182,9 @@ def run_phase6_1_audit():
             print(f"    {m_name:36s} | Coverage: {res.prediction_coverage_pct:5.1f}% | RMSE: {rmse_str} | MAE: {mae_str} | PICP: {picp_str}")
 
     # -----------------------------------------------------------------
-    # 4. Experiment B: Benchmark Evaluation - Experimental Data
+    # 4. Experiment B: Benchmark Evaluation - Synthetic Cohorts
     # -----------------------------------------------------------------
-    print("\n--- 4. Evaluating Benchmark on EXPERIMENTAL Cohorts (CALCE, MIT) ---")
+    print("\n--- 4. Evaluating Benchmark on SYNTHETIC Cohorts (CALCE, MIT Formulas) ---")
     exp_splits = harness.create_battery_lobo_splits(exp_calce)[:2] + harness.create_battery_lobo_splits(exp_mit)[:2]
     exp_benchmark_results: Dict[str, List[EstimatorBenchmarkResult]] = {m: [] for m in candidate_factories}
 
@@ -629,8 +629,8 @@ In accordance with Phase 6.1 directives, when an estimator cannot form an eligib
         md += f"| **{m}** | {s['coverage_pct']:.1f}% | {s['abstention_pct']:.1f}% | {rmse_s} | {mae_s} | {max_s} | {picp_s} | {reason} |\n"
 
     md += """
-### Table 2: Experimental Benchmark (CALCE & MIT/Stanford Physical Cell LOBO)
-*Evaluated across physical LFP cells (CALCE CS2 and MIT Severson fast-charging).*
+### Table 2: SYNTHETIC cohort Benchmark (CALCE & MIT/Stanford Analytical Formulas LOBO)
+*Evaluated across synthetic LFP cells (CALCE CS2 and MIT Severson analytical formulas).*
 
 | Estimator Candidate | Prediction Coverage | Abstention Rate | Eligible $SOH_C$ RMSE (%) | Eligible $SOH_C$ MAE (%) | Max Error (%) | PICP 95% | Primary Abstention Reason |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |

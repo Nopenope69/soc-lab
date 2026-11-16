@@ -20,6 +20,7 @@ class ReferenceProvenanceType(str, Enum):
     FLEET_DERIVED_CONSENSUS = "FLEET_DERIVED_CONSENSUS"           # Statistical median across deployed fleet
     ELECTROCHEMICAL_MODEL = "ELECTROCHEMICAL_MODEL"               # Inverted OCV / physics model curve
     UNAVAILABLE_DEGRADED_ENTRY = "UNAVAILABLE_DEGRADED_ENTRY"     # Unknown BOL / second-life pack entry
+    SYNTHETIC = "SYNTHETIC"                                       # Analytical formula or synthetic simulation
 
 
 class ReferenceProvenance(BaseModel):

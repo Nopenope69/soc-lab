@@ -72,6 +72,28 @@ class DatasetProvenanceRecord:
     operating_temperature_c: float = 25.0
 
 
+def verify_physical_dataset_manifest(dataset_id: str) -> None:
+    """Guard: anything labelled physical must be loaded from files whose hashes are in data/manifests."""
+    manifest_path = Path("data/manifests") / f"{dataset_id}.sha256"
+    if not manifest_path.exists():
+        raise ValueError(
+            f"Provenance Guard Failure: physical dataset '{dataset_id}' has no manifest at {manifest_path}. "
+            "Rule R2: physical datasets must be backed by a verified manifest in data/manifests/."
+        )
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    if any(line.strip().startswith("# Status: NOT_DOWNLOADED") for line in lines):
+        raise ValueError(
+            f"Provenance Guard Failure: physical dataset '{dataset_id}' status is NOT_DOWNLOADED. "
+            "Cannot claim physical qualification without files on disk."
+        )
+    hash_lines = [l for l in lines if l.strip() and not l.strip().startswith("#")]
+    if len(hash_lines) == 0:
+        raise ValueError(
+            f"Provenance Guard Failure: manifest for physical dataset '{dataset_id}' contains zero verified hashes."
+        )
+
+
 # Registry of verified real-cell dataset provenance contracts
 DATASET_PROVENANCE_REGISTRY: Dict[DatasetSource, DatasetProvenanceRecord] = {
     DatasetSource.LG_M50T: DatasetProvenanceRecord(
@@ -96,61 +118,61 @@ DATASET_PROVENANCE_REGISTRY: Dict[DatasetSource, DatasetProvenanceRecord] = {
     ),
     DatasetSource.CALCE_A123: DatasetProvenanceRecord(
         dataset_source=DatasetSource.CALCE_A123,
-        dataset_category=DatasetCategory.EXPERIMENTAL,
+        dataset_category=DatasetCategory.SIMULATION,
         chemistry="LiFePO4 (LFP) / Graphite",
-        form_factor="18650 Cylindrical (APR18650M1A)",
+        form_factor="A123 LiFePO4, format unverified",
         nominal_capacity_ah=1.10,
         nominal_voltage_v=3.30,
         voltage_range_v=(2.00, 3.60),
-        provenance_type=ReferenceProvenanceType.CHARACTERIZATION_CYCLE,
+        provenance_type=ReferenceProvenanceType.SYNTHETIC,
         is_pristine_bol=False,
         is_resistance_validated=False,
         resistance_measurement_protocol="Instantaneous cycler load perturbation. Non-standardized; NOT equivalent to standardized DCIR HPPC.",
-        qualification_notes="Physical commercial cells received post-formation and post-shipping with unknown calendar aging. C/20 initial cycle is a laboratory characterization baseline, NOT pristine factory BOL acceptance. Internal resistance from load perturbation is unvalidated.",
-        citation="Center for Advanced Life Cycle Engineering (CALCE), University of Maryland",
-        cell_identifiers=["CS2_35", "CS2_36", "CS2_37", "CS2_38"],
-        batch_identifiers=["BATCH_CALCE_CS2"],
-        ground_truth_protocol="CALCE Arbin cycler C/20 characterization cycle (2.0V - 3.6V at 25°C)",
+        qualification_notes="SYNTHETIC cohort generated via analytical degradation formula with seeded RNG (default_rng(202)). Not real laboratory data files. Resistance ground truth is unvalidated.",
+        citation="Center for Advanced Life Cycle Engineering (CALCE), University of Maryland (synthetic analytical reproduction)",
+        cell_identifiers=["SYN_CALCE_CS2_35", "SYN_CALCE_CS2_36", "SYN_CALCE_CS2_37", "SYN_CALCE_CS2_38"],
+        batch_identifiers=["SYN_BATCH_CALCE_CS2"],
+        ground_truth_protocol="Synthetic analytical degradation curve (2.0V - 3.6V at 25°C)",
         bol_capacity_measurement_ah=1.06,
         operating_temperature_c=25.0,
     ),
     DatasetSource.OXFORD: DatasetProvenanceRecord(
         dataset_source=DatasetSource.OXFORD,
-        dataset_category=DatasetCategory.EXPERIMENTAL,
+        dataset_category=DatasetCategory.SIMULATION,
         chemistry="NMC-LCO blend / Graphite",
         form_factor="Kokam 740mAh Pouch Cell (SLPB533459H4)",
         nominal_capacity_ah=0.74,
         nominal_voltage_v=3.70,
         voltage_range_v=(2.70, 4.20),
-        provenance_type=ReferenceProvenanceType.CHARACTERIZATION_CYCLE,
+        provenance_type=ReferenceProvenanceType.SYNTHETIC,
         is_pristine_bol=False,
-        is_resistance_validated=True,
-        resistance_measurement_protocol="Periodic characterization at 40°C with 1C discharge and EIS frequency sweep (10 mHz to 100 kHz).",
-        qualification_notes="Physical cells tested in environmental chambers at 40°C under repeated drive cycles (Artemis urban). Characterization cycles provide reliable capacity retention; resistance requires equivalent circuit fitting.",
-        citation="Howey et al., Oxford Battery Intelligence Lab, IEEE Trans. Ind. Electron. (2014)",
-        cell_identifiers=["OXFORD_CELL_01", "OXFORD_CELL_02", "OXFORD_CELL_03", "OXFORD_CELL_04"],
-        batch_identifiers=["KOKAM_SLPB533459H4_2014"],
-        ground_truth_protocol="Oxford Battery Intelligence Lab 1C characterization cycle at 40°C",
+        is_resistance_validated=False,
+        resistance_measurement_protocol="Periodic characterization at 40°C (simulated). Resistance SOH unvalidated on physical cells.",
+        qualification_notes="SYNTHETIC cohort generated via analytical degradation formula (fade = 0.0012*k**0.55 + 0.00015*k) with seeded RNG (default_rng(101)). Not real laboratory data files.",
+        citation="Howey et al., Oxford Battery Intelligence Lab (synthetic analytical reproduction)",
+        cell_identifiers=["SYN_OXFORD_CELL_01", "SYN_OXFORD_CELL_02", "SYN_OXFORD_CELL_03", "SYN_OXFORD_CELL_04"],
+        batch_identifiers=["SYN_BATCH_KOKAM_SLPB533459H4_2014"],
+        ground_truth_protocol="Synthetic analytical power-law curve at 40°C",
         bol_capacity_measurement_ah=0.74,
         operating_temperature_c=40.0,
     ),
     DatasetSource.MIT_STANFORD: DatasetProvenanceRecord(
         dataset_source=DatasetSource.MIT_STANFORD,
-        dataset_category=DatasetCategory.EXPERIMENTAL,
+        dataset_category=DatasetCategory.SIMULATION,
         chemistry="LiFePO4 (LFP) / Graphite",
-        form_factor="18650 Cylindrical (A123 APR18650M1A)",
+        form_factor="A123 18650 Cylindrical",
         nominal_capacity_ah=1.10,
         nominal_voltage_v=3.30,
         voltage_range_v=(2.00, 3.60),
-        provenance_type=ReferenceProvenanceType.CHARACTERIZATION_CYCLE,
+        provenance_type=ReferenceProvenanceType.SYNTHETIC,
         is_pristine_bol=False,
-        is_resistance_validated=True,
-        resistance_measurement_protocol="Internal resistance estimated from 80% to 20% discharge voltage drop delta_V / delta_I during high-rate fast-charging.",
-        qualification_notes="124 commercial cells cycled to failure (80% SOH_C) under 72 fast-charging policies. Commercial manufacturing batch metadata available (batches 2017-05-12, 2017-06-30). Cycle life spans 150 to 2,300 cycles.",
-        citation="Severson et al., Nature Energy 4 (2019) 383–391",
-        cell_identifiers=["MIT_CELL_BATCH_2017-05-12_01", "MIT_CELL_BATCH_2017-06-30_02", "MIT_CELL_BATCH_2017-05-12_03", "MIT_CELL_BATCH_2017-06-30_04"],
-        batch_identifiers=["BATCH_2017-05-12", "BATCH_2017-06-30"],
-        ground_truth_protocol="Severson et al. 2019 high-rate fast-charging characterization protocol (A123 APR18650M1A LFP cells)",
+        is_resistance_validated=False,
+        resistance_measurement_protocol="Estimated discharge voltage drop (simulated). Resistance SOH unvalidated on physical cells.",
+        qualification_notes="SYNTHETIC cohort generated via analytical degradation formula with knee rollover at cycle 45 and seeded RNG (default_rng(202)); manufacturing batch metadata available. Not real laboratory data files.",
+        citation="Severson et al., Nature Energy 4 (2019) 383–391 (synthetic analytical reproduction)",
+        cell_identifiers=["SYN_MIT_CELL_BATCH_2017-05-12_01", "SYN_MIT_CELL_BATCH_2017-06-30_02", "SYN_MIT_CELL_BATCH_2017-05-12_03", "SYN_MIT_CELL_BATCH_2017-06-30_04"],
+        batch_identifiers=["SYN_BATCH_2017-05-12", "SYN_BATCH_2017-06-30"],
+        ground_truth_protocol="Synthetic analytical knee-rollover curve",
         bol_capacity_measurement_ah=1.08,
         operating_temperature_c=30.0,
     ),
@@ -163,17 +185,19 @@ class RealCellDataLoader:
     def __init__(self, raw_data_dir: Optional[Path] = None):
         self.raw_data_dir = raw_data_dir or Path("data/raw")
 
-    def load_calce_a123(self, cell_ids: Optional[List[str]] = None, num_cells: int = 4, num_cycles: int = 25) -> SohDataset:
-        """Load real CALCE A123 APR18650M1A cells with explicit provenance qualification.
+    def load_calce_a123_synthetic(
+        self, cell_ids: Optional[List[str]] = None, num_cells: int = 4, num_cycles: int = 25
+    ) -> SohDataset:
+        """Load synthetic CALCE A123 cohort generated via analytical formulas.
         
-        Uses qualified cell parameters from the CALCE battery laboratory:
-        A123 APR18650M1A, 1.10 Ah nominal, 2.0-3.6 V, tested at 25°C.
-        Explicitly flagged as non-pristine BOL with unvalidated resistance ground truth.
+        Analytical degradation formula with seeded RNG (default_rng(202)).
+        Cell IDs and batch IDs prefixed with SYN_.
         """
         provenance = DATASET_PROVENANCE_REGISTRY[DatasetSource.CALCE_A123]
         dataset = SohDataset()
         rng = np.random.default_rng(202)
-        cids = cell_ids or [f"CALCE_A123_CS2_{35+i}" for i in range(num_cells)]
+        cids = cell_ids or [f"SYN_CALCE_CS2_{35+i}" for i in range(num_cells)]
+        cids = [cid if cid.startswith("SYN_") else f"SYN_{cid}" for cid in cids]
 
         for i, cid in enumerate(cids):
             spec = CellReferenceSpec(
@@ -185,7 +209,7 @@ class RealCellDataLoader:
                 t_ref_c=25.0,
                 nominal_resistance_ohm=0.015,
                 provenance=ReferenceProvenance(
-                    provenance_type=provenance.provenance_type,
+                    provenance_type=ReferenceProvenanceType.SYNTHETIC,
                     is_pristine_bol=provenance.is_pristine_bol,
                     qualification_notes=provenance.qualification_notes,
                 ),
@@ -221,12 +245,16 @@ class RealCellDataLoader:
                     soh_c_rated_true=cap / provenance.nominal_capacity_ah,
                     soh_r_bol_true=bol_res / res,
                     soh_r_rated_true=0.015 / res,
-                    metadata={"source": "CALCE_A123_APR18650M1A", "batch_id": "BATCH_CALCE_CS2"},
+                    metadata={"source": "SYN_CALCE_A123", "batch_id": "SYN_BATCH_CALCE_CS2"},
                 )
                 bdata.cycles.append(rec)
             dataset.add_battery(bdata)
 
         return dataset
+
+    def load_calce_a123(self, *args, **kwargs) -> SohDataset:
+        """Alias for load_calce_a123_synthetic."""
+        return self.load_calce_a123_synthetic(*args, **kwargs)
 
     def load_lg_m50t_pybamm(self, num_cycles: int = 15) -> SohDataset:
         """Load LG M50T 21700 electrochemical benchmark cohort."""
@@ -243,16 +271,17 @@ class RealCellDataLoader:
 
         return dataset
 
-    def create_oxford_reference_cohort(self, num_cells: int = 4, num_cycles: int = 40) -> SohDataset:
-        """Create reference cohort matching Oxford Battery Intelligence Lab specifications:
+    def create_oxford_synthetic_cohort(self, num_cells: int = 4, num_cycles: int = 40) -> SohDataset:
+        """Create synthetic reference cohort matching Oxford specifications via analytical power-law formulas:
         
-        Kokam 740mAh pouch cells tested at 40°C with characterization cycles.
+        Kokam 740mAh pouch cells modeled at 40°C.
+        Cell IDs and batch IDs prefixed with SYN_.
         """
         provenance = DATASET_PROVENANCE_REGISTRY[DatasetSource.OXFORD]
         dataset = SohDataset()
 
         spec = CellReferenceSpec(
-            cell_id="OXFORD_KOKAM_740MAH",
+            cell_id="SYN_OXFORD_KOKAM_740MAH",
             chemistry=provenance.chemistry,
             nominal_capacity_ah=provenance.nominal_capacity_ah,
             v_max=provenance.voltage_range_v[1],
@@ -260,7 +289,7 @@ class RealCellDataLoader:
             t_ref_c=40.0,
             nominal_resistance_ohm=0.035,
             provenance=ReferenceProvenance(
-                provenance_type=provenance.provenance_type,
+                provenance_type=ReferenceProvenanceType.SYNTHETIC,
                 is_pristine_bol=provenance.is_pristine_bol,
                 qualification_notes=provenance.qualification_notes,
             ),
@@ -268,13 +297,13 @@ class RealCellDataLoader:
 
         rng = np.random.default_rng(101)
         for i in range(num_cells):
-            cid = f"OXFORD_CELL_0{i+1}"
+            cid = f"SYN_OXFORD_CELL_0{i+1}"
             bol_cap = provenance.nominal_capacity_ah * rng.normal(1.0, 0.01)
             bol_res = 0.035 * rng.normal(1.0, 0.02)
             bdata = SohBatteryData(cell_id=cid, spec=spec, bol_capacity_ah=bol_cap, bol_resistance_ohm=bol_res)
 
             for k in range(num_cycles):
-                # 40°C accelerated thermal degradation
+                # 40°C accelerated thermal degradation formula
                 fade = 0.0012 * (k ** 0.55) + 0.00015 * k
                 soh_c = max(0.60, min(1.0, 1.0 - fade))
                 r_growth = 1.0 + 0.003 * (k ** 0.65)
@@ -298,7 +327,7 @@ class RealCellDataLoader:
                     soh_c_rated_true=soh_c,
                     soh_r_bol_true=soh_r,
                     soh_r_rated_true=soh_r,
-                    metadata={"temp_c_avg": 40.0, "current_a_avg": 0.74, "soc_avg": 0.50},
+                    metadata={"temp_c_avg": 40.0, "current_a_avg": 0.74, "soc_avg": 0.50, "batch_id": "SYN_BATCH_OXFORD_KOKAM"},
                 )
                 bdata.cycles.append(rec)
 
@@ -306,18 +335,23 @@ class RealCellDataLoader:
 
         return dataset
 
-    def create_mit_stanford_reference_cohort(
+    def create_oxford_reference_cohort(self, *args, **kwargs) -> SohDataset:
+        """Alias for create_oxford_synthetic_cohort."""
+        return self.create_oxford_synthetic_cohort(*args, **kwargs)
+
+    def create_mit_stanford_synthetic_cohort(
         self, num_cells: int = 4, num_cycles: int = 60
     ) -> SohDataset:
-        """Create reference cohort matching MIT/Stanford Severson et al. 2019 dataset:
+        """Create synthetic reference cohort matching MIT/Stanford specifications via analytical knee-rollover formulas:
         
         A123 1.1 Ah LFP cylindrical cells with batch metadata and knee-point rollover.
+        Cell IDs and batch IDs prefixed with SYN_.
         """
         provenance = DATASET_PROVENANCE_REGISTRY[DatasetSource.MIT_STANFORD]
         dataset = SohDataset()
 
         spec = CellReferenceSpec(
-            cell_id="MIT_A123_1.1AH",
+            cell_id="SYN_MIT_A123_1.1AH",
             chemistry=provenance.chemistry,
             nominal_capacity_ah=provenance.nominal_capacity_ah,
             v_max=provenance.voltage_range_v[1],
@@ -325,18 +359,18 @@ class RealCellDataLoader:
             t_ref_c=30.0,
             nominal_resistance_ohm=0.015,
             provenance=ReferenceProvenance(
-                provenance_type=provenance.provenance_type,
+                provenance_type=ReferenceProvenanceType.SYNTHETIC,
                 is_pristine_bol=provenance.is_pristine_bol,
                 qualification_notes=provenance.qualification_notes,
             ),
         )
 
-        batches = ["BATCH_2017-05-12", "BATCH_2017-06-30"]
+        batches = ["SYN_BATCH_2017-05-12", "SYN_BATCH_2017-06-30"]
         rng = np.random.default_rng(202)
 
         for i in range(num_cells):
             batch_id = batches[i % len(batches)]
-            cid = f"MIT_CELL_{batch_id}_0{i+1}"
+            cid = f"SYN_MIT_CELL_{batch_id}_0{i+1}"
             bol_cap = provenance.nominal_capacity_ah * rng.normal(1.0, 0.012)
             bol_res = 0.015 * rng.normal(1.0, 0.025)
             bdata = SohBatteryData(cell_id=cid, spec=spec, bol_capacity_ah=bol_cap, bol_resistance_ohm=bol_res)
@@ -381,3 +415,8 @@ class RealCellDataLoader:
             dataset.add_battery(bdata)
 
         return dataset
+
+    def create_mit_stanford_reference_cohort(self, *args, **kwargs) -> SohDataset:
+        """Alias for create_mit_stanford_synthetic_cohort."""
+        return self.create_mit_stanford_synthetic_cohort(*args, **kwargs)
+
