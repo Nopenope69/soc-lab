@@ -3,7 +3,7 @@
 **Status:** `CANDIDATE ALGORITHM SPECIFICATION (NO-GO AT STAGE V3 GATE A ii-b & GATE B iii)`  
 **Chemistry:** Lithium Iron Phosphate (LFP / $\text{LiFePO}_4$)  
 **Target Cell:** A123 Systems 1.11 Ah Cylindrical Cell (APR18650M1A-class)  
-**Reference Implementation:** [`deliverable/bms_soc_ref.py`](file:///Users/tecbusiness/Desktop/random/SOC/deliverable/bms_soc_ref.py)  
+**Reference Implementation:** [`deliverable/bms_soc_ref.py`](../../../../../../../deliverable/bms_soc_ref.py)  
 **Verification Status:** Cross-verified against reference implementation to machine precision ($\max |\Delta \text{SOC}| = 0.00 \times 10^0$).
 
 ---

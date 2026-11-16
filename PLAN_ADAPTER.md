@@ -2,7 +2,7 @@
 
 ## 1. Specification Overview & Objectives
 
-This document specifies the technical design, data schema, ingestion pipeline, verification checks, and evaluation protocols for adapting the **CALCE A123 26650 LiFePO4 (LFP)** laboratory dataset into the State-of-Charge (SOC) Estimation Lab.
+This document specifies the technical design, data schema, ingestion pipeline, verification checks, and evaluation protocols for adapting the **CALCE A123 LiFePO4 (measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified)** laboratory dataset into the State-of-Charge (SOC) Estimation Lab.
 
 ### Core Architectural Rules
 1. **Zero Estimator/Harness Edits:** Estimator implementations (`E0`, `E1`, `E2`, `E5`, `E6`) and harness code under `src/soc/harness/` remain strictly immutable.
@@ -24,8 +24,8 @@ class CalceA123DatasetCard(BaseModel):
 
     # Cell Metadata (Source: Info Sheet & CALCE Documentation)
     cell_manufacturer: str          # "A123 Systems"
-    cell_part_number: str           # "ANR26650M1-A"
-    cell_format: str                # "26650 cylindrical"
+    cell_part_number: str           # "UNVERIFIED"
+    cell_format: str                # "A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified"
     cell_chemistry: str             # "LiFePO4"
     nominal_capacity_ah: float      # 1.11 Ah
     nominal_voltage_v: float        # 3.3 V
@@ -133,14 +133,14 @@ Deduplication is performed on the **parsed numeric time-series**, not on file by
 
 ## 6. Schema Bounds Widening
 
-The existing schema in `src/soc/assumptions/schema.py` and defaults in `configs/assumptions/base.yaml` were configured for a large $100\,\text{Ah}$ prismatic cell ($R_0 \approx 1\,\text{m}\Omega$). Small $1.11\,\text{Ah}$ cylindrical 26650 cells have significantly higher internal resistance ($80 - 150\,\text{m}\Omega$) and lower capacity.
+The existing schema in `src/soc/assumptions/schema.py` and defaults in `configs/assumptions/base.yaml` were configured for a large $100\,\text{Ah}$ prismatic cell ($R_0 \approx 1\,\text{m}\Omega$). Small cells (A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified) have significantly higher internal resistance ($80 - 150\,\text{m}\Omega$) and lower capacity.
 
 The schema bounds are widened with mandatory reason strings:
 
 | Parameter | Previous Bounds | Widened Bounds | Reason String |
 | :--- | :---: | :---: | :--- |
-| `plant.nominal_capacity_Ah` | $[1.0, 500.0]$ | $[0.1, 500.0]$ | `"Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 26650 delivering 0.4-1.1 Ah at sub-zero temperatures)."` |
-| `plant.r0_table_ohm` | $[0.0001, 0.05]$ | $[0.0001, 0.50]$ | `"Support small cylindrical cells (e.g. A123 26650 with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm)."` |
+| `plant.nominal_capacity_Ah` | $[1.0, 500.0]$ | $[0.1, 500.0]$ | `"Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 LiFePO4, format unverified, delivering 0.4-1.1 Ah at sub-zero temperatures)."` |
+| `plant.r0_table_ohm` | $[0.0001, 0.05]$ | $[0.0001, 0.50]$ | `"Support small cells (e.g. A123 LiFePO4, format unverified, with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm)."` |
 | `plant.r1_table_ohm` | $[0.00005, 0.05]$ | $[0.00005, 0.50]$ | `"Support small cylindrical cells with higher polarization resistance R1 up to 100-200 mOhm."` |
 | `plant.r2_table_ohm` | $[0.00005, 0.05]$ | $[0.00005, 0.50]$ | `"Support small cylindrical cells with second RC polarization resistance R2 up to 100-200 mOhm."` |
 

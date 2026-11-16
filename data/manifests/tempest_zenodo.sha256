@@ -1,0 +1,26 @@
+# Dataset: tempest_zenodo
+# Name: TEMPEST project 280 Ah LFP prismatic cell dataset
+# Source URL: https://zenodo.org/records/19632939
+# DOI: UNVERIFIED
+# Licence: UNVERIFIED
+# Version: UNVERIFIED
+# Published: 2026-04-17
+# Download Date: 2026-11-15
+# Cell: 280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell)
+# Creators: University of Bath, EU TEMPEST project
+# Note: Zenodo record URL verified: https://zenodo.org/records/19632939
+# Note: DOI in previous manifest was INVENTED and must not be used
+bae5fa2223ddf0b999cde54f125e0004c31b3add86d8aeb6b28d74f5466a04c6  15C_capacity.csv
+7f967eacfcff6622b19e1fa73d1a48c1a3dd91fcc0bd0b6f13ee0dbcd4d7719d  15C_hppc.csv
+1cfc26d91eef89ec4a5c18dbfb9273e6eb827c6c91fd34359ad1b66fccea341d  20C_capacity.csv
+3b9af6bef8a18b653383b8a859df6f62d836d9da28cd48e25b85cad4fe0ac65b  20C_hppc.csv
+97288b5e6e012618a13e34225fde6e68a4ea2be5d5ecaedf4682db8167685920  25C_capacity.csv
+c7e1f5d6d773fb35ba1d0ae8983ef77b62396fbbf87aa06f7fead16d8b114b32  25C_hppc.csv
+1090fe0e4ba61479195f7aff9ec79422e5f34887b9c7cc565b3ed6e59a345df7  30C_capacity.csv
+cbe748658ec50bcf7a32965262b7c97c40dbb5e8e2e5d10e0d001c5e63348a71  30C_hppc.csv
+44c5611bf83dce12e08c4e9b3e8e70d11a92d5929e79374e6c7eb4423188d435  35C_capacity.csv
+89a85e08a7d927f9eb336816e9c0f2e8997b57a9f6ffe85273b1c200d690792b  35C_hppc.csv
+cf510a7771c5ddcc088b71fd0846d11246e82fecf8f60cdbff9635d9d56b2062  LIC_capacity_analysis.csv
+357ecab70571b76a7540b3bb714c1b8c1e0a037af5061c8e967ea436f735273b  LIC_characterisation_readme.txt
+d5c82b460fd71591d56656cb6d77cbcbc5922f3d15c4c0f79ae2fd224febe168  LIC_entropy_analysis.csv
+58c02d68b32b4bcd79ada357436fc56fedb4d808a351e4aca952e91005cf8fef  LIC_hppc_analysis.csv

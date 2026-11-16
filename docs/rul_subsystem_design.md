@@ -12,7 +12,7 @@
 This document defines the production architecture for the Remaining Useful Life (RUL) prognostic subsystem of the battery management platform. In accordance with strict engineering governance:
 
 > [!IMPORTANT]
-> **Implementation Freeze:** RUL estimation algorithms must NOT be implemented or promoted into production until sufficiently long, standardized degradation trajectories (>500 equivalent full cycles with documented end-of-life knee rollover) are independently qualified and verified.
+> **Implementation Freeze & Design Scope:** RUL is design only (no runnable code exists in `src/soh`). RUL estimation algorithms must NOT be implemented or promoted into production until sufficiently long, standardized degradation trajectories (>500 equivalent full cycles with documented end-of-life knee rollover) are independently qualified and verified.
 
 The RUL subsystem operates downstream of the SOH State Estimation & Fusion Layer. While SOH tracks the battery's *current health state* ($\mathbf{x}_k = [SOH_C, SOH_R]^T$), RUL projects the *future time evolution* of the health trajectory to determine the remaining operational horizon before functional retirement.
 

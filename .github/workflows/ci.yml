@@ -58,14 +58,17 @@ jobs:
   lint-imports:
     name: Lint & Import Hygiene Check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install core + dev
         run: |
@@ -75,9 +78,32 @@ jobs:
         run: |
           pytest tests/test_no_hardcoded_constants.py -v
 
+      - name: Verify all package modules import cleanly via pkgutil
+        run: |
+          pytest tests/test_import_all_modules.py -v
+
       - name: Verify deliverable stdlib isolation
         run: |
           pytest tests/test_bms_soc_ref.py -k "test_bms_soc_ref_has_zero_forbidden_imports" -v
+
+  c-edge-package:
+    name: C Edge Package Build & Test (C99, ASAN/UBSAN)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Compile and run C test suite with gcc C99 -Wall -Wextra -Werror and ASAN/UBSAN
+        run: |
+          cd deliverable/edge_pkg
+          gcc -std=c99 -Wall -Wextra -Werror -fsanitize=address,undefined -g \
+            soh_pulse_elasticnet.c \
+            soh_empirical_powerlaw.c \
+            soh_dual_state_tracker.c \
+            soh_edge_pipeline.c \
+            test_soh_edge.c \
+            -o test_soh_edge -lm
+          ./test_soh_edge
 
   test-neural:
     name: Neural Estimators (optional / manual)

@@ -1,0 +1,22 @@
+# UConn-ISU-ILCC LFP/Gr Battery Aging Dataset 1 Splits (status: NOT_DOWNLOADED, catalogued only)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "uconn_reil_dataset1"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition
+dev_cells:
+  train_cells:
+    - "cell_01"
+    - "cell_02"
+  val_cells:
+    - "cell_03"
+
+# Sealed test partition
+sealed_test_cells:
+  - "cell_04"
+
+conditions:
+  nominal_chemistry: "LFP/Graphite"
+  form_factor: "18650 cylindrical"
+  aging_profiles: ["fast_charge_cc", "standard_cycle", "intermittent_rpt"]

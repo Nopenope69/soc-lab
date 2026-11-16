@@ -174,3 +174,29 @@ def test_bms_soc_ref_runtime_limit():
 
     print(f"BmsSocEstimatorRef runtime: {ms_per_step:.4f} ms per step")
     assert ms_per_step <= 5.0, f"Runtime {ms_per_step} ms exceeds 5.0 ms limit"
+
+
+def test_bms_soc_ref_capacity_scale_contract():
+    """Verify capacity_scale contract: 1.0 is bit-identical, <1.0 integrates faster discharge."""
+    est_default = BmsSocEstimatorRef()
+    est_default.reset(0.80, soc_std=0.01)
+
+    est_scaled_1 = BmsSocEstimatorRef()
+    est_scaled_1.reset(0.80, soc_std=0.01)
+
+    est_aged = BmsSocEstimatorRef()
+    est_aged.reset(0.80, soc_std=0.01)
+
+    # 10s of 2A discharge on flat plateau (minimal OCV correction)
+    for _ in range(10):
+        out_def = est_default.step(v=3.28, i=2.0, temp_c=25.0, dt=1.0)
+        out_sc1 = est_scaled_1.step(v=3.28, i=2.0, temp_c=25.0, dt=1.0, capacity_scale=1.0)
+        out_aged = est_aged.step(v=3.28, i=2.0, temp_c=25.0, dt=1.0, capacity_scale=0.80)
+
+        # Bit-identical assertion for capacity_scale=1.0
+        assert out_def.soc == out_sc1.soc
+        assert out_def.soc_std == out_sc1.soc_std
+        assert est_default.p == est_scaled_1.p
+
+    # Aged battery (0.80 capacity) must have discharged more SOC than nominal battery
+    assert out_aged.soc < out_def.soc, f"Aged SOC {out_aged.soc} should be lower than nominal {out_def.soc}"

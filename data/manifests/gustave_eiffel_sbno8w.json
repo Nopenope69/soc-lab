@@ -1,0 +1,51 @@
+{
+  "dataset_id": "gustave_eiffel_sbno8w",
+  "title": "Electrical model parameters of LFP 105Ah cells",
+  "source_url": "https://doi.org/10.57745/SBNO8W",
+  "doi": "10.57745/SBNO8W",
+  "licence": "UNVERIFIED",
+  "version": "UNVERIFIED",
+  "status": "INTEGRITY_OK",
+  "download_date": "2026-11-15",
+  "cell": "EVE Energy LFP 105 Ah, four cells BUGE388..BUGE391",
+  "file_count": 6,
+  "total_bytes": 205400,
+  "files": [
+    {
+      "rel_path": "params_SBNO8W_dataverse_files.zip",
+      "size_bytes": 99099,
+      "mtime_iso": "2026-11-15T21:41:29.565570+00:00",
+      "sha256": "e321dbb71ad91ad33800eab6d288a5033ae960156ec3e254a271e2be3decbff5"
+    },
+    {
+      "rel_path": "params_extracted/MANIFEST.TXT",
+      "size_bytes": 196,
+      "mtime_iso": "2026-11-15T17:11:28+00:00",
+      "sha256": "0c82d6f80902bb29d501244d1abc6b7d46d8c61e3c343bcf45e175e93758cfce"
+    },
+    {
+      "rel_path": "params_extracted/auxiliary_code.zip",
+      "size_bytes": 2607,
+      "mtime_iso": "2026-11-15T17:11:28+00:00",
+      "sha256": "b2330bb6ab3eb3c7f535bb233e8a31fc62fefffc41605790e24a3cfc7d86ef0a"
+    },
+    {
+      "rel_path": "params_extracted/batt_data.mat",
+      "size_bytes": 93714,
+      "mtime_iso": "2026-11-15T17:11:28+00:00",
+      "sha256": "64cfc4bdd0c71403de1c9a32bb55f8bc3452f0e8f136e64dc943f994364551bb"
+    },
+    {
+      "rel_path": "params_extracted/parameter_visualisation.m",
+      "size_bytes": 5711,
+      "mtime_iso": "2026-11-15T17:11:28+00:00",
+      "sha256": "d3a9bf3e4b41215f4bf49614e649fa9609bcf1fc1cd1bd8950e690a0456600d6"
+    },
+    {
+      "rel_path": "params_extracted/readme.txt",
+      "size_bytes": 4073,
+      "mtime_iso": "2026-11-15T17:11:28+00:00",
+      "sha256": "e5b05654b70732335082c2049bd5cd545da4bfc48e929b3a07ae73f889d8bb40"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# Wheeler et al. 2025 Twenty-Cell LFP Aging Dataset Splits (status: NOT_DOWNLOADED, catalogued only)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "wheeler_2025"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition (14 cells)
+dev_cells:
+  train_cells:
+    - "Cell_01"
+    - "Cell_02"
+    - "Cell_03"
+    - "Cell_04"
+    - "Cell_05"
+    - "Cell_06"
+    - "Cell_07"
+    - "Cell_08"
+    - "Cell_09"
+    - "Cell_10"
+  val_cells:
+    - "Cell_11"
+    - "Cell_12"
+    - "Cell_13"
+    - "Cell_14"
+
+# Sealed test partition (6 cells held out until final unsealing)
+sealed_test_cells:
+  - "Cell_15"
+  - "Cell_16"
+  - "Cell_17"
+  - "Cell_18"
+  - "Cell_19"
+  - "Cell_20"
+
+conditions:
+  aging_temperatures_c: [25.0, 50.0]
+  use_cases: ["first_life_ev_wltp", "second_life_storage"]
+  degradation_depth: "40% capacity loss"

@@ -16,7 +16,7 @@ Phase 6.3 reconciles historical benchmark discrepancies, enforces strict provena
    - **Empirical Power Law (0.812–0.885% vs 0.21–0.25%):** 0.21%–0.25% applies strictly to monotonic early-life / steady cycling (SOH_C >= 0.90); 0.812%–0.885% occurs across full 60-cycle commercial batches containing rapid nonlinear knee-point rollover. It is **`QUALIFIED` for steady-state**, monitored by an active knee-point detector.
    - **GRU Coverage (86.0% vs 96.7%):** 96.7% applied exclusively to pristine BOL cycles; mid-life heteroskedasticity caused coverage to drop to 72.7% (86.0% overall). Point estimates are **`QUALIFIED`** (0.525% RMSE), but uncertainty is **`PROVISIONALLY_QUALIFIED`**.
 2. **HPPC Cohort Provenance Audit:** `StandardizedHppcCohortGenerator` is confirmed to be an **analytical 2-RC simulation benchmark with Gaussian noise**, NOT physically cycled hardware batteries. SOH_R results on this cohort demonstrate algorithm identifiability under simulation.
-3. **Physical Resistance SOH Protocol:** SOH_R is formally classified as **`PROVISIONALLY_QUALIFIED`** on physical cells until physical test benches execute the dedicated HPPC characterization protocol ([docs/experimental_hppc_protocol.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/experimental_hppc_protocol.md)).
+3. **Physical Resistance SOH Protocol:** SOH_R is formally classified as **`PROVISIONALLY_QUALIFIED`** on physical cells until physical test benches execute the dedicated HPPC characterization protocol ([docs/experimental_hppc_protocol.md](../../../../../../docs/experimental_hppc_protocol.md)).
 4. **Edge Microcontroller Benchmarking:**
    - **Inference WCET:** 0.035 ms on Cortex-M4 (170MHz), 0.012 ms on Cortex-M7 (480MHz) with 4.0 kB Flash, 512 B Stack RAM, and 0 B heap.
    - **2-RC Parameter Fitting WCET:** 0.420 ms on Cortex-M4, 0.145 ms on Cortex-M7 with 8.2 kB Flash and 3.2 kB Stack RAM.
@@ -36,7 +36,7 @@ Phase 6.3 reconciles historical benchmark discrepancies, enforces strict provena
 
 ## 2. HPPC Cohort Provenance Audit
 
-- **Generator:** `StandardizedHppcCohortGenerator` ([src/soh/data/pulse_hppc_cohort.py](file:///Users/tecbusiness/Desktop/random/SOC/src/soh/data/pulse_hppc_cohort.py))
+- **Generator:** `StandardizedHppcCohortGenerator` ([src/soh/data/pulse_hppc_cohort.py](../../../../../../src/soh/data/pulse_hppc_cohort.py))
 - **Pedigree:** Analytical 2-RC Equivalent Circuit Model differential equation simulation with added Gaussian sensor noise.
 - **Physical Cell Origin:** None (Synthesized).
 - **Corrected Provenance Category:** **`SIMULATION / SYNTHETIC_BENCHMARK`**.
@@ -55,7 +55,7 @@ Evaluated on available physical laboratory aging datasets:
    - Provenance: High-rate discharge voltage drop step during fast-charge cycling.
 3. **Physical Resistance Qualification Gate:**
    - Neither dataset contains a standardized 3-temperature, 3-SOC USABC HPPC pulse matrix.
-   - SOH_R is classified as **`PROVISIONALLY_QUALIFIED`** pending physical cycler data collection adhering to [docs/experimental_hppc_protocol.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/experimental_hppc_protocol.md).
+   - SOH_R is classified as **`PROVISIONALLY_QUALIFIED`** pending physical cycler data collection adhering to [docs/experimental_hppc_protocol.md](../../../../../../docs/experimental_hppc_protocol.md).
 
 ---
 
@@ -95,7 +95,7 @@ Evaluated on available physical laboratory aging datasets:
 
 ## 6. Synchronized Raw Telemetry Format
 
-Standardized synchronized schema implemented in [src/soh/data/synchronized_telemetry.py](file:///Users/tecbusiness/Desktop/random/SOC/src/soh/data/synchronized_telemetry.py) and verified via [deliverable/example_synchronized_telemetry.json](file:///Users/tecbusiness/Desktop/random/SOC/deliverable/example_synchronized_telemetry.json):
+Standardized synchronized schema implemented in [src/soh/data/synchronized_telemetry.py](../../../../../../src/soh/data/synchronized_telemetry.py) and verified via [deliverable/example_synchronized_telemetry.json](../../../../../../deliverable/example_synchronized_telemetry.json):
 - Contains 12 mandatory synchronized fields: `cell_id`, `chemistry`, `batch_id`, `timestamp_s`, `voltage_v`, `current_a`, `temp_c`, `soc`, `ah_throughput`, `pulse_id`, `reference_protocol`, `ground_truth_metadata`.
 - Replayer (`SynchronizedTelemetryReplayer`) delivers identical traces across all estimators for regression testing.
 
@@ -103,7 +103,7 @@ Standardized synchronized schema implemented in [src/soh/data/synchronized_telem
 
 ## 7. Verification Summary
 
-- **Phase 6.3 Automated Tests:** **10 / 10 passed** ([tests/soh/test_phase6_3_qualification.py](file:///Users/tecbusiness/Desktop/random/SOC/tests/soh/test_phase6_3_qualification.py)).
+- **Phase 6.3 Automated Tests:** **10 / 10 passed** ([tests/soh/test_phase6_3_qualification.py](../../../../../../tests/soh/test_phase6_3_qualification.py)).
 - **Complete SOH Suite:** **94 / 94 passed** (100% pass rate).
 - **Baseline SOC Lab Suite:** **64 / 64 passed** (0 regressions).
 - **Compiled ANSI C Edge Package:** **100% passed** (`test_soh_edge`).

@@ -206,9 +206,23 @@ class EmbeddedSohEdgePipeline:
         return self.state
 
 
-def profile_edge_inference(iterations: int = 5000) -> Dict[str, Any]:
-    """Execute rigorous embedded profiling including actual latency, WCET, RAM, Flash, and concurrency."""
+def profile_edge_inference(
+    iterations: int = 5000,
+    measurement_file: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Execute embedded profiling distinguishing measured host latency from target MCU analytical estimates."""
+    import json
     pipeline = EmbeddedSohEdgePipeline()
+
+    mcu_measurements: Dict[str, Any] = {}
+    if measurement_file is not None and Path(measurement_file).exists():
+        try:
+            mcu_measurements = json.loads(Path(measurement_file).read_text(encoding="utf-8"))
+        except Exception:
+            mcu_measurements = {}
+
+    m4_measured = mcu_measurements.get("target_mcu_cortex_m4_170mhz", {})
+    m7_measured = mcu_measurements.get("target_mcu_cortex_m7_480mhz", {})
 
     # 1. Host Latency Measurements
     mock_pulse = np.array([0.0155, 0.0052, 980.0, 0.0062, 3950.0, 0.0269, 5.1, 24.5, -2.0, 25.0, 3.32], dtype=np.float32)
@@ -273,38 +287,55 @@ def profile_edge_inference(iterations: int = 5000) -> Dict[str, Any]:
     int8_pred = float(np.clip(pipeline.intercept_c + np.dot(pipeline.coefs_c, x_norm_int8), 0.20, 1.20))
     quant_error_pct = abs(float(fp32_pred - int8_pred)) * 100.0
 
+    m4_status = m4_measured.get("status", "NOT MEASURED (ANALYTICAL ESTIMATE)")
+    m7_status = m7_measured.get("status", "NOT MEASURED (ANALYTICAL ESTIMATE)")
+
     return {
+        # Host workstation execution measurements
         "pulse_mean_host_us": float(np.mean(pulse_times_ns)) / 1000.0,
         "pulse_wcet_host_us": float(np.max(pulse_times_ns)) / 1000.0,
         "empirical_mean_host_us": float(np.mean(emp_times_ns)) / 1000.0,
         "empirical_wcet_host_us": float(np.max(emp_times_ns)) / 1000.0,
         "tracker_mean_host_us": float(np.mean(tracker_times_ns)) / 1000.0,
         "tracker_wcet_host_us": float(np.max(tracker_times_ns)) / 1000.0,
+        # Explicit host timing aliases
+        "host_timing_pulse_mean_us": float(np.mean(pulse_times_ns)) / 1000.0,
+        "host_timing_pulse_max_us": float(np.max(pulse_times_ns)) / 1000.0,
+        "host_timing_empirical_mean_us": float(np.mean(emp_times_ns)) / 1000.0,
+        "host_timing_empirical_max_us": float(np.max(emp_times_ns)) / 1000.0,
+        "host_timing_tracker_mean_us": float(np.mean(tracker_times_ns)) / 1000.0,
+        "host_timing_tracker_max_us": float(np.max(tracker_times_ns)) / 1000.0,
         "target_mcu_cortex_m4_170mhz": {
             "clock_mhz": 170.0,
-            "pulse_inference_wcet_us": 0.035,
-            "empirical_inference_wcet_us": 0.028,
-            "tracker_step_wcet_us": 0.045,
-            "complete_pipeline_inference_wcet_us": 0.108,
-            "ecm_2rc_fitting_wcet_ms": 0.420,
-            "inference_flash_bytes": 4096,
-            "fitting_flash_bytes": 8192,
-            "inference_ram_stack_bytes": 512,
-            "fitting_ram_stack_bytes": 3200,
-            "ram_static_bytes": 0,
+            "status": m4_status,
+            "analytical_estimate": True if "ANALYTICAL" in m4_status else False,
+            "pulse_inference_wcet_us": m4_measured.get("pulse_inference_wcet_us", 0.035),
+            "pulse_inference_analytical_us": 0.035,
+            "empirical_inference_wcet_us": m4_measured.get("empirical_inference_wcet_us", 0.028),
+            "tracker_step_wcet_us": m4_measured.get("tracker_step_wcet_us", 0.045),
+            "complete_pipeline_inference_wcet_us": m4_measured.get("complete_pipeline_inference_wcet_us", 0.108),
+            "ecm_2rc_fitting_wcet_ms": m4_measured.get("ecm_2rc_fitting_wcet_ms", 0.420),
+            "inference_flash_bytes": m4_measured.get("inference_flash_bytes", 4096),
+            "fitting_flash_bytes": m4_measured.get("fitting_flash_bytes", 8192),
+            "inference_ram_stack_bytes": m4_measured.get("inference_ram_stack_bytes", 512),
+            "fitting_ram_stack_bytes": m4_measured.get("fitting_ram_stack_bytes", 3200),
+            "ram_static_bytes": m4_measured.get("ram_static_bytes", 0),
         },
         "target_mcu_cortex_m7_480mhz": {
             "clock_mhz": 480.0,
-            "pulse_inference_wcet_us": 0.012,
-            "empirical_inference_wcet_us": 0.009,
-            "tracker_step_wcet_us": 0.016,
-            "complete_pipeline_inference_wcet_us": 0.037,
-            "ecm_2rc_fitting_wcet_ms": 0.145,
-            "inference_flash_bytes": 4096,
-            "fitting_flash_bytes": 8192,
-            "inference_ram_stack_bytes": 512,
-            "fitting_ram_stack_bytes": 3200,
-            "ram_static_bytes": 0,
+            "status": m7_status,
+            "analytical_estimate": True if "ANALYTICAL" in m7_status else False,
+            "pulse_inference_wcet_us": m7_measured.get("pulse_inference_wcet_us", 0.012),
+            "pulse_inference_analytical_us": 0.012,
+            "empirical_inference_wcet_us": m7_measured.get("empirical_inference_wcet_us", 0.009),
+            "tracker_step_wcet_us": m7_measured.get("tracker_step_wcet_us", 0.016),
+            "complete_pipeline_inference_wcet_us": m7_measured.get("complete_pipeline_inference_wcet_us", 0.037),
+            "ecm_2rc_fitting_wcet_ms": m7_measured.get("ecm_2rc_fitting_wcet_ms", 0.145),
+            "inference_flash_bytes": m7_measured.get("inference_flash_bytes", 4096),
+            "fitting_flash_bytes": m7_measured.get("fitting_flash_bytes", 8192),
+            "inference_ram_stack_bytes": m7_measured.get("inference_ram_stack_bytes", 512),
+            "fitting_ram_stack_bytes": m7_measured.get("fitting_ram_stack_bytes", 3200),
+            "ram_static_bytes": m7_measured.get("ram_static_bytes", 0),
         },
         "timing_provenance": "Direct Host Hardware Timings (time.perf_counter_ns) vs Target MCU Static Instruction-Cycle Calculations",
         "feature_fitting_included_in_online_step": False,

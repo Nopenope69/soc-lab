@@ -1,0 +1,22 @@
+# TEMPEST 280 Ah Prismatic LFP Dataset Splits (Zenodo: https://zenodo.org/records/19632939; DOI: UNVERIFIED)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "tempest_zenodo"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition
+dev_cells:
+  train_cells:
+    - "cell_tempest_01"
+  val_cells:
+    - "cell_tempest_01"
+
+# Sealed test partition
+sealed_test_cells:
+  - "cell_tempest_02"
+
+conditions:
+  form_factor: "280 Ah prismatic"
+  characterisation_temperatures_c: [15.0, 20.0, 25.0, 30.0, 35.0]
+  entropy_soc_points: [0.10, 0.30, 0.50, 0.70, 0.90]
+  cycle_count: 700

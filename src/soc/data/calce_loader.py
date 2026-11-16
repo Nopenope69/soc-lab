@@ -1,6 +1,6 @@
 """CALCE A123 dataset loader, parser, and preprocessor.
 
-Handles Excel workbooks from the CALCE A123 1.11 Ah LFP (ANR26650M1-A 26650 form-factor) test matrix.
+Handles Excel workbooks from the CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified test matrix.
 Extracts low-current OCV and dynamic drive cycles (DST, US06, FUDS).
 Applies repo sign convention (discharge positive), anchors full charge,
 computes reference Coulomb-counting SOC, and verifies capacity integrals.

@@ -21,7 +21,7 @@ The primary research candidate is **E7v3** (`E7V3CompositeFilter` in research, a
 
 > [!IMPORTANT]
 > **VALIDATED (Certified Development Scope):**
-> - **Specimens**: CALCE A123 Systems ANR26650M1-A (26650 cylindrical form-factor, $1.11\text{ Ah}$ calibrated baseline) cells (`A1-007` primary development, `A1-008` transfer check).
+> - **Specimens**: CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified (`A1-007` primary development, `A1-008` transfer check).
 > - **Certified Thermal Envelope**: **20 °C to 50 °C** (evaluated at 20, 25, 30, 40, and 50 °C).
 > - **Drive Cycles**: Dynamic driving profiles (DST, US06, FUDS) on laboratory cycler data.
 > - **Fault Recovery**: Tested against sensor gain errors ($\pm 2\%$), persistent voltage sensor bias ($+50\text{ mV}$), and wrong starts ($-50\text{ pp}$, $-20\text{ pp}$, $+10\text{ pp}$).
@@ -125,7 +125,7 @@ deliverable/
 ├── bms_soc_ref.py            # Zero-dependency, pure Python standard library E7v3 reference
 ├── calibration.py            # Certified CellCalibration contract with strict validation
 ├── calibrations/
-│   ├── calce_a123_v4.json    # Validated CALCE A123 26650 20–50 °C calibration profile
+│   ├── calce_a123_v4.json    # Validated CALCE A123 (format unverified) 20–50 °C calibration profile
 │   └── flexipod_100ah_v1.json# FlexiPod profile (marked NOT_VALIDATED)
 ├── golden/
 │   ├── golden_synthetic_dynamic.csv  # 25,000-step dynamic verification vector

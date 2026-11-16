@@ -6,7 +6,7 @@ parameter stress tests, and automated unit testing without external file depende
 """
 
 import math
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Tuple
 import numpy as np
 
 from soh.common.contracts import CycleRecord

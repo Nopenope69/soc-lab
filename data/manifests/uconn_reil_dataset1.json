@@ -1,0 +1,14 @@
+{
+  "dataset_id": "uconn_reil_dataset1",
+  "title": "UConn-ISU-ILCC LFP/Gr Battery Aging Dataset (Dataset 1)",
+  "source_url": "https://digitalcommons.lib.uconn.edu/reil_datasets/1/",
+  "doi": "UNVERIFIED",
+  "licence": "CC BY 4.0",
+  "version": "UNVERIFIED",
+  "status": "NOT_DOWNLOADED",
+  "download_date": "NOT_DOWNLOADED",
+  "cell": "64 LithiumWerks APR18650M1B cells, 11 conditions",
+  "file_count": 0,
+  "total_bytes": 0,
+  "files": []
+}

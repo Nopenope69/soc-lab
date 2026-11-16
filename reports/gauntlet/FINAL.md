@@ -22,16 +22,16 @@
 | `7fdc2f3` | Audit & Resolution | `gauntlet: E0 reference fix` — Scenario runner aligned E0 capacity to truth $Q(T)$; generated `e0_audit.md`, `loss_cases.md`, traces, and plots. |
 
 ### Core Project Artifacts
-- **Calibrated Plant Profile:** [`configs/assumptions/profiles/calce_a123_v3.yaml`](file:///Users/tecbusiness/Desktop/random/SOC/configs/assumptions/profiles/calce_a123_v3.yaml)
-- **Scenario Engine:** [`scripts/gauntlet_scenarios.py`](file:///Users/tecbusiness/Desktop/random/SOC/scripts/gauntlet_scenarios.py)
-- **E0 Audit Documentation:** [`reports/gauntlet/e0_audit.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/e0_audit.md)
-  - Data table: [`reports/gauntlet/e0_audit_data.csv`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/e0_audit_data.csv)
-  - SOC traces: [`reports/gauntlet/e0_soc_traces.csv`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/e0_soc_traces.csv)
-  - Visual plot: [`reports/gauntlet/e0_audit_plot.png`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/e0_audit_plot.png)
-- **Loss-Case Analysis:** [`reports/gauntlet/loss_cases.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/loss_cases.md)
-- **Re-evaluation Data:** [`reports/gauntlet/gate2_post_fix_results.csv`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/gate2_post_fix_results.csv)
-- **Failure Analysis Design Note:** [`reports/gauntlet/failure_analysis_design_note.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/failure_analysis_design_note.md)
-- **State Ledger:** [`reports/gauntlet/STATE.md`](file:///Users/tecbusiness/Desktop/random/SOC/reports/gauntlet/STATE.md)
+- **Calibrated Plant Profile:** [`configs/assumptions/profiles/calce_a123_v3.yaml`](../../../../../../../configs/assumptions/profiles/calce_a123_v3.yaml)
+- **Scenario Engine:** [`scripts/gauntlet_scenarios.py`](../../../../../../../scripts/gauntlet_scenarios.py)
+- **E0 Audit Documentation:** [`reports/gauntlet/e0_audit.md`](../../../../../../../reports/gauntlet/e0_audit.md)
+  - Data table: [`reports/gauntlet/e0_audit_data.csv`](../../../../../../../reports/gauntlet/e0_audit_data.csv)
+  - SOC traces: [`reports/gauntlet/e0_soc_traces.csv`](../../../../../../../reports/gauntlet/e0_soc_traces.csv)
+  - Visual plot: [`reports/gauntlet/e0_audit_plot.png`](../../../../../../../reports/gauntlet/e0_audit_plot.png)
+- **Loss-Case Analysis:** [`reports/gauntlet/loss_cases.md`](../../../../../../../reports/gauntlet/loss_cases.md)
+- **Re-evaluation Data:** [`reports/gauntlet/gate2_post_fix_results.csv`](../../../../../../../reports/gauntlet/gate2_post_fix_results.csv)
+- **Failure Analysis Design Note:** [`reports/gauntlet/failure_analysis_design_note.md`](../../../../../../../reports/gauntlet/failure_analysis_design_note.md)
+- **State Ledger:** [`reports/gauntlet/STATE.md`](../../../../../../../reports/gauntlet/STATE.md)
 
 ---
 

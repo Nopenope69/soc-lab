@@ -1,0 +1,39 @@
+# CALCE A123 LFP Dataset Splits (Format UNVERIFIED; measured capacity ~1.06 Ah A1-007, ~1.09 Ah A1-008)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "calce_a123"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition (tuning and calibration allowed)
+dev_cells:
+  train_cells:
+    - "A1-007"
+  val_cells:
+    - "A1-007"
+
+# Sealed test partition (evaluated ONCE per version; tuning strictly prohibited)
+sealed_test_cells:
+  - "A1-008"
+
+# Condition coverage across temperatures and profiles
+conditions:
+  temperatures_c: [-10.0, 0.0, 10.0, 20.0, 25.0, 30.0, 40.0, 50.0]
+  profiles: ["DST", "US06", "FUDS"]
+
+# Legacy cycle-level mapping (for sealed-split lock integration)
+cycle_mapping:
+  dev_cycles:
+    - "calce_dst_20c_a1007"
+    - "calce_dst_25c_a1007"
+    - "calce_dst_30c_a1007"
+    - "calce_dst_40c_a1007"
+    - "calce_dst_50c_a1007"
+    - "calce_us06_25c_a1007"
+  sealed_test_cycles:
+    - "calce_dst_20c_a1008"
+    - "calce_dst_25c_a1008"
+    - "calce_dst_30c_a1008"
+    - "calce_dst_40c_a1008"
+    - "calce_dst_50c_a1008"
+    - "calce_us06_25c_a1008"
+    - "calce_fuds_25c_a1008"

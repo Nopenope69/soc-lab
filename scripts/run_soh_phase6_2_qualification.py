@@ -82,11 +82,11 @@ def run_phase6_2_qualification():
     # =========================================================================
     print("\n--- 1. Empirical Power-Law Independent Validation & Batch Holdout Audit ---")
     data_loader = RealCellDataLoader()
-    mit_dataset = data_loader.create_mit_stanford_reference_cohort(num_cells=4, num_cycles=60)
+    mit_dataset = data_loader.create_mit_stanford_synthetic_cohort(num_cells=4, num_cycles=60)
 
     # Direction A: Train on BATCH_2017-05-12 -> Test on BATCH_2017-06-30
-    batch_12_cids = [cid for cid, b in mit_dataset.batteries.items() if b.cycles[0].metadata.get("batch_id") == "BATCH_2017-05-12"]
-    batch_30_cids = [cid for cid, b in mit_dataset.batteries.items() if b.cycles[0].metadata.get("batch_id") == "BATCH_2017-06-30"]
+    batch_12_cids = [cid for cid, b in mit_dataset.batteries.items() if "2017-05-12" in str(b.cycles[0].metadata.get("batch_id"))]
+    batch_30_cids = [cid for cid, b in mit_dataset.batteries.items() if "2017-06-30" in str(b.cycles[0].metadata.get("batch_id"))]
 
     assert set(batch_12_cids).isdisjoint(set(batch_30_cids)), "Train and test battery IDs must be completely disjoint!"
 

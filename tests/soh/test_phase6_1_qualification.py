@@ -101,11 +101,11 @@ def test_dataset_provenance_registry_classification():
         assert record.ground_truth_protocol != ""
         assert record.bol_capacity_measurement_ah > 0.0
 
-    # Specifically verify LG M50T is SIMULATION and CALCE / OXFORD / MIT are EXPERIMENTAL
+    # All four cohorts in the provenance registry are verified as SIMULATION (PyBaMM or synthetic formulas)
     assert DATASET_PROVENANCE_REGISTRY[DatasetSource.LG_M50T].dataset_category == DatasetCategory.SIMULATION
-    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.CALCE_A123].dataset_category == DatasetCategory.EXPERIMENTAL
-    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.OXFORD].dataset_category == DatasetCategory.EXPERIMENTAL
-    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.MIT_STANFORD].dataset_category == DatasetCategory.EXPERIMENTAL
+    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.CALCE_A123].dataset_category == DatasetCategory.SIMULATION
+    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.OXFORD].dataset_category == DatasetCategory.SIMULATION
+    assert DATASET_PROVENANCE_REGISTRY[DatasetSource.MIT_STANFORD].dataset_category == DatasetCategory.SIMULATION
 
 
 # =====================================================================

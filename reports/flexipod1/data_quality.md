@@ -8,7 +8,7 @@ This report establishes robust, header-text-based ingestion and comprehensive da
 - **Cell Class Identified (Assumption A1)**: End capacities delivered to the 2.5 V cutoff range from **86.35 Ah to 95.46 Ah** (at ~0.0277 Ah/s for 100 A), proving that the discharge curves belong to a **100 Ah-class cell**, not the 206 Ah cell named on the IR sheet.
 - **Suspect Curve Flagged**: The **5 °C / 150 A** curve starts at **3.155 V** ($t=0$) compared to **~3.33 V** for all other curves. It is formally flagged as **`SUSPECT`** (likely starting from an unrelaxed or depleted state) and excluded from primary rate and thermal comparisons, though reported separately.
 - **15 °C Sheet Layout Discrepancy**: Sheet `15 degC` lacks textual header rows, contains dual timestamp columns (relative elapsed time and wall-clock time `13:39:07`), includes a dedicated measured current column (`-99.84 A`), and contains only a 100 A discharge curve (no 150 A test).
-- **Policy Table Date Corruption Restored**: Excel auto-converted temperature ranges `3-7` and `8-12` on `Sheet5` to date timestamps `2026-07-03` and `2026-12-08`. These have been detected and restored to clean text ranges in [`reports/flexipod1/policy_table_corrected.csv`](file:///Users/tecbusiness/Desktop/random/SOC/reports/flexipod1/policy_table_corrected.csv).
+- **Policy Table Date Corruption Restored**: Excel auto-converted temperature ranges `3-7` and `8-12` on `Sheet5` to date timestamps `2026-07-03` and `2026-12-08`. These have been detected and restored to clean text ranges in [`reports/flexipod1/policy_table_corrected.csv`](../../../../../../../reports/flexipod1/policy_table_corrected.csv).
 - **OCV Endpoints Identified as Non-Equilibrium**: Endpoints at 0% and 100% SOC exhibit dynamic polarisation truncation and are formally excluded from equilibrium OCV fitting.
 - **Cell Census Recorded**: OCV cell counts verified (`GOTION_50Ah`: 3 cells; `Ganfeng_100Ah`: 2 cells; `CALB_100Ah`: 2 cells; `Ganfeng_125Ah`: 1 cell; `Ganfeng_206Ah`: 2 cells; `Ganfeng_230Ah`: 2 cells). Sheet `Ganfeng_230Ah` is verified to be **discharge-only**.
 
@@ -64,7 +64,7 @@ Excel auto-formatting corrupted temperature ranges on `Sheet5` of `Temperature_b
 | **Row 6, Column D** | `13-17` | *Unmodified String* | `13-17` | Temperature operating range: **13 °C to 17 °C** (Month 13 does not exist, so Excel left as text) |
 | **Row 7, Column D** | `18-22` | *Unmodified String* | `18-22` | Temperature operating range: **18 °C to 22 °C** (Month 18 does not exist, so Excel left as text) |
 
-The complete, sanitized policy specification has been written to [`reports/flexipod1/policy_table_corrected.csv`](file:///Users/tecbusiness/Desktop/random/SOC/reports/flexipod1/policy_table_corrected.csv):
+The complete, sanitized policy specification has been written to [`reports/flexipod1/policy_table_corrected.csv`](../../../../../../../reports/flexipod1/policy_table_corrected.csv):
 
 ```csv
 Temperature Range (°C),Hard Cutoff,Usable Capacity Multiplier,Number of Samples

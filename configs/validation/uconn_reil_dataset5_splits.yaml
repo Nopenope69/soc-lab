@@ -1,0 +1,22 @@
+# UConn-ISU-ILCC LFP/Gr Battery Aging Dataset Extended (Dataset 5) Splits
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "uconn_reil_dataset5"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition
+dev_cells:
+  train_cells:
+    - "cell_condition1"
+    - "cell_condition2"
+  val_cells:
+    - "cell_condition3"
+
+# Sealed test partition
+sealed_test_cells:
+  - "cell_condition4"
+
+conditions:
+  unique_conditions_count: 11
+  end_of_life_target: "80% retention"
+  sampling_rate_hz: 1.0

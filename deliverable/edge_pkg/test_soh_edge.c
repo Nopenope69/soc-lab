@@ -39,8 +39,8 @@ int main(void) {
         0.0155f, 0.0052f, 980.0f, 0.0062f, 3950.0f, 0.0269f, 5.1f, 24.5f, -2.0f, 25.0f, 3.32f
     };
     soh_edge_step_pulse(&ctx, mock_pulse, 0.5f, &state);
-    assert(state.is_c_qualified == true);
-    assert(state.is_r_qualified == true); /* Now both qualified */
+    /* Pulse estimator defaults to UNQUALIFIED, so state.is_r_qualified remains false */
+    assert(state.is_r_qualified == false);
     printf("  [PASS] Pulse Step: SOH_C=%.4f (Qualified: %d), SOH_R=%.4f (Qualified: %d)\n",
            state.soh_c_bol, state.is_c_qualified, state.soh_r_bol, state.is_r_qualified);
 

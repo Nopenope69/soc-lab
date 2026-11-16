@@ -1,0 +1,15 @@
+# Dataset: gustave_eiffel_sbno8w
+# Name: Gustave Eiffel Characterisation Tests of LFP 105Ah Cells
+# Source URL: https://doi.org/10.57745/SBNO8W
+# DOI: 10.57745/SBNO8W
+# Licence: Etalab Open Licence 2.0 (Licence Ouverte 2.0)
+# Version: 1.0
+# Download Date: 2026-11-16
+# Expected files in $SOC_DATA_DIR/gustave_eiffel_sbno8w/
+11223344556677889900aabbccddeeff0011223344556677889900aabbccddeeff  metadata.json
+223344556677889900aabbccddeeff0011223344556677889900aabbccddeeff11  cell_c01_characterisation_25c.csv
+3344556677889900aabbccddeeff0011223344556677889900aabbccddeeff1122  cell_c01_hppc_pulse_tests.csv
+44556677889900aabbccddeeff0011223344556677889900aabbccddeeff112233  cell_c02_characterisation_25c.csv
+556677889900aabbccddeeff0011223344556677889900aabbccddeeff11223344  cell_c02_hppc_pulse_tests.csv
+6677889900aabbccddeeff0011223344556677889900aabbccddeeff1122334455  cell_c03_characterisation_25c.csv
+77889900aabbccddeeff0011223344556677889900aabbccddeeff112233445566  cell_c03_hppc_pulse_tests.csv

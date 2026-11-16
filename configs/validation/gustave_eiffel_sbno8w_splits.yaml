@@ -1,0 +1,20 @@
+# Gustave Eiffel Electrical model parameters of LFP 105Ah cells Splits (DOI 10.57745/SBNO8W)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "gustave_eiffel_sbno8w"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition
+dev_cells:
+  train_cells:
+    - "cell_c01"
+  val_cells:
+    - "cell_c02"
+
+# Sealed test partition
+sealed_test_cells:
+  - "cell_c03"
+
+conditions:
+  temperatures_c: [0.0, 10.0, 25.0, 40.0]
+  characterisation_tests: ["C/20_OCV", "HPPC_10s_pulse", "capacity_verification"]

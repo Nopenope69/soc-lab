@@ -1,0 +1,21 @@
+# Gustave Eiffel Characterisation tests of LFP 105Ah cells Splits (DOI 10.57745/G02IYE)
+# Rule R3: Splits are strictly by CELL. Sealed test set must NEVER be accessed during tuning.
+dataset_id: "gustave_eiffel_g02iye"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition
+dev_cells:
+  train_cells:
+    - "cell_01"
+    - "cell_02"
+  val_cells:
+    - "cell_03"
+
+# Sealed test partition
+sealed_test_cells:
+  - "cell_04"
+
+conditions:
+  regimes: ["first_life_calendar", "second_life_cycling"]
+  temperatures_c: [25.0, 45.0]

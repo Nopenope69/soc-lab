@@ -25,9 +25,9 @@ class CalceAgingDataLoader(AbstractAgingDataLoader):
 
     def __init__(self, spec: Optional[CellReferenceSpec] = None):
         if spec is None:
-            # Default reference spec for CALCE A123 APR18650M1A cell
+            # Default reference spec for A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified
             self.spec = CellReferenceSpec(
-                cell_id="CALCE_A123_APR18650M1A",
+                cell_id="CALCE_A123_UNVERIFIED",
                 chemistry="LFP",
                 nominal_capacity_ah=1.11,
                 v_max=3.65,

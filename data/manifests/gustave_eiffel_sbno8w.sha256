@@ -1,0 +1,15 @@
+# Dataset: gustave_eiffel_sbno8w
+# Name: Electrical model parameters of LFP 105Ah cells
+# Source URL: https://doi.org/10.57745/SBNO8W
+# DOI: 10.57745/SBNO8W
+# Licence: UNVERIFIED
+# Version: UNVERIFIED
+# Published: 2024
+# Download Date: 2026-11-15
+# Cell: EVE Energy LFP 105 Ah, four cells BUGE388..BUGE391
+e321dbb71ad91ad33800eab6d288a5033ae960156ec3e254a271e2be3decbff5  params_SBNO8W_dataverse_files.zip
+0c82d6f80902bb29d501244d1abc6b7d46d8c61e3c343bcf45e175e93758cfce  params_extracted/MANIFEST.TXT
+b2330bb6ab3eb3c7f535bb233e8a31fc62fefffc41605790e24a3cfc7d86ef0a  params_extracted/auxiliary_code.zip
+64cfc4bdd0c71403de1c9a32bb55f8bc3452f0e8f136e64dc943f994364551bb  params_extracted/batt_data.mat
+d3a9bf3e4b41215f4bf49614e649fa9609bcf1fc1cd1bd8950e690a0456600d6  params_extracted/parameter_visualisation.m
+e5b05654b70732335082c2049bd5cd545da4bfc48e929b3a07ae73f889d8bb40  params_extracted/readme.txt

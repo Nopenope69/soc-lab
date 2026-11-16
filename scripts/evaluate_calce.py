@@ -324,11 +324,10 @@ def main():
         print(f"   {est}: median RMSE = {med:.3f} pp")
 
     # Determine better E5 variant on DST training data only
-    df_dst_gating = df_raw[
-        (df_raw["profile"] == "DST") &
-        (df_raw["is_gating"]) &
-        (df_raw["fault_name"] == "baseline") &
-        (df_raw["cell_id"] == "A1-007")
+    df_dst_gating = df_base[
+        (df_base["profile"] == "DST") &
+        (df_base["is_gating"]) &
+        (df_base["cell"] == "A1-007")
     ]
     e5v1_dst = float(df_dst_gating[df_dst_gating["estimator"] == "E5 v1"]["rmse"].median())
     e5v2_dst = float(df_dst_gating[df_dst_gating["estimator"] == "E5 v2"]["rmse"].median())
@@ -377,6 +376,7 @@ def main():
     r3_diff = abs(e5_soc_mean - e2_soc_mean)
     r3_pass_two_sided = r3_diff <= 2.0
     r3_pass_one_sided = (e5_soc_mean <= e2_soc_mean + 2.0)
+    r3_pass = r3_pass_two_sided
 
     print(f"\nRule 3 - Recovery under +-10 pp offset:")
     print(f"   Two-sided: E2 mean RMSE = {e2_soc_mean:.3f} pp, {better_e5} mean RMSE = {e5_soc_mean:.3f} pp (|Diff| = {r3_diff:.3f} pp, Threshold: <= 2.0 pp) -> {'PASS' if r3_pass_two_sided else 'FAIL'}")
@@ -420,9 +420,9 @@ def main():
         r2_no_harm_pass=r2_no_harm_pass,
         r2_reduction_pass=r2_reduction_pass,
         better_e5=better_e5,
-        within_03_count=within_03_count,
+        within_03_count=within_03_two_sided,
         total_base_cases=total_base_cases,
-        r2_no_harm_pct=r2_no_harm_pct,
+        r2_no_harm_pct=r2_no_harm_two_sided_pct,
         e2_ocv_mean=e2_ocv_mean,
         e5_ocv_mean=e5_ocv_mean,
         r2_reduction_pct=r2_reduction_pct,
@@ -487,7 +487,7 @@ def generate_markdown_report(
         return "PASS" if p else "FAIL"
 
     lines = []
-    lines.append("# CALCE A123 1.11 Ah LFP (ANR26650M1-A 26650-class) Real-Data Benchmark Verdict")
+    lines.append("# CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified Real-Data Benchmark Verdict")
     lines.append("")
     lines.append(f"**Overall Verdict: {status_badge(overall_pass)}**")
     lines.append("")
@@ -514,7 +514,7 @@ def generate_markdown_report(
     lines.append("")
 
     lines.append("## 2. Experimental Scope & Ground Truth Accounting")
-    lines.append("- **Specimens:** A123 1.11 Ah LFP (ANR26650M1-A 26650-class) cells (`A1-007` and `A1-008`).")
+    lines.append("- **Specimens:** A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified (`A1-007` and `A1-008`).")
     lines.append("- **Gating Temperatures (enforced by pass rules):** 20, 25, 30, 40, and 50 C.")
     lines.append("- **Informational Temperatures (reported only, excluded from pass rules):** -10, 0, and 10 C.")
     lines.append("- **Profiles:** DST (Step 8, used for fitting and tuning), US06 (Step 16, sealed test), FUDS (Step 24, sealed test).")

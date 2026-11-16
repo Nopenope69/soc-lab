@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 import sys
 import time
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Tuple
 import numpy as np
 
 repo_root = Path(__file__).resolve().parents[1]

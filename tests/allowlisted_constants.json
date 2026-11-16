@@ -356,5 +356,14 @@
     "allowed_calls": [
       "float(\"nan\")"
     ]
+  },
+  "src/soc/data/registry.py": {
+    "justification": "Real data registry metadata and buffer size constants",
+    "allowed_calls": [
+      "float(\"1.0636\")",
+      "float(\"105.0\")",
+      "float(\"280.0\")",
+      "int(\"65536\")"
+    ]
   }
 }

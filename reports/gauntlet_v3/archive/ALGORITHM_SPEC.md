@@ -1,4 +1,4 @@
-> **SUPERSEDED:** This historical specification has been superseded by the canonical specification at [docs/ALGORITHM_SPEC.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/ALGORITHM_SPEC.md).
+> **SUPERSEDED:** This historical specification has been superseded by the canonical specification at [docs/ALGORITHM_SPEC.md](../../../../../../../../docs/ALGORITHM_SPEC.md).
 
 STATUS: GATE-PASSED
 

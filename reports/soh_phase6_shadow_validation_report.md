@@ -13,7 +13,7 @@ Phase 6 establishes a unified, leak-free benchmarking framework and non-intrusiv
 1. **Candidate Estimator Freeze:** All prior algorithms have been retained and evaluated under identical validation splits without modifying historical benchmark logs or codebases.
 2. **Real-Cell Dataset Provenance & Reference Qualification:** Four landmark open datasets (LG M50T, CALCE A123, Oxford, MIT/Stanford) have been integrated with formal qualification metadata. Laboratory characterization cycles (e.g., CALCE C/20) are explicitly disqualified from pristine factory BOL classification, and DCIR resistance measurements are verified only when standardized HPPC pulse protocols exist.
 3. **Multi-Model Shadow Integration:** Built `ShadowInferenceEngine`, allowing concurrent parallel evaluation of all candidates against online telemetry. Real-time logging of individual SOH_C, SOH_R, heteroscedastic variances, conformal 95% confidence bounds, and inter-estimator disagreement is achieved with **zero state mutation** on the active `DualSohFusionTracker`.
-4. **Remaining Useful Life (RUL) Architecture:** Formulated complete prognostic subsystem specification in [rul_subsystem_design.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/rul_subsystem_design.md), establishing formal EOL definitions ($SOH_C \le 80\%$, $SOH_R \le 50\%$) and Sequential Monte Carlo (SMC) particle filtering architecture without prematurely releasing unvalidated run-to-failure models.
+4. **Remaining Useful Life (RUL) Architecture:** Formulated complete prognostic subsystem specification in [rul_subsystem_design.md](../../../../../../docs/rul_subsystem_design.md), establishing formal EOL definitions ($SOH_C \le 80\%$, $SOH_R \le 50\%$) and Sequential Monte Carlo (SMC) particle filtering architecture without prematurely releasing unvalidated run-to-failure models.
 
 ---
 
@@ -98,7 +98,7 @@ A dedicated 50-cycle online telemetry stream was evaluated concurrently across a
 - **Mean Ensemble Dispersion ($\sigma_{\text{ensemble}}$):** 4.413%
 - **Maximum Pairwise Disagreement Spread:** 12.164%
 - **State Isolation Audit:** **PASSED**. Fused tracker state (`DualSohFusionTracker`) was verified to have zero side-effects ($x_{\text{final}} == x_{\text{initial}}$, $P_{\text{final}} == P_{\text{initial}}$).
-- **Log Serialization:** Logged full telemetry snapshot to [deliverable/soh_phase6_shadow_telemetry_log.json](file:///Users/tecbusiness/Desktop/random/SOC/deliverable/soh_phase6_shadow_telemetry_log.json).
+- **Log Serialization:** Logged full telemetry snapshot to [deliverable/soh_phase6_shadow_telemetry_log.json](../../../../../../deliverable/soh_phase6_shadow_telemetry_log.json).
 
 ### Table 4: Shadow Estimator Performance & Residual Audit
 
@@ -146,7 +146,7 @@ Uncertainty calibration was evaluated using battery-level grouping to account fo
 ## 7. Remaining Useful Life (RUL) Subsystem Architecture
 
 A formal, production-grade architectural specification for Remaining Useful Life (RUL) prediction has been prepared and cataloged in:
-[docs/rul_subsystem_design.md](file:///Users/tecbusiness/Desktop/random/SOC/docs/rul_subsystem_design.md)
+[docs/rul_subsystem_design.md](../../../../../../docs/rul_subsystem_design.md)
 
 ### Key Architectural Pillars:
 1. **Formal Multi-Domain End-of-Life (EOL) Criteria:**

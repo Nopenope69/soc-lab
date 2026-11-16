@@ -5,11 +5,11 @@ Supports Leave-One-Battery-Out (LOBO) evaluation and uncertainty scoring.
 """
 
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 import numpy as np
 
 from soh.benchmarks.metrics import SohEvaluationMetrics, evaluate_soh_predictions
-from soh.common.contracts import EstimationStatus
+from soh.common.contracts import EstimationStatus, SohEstimate
 from soh.data.base_loader import SohDataset
 from soh.data.window_extractor import PartialChargeWindowExtractor
 from soh.estimators.base import SohEstimator

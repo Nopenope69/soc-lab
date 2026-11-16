@@ -21,6 +21,7 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from soh.common.contracts import (
+    CycleRecord,
     EstimationStatus,
     PartialWindow,
     SohEstimate,

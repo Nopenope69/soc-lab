@@ -80,7 +80,7 @@ We audited the real CALCE A123 1.11 Ah LFP experimental dataset to establish whe
 | **FLOP Count** | **68 FLOPs** | Can run every 10ms with < 0.01% CPU load |
 | **Host Latency** | **1.39 µs** | Hardware FPU estimated latency ~0.7 - 1.2 µs |
 
-Generated deployable C header: [`deliverable/soh_pulse_elasticnet.h`](file:///Users/tecbusiness/Desktop/random/SOC/deliverable/soh_pulse_elasticnet.h).
+Generated deployable C header: [`deliverable/soh_pulse_elasticnet.h`](../../../../../../deliverable/soh_pulse_elasticnet.h).
 
 ---
 
