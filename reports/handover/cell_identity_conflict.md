@@ -95,6 +95,8 @@ To guarantee scientific rigor, benchmark integrity, and zero fabrication:
 > - `reports/soh_phase6_shadow_validation_report.md`
 > - `reports/handover/float32_sensitivity.md`
 > - `reports/gauntlet_v3/*`
+> - `reports/diagnostics/b1_root_cause.md`
+> - `reports/gauntlet/FINAL.md`
 >
 > contain historical assertions referring to the CALCE A123 cells as "26650 cylindrical", "ANR26650M1-A", "18650 cylindrical", or "APR18650M1A". Per the frozen baseline preservation rules, these historical artifacts are kept unmodified. All future development, documentation, and production qualifications designate these cells strictly as:
 >

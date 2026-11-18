@@ -36,7 +36,7 @@ def test_units_and_polarity():
 def test_cell_reference_spec_and_protocols():
     """Verify reference protocol SOH calculations."""
     spec = CellReferenceSpec(
-        cell_id="A123_26650",
+        cell_id="A123 LiFePO4, measured capacity about 1.06 Ah, format unverified",
         chemistry="LFP",
         nominal_capacity_ah=2.3,
         v_max=3.65,
