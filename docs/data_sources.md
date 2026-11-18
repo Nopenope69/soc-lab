@@ -50,9 +50,9 @@ A detailed investigative audit is recorded in [cell_identity_conflict.md](../../
 2. **Website Rating Contradiction:** The CALCE public website (`https://calce.umd.edu/data`) states **"2230 mAh"** (~2.2–2.3 Ah) for A123 samples. This is more than double the actual measured capacity in the raw time-series test files in that same repository.
 
 ### 3.2 Form Factor Ambiguity (18650 vs 26650)
-- Commercial A123 Nanophosphate® cells include the **APR18650M1A/B** (rated nominal $1.1\text{ Ah}$, matching the empirical ~1.06 Ah capacity) and the **ANR26650M1A/B** (rated nominal $2.3 - 2.5\text{ Ah}$).
+- Commercial A123 Nanophosphate® cells include the **APR18650M1A/B** (rated nominal $1.1\text{ Ah}$, from general knowledge, not verified against a datasheet on disk, matching the empirical ~1.06 Ah capacity) and the **ANR26650M1A/B** (rated nominal $2.3 - 2.5\text{ Ah}$, from general knowledge, not verified against a datasheet on disk).
 - The raw spreadsheet files contain only numeric time-series columns (timestamps, step numbers, current, voltage, capacity, temperature) with no photographs, mechanical dimensions, or cell model numbers.
-- Because raw file evidence alone cannot prove whether the specimens were 18650 cells mislabeled on the website, degraded 26650 cells, or custom development prototypes, **we assert NEITHER 18650 nor 26650**.
+- Because raw file evidence alone cannot prove whether Hypothesis A (the specimens are a 1.1 Ah-class cell, for example 18650 format, and the CALCE page's 2230 mAh listing does not describe them), Hypothesis B (degraded 26650 cells), or custom development prototypes holds, **we assert NEITHER 18650 nor 26650**.
 - The form factor is formally catalogued as `cell_form_factor = "UNVERIFIED"`.
 
 ### 3.3 Algorithmic Baselines

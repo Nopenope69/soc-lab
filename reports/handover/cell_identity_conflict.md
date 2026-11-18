@@ -55,14 +55,14 @@ While this paper describes testing A123 LiFePO4 cells under similar thermal prof
 ## 4. The Form Factor Ambiguity: 18650 vs 26650
 
 A123 Systems historically produced two well-known commercial cylindrical cells with Nanophosphate® LiFePO4 chemistry:
-1. **APR18650M1A / APR18650M1B:** 18650 cylindrical form-factor ($18\text{ mm} \times 65\text{ mm}$), nominal rated capacity **$1.1\text{ Ah}$ ($1100\text{ mAh}$)**.
-2. **ANR26650M1A / ANR26650M1B:** 26650 cylindrical form-factor ($26\text{ mm} \times 65\text{ mm}$), nominal rated capacity **$2.3\text{ Ah} - 2.5\text{ Ah}$ ($2300 - 2500\text{ mAh}$)**.
+1. **APR18650M1A / APR18650M1B:** 18650 cylindrical form-factor ($18\text{ mm} \times 65\text{ mm}$), nominal rated capacity **$1.1\text{ Ah}$ ($1100\text{ mAh}$)** (from general knowledge, not verified against a datasheet on disk).
+2. **ANR26650M1A / ANR26650M1B:** 26650 cylindrical form-factor ($26\text{ mm} \times 65\text{ mm}$), nominal rated capacity **$2.3\text{ Ah} - 2.5\text{ Ah}$ ($2300 - 2500\text{ mAh}$)** (from general knowledge, not verified against a datasheet on disk).
 
 ### Why Neither Can Be Asserted from Raw Files
 1. The spreadsheet files (`.xlsx` and `.xls`) contain strictly electrical and environmental telemetry: timestamp, step index, cycle count, current, voltage, charge/discharge capacity, and thermocouple temperature.
 2. No dimensional data, physical mass, photograph, barcode, or cell model string appears in the raw data files.
 3. Two competing hypotheses explain the discrepancy:
-   - **Hypothesis A (Mislabeled Form Factor):** The physical specimens were actually 18650 cells (`APR18650M1A`, nominal $1.1\text{ Ah}$, closely matching the measured $1.0636\text{ Ah}$ at 25°C), but were mislabeled as 26650 on the CALCE website.
+   - **Hypothesis A:** The specimens are a 1.1 Ah-class cell (for example 18650 format, matching the measured $1.0636\text{ Ah}$ at 25°C), and the CALCE page's 2230 mAh listing does not describe them.
    - **Hypothesis B (Degraded / Sub-Cycled 26650):** The physical specimens were heavily degraded 26650 cells, or sub-cells cycled over restricted windows.
 
 Because raw file evidence alone cannot conclusively verify or refute either hypothesis without inventing external facts:
