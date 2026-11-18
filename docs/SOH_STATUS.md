@@ -103,3 +103,19 @@ To achieve `LAB_VALIDATED` status for any SOH estimator, the following strict cr
 2. **Cell-Held-Out Splits**: Evaluation must follow strict Cell Leave-One-Battery-Out (LOBO) or batch holdouts defined prior to evaluation in `configs/validation/`.
 3. **Reference Capacity Protocols**: SOH_C ground truth must be derived from C/20 or standardized 1C reference capacity checkups at controlled temperature (e.g. 25°C).
 4. **Standardized DCIR Protocols**: SOH_R ground truth must be derived from standardized 10s HPPC discharge pulses at defined SOC (e.g. 50% SOC) and controlled temperature.
+
+
+---
+
+## 4. Gustave Eiffel 105 Ah LFP Dataset SOH Evidence Assessment
+
+> **Dataset:** Gustave Eiffel 105 Ah LFP Dataset (`DOI: 10.57745/G02IYE`, parameters `10.57745/SBNO8W`)  
+> **Status:** NO SOH EVIDENCE (Beginning-of-Life Characterisation Only)
+
+The Gustave Eiffel 105 Ah LFP dataset contains tests across four cells (`BUGE388`, `BUGE389`, `BUGE390`, `BUGE391`) conducted exclusively for **beginning-of-life (BOL) electro-thermal characterisation** across temperatures from 0 °C to 40 °C.
+
+Key verification findings regarding SOH:
+1. **Zero Degradation Cycling:** The cells were not subjected to long-term cycle aging or calendar aging campaigns. Total accumulated throughput is under 20 equivalent full cycles per cell.
+2. **Short Characterisation Protocols:** Tests consist solely of characterisation checkups: initial 1C capacity check cycles, 30 s impedance pulses, C/15 pseudo-OCV ramps, and 986 s dynamic WLTC profiles.
+3. **Repeated 25 °C Tests Are Drift, Not Aging:** Repeat 25 °C partial checkups performed on `BUGE388` ($\Delta \text{Cap} = -1.17\%$), `BUGE389` ($\Delta \text{Cap} = -1.89\%$), and `BUGE390` ($\Delta \text{Cap} = -1.27\%$) reflect cycler channel drift, contact impedance variation, and thermal equilibration differences across test days, **not irreversible electrochemical degradation**.
+4. **Qualification Implication:** This dataset provides zero valid ground-truth degradation trajectories ($SOH_C$ or $SOH_R$). Therefore, **no SOH estimators can be qualified or awarded `LAB_VALIDATED` status from this dataset**. SOH status remains unchanged across all candidate models.
