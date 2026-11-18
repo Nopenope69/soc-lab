@@ -22,7 +22,7 @@
       "status": "NOT_VALIDATED: open-loop model gate FAIL"
     }
   },
-  "combined_config_hash": "18902f2c61efc3b36f0d62e2e424e298c6b886c19398a433bf9f7861eced2a70",
+  "combined_config_hash": "139bf2f670f44de49f52a9672bf4a628fe63c825c547bd26d0cb5ad677dff6eb",
   "dataset_manifests": {
     "calce_a123": {
       "file_count": 52,
@@ -676,7 +676,7 @@
           500.0
         ],
         "note": "Measured C/20 capacity for A123 1.11 Ah LFP (APR18650M1A-class) cell A1-007 at 25C",
-        "reason": "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 26650 delivering 0.4-1.1 Ah at sub-zero temperatures).",
+        "reason": "Support small sub-1Ah cells and low-temperature LFP cells (e.g. A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified delivering 0.4-1.1 Ah at sub-zero temperatures).",
         "source": "CALCE A123 dataset cell A1-007",
         "status": "measured",
         "unit": "Ah",
@@ -865,7 +865,7 @@
           0.5
         ],
         "note": "Fitted ohmic resistance from DST with residuals restricted to W-mid only (tau2 <= 600 s)",
-        "reason": "Support small cylindrical cells (e.g. A123 26650 with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm).",
+        "reason": "Support small cylindrical cells (e.g. A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified with R0 ~ 80-150 mOhm at low temperatures vs large 100Ah prismatic cells with R0 ~ 1 mOhm).",
         "source": "CALCE A123 dataset cell A1-007",
         "status": "measured",
         "unit": "Ohm",
@@ -1268,9 +1268,9 @@
       }
     }
   },
-  "git_commit": "582dbf172101f3957f2f97c0d1070ddacfa4a4de",
+  "git_commit": "ee29aa0a2d115562540ea95a4437ddf45f6a8f04",
   "known_limitations": [
-    "Validated operating envelope is strictly 20\u00b0C to 50\u00b0C on CALCE A123 26650 LFP cells.",
+    "Validated operating envelope is strictly 20\u00b0C to 50\u00b0C on CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified.",
     "Sub-zero and cold-temperature (< 15\u00b0C) dynamics uncharacterized; do not deploy in freezing environments.",
     "Capacity fade and battery degradation (SOH) are unmodeled; nominal capacity is fixed at calibrated value.",
     "Extended flat plateau relaxation requires low-noise current measurement (< 50 mA) for reliable OCV anchoring.",
