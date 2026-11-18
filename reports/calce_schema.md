@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-This report documents the exhaustive structural and physical inspection of the **CALCE A123 26650 LiFePO4 (LFP)** battery dataset located in `data/raw/calce_a123/`. 
+This report documents the exhaustive structural and physical inspection of the **CALCE A123 LiFePO4** (measured capacity about 1.06 Ah, format unverified) battery dataset located in `data/raw/calce_a123/`. 
 All 36 data workbooks across 8 temperatures ($-10^\circ\text{C}$, $0^\circ\text{C}$, $10^\circ\text{C}$, $20^\circ\text{C}$, $25^\circ\text{C}$, $30^\circ\text{C}$, $40^\circ\text{C}$, $50^\circ\text{C}$) and 2 individual cells (`A1-007` and `A1-008`) were analyzed for channel schema, sheet organization, sampling intervals, sign conventions, profile step sequences, temperature tracking, and data integrity anomalies.
 
 ---
@@ -11,8 +11,8 @@ All 36 data workbooks across 8 temperatures ($-10^\circ\text{C}$, $0^\circ\text{
 
 ### 2.1 Cell Specifications
 - **Cell Chemistry:** Lithium Iron Phosphate ($\text{LiFePO}_4$ / LFP)
-- **Cell Form Factor:** Cylindrical 26650
-- **Manufacturer / Model:** A123 Systems ANR26650M1-A (26650 form-factor, calibrated capacity $1.11\,\text{Ah}$, nominal voltage $3.3\,\text{V}$)
+- **Cell Form Factor:** A123 LiFePO4 (format unverified, measured capacity ~1.06 Ah at 25 C)
+- **Manufacturer / Model:** A123 Systems LiFePO4 (format unverified, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, nominal voltage $3.3\,\text{V}$)
 - **Tested Cells:** Two distinct cell specimens tested in parallel across all temperatures:
   - Cell 1: `A1-007`
   - Cell 2: `A1-008`

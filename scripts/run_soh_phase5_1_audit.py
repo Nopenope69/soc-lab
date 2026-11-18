@@ -461,7 +461,7 @@ Prediction interval quality must be audited across distinct health strata, as un
 
 ## 9. Real-Cell CALCE Characterization
 
-Validation on real CALCE APR18650M1A (1.11 Ah LFP) cells:
+Validation on real CALCE A123 LiFePO4 (measured capacity about 1.06 Ah, format unverified) cells:
 - Reference discharge capacity at 25°C: **1.0636 Ah** for A1-007 ($SOH_C = 95.82\%$), **1.0879 Ah** for A1-008 ($SOH_C = 98.01\%$).
 - Reversible thermal expansion: Capacity expands from 1.0636 Ah at 25°C to 1.0810 Ah at 50°C ($+1.64\%$), confirming the necessity of reversible temperature correction.
 - Instantaneous cycler dynamic resistance records $0.1013\\,\\Omega$, which represents cycler load perturbation resistance rather than standardized DCIR RMP. Real resistance health labels remain strictly qualified.

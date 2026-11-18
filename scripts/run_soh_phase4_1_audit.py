@@ -435,7 +435,7 @@ Every battery reference now includes explicit provenance tracking (`ReferencePro
 *Rule Enforced:* Fleet median is never silently substituted for pristine factory reference.
 
 ### 6.2 Real CALCE Ground-Truth Capacity Validation
-Extracted from standardized low-current C/20 OCV characterization files on CALCE A123 APR18650M1A cells:
+Extracted from standardized low-current C/20 OCV characterization files on CALCE A123 LiFePO4 (measured capacity about 1.06 Ah, format unverified) cells:
 
 | Cell Identifier | Characterization Temperature | C/20 Measured Capacity | Rated Capacity | Real Capacity SOH ($SOH_C$) | Provenance Pedigree |
 |---|---|---|---|---|---|

@@ -64,7 +64,7 @@ In this handover hardening pass:
 
 ### 3.3 Data Ingestion (`calce_loader.py`)
 - Column indices: Voltage (col 8), Current (col 16), Relative Time (col 24), Step Index (col 5), Cycle Count (col 7), Ambient Temp (col 10).
-- Physical bounds: Plausible voltage limits `[float("2.0"), float("3.6")]` V, nominal capacity plausibility `[float("0.75"), float("0.78")]` Ah (for A123 26650 unconditioned fresh cells).
+- Physical bounds: Plausible voltage limits `[float("2.0"), float("3.6")]` V, nominal capacity plausibility `[float("0.75"), float("0.78")]` Ah (for A123 LiFePO4 unconditioned fresh cells, format unverified).
 
 ### 3.4 Runtime Sentinels (`runner.py`, `plant.py`, `metrics.py`, `report.py`)
 - Standard IEEE floating-point representations: `float("nan")` for uninitialized measurements or invalid metrics, and `float("inf")` for unbounded errors.

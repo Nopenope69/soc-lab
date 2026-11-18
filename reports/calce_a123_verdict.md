@@ -1,4 +1,4 @@
-# CALCE A123 26650 LFP Real-Data Benchmark Verdict
+# CALCE A123 LiFePO4 Real-Data Benchmark Verdict (Format Unverified)
 
 **Overall Verdict: FAIL**
 
@@ -25,7 +25,7 @@
 - **Rule 4 (Cell Transfer):** Evaluated cross-specimen transfer on Cell A1-008 across gating temperatures. `E6` achieved 15.75 pp with zero-refit A1-007 parameters versus 23.09 pp with its own fit (ratio: 0.68x, requirement: $\le 1.5\times$). (**PASS**)
 
 ## 2. Experimental Scope & Ground Truth Accounting
-- **Specimens:** A123 ANR26650M1-A LiFePO4 cells (`A1-007` and `A1-008`).
+- **Specimens:** A123 LiFePO4 cells (`A1-007` and `A1-008`, measured capacity about 1.06 Ah and 1.09 Ah at 25 C, format unverified).
 - **Gating Temperatures (enforced by pass rules):** 20, 25, 30, 40, and 50 C.
 - **Informational Temperatures (reported only, excluded from pass rules):** -10, 0, and 10 C.
 - **Profiles:** DST (Step 8, used for fitting and tuning), US06 (Step 16, sealed test), FUDS (Step 24, sealed test).

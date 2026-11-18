@@ -278,7 +278,7 @@ All six cell types from `OCV_and_HPPC_data_of_cells.xlsx` were analyzed across t
 
 ## 3. Comparison with CALCE A123 Baseline
 
-| Metric | CALCE A123 (Cylindrical 26650) | FlexiPod Prismatic/Large Pouch Cells | Algorithm Implication |
+| Metric | CALCE A123 LiFePO4 (format unverified) | FlexiPod Prismatic/Large Pouch Cells | Algorithm Implication |
 |:---|:---|:---|:---|
 | **Hysteresis Half-Gap $M$** | $20.0\text{ to }27.0\text{ mV}$ | **$9.58\text{ to }10.62\text{ mV}$** | Hysteresis voltage offset is ~50% smaller; major polarization is dynamic $R_0 + 2RC$, not static hysteresis |
 | **Central Plateau Slope (35-60%)** | $0.50\text{ to }1.20\text{ mV/pp}$ | **$0.12\text{ to }0.25\text{ mV/pp}$** | Slope is 3x to 5x flatter than CALCE; voltage contains near-zero SOC observability |

@@ -22,7 +22,7 @@ Embedded target hardware (ARM Cortex-M4F, Cortex-M7, RISC-V with Single-Precisio
 ## 2. Experimental Methodology
 
 ### Test Profile
-- **Scenario:** Full Dynamic Stress Test (DST) at $20^\circ\text{C}$ on CALCE A123 26650 LFP cell `A1-007`.
+- **Scenario:** Full Dynamic Stress Test (DST) at $20^\circ\text{C}$ on CALCE A123 LiFePO4 cell A1-007 (measured capacity about 1.06 Ah, format unverified).
 - **Duration:** 25,000 discrete steps ($\sim 7\text{ hours}$ of dynamic EV driving cycles).
 - **Initial State:** Known start ($SOC_0 = 1.0$, $\sigma_0 = 0.005$ or initial gap).
 
