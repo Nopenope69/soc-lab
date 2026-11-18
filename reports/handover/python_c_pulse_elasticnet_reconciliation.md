@@ -20,7 +20,7 @@ static const float SOH_C_INTERCEPT = 0.999999635f;
 static const float SOH_R_COEFS[11] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 static const float SOH_R_INTERCEPT = 0.999999864f;
 ```
-**Root Cause**: When `PulseElasticNetEstimator` was trained in Phase 2 on low-variance synthetic data with default regularization (`alpha=0.01, l1_ratio=0.5`), the $L_1$ penalty drove every feature coefficient to zero, collapsing the model to a constant-mean predictor at the intercept.
+**Hypothesis (not tested)**: It is hypothesized that when `PulseElasticNetEstimator` was trained in Phase 2 on low-variance synthetic data with default regularization (`alpha=0.01, l1_ratio=0.5`), the $L_1$ penalty drove every feature coefficient to zero, collapsing the model to a constant-mean predictor at the intercept. However, no experiment on disk supports or verifies this hypothesis.
 
 ### Finding 2: Hand-Written Discrepant Constants in C Edge Package
 In `deliverable/edge_pkg/soh_pulse_elasticnet.c`, instead of consuming the auto-generated header or matching Python's fitted state, arbitrary hand-written constants were hardcoded:
@@ -39,14 +39,17 @@ These coefficients matched neither the exported header nor any verified physical
 
 ---
 
-## 2. Remediation and Single Source of Truth
+## 2. Implementation State and Verification Scope
 
-1. **Exporter as Single Source of Truth**:  
-   Python `PulseElasticNetEstimator.export_c_header()` is the canonical source of truth for edge deployment. Hand-written parameter constants are prohibited.
+1. **Discrepant Header vs Source (Item E4(b) is OPEN)**:  
+   `deliverable/edge_pkg/soh_pulse_elasticnet.c` includes the generated header `soh_pulse_elasticnet.h`, but it still defines and evaluates its own hand-written PLACEHOLDER arrays `COEFS_C` and `COEFS_R` (lines 28–40). The generated header (which contains all-zero coefficients and an intercept of approximately 1.0) is not what the C code evaluates. Harmonizing the C edge package to consume an authoritative exporter header without hand-written placeholder arrays remains an **OPEN item (Item E4(b))**.
 2. **Placeholder Marking and Unvalidated Status**:  
    Until calibrated against physical laboratory HPPC pulses, all shipped coefficients in `deliverable/edge_pkg/` are explicitly marked with `#define SOH_PULSE_COEFFICIENTS_PLACEHOLDER 1` and emit `qual_c = SOH_QUAL_UNQUALIFIED`, `qual_r = SOH_QUAL_UNQUALIFIED`.
-3. **Parity Verification**:  
-   A dedicated Python-vs-C parity test (`tests/soh/test_python_c_pulse_parity.py`) validates that evaluating the Python inference math on any feature vector yields bit-exact numerical parity ($\Delta \le 10^{-6}$) with the C floating-point computation.
+3. **Parity Verification Scope & Limitations**:  
+   `tests/soh/test_python_c_pulse_parity.py` compiles `deliverable/edge_pkg/soh_pulse_elasticnet.c` using a C compiler (`gcc` or `cc`) via `subprocess.run`, loads it via `ctypes`, and compares its inference output against `EmbeddedSohEdgePipeline.predict_pulse()` across 4 hand-crafted test vectors.  
+   - **What it tests**: Numerical agreement between the C implementation and the Python embedded pipeline harness.  
+   - **Tolerance**: The test checks absolute difference $\le 10^{-5}$ (`PARITY_FP32_TOLERANCE`), accounting for single-precision floating-point rounding; it does NOT demand exact bit-for-bit equality.  
+   - **Critical Limitation**: Because both the C source (`deliverable/edge_pkg/soh_pulse_elasticnet.c`) and the Python embedded harness (`src/soh/embedded/pipeline.py`) use the same hand-written placeholder constants, this test verifies only implementation parity between two placeholder-bearing harnesses. **It does NOT show or prove that either implementation equals a trained or calibrated physical model.**
 
 ---
 

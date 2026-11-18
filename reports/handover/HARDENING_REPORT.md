@@ -191,7 +191,7 @@ This pass addressed SOH subsystem honesty, deliverable hygiene, edge-deployment 
 | **E** | E1 | Add SOH evidence inventory | **DONE** | `ca4c4c0` |
 | **E** | E2 | Replace hardcoded WCET with measurement protocol | **DONE** | `90a03b0` |
 | **E** | E3 | C edge package qualification defaults and CI build | **DONE** | `5df94c8` |
-| **E** | E4 | Reconcile Python and C edge coefficients | **DONE** | `43bf98e` |
+| **E** | E4 | Reconcile Python and C edge coefficients | **PARTIAL (E4(b) OPEN)** | `43bf98e` |
 | **E** | E5 | Exclude missing `SOH_R` labels from training | **DONE** | `b4a7498` |
 | **E** | E6 | Pulse ECM variable-current forward model | **DONE** | `979cb12` |
 | **E** | E7 | GRU sequence isolation and erratum | **DONE** | `81f7a07` |
@@ -230,7 +230,7 @@ This pass addressed SOH subsystem honesty, deliverable hygiene, edge-deployment 
 - **E1:** Created `reports/soh/evidence_inventory.md` cataloging every SOH estimator's evidence type (simulation, synthetic, experimental).
 - **E2:** Replaced hardcoded WCET claims with a measurement protocol document in `deliverable/`.
 - **E3:** Fixed C edge package (`edge_pkg/`) default calibration values and added CI build step.
-- **E4:** Reconciled Python and C OCV/R0 lookup-table coefficients — confirmed bit-identical.
+- **E4:** Reconciled Python and C OCV/R0 lookup-table coefficients (confirmed identical in dual state tracker). For Pulse ElasticNet, C edge implementation (`deliverable/edge_pkg/soh_pulse_elasticnet.c`) includes the generated header but evaluates hand-written placeholder arrays `COEFS_C` and `COEFS_R`; the generated header (all zeros) is not consumed, so item E4(b) remains OPEN. Parity test verifies only numerical agreement between the C source and the Python embedded harness (both using placeholder constants, tol $\le 10^{-5}$, 4 test vectors), not equivalence to a trained model.
 - **E5:** `SOH_R` training now explicitly excludes samples where resistance labels are missing (previously defaulted to 1.0).
 - **E6:** Pulse ECM forward model extended to handle variable-current input (was constant-current only).
 - **E7:** GRU estimator: ensured sequence-level train/test isolation (no cycle-level leakage). Added erratum for prior results.
