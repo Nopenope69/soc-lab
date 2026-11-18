@@ -384,3 +384,125 @@ SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'whee
 - **Reason**: The raw files for `wheeler_2025` have not been acquired or downloaded to disk. The loader cleanly detects missing data and issues an explicit skip in compliance with Rule R2.
 - **DST Parity Test**: Ran and passed cleanly in both runs (previously skipped when `SOC_DATA_DIR` pointed to an external folder without CALCE subfolders).
 
+---
+
+# Hardening 4: Honesty Fixes to Reports and Docs
+
+> **Document ID**: HARDENING-004  
+> **Date**: 2026-11-19  
+> **Branch**: `handover/hardening2`  
+> **Scope**: Quarantined manifest provenance reconciliation, unverified dataset capacity corrections, Python/C ElasticNet parity transparency and open item E4b declaration, C compiler availability guards in parity testing, 26650 test fixture harmonization and historical errata coverage. No algorithm changes, no tuning, no data changes.
+
+---
+
+## H4.1 Frozen Artifact Verification
+
+All frozen artifacts verified bit-for-bit identical at the start and end of Hardening 4:
+
+| Artifact | SHA-256 Checksum | Start | End |
+|:---|:---|:---:|:---:|
+| `src/soc/estimators/e7v3.py` | `057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e` | MATCH | MATCH |
+| `src/soc/estimators/base.py` | `33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da` | MATCH | MATCH |
+| `deliverable/bms_soc_ref.py` | `1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431` | MATCH | MATCH |
+| `configs/assumptions/profiles/calce_a123_v4.yaml` | `3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375` | MATCH | MATCH |
+| `scripts/gauntlet_v3_scenarios.py` | `a2c8929bf4959217e770a14dcdacf1dee761feefed1eb17909a16e99427feceb` | MATCH | MATCH |
+| `data/manifests/calce_a123.sha256` (52 hashes) | Verified 52/52 OK via `shasum -a 256 -c` | MATCH | MATCH |
+
+---
+
+## H4.2 Summary of Changes (Items 1–5)
+
+- **Item 1: Correct Fabricated Metadata Audit and Quarantine Provenance (`8d42278`)**
+  - Audited every row of `reports/handover/fabricated_metadata_audit.md` against quarantined manifests on disk (`data/manifests/_quarantine_fabricated/`) and git history (`commit f667ee8`).
+  - Rewrote the audit narrative and table so every "was" value is backed by real quarantined files or git history.
+  - Corrected `wheeler_2025` entry: removed invented URL `https://doi.org/10.57745/OLBXKT` from the corrected entry; stated truthfully that no data repository URL is verified (`UNVERIFIED`).
+  - Documented that earlier 0b draft claims for `wheeler_2025` (`version 2.1`, `licence MIT`, `24 files`, `DOI 10.1038/s41597-025-04567-8`, `zenodo.org/records/10876543`) were NOT found in the quarantine manifest or git history outside that draft, and marked them `UNVERIFIED (not found in quarantine or git history)`.
+  - Harmonized narrative lines and updated Section H3.2 Item 2 in `reports/handover/HARDENING_REPORT.md`.
+
+- **Item 2: Mark Unverified Capacities in Data Sources Documentation (`c871710`)**
+  - In `docs/data_sources.md`:
+    - Replaced `1.1 Ah nominal` in the `wheeler_2025` row with `UNVERIFIED` (retained `LFP 18650 (from the article title; UNVERIFIED on disk)`).
+    - Replaced `1.1 Ah nominal` in `uconn_reil_dataset1` with `UNVERIFIED`.
+    - Corrected `uconn_reil_dataset5` nominal capacity to `1.2 Ah nominal (LithiumWerks APR18650M1B, per README_Uconn.txt on disk)`.
+    - Explicitly confirmed `calce_a123` cell format is `format UNVERIFIED`.
+
+- **Item 3: Reconcile Python/C Pulse ElasticNet Status and Declare Open Item E4(b) (`b8f8eb8`)**
+  - In `reports/handover/python_c_pulse_elasticnet_reconciliation.md` and `reports/handover/HARDENING_REPORT.md`:
+    - Changed Root Cause from an assertion of zero-collapse to `Hypothesis (not tested)` (no experiment supports alpha=0.01/l1_ratio=0.5 collapse).
+    - Replaced "Exporter as Single Source of Truth" with accurate status: `deliverable/edge_pkg/soh_pulse_elasticnet.c` defines its own hand-written placeholder arrays `COEFS_C` and `COEFS_R` and does not consume the generated header; Item E4(b) is explicitly declared **OPEN**.
+    - Clarified what `tests/soh/test_python_c_pulse_parity.py` actually compares: evaluates ctypes C compilation against the Python embedded pipeline harness over 4 test vectors; does NOT demonstrate that either implementation equals a trained model.
+    - Replaced "bit-exact" claims with the exact named numerical tolerance $\le 10^{-5}$ (`PARITY_FP32_TOLERANCE`).
+
+- **Item 4: Guard C Parity Test Against Missing Compilers and Name FP32 Tolerance (`74599a0`)**
+  - In `tests/soh/test_python_c_pulse_parity.py`:
+    - Added dynamic compiler check via `shutil.which("gcc") or shutil.which("clang") or shutil.which("cc")`. If none is installed, the test calls `pytest.skip` with a clear diagnostic message instead of raising `FileNotFoundError`.
+    - Replaced hardcoded literal tolerances with module-level constant `PARITY_FP32_TOLERANCE = 1e-5` (matching single-precision IEEE 754 precision).
+    - Verified test passes cleanly in verbose mode (`pytest tests/soh/test_python_c_pulse_parity.py -v`).
+
+- **Item 5: Harmonize 26650 References and Update Errata Coverage (`5734a6e`)**
+  - Audited all 4 occurrences of `26650` across the codebase using `grep -n 26650 scripts/diagnostics/d1_loader_checks.py tests/soh/test_common.py reports/diagnostics/b1_root_cause.md reports/gauntlet/FINAL.md`:
+    - `scripts/diagnostics/d1_loader_checks.py` (lines 8, 96): verified references are search patterns auditing obsolete repository mentions; left untouched.
+    - `tests/soh/test_common.py` (line 39): updated fixture `cell_id="A123_26650"` to `cell_id="A123 LiFePO4, measured capacity about 1.06 Ah, format unverified"`. Verified unit tests pass cleanly.
+    - `reports/diagnostics/b1_root_cause.md` and `reports/gauntlet/FINAL.md`: per Rule 2 (frozen history preservation), files were not edited directly; both were added to the historical reports erratum list in Section 6 of `reports/handover/cell_identity_conflict.md`.
+
+---
+
+## H4.3 Commands Run During Hardening 4
+
+```bash
+# Check frozen artifact hashes at start
+shasum -a 256 src/soc/estimators/e7v3.py src/soc/estimators/base.py deliverable/bms_soc_ref.py
+
+# Verify CALCE manifest hashes
+(cd data/raw/calce_a123 && shasum -a 256 -c ../../../data/manifests/calce_a123.sha256)
+
+# Verify parity test in isolation
+.venv/bin/python -m pytest tests/soh/test_python_c_pulse_parity.py -v
+
+# Grep for remaining 26650 references
+grep -n 26650 scripts/diagnostics/d1_loader_checks.py tests/soh/test_common.py reports/diagnostics/b1_root_cause.md reports/gauntlet/FINAL.md
+
+# Verify test_common unit tests
+.venv/bin/python -m pytest tests/soh/test_common.py -v
+
+# Test Run 1: with SOC_DATA_DIR set
+SOC_DATA_DIR=/Users/tecbusiness/soc_data .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+
+# Test Run 2: with SOC_DATA_DIR unset
+env -u SOC_DATA_DIR .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+
+# Check frozen artifact hashes at end
+shasum -a 256 src/soc/estimators/e7v3.py src/soc/estimators/base.py deliverable/bms_soc_ref.py
+```
+
+---
+
+## H4.4 Final Test Suite Execution and Skip Accounting
+
+### Run 1: With `SOC_DATA_DIR=/Users/tecbusiness/soc_data`
+```
+Command: SOC_DATA_DIR=/Users/tecbusiness/soc_data .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+Result:  378 passed, 1 skipped, 1 warning in 423.14s (0:07:03)
+```
+
+### Run 2: With `SOC_DATA_DIR` unset
+```
+Command: env -u SOC_DATA_DIR .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+Result:  378 passed, 1 skipped, 1 warning in 415.66s (0:06:55)
+```
+
+### Skip Reason Accounting (Both Runs)
+```
+SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.
+```
+- Exactly 1 test skipped across all 379 collected tests in both environments.
+- Dataset `wheeler_2025` has not been downloaded or acquired; the loader cleanly detects missing data and skips per Rule R2.
+
+### Warning Accounting (Both Runs)
+```
+tests/soh/test_ica_gpr_ekf.py::test_ica_gpr_ekf_fit_and_predict
+  /Users/tecbusiness/Desktop/random/SOC/.venv/lib/python3.14/site-packages/sklearn/gaussian_process/kernels.py:455: ConvergenceWarning: The optimal value found for dimension 0 of parameter k1__k2__length_scale is close to the specified upper bound 100.0. Increasing the bound and calling fit again may find a better value.
+```
+- Cosmetic ConvergenceWarning during GPR kernel fitting optimization in unit test.
+
+
