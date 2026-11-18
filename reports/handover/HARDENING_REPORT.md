@@ -319,10 +319,11 @@ All frozen artifacts verified bit-for-bit identical at the start and end of Hard
   - Rewrote the "before" column in `reports/handover/fabricated_metadata_audit.md` for `calce_a123` with the exact uncommitted header: Name `CALCE A123 26650 LFP Battery Dataset`, Source URL `https://calce.umd.edu/battery-data`, DOI `10.1016/j.jpowsour.2013.03.111` (with note that it resolved to an unrelated fuel-cell electrode paper, hence was wrong), Licence `Public Academic Research Data (CALCE University of Maryland)`, Version `1.0`, Download Date `2024-10-12`.
   - Removed unsupported claims (`10.57745/CALCE_A123`, `CC BY 4.0`, and `1.11 Ah measured`) from that row.
 
-- **Item 2: Comprehensive Manifest Row Audit and Errata (`8e619c8`)**
-  - Audited every row of `reports/handover/fabricated_metadata_audit.md` against quarantined manifests in `data/manifests/_quarantine_fabricated/`.
+- **Item 2: Comprehensive Manifest Row Audit and Errata (`8e619c8`, `handover4`)**
+  - Audited every row of `reports/handover/fabricated_metadata_audit.md` against quarantined manifests in `data/manifests/_quarantine_fabricated/` and git history.
   - Corrected titles, licences, versions, file counts, and placeholder hash patterns for `gustave_eiffel_g02iye`, `gustave_eiffel_sbno8w`, `uconn_reil_dataset5`, `tempest_zenodo`, `uconn_reil_dataset1`, and `wheeler_2025`.
-  - Added Section 4 "Corrections (handover3)" cataloging every correction.
+  - Documented that earlier 0b draft claims for `wheeler_2025` (`version 2.1`, `MIT`, `24 files`, `DOI 10.1038/s41597-025-04567-8`, `zenodo.org/records/10876543`) were not found in the quarantine manifest or git history outside that draft, and that `https://doi.org/10.57745/OLBXKT` was an invented URL in the quarantined manifest; the production entry has no verified data repository URL (`UNVERIFIED`).
+  - Added Section 4 "Corrections (handover3 and handover4)" cataloging every correction.
   - Removed fabricated identifiers (`10.57745/CALCE_A123`, `10.5281/zenodo.10654321`, `10.5281/zenodo.10876543`, `10.1038/s41597-025-04567-8`, `deadbeef...`) from the report narrative.
 
 - **Item 3: Harmonized Remaining CALCE Cell Format Assertions (`2b3b7dc`)**
