@@ -1,0 +1,24 @@
+# Gustave Eiffel 105 Ah LFP Dataset Split Configuration (DOI 10.57745/G02IYE)
+# Rule R3: Splits are strictly by CELL. Dev cells are used for calibration and tuning.
+# Sealed test cells are evaluated once per frozen version on the final evaluation path.
+dataset_id: "ge105"
+version: "1.0"
+split_policy: "BY_CELL"
+
+# Development partition (tuning and calibration)
+dev_cells:
+  train_cells:
+    - "BUGE388"
+  val_cells:
+    - "BUGE389"
+
+# Sealed test partition (held-out test cells; evaluated once per version)
+sealed_test_cells:
+  - "BUGE390"
+  - "BUGE391"
+
+conditions:
+  temperatures_c: [0, 10, 15, 20, 25, 30, 35, 40]
+  full_protocol_temperatures_c: [0, 25, 40]
+  partial_protocol_temperatures_c: [10, 15, 20, 30, 35]
+  wltc_target_socs_pct: [90.0, 50.0]

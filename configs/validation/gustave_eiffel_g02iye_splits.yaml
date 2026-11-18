@@ -7,15 +7,16 @@ split_policy: "BY_CELL"
 # Development partition
 dev_cells:
   train_cells:
-    - "cell_01"
-    - "cell_02"
+    - "BUGE388"
   val_cells:
-    - "cell_03"
+    - "BUGE389"
 
-# Sealed test partition
+# Sealed test partition (held-out test cells)
 sealed_test_cells:
-  - "cell_04"
+  - "BUGE390"
+  - "BUGE391"
 
 conditions:
-  regimes: ["first_life_calendar", "second_life_cycling"]
-  temperatures_c: [25.0, 45.0]
+  temperatures_c: [0, 10, 15, 20, 25, 30, 35, 40]
+  full_protocol_temperatures_c: [0, 25, 40]
+  wltc_target_socs_pct: [90.0, 50.0]

@@ -7,14 +7,14 @@ split_policy: "BY_CELL"
 # Development partition
 dev_cells:
   train_cells:
-    - "cell_c01"
+    - "BUGE388"
   val_cells:
-    - "cell_c02"
+    - "BUGE389"
 
-# Sealed test partition
+# Sealed test partition (held-out test cells)
 sealed_test_cells:
-  - "cell_c03"
+  - "BUGE390"
+  - "BUGE391"
 
 conditions:
-  temperatures_c: [0.0, 10.0, 25.0, 40.0]
-  characterisation_tests: ["C/20_OCV", "HPPC_10s_pulse", "capacity_verification"]
+  temperatures_c: [0, 10, 15, 20, 25, 30, 35, 40]
