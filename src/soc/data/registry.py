@@ -527,7 +527,20 @@ def load_gustave_eiffel_g02iye(
     info = load_dataset_with_manifest_check("gustave_eiffel_g02iye", data_dir, verify_checksums)
     split_config = ValidationSplitConfig.load(get_split_config_path("gustave_eiffel_g02iye"))
     split_config.validate_cell_isolation()
-    return {**info, "split_config": split_config}
+    from soc.data.ge105_loader import (
+        extract_pseudo_ocv,
+        extract_wltc_segments,
+        load_ge105_ecm_parameters,
+        load_ge105_raw_mat,
+    )
+    return {
+        **info,
+        "split_config": split_config,
+        "load_raw_mat": load_ge105_raw_mat,
+        "extract_wltc_segments": extract_wltc_segments,
+        "extract_pseudo_ocv": extract_pseudo_ocv,
+        "load_ecm_parameters": load_ge105_ecm_parameters,
+    }
 
 
 def load_gustave_eiffel_sbno8w(

@@ -1,0 +1,31 @@
+# Gustave Eiffel 105 Ah LFP Dataset Validation Configuration
+dataset_id: "gustave_eiffel_105ah"
+name: "EVE Energy LFP 105Ah Characterisation (Univ Gustave Eiffel)"
+doi: "10.57745/G02IYE"
+params_doi: "10.57745/SBNO8W"
+licence: "Etalab 2.0"
+
+cell:
+  chemistry: "LFP"
+  form_factor: "Prismatic"
+  nominal_capacity_ah: 105.042655
+  voltage_limit_min: 2.4986
+  voltage_limit_max: 3.6503
+  tested_temperatures_c: [0, 10, 15, 20, 25, 30, 35, 40]
+
+protocols:
+  full_temperatures_c: [0, 25, 40]
+  partial_temperatures_c: [10, 15, 20, 30, 35]
+  pseudo_ocv_c_rate: 0.066666667  # C/15
+  pulse_c_rates: [0.25, 0.5, 1.0]
+
+wltc:
+  target_socs_pct: [90.0, 50.0]
+  expected_phases_per_segment: 44
+  expected_duration_s: 986.0
+  resample_dt_s: 1.0
+  max_rest_interpolate_s: 10.0
+
+verification:
+  capacity_diff_tolerance_pct: 0.005  # 0.5% tolerance between integrated current and dod_ah
+  max_voltage_resample_diff_v: 0.010

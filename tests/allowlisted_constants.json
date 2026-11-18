@@ -16,6 +16,23 @@
       "int(\"8\")"
     ]
   },
+  "src/soc/data/ge105_loader.py": {
+    "justification": "Gustave Eiffel 105 Ah LFP raw data loader; physical cell capacity, percent conversion, and WLTC phase duration bounds",
+    "allowed_calls": [
+      "float(\"-5.0\")",
+      "float(\"100.0\")",
+      "float(\"105.042655\")",
+      "float(\"120.0\")",
+      "float(\"1200.0\")",
+      "float(\"40000.0\")",
+      "float(\"5.0\")",
+      "float(\"50.0\")",
+      "float(\"70.0\")",
+      "float(\"800.0\")",
+      "float(\"90.0\")",
+      "int(\"20\")"
+    ]
+  },
   "src/soc/estimators/base.py": {
     "justification": "Estimator base interface; default filter tunings and thresholds",
     "allowed_calls": [
