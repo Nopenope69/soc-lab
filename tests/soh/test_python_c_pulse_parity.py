@@ -3,15 +3,22 @@
 import ctypes
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import numpy as np
 import pytest
 
 from soh.embedded.pipeline import EmbeddedSohEdgePipeline
 
+PARITY_FP32_TOLERANCE = 1e-5
+
 
 def test_pulse_elasticnet_python_vs_c_golden_vector_parity(tmp_path):
     """Verify that Python embedded pipeline math and C edge implementation produce identical outputs."""
+    compiler = shutil.which("gcc") or shutil.which("clang") or shutil.which("cc")
+    if compiler is None:
+        pytest.skip("Neither gcc nor clang is installed; skipping C parity test.")
+
     edge_pkg_dir = Path(__file__).resolve().parents[2] / "deliverable" / "edge_pkg"
     c_source = edge_pkg_dir / "soh_pulse_elasticnet.c"
     
@@ -20,7 +27,7 @@ def test_pulse_elasticnet_python_vs_c_golden_vector_parity(tmp_path):
     # Build shared library in tmp_path
     so_path = tmp_path / "libsoh_pulse_test.so"
     cmd = [
-        "gcc",
+        compiler,
         "-std=c99",
         "-O2",
         "-shared",
@@ -72,11 +79,11 @@ def test_pulse_elasticnet_python_vs_c_golden_vector_parity(tmp_path):
         c_est = SohEstimateC()
         c_predict(c_raw, ctypes.byref(c_est))
 
-        # Check numerical agreement to single-precision float accuracy (tol <= 1e-6)
-        assert abs(float(py_est.soh_c) - float(c_est.soh_c)) <= 1e-5, (
+        # Check numerical agreement to single-precision float accuracy (PARITY_FP32_TOLERANCE)
+        assert abs(float(py_est.soh_c) - float(c_est.soh_c)) <= PARITY_FP32_TOLERANCE, (
             f"Vector {idx} SOH_C mismatch: Python={py_est.soh_c}, C={c_est.soh_c}"
         )
-        assert abs(float(py_est.soh_r) - float(c_est.soh_r)) <= 1e-5, (
+        assert abs(float(py_est.soh_r) - float(c_est.soh_r)) <= PARITY_FP32_TOLERANCE, (
             f"Vector {idx} SOH_R mismatch: Python={py_est.soh_r}, C={c_est.soh_r}"
         )
         # Qualification in C must be UNQUALIFIED (0)
