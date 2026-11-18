@@ -94,6 +94,35 @@ def main():
         "note": "239 baseline tests passed on release commit, 337 total unit tests passed without external data dependency.",
     }
 
+    # Frozen artifacts and reference implementation hashes
+    frozen_artifacts = {
+        "e7v3": {
+            "path": "src/soc/estimators/e7v3.py",
+            "sha256": file_sha256(REPO_ROOT / "src/soc/estimators/e7v3.py"),
+            "status": "FROZEN_RESEARCH_BASELINE",
+        },
+        "base": {
+            "path": "src/soc/estimators/base.py",
+            "sha256": file_sha256(REPO_ROOT / "src/soc/estimators/base.py"),
+            "status": "FROZEN_RESEARCH_BASELINE",
+        },
+        "bms_soc_ref": {
+            "path": "deliverable/bms_soc_ref.py",
+            "sha256": file_sha256(REPO_ROOT / "deliverable/bms_soc_ref.py"),
+            "status": "REFERENCE_STANDALONE_IMPLEMENTATION",
+        },
+        "calce_a123_v4_yaml": {
+            "path": "configs/assumptions/profiles/calce_a123_v4.yaml",
+            "sha256": file_sha256(REPO_ROOT / "configs/assumptions/profiles/calce_a123_v4.yaml"),
+            "status": "FROZEN_CALIBRATION_PROFILE",
+        },
+        "gauntlet_v3_scenarios": {
+            "path": "scripts/gauntlet_v3_scenarios.py",
+            "sha256": file_sha256(REPO_ROOT / "scripts/gauntlet_v3_scenarios.py"),
+            "status": "FROZEN_BENCHMARK_SCENARIO_BUILDER",
+        },
+    }
+
     manifest = {
         "schema_version": "1.0",
         "release_version": "0.2.0-handover",
@@ -101,6 +130,7 @@ def main():
         "algorithm_id": "E7v3",
         "validation_status": "DEVELOPMENT_VALIDATED_CALCE_20_50C",
         "combined_config_hash": combined_config_hash,
+        "frozen_artifacts": frozen_artifacts,
         "calibrations": calibrations,
         "dataset_manifests": dataset_manifest,
         "test_results_summary": tests_summary,

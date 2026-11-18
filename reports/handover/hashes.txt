@@ -1,7 +1,5 @@
-=== FROZEN ARTIFACTS AND REFERENCE IMPLEMENTATION SHA256 ===
 057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e  src/soc/estimators/e7v3.py
 33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da  src/soc/estimators/base.py
 3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375  configs/assumptions/profiles/calce_a123_v4.yaml
 a2c8929bf4959217e770a14dcdacf1dee761feefed1eb17909a16e99427feceb  scripts/gauntlet_v3_scenarios.py
-f0848bf3f5f1db5a12e59c30826c575bafef1f580bede2d359eefc0b7d26098e  deliverable/bms_soc_ref.py  (pre-G1)
-1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431  deliverable/bms_soc_ref.py  (post-G1: added model_loaded, fallback_active to SocEstimateRef)
+1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431  deliverable/bms_soc_ref.py

@@ -1268,7 +1268,34 @@
       }
     }
   },
-  "git_commit": "ee29aa0a2d115562540ea95a4437ddf45f6a8f04",
+  "frozen_artifacts": {
+    "base": {
+      "path": "src/soc/estimators/base.py",
+      "sha256": "33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da",
+      "status": "FROZEN_RESEARCH_BASELINE"
+    },
+    "bms_soc_ref": {
+      "path": "deliverable/bms_soc_ref.py",
+      "sha256": "1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431",
+      "status": "REFERENCE_STANDALONE_IMPLEMENTATION"
+    },
+    "calce_a123_v4_yaml": {
+      "path": "configs/assumptions/profiles/calce_a123_v4.yaml",
+      "sha256": "3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375",
+      "status": "FROZEN_CALIBRATION_PROFILE"
+    },
+    "e7v3": {
+      "path": "src/soc/estimators/e7v3.py",
+      "sha256": "057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e",
+      "status": "FROZEN_RESEARCH_BASELINE"
+    },
+    "gauntlet_v3_scenarios": {
+      "path": "scripts/gauntlet_v3_scenarios.py",
+      "sha256": "a2c8929bf4959217e770a14dcdacf1dee761feefed1eb17909a16e99427feceb",
+      "status": "FROZEN_BENCHMARK_SCENARIO_BUILDER"
+    }
+  },
+  "git_commit": "2445442c5d80c0291c98fd9c4197f1c8d6abf91a",
   "known_limitations": [
     "Validated operating envelope is strictly 20\u00b0C to 50\u00b0C on CALCE A123 LiFePO4, measured capacity about 1.06 Ah (A1-007) and about 1.09 Ah (A1-008) at 25 C, format unverified.",
     "Sub-zero and cold-temperature (< 15\u00b0C) dynamics uncharacterized; do not deploy in freezing environments.",
