@@ -38,10 +38,10 @@ def get_file_paths(raw_dir: Path, temp: int, cell: str) -> Tuple[Path, Path]:
 
     ocv_dirs = [p for p in raw_dir.glob(ocv_pattern) if p.is_dir()]
     if not ocv_dirs:
-        raise FileNotFoundError(f"No OCV folder for {temp}C")
+        raise FileNotFoundError(f"No OCV folder for {temp}C found under {raw_dir} (searched pattern: '{ocv_pattern}')")
     ocv_cands = [p for p in ocv_dirs[0].rglob(f"*{cell}*.xlsx") if not p.name.startswith("~$")]
     if not ocv_cands:
-        raise FileNotFoundError(f"Cannot find OCV file for {temp}C {cell}")
+        raise FileNotFoundError(f"Cannot find OCV file for {temp}C {cell} under {ocv_dirs[0]}")
     ocv_path = ocv_cands[0]
 
     if temp == -10:
@@ -53,7 +53,7 @@ def get_file_paths(raw_dir: Path, temp: int, cell: str) -> Tuple[Path, Path]:
 
     dyn_dirs = [p for p in raw_dir.glob(dyn_pattern) if p.is_dir()]
     if not dyn_dirs:
-        raise FileNotFoundError(f"No dynamic folder for {temp}C")
+        raise FileNotFoundError(f"No dynamic folder for {temp}C found under {raw_dir} (searched pattern: '{dyn_pattern}')")
 
     if temp == 20:
         dyn_cands = [p for p in dyn_dirs[0].rglob(f"*{cell}*20120817.xlsx") if not p.name.startswith("~$") and "newprofile" not in p.name]
@@ -63,7 +63,7 @@ def get_file_paths(raw_dir: Path, temp: int, cell: str) -> Tuple[Path, Path]:
     if not dyn_cands:
         dyn_cands = [p for p in dyn_dirs[0].rglob(f"*{cell}*") if not p.name.startswith("~$") and ("xlsx" in p.name or "xls" in p.name)]
     if not dyn_cands:
-        raise FileNotFoundError(f"Cannot find dynamic file for {temp}C {cell}")
+        raise FileNotFoundError(f"Cannot find dynamic file for {temp}C {cell} under {dyn_dirs[0]}")
     dyn_path = dyn_cands[0]
 
     return ocv_path, dyn_path

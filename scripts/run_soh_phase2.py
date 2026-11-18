@@ -58,7 +58,11 @@ def main() -> int:
     # -------------------------------------------------------------
     print("[2/4] Auditing and evaluating real CALCE cell datasets...")
     calce_loader = CalceAgingDataLoader()
-    calce_dir = Path("data/raw/calce_a123")
+    from soc.data.registry import resolve_dataset_dir
+    try:
+        calce_dir = resolve_dataset_dir("calce_a123")
+    except FileNotFoundError:
+        calce_dir = Path("data/raw/calce_a123")
 
     calce_results = []
     calce_ir_support = {}

@@ -397,16 +397,42 @@ def resolve_dataset_dir(dataset_id: str, custom_data_dir: Optional[Path] = None)
 
     # 1. calce_a123 has an explicit repo-local root inside the repo
     if dataset_id == "calce_a123":
-        if custom_data_dir is not None:
-            c_path = custom_data_dir.resolve()
-            if (c_path / rel_pattern).is_dir():
-                return c_path / rel_pattern
-            if c_path.name == "calce_a123" and c_path.is_dir():
-                return c_path
+        searched: List[str] = []
+        # Repo-local data/raw/calce_a123 first
         repo_calce = get_repo_root() / "data" / "raw" / "calce_a123"
+        searched.append(str(repo_calce))
         if repo_calce.exists() and repo_calce.is_dir():
             return repo_calce
-        return repo_calce
+
+        # Custom data dir if provided
+        if custom_data_dir is not None:
+            c_path = custom_data_dir.resolve()
+            c_cand1 = c_path / "data" / "raw" / "calce_a123"
+            searched.append(str(c_cand1))
+            if c_cand1.is_dir():
+                return c_cand1
+            c_cand2 = c_path / "calce_a123"
+            searched.append(str(c_cand2))
+            if c_cand2.is_dir():
+                return c_cand2
+            if c_path.name == "calce_a123" and c_path.is_dir():
+                return c_path
+            if (c_path / rel_pattern).is_dir():
+                return c_path / rel_pattern
+
+        # $SOC_DATA_DIR / calce_a123
+        soc_dir = get_soc_data_dir()
+        env_cand1 = soc_dir / "calce_a123"
+        searched.append(str(env_cand1))
+        if env_cand1.is_dir():
+            return env_cand1
+        if soc_dir.name == "calce_a123" and soc_dir.is_dir():
+            return soc_dir
+
+        raise FileNotFoundError(
+            f"CALCE A123 dataset directory not found. Searched paths:\n  - "
+            + "\n  - ".join(searched)
+        )
 
     # 2. Custom data dir if provided
     if custom_data_dir is not None:

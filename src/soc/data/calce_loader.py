@@ -70,20 +70,9 @@ _EXCLUDED_10C_SOC_HIGH = float("0.78")
 
 
 def get_raw_dir(root_dir: Optional[Path] = None) -> Path:
-    """Return path to data/raw/calce_a123 directory."""
-    env_dir = os.environ.get("SOC_DATA_DIR")
-    if env_dir:
-        p = Path(env_dir)
-        if p.name == "calce_a123":
-            return p
-        if (p / "calce_a123").exists():
-            return p / "calce_a123"
-        return p
-    if root_dir is not None:
-        return root_dir / "data" / "raw" / "calce_a123"
-    this_dir = Path(__file__).resolve().parent
-    repo_root = this_dir.parent.parent.parent
-    return repo_root / "data" / "raw" / "calce_a123"
+    """Return path to data/raw/calce_a123 directory resolved via registry."""
+    from soc.data.registry import resolve_dataset_dir
+    return resolve_dataset_dir("calce_a123", custom_data_dir=root_dir)
 
 
 def find_channel_sheet(sheet_names: List[str]) -> str:
