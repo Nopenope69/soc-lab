@@ -286,3 +286,100 @@ This pass addressed SOH subsystem honesty, deliverable hygiene, edge-deployment 
 The 1 skip is `test_bms_soc_ref_agreement_with_repo_e7v3_on_dst` when CALCE raw data is not present (it passes when data is available — confirmed in this session).
 
 The 1 warning is a `sklearn` `ConvergenceWarning` from `test_ica_gpr_ekf_fit_and_predict` (GPR length scale near upper bound — cosmetic).
+
+---
+
+# Hardening 3: Corrections to Hardening 2
+
+> **Document ID**: HARDENING-003  
+> **Date**: 2026-11-19  
+> **Branch**: `handover/hardening2`  
+> **Scope**: Metadata audit corrections, CALCE path resolution, C edge defaults audit, extras isolation, release manifest frozen tracking. No algorithm changes, no tuning, no new data.
+
+---
+
+## H3.1 Frozen Artifact Verification
+
+All frozen artifacts verified bit-for-bit identical at the start and end of Hardening 3:
+
+| Artifact | SHA-256 Checksum | Start | End |
+|:---|:---|:---:|:---:|
+| `src/soc/estimators/e7v3.py` | `057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e` | MATCH | MATCH |
+| `src/soc/estimators/base.py` | `33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da` | MATCH | MATCH |
+| `deliverable/bms_soc_ref.py` | `1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431` | MATCH | MATCH |
+| `configs/assumptions/profiles/calce_a123_v4.yaml` | `3a3391e4f95ee967004d41f9c4d3a210a64c852715befbdfe26b53d74cc9c375` | MATCH | MATCH |
+| `scripts/gauntlet_v3_scenarios.py` | `a2c8929bf4959217e770a14dcdacf1dee761feefed1eb17909a16e99427feceb` | MATCH | MATCH |
+| `data/manifests/calce_a123.sha256` (52 hashes) | Verified 52/52 OK via `shasum -a 256 -c` | MATCH | MATCH |
+
+---
+
+## H3.2 Summary of Changes (Items 1–7)
+
+- **Item 1: Corrected CALCE A123 Manifest Audit Row (`5f436de`)**
+  - Rewrote the "before" column in `reports/handover/fabricated_metadata_audit.md` for `calce_a123` with the exact uncommitted header: Name `CALCE A123 26650 LFP Battery Dataset`, Source URL `https://calce.umd.edu/battery-data`, DOI `10.1016/j.jpowsour.2013.03.111` (with note that it resolved to an unrelated fuel-cell electrode paper, hence was wrong), Licence `Public Academic Research Data (CALCE University of Maryland)`, Version `1.0`, Download Date `2024-10-12`.
+  - Removed unsupported claims (`10.57745/CALCE_A123`, `CC BY 4.0`, and `1.11 Ah measured`) from that row.
+
+- **Item 2: Comprehensive Manifest Row Audit and Errata (`8e619c8`)**
+  - Audited every row of `reports/handover/fabricated_metadata_audit.md` against quarantined manifests in `data/manifests/_quarantine_fabricated/`.
+  - Corrected titles, licences, versions, file counts, and placeholder hash patterns for `gustave_eiffel_g02iye`, `gustave_eiffel_sbno8w`, `uconn_reil_dataset5`, `tempest_zenodo`, `uconn_reil_dataset1`, and `wheeler_2025`.
+  - Added Section 4 "Corrections (handover3)" cataloging every correction.
+  - Removed fabricated identifiers (`10.57745/CALCE_A123`, `10.5281/zenodo.10654321`, `10.5281/zenodo.10876543`, `10.1038/s41597-025-04567-8`, `deadbeef...`) from the report narrative.
+
+- **Item 3: Harmonized Remaining CALCE Cell Format Assertions (`2b3b7dc`)**
+  - Replaced unqualified "26650" assertions with "CALCE A123 LiFePO4 cell A1-007 (measured capacity about 1.06 Ah, format unverified)" across `reports/handover/float32_sensitivity.md`, `reports/calce_schema.md`, `reports/calce_a123_verdict.md`, `reports/handover/embedded_constants.md`, `scripts/run_soh_phase5_1_audit.py`, `scripts/run_soh_phase4_1_audit.py`, and `reports/flexipod1/ocv_hysteresis.md`.
+
+- **Item 4: Neutral Hypothesis and Unverified Datasheet Qualifiers (`2445442`)**
+  - In `docs/data_sources.md` (section 3.2) and `reports/handover/cell_identity_conflict.md` (section 4), qualified rated capacities for APR18650M1A/B (1.1 Ah) and ANR26650M1A/B (2.3–2.5 Ah) with "(from general knowledge, not verified against a datasheet on disk)".
+  - Neutralized Hypothesis A phrasing to avoid asserting an unverified website mislabel.
+
+- **Item 5: Reconciled Hashes and Release Manifest Generator (`c1d8155`)**
+  - Cleaned `reports/handover/hashes.txt` (removed trailing inline annotations) so all 5 files pass `shasum -c` cleanly.
+  - Added `frozen_artifacts` mapping to `scripts/make_release_manifest.py` so `RELEASE_MANIFEST.json` tracks exact hashes for `e7v3`, `base`, `bms_soc_ref`, `calce_a123_v4_yaml`, and `gauntlet_v3_scenarios`.
+
+- **Item 6: Fixed CALCE A123 Path Resolution and Explicit Search Errors (`3b4f7c8`)**
+  - In `src/soc/data/registry.py` and `src/soc/data/calce_loader.py`, updated search order: repo-local `data/raw/calce_a123` first, then `$SOC_DATA_DIR/calce_a123`, then `$SOC_DATA_DIR`. Explicitly raises `FileNotFoundError` detailing all searched paths if absent.
+  - Updated `scripts/evaluate_calce.py`, `scripts/identify_calce_params.py`, and `scripts/run_soh_phase2.py` with explicit path error reporting.
+  - Verified bit-exact loaded array hashes for A1-007 OCV and DST at 20 °C before and after fix:
+    - OCV 20 °C: `f44f06cb4baa395e555e21c0c51d8ce9ed5e124f2d09a6b40e086fe2081c8497`
+    - DST 20 °C: `55cfe0a459c7bf9d0b2998a3be4c996ea6b0e05e751b5ccd7f4207fe6d837962`
+  - DST parity test verified: Max |dSOC| = `1.1102e-16` (<= 1e-12), runs and passes in both environments.
+
+- **Item 7: Verified Edge C Defaults and Pyproject Extras Isolation (`73c7ffb`)**
+  - Confirmed `deliverable/edge_pkg/soh_pulse_elasticnet.c` sets `out_estimate->qual_c = SOH_QUAL_UNQUALIFIED;` and `out_estimate->qual_r = SOH_QUAL_UNQUALIFIED;` (both default to 0, not QUALIFIED).
+  - Confirmed `pyproject.toml` core `dependencies` contains only `numpy`, `scipy`, `pydantic`, `pyyaml`. Heavy libraries (`torch`, `lightgbm`, `scikit-learn`, `pybamm`) are strictly partitioned into extras (`neural`, `ml`, `soh`).
+  - Documented findings in `reports/handover/python_c_pulse_elasticnet_reconciliation.md`.
+
+---
+
+## H3.3 Test Suite Execution and Skip Accounting
+
+### Run 1: With `SOC_DATA_DIR=/Users/tecbusiness/soc_data`
+```
+Command: SOC_DATA_DIR=/Users/tecbusiness/soc_data .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+Result:  378 passed, 1 skipped, 1 warning in 428.14s (0:07:08)
+```
+
+### Run 2: With `SOC_DATA_DIR` unset
+```
+Command: env -u SOC_DATA_DIR .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+Result:  378 passed, 1 skipped, 1 warning in 437.46s (0:07:17)
+```
+
+### DST Parity Verification (Both Environments)
+```
+Command: .venv/bin/python -m pytest tests/test_bms_soc_ref.py::test_bms_soc_ref_agreement_with_repo_e7v3_on_dst -v -s
+Output:
+Max single-step |dSOC|: 0.0000e+00 (0.0000e+00 pp)
+Full DST Max |dSOC|: 1.1102e-16 (1.1102e-14 pp)
+Full DST Final |dSOC|: 0.0000e+00 (0.0000e+00 pp)
+PASSED
+```
+
+### Detailed Skip Accounting (Item 6e)
+In both test runs, exactly 1 test was skipped:
+```
+SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.
+```
+- **Reason**: The raw files for `wheeler_2025` have not been acquired or downloaded to disk. The loader cleanly detects missing data and issues an explicit skip in compliance with Rule R2.
+- **DST Parity Test**: Ran and passed cleanly in both runs (previously skipped when `SOC_DATA_DIR` pointed to an external folder without CALCE subfolders).
+
