@@ -47,3 +47,27 @@ These coefficients matched neither the exported header nor any verified physical
    Until calibrated against physical laboratory HPPC pulses, all shipped coefficients in `deliverable/edge_pkg/` are explicitly marked with `#define SOH_PULSE_COEFFICIENTS_PLACEHOLDER 1` and emit `qual_c = SOH_QUAL_UNQUALIFIED`, `qual_r = SOH_QUAL_UNQUALIFIED`.
 3. **Parity Verification**:  
    A dedicated Python-vs-C parity test (`tests/soh/test_python_c_pulse_parity.py`) validates that evaluating the Python inference math on any feature vector yields bit-exact numerical parity ($\Delta \le 10^{-6}$) with the C floating-point computation.
+
+---
+
+## 3. Verification of Edge Defaults and Dependency Isolation (Handover 3)
+
+1. **Edge SOH C Implementation Defaults**:
+   - Audited `deliverable/edge_pkg/soh_pulse_elasticnet.c`:
+     - Line 15 defines `#define SOH_PULSE_COEFFICIENTS_PLACEHOLDER 1`.
+     - Lines 67–68 explicitly default both qualification fields to unvalidated status:
+       ```c
+       out_estimate->qual_c = SOH_QUAL_UNQUALIFIED;
+       out_estimate->qual_r = SOH_QUAL_UNQUALIFIED;
+       ```
+     - Defined in `deliverable/edge_pkg/soh_edge_types.h` as `SOH_QUAL_UNQUALIFIED = 0`. Neither is defaulted to `SOH_QUAL_QUALIFIED`.
+2. **Pyproject Extras Isolation**:
+   - Audited `pyproject.toml`:
+     - Core `project.dependencies` contains strictly minimal baseline runtime requirements: `numpy>=2.0.0`, `scipy>=1.14.0`, `pydantic>=2.10.0`, `pyyaml>=6.0.0`.
+     - Heavy or specialized libraries are strictly partitioned into `[project.optional-dependencies]`:
+       - `torch`: isolated in `[project.optional-dependencies].neural` and `all`.
+       - `lightgbm`: isolated in `[project.optional-dependencies].ml` and `all`.
+       - `scikit-learn`: isolated in `[project.optional-dependencies].ml` and `all`.
+       - `pybamm`: isolated in `[project.optional-dependencies].soh` and `all`.
+     - Core runtime installs cleanly without neural network, GBDT, or electrochemical simulator dependencies.
+
