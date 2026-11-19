@@ -1,0 +1,69 @@
+{
+  "disclaimer": "Asserting NO causes and NO scaling laws from four points. All values extracted directly from committed repository files.",
+  "cells": [
+    {
+      "cell_id": "CALCE A123 (A123 APR18650M1A)",
+      "form_factor": "18650 Cylindrical",
+      "chemistry": "LFP/Graphite",
+      "capacity_source_file": "deliverable/calibrations/calce_a123_v4.json",
+      "nominal_capacity_ah": 1.1,
+      "measured_capacity_ah": 1.0636,
+      "r0_source_file": "deliverable/calibrations/calce_a123_v4.json:r0_table['27.3']",
+      "r0_eval_temperature_c": 27.3,
+      "r0_mohm": 158.51,
+      "plateau_slope_source_file": "deliverable/calibrations/calce_a123_v4.json:ocv_table['27.3']",
+      "plateau_slope_v_per_unit_soc": 0.1598,
+      "plateau_slope_mv_per_pp": 1.598,
+      "hysteresis_source_file": "deliverable/calibrations/calce_a123_v4.json:m_table_v[25C]",
+      "measured_hysteresis_mv": 17.19
+    },
+    {
+      "cell_id": "GE105 (EVE Energy LF105)",
+      "form_factor": "Prismatic",
+      "chemistry": "LFP/Graphite",
+      "capacity_source_file": "deliverable/calibrations/ge105_v1.json",
+      "nominal_capacity_ah": 105.0,
+      "measured_capacity_ah": 105.0427,
+      "r0_source_file": "deliverable/calibrations/ge105_v1.json:r0_table['25.0']",
+      "r0_eval_temperature_c": 25.0,
+      "r0_mohm": 0.5815,
+      "plateau_slope_source_file": "deliverable/calibrations/ge105_v1.json:ocv_table['25.0']",
+      "plateau_slope_v_per_unit_soc": 0.1372,
+      "plateau_slope_mv_per_pp": 1.372,
+      "hysteresis_source_file": "deliverable/calibrations/ge105_v1.json:m_table_v[25C]",
+      "measured_hysteresis_mv": 31.76
+    },
+    {
+      "cell_id": "FlexiPod (100 Ah Prismatic)",
+      "form_factor": "Prismatic",
+      "chemistry": "LFP",
+      "capacity_source_file": "deliverable/calibrations/flexipod_100ah_v1.json",
+      "nominal_capacity_ah": 100.0,
+      "measured_capacity_ah": 95.1521,
+      "r0_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:r0_table['25.0']",
+      "r0_eval_temperature_c": 25.0,
+      "r0_mohm": 0.894,
+      "plateau_slope_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:ocv_table['25.0']",
+      "plateau_slope_v_per_unit_soc": 0.1387,
+      "plateau_slope_mv_per_pp": 1.387,
+      "hysteresis_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:m_table_v[25C]",
+      "measured_hysteresis_mv": 12.01
+    },
+    {
+      "cell_id": "TEMPEST 280 Ah ('LIC')",
+      "form_factor": "Prismatic",
+      "chemistry": "LFP",
+      "capacity_source_file": "reports/validation/tempest_capacity_results.json (T=25C)",
+      "nominal_capacity_ah": 280.0,
+      "measured_capacity_ah": 302.3087,
+      "r0_source_file": "reports/validation/tempest_ecm_results.json (T=25C, SOC=0.55)",
+      "r0_eval_temperature_c": 25.0,
+      "r0_mohm": 0.4216,
+      "plateau_slope_source_file": "reports/validation/tempest_ecm_results.json (T=25C)",
+      "plateau_slope_v_per_unit_soc": 0.1386,
+      "plateau_slope_mv_per_pp": 1.386,
+      "hysteresis_source_file": "N/A (No continuous pseudo-OCV charge/discharge loop in dataset)",
+      "measured_hysteresis_mv": null
+    }
+  ]
+}
