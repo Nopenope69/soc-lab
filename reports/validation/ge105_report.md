@@ -133,10 +133,30 @@ The evaluation was executed across 36 development scenarios and 24 sealed test s
   E7v3 (GE105 Calib)         5.03 pp (Converging)      5.17 pp (Converging)     Closed Loop OK
 ```
 
+### Disturbance Recovery Characterisation (8 Perturbed In-Envelope Scenarios)
+
+The closed-loop recovery response of E7v3 (GE105 calibration) across the 8 perturbed held-out test scenarios at 40 °C:
+
+| Cell | Target SOC | Scenario | Initial Err | E0 Max (pp) | E0 RMSE (pp) | E0 Final (pp) | E7 GE105 Max (pp) | E7 GE105 RMSE (pp) | E7 GE105 Final (pp) | Final $\Delta$ vs E0 (pp) | Recovery Verdict |
+|:---|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| **BUGE390** | ~90% | +10 pp | +10.0 pp | 9.93 | 9.90 | 9.93 | 8.92 | 4.95 | 5.03 | -4.90 pp | Closer to truth |
+| **BUGE390** | ~90% | -10 pp | -10.0 pp | 10.05 | 10.02 | 10.05 | 10.47 | 9.46 | 6.80 | -3.25 pp | Closer (peaked above E0) |
+| **BUGE390** | ~50% | +10 pp | +10.0 pp | 10.01 | 9.98 | 10.01 | 12.15 | 8.08 | 12.15 | +2.14 pp | **Worse than start & E0** |
+| **BUGE390** | ~50% | -10 pp | -10.0 pp | 10.05 | 10.02 | 10.05 | 10.01 | 8.17 | 4.17 | -5.88 pp | Closer to truth |
+| **BUGE391** | ~90% | +10 pp | +10.0 pp | 10.03 | 10.01 | 10.03 | 9.00 | 5.06 | 5.17 | -4.86 pp | Closer to truth |
+| **BUGE391** | ~90% | -10 pp | -10.0 pp | 10.01 | 9.99 | 10.01 | 10.38 | 9.10 | 6.02 | -3.99 pp | Closer to truth |
+| **BUGE391** | ~50% | +10 pp | +10.0 pp | 10.03 | 10.01 | 10.03 | 16.86 | 9.51 | 16.23 | +6.20 pp | **Worse than start & E0** |
+| **BUGE391** | ~50% | -10 pp | -10.0 pp | 10.01 | 9.99 | 10.01 | 10.09 | 8.22 | 5.73 | -4.28 pp | Closer to truth |
+
+**Observations on Disturbance Dynamics:**
+1. **Convergence in 6 of 8 Scenarios:** 6 out of 8 perturbed scenarios end closer to truth than the baseline Coulomb counter E0.
+2. **Plateau Divergence (+10 pp at ~50% SOC):** In both +10 pp runs at 50% SOC, final error ends **worse than the initial +10 pp error** (12.15 pp on BUGE390 and 16.23 pp on BUGE391, compared to E0's 10.01 pp and 10.03 pp). On the flat plateau ($d\text{OCV}/d\text{SOC} \approx 0$), small voltage residuals do not provide a reliable gradient to correct a positive offset, allowing updates to drift away from truth.
+3. **Transient Overshoot (-10 pp at ~90% SOC):** On BUGE390, the -10 pp disturbance peaked above E0 (**10.47 pp** max error against E0's **10.05 pp**) before recovering to 6.80 pp.
+
 ### Key Closed-Loop Insights:
 1. **Coulomb Counting (E0) Limitations:** While E0 appears near-perfect when initialized with zero error (by definition, as `profiles.soc` is an Ah integration), it has zero feedback capability and preserves initialization errors indefinitely.
 2. **CALCE Scale Catastrophe:** Applying the 1.06 Ah CALCE calibration to a 105 Ah cell causes 100× internal current-to-capacity scaling distortions, resulting in severe state saturation and 70–88 pp errors.
-3. **Matched E7v3 Performance:** E7v3 equipped with `ge105_v1.json` demonstrates exceptional tracking accuracy on physical cells, achieving $< 0.15\ \text{pp}$ error across held-out cells in nominal driving and successfully rejecting initial state perturbations.
+3. **Matched E7v3 Performance:** E7v3 equipped with `ge105_v1.json` demonstrates good nominal tracking on physical cells, but disturbance recovery is non-uniform across SOC operating regions.
 4. **Reference Implementation Parity:** Concurrent execution of `deliverable/bms_soc_ref.py` confirmed 100% agreement on operating status flags (`['OK']` at 40 °C, `['OUT_OF_ENVELOPE']` at 0 °C) and numerical tracking discrepancy $\le 0.3\ \text{pp}$ (attributed to `bms_soc_ref.py` utilizing the full cell-specific scheduled $Q(T)$ table).
 
 ---

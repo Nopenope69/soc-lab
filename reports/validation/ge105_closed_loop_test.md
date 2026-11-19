@@ -39,10 +39,22 @@ This document presents the unsealed, single-run evaluation of the held-out test 
 2. **Cross-Scale Calibration Divergence:**
    - Frozen E7v3 with the CALCE A123 calibration (`calce_a123_v4.json`, 1.06 Ah nominal) diverged catastrophically on the 105 Ah cells, experiencing maximum errors of **68.89 pp to 88.69 pp** and RMSE up to **72.87 pp**.
    - This provides definitive proof that cell-level calibrations cannot be transferred across cell capacity scales without matched capacity scaling.
-3. **Disturbance Recovery:**
-   - Under deliberately perturbed initial states ($\pm 10\ \text{pp}$ initial offset), the closed-loop Kalman innovation feedback pulled the tracking error down:
-     - Initial $+10.0\ \text{pp}$ error at 90% SOC dropped to **5.03 pp** (BUGE390) and **5.17 pp** (BUGE391) by the end of the WLTC segment.
-     - In contrast, open-loop Coulomb counting (E0) remained permanently offset with $9.90\text{--}10.02\ \text{pp}$ error across the entire drive cycle.
+3. **Disturbance Recovery Characterisation (8 Perturbed In-Envelope Scenarios):**
+   - Closed-loop innovation feedback shows mixed recovery on physical LFP cells depending on operating point:
+     - **6 of 8 scenarios end closer to truth** than open-loop Coulomb counting (E0).
+     - **Plateau divergence (+10 pp at ~50% SOC):** Both +10 pp runs on the flat plateau end **worse than their starting error**, reaching final errors of **12.15 pp** on BUGE390 and **16.23 pp** on BUGE391 (against E0's 10.01 pp and 10.03 pp). On the plateau, where $d\text{OCV}/d\text{SOC} \approx 0$, voltage residuals cannot reliably infer state direction and innovation updates drift away from truth.
+     - **Overshoot (-10 pp at ~90% SOC):** On BUGE390, the -10 pp perturbation peaked above E0 (**10.47 pp** max error against E0's **10.05 pp**) before recovering to 6.80 pp.
+
+| Cell | Target SOC | Scenario | Initial Err | E0 Max (pp) | E0 RMSE (pp) | E0 Final (pp) | E7 GE105 Max (pp) | E7 GE105 RMSE (pp) | E7 GE105 Final (pp) | Final $\Delta$ vs E0 (pp) | Recovery Verdict |
+|:---|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| **BUGE390** | ~90% | +10 pp | +10.0 pp | 9.93 | 9.90 | 9.93 | 8.92 | 4.95 | 5.03 | -4.90 pp | Closer to truth |
+| **BUGE390** | ~90% | -10 pp | -10.0 pp | 10.05 | 10.02 | 10.05 | 10.47 | 9.46 | 6.80 | -3.25 pp | Closer (peaked above E0) |
+| **BUGE390** | ~50% | +10 pp | +10.0 pp | 10.01 | 9.98 | 10.01 | 12.15 | 8.08 | 12.15 | +2.14 pp | **Worse than start & E0** |
+| **BUGE390** | ~50% | -10 pp | -10.0 pp | 10.05 | 10.02 | 10.05 | 10.01 | 8.17 | 4.17 | -5.88 pp | Closer to truth |
+| **BUGE391** | ~90% | +10 pp | +10.0 pp | 10.03 | 10.01 | 10.03 | 9.00 | 5.06 | 5.17 | -4.86 pp | Closer to truth |
+| **BUGE391** | ~90% | -10 pp | -10.0 pp | 10.01 | 9.99 | 10.01 | 10.38 | 9.10 | 6.02 | -3.99 pp | Closer to truth |
+| **BUGE391** | ~50% | +10 pp | +10.0 pp | 10.03 | 10.01 | 10.03 | 16.86 | 9.51 | 16.23 | +6.20 pp | **Worse than start & E0** |
+| **BUGE391** | ~50% | -10 pp | -10.0 pp | 10.01 | 9.99 | 10.01 | 10.09 | 8.22 | 5.73 | -4.28 pp | Closer to truth |
 4. **Safety & Envelope Self-Reporting:**
    - In-envelope test conditions (40 °C) generated strictly `['OK']` status flags on 100% of samples.
    - Out-of-envelope test conditions (0 °C) generated strictly `['OUT_OF_ENVELOPE']` flags on 100% of samples.
