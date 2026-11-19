@@ -177,8 +177,9 @@ Task V2 executed laboratory evaluation of pulse-based SOH estimation across all 
 Based on the laboratory evaluation, split independence audit, baseline comparisons, and feature-label identity findings on UConn REIL Dataset 5:
 
 1. **$SOH_C$ on the 21 Sealed Cells:**
-   - Ridge achieved 0.0199 MAE, `soh_pulse_v2` achieved 0.0211 MAE, and Age-Quadratic achieved 0.0221 MAE with overlapping cell-bootstrap confidence intervals ([0.0181, 0.0260] vs [0.0199, 0.0281]).
-   - **No advantage over Ridge regression or simple cycle counting is demonstrated.**
+   - Sealed MAE with cell-bootstrap 95% intervals: Ridge (post-hoc) 0.0196 [0.0167, 0.0246] (sealed script: 0.01994), `soh_pulse_v2` 0.0211 [0.0181, 0.0260], Age-Quadratic 0.0221 [0.0199, 0.0281]; DEV validation 0.0222, 0.0225, and 0.0227.
+   - **Conclusion:** Pulse features are not shown to add value over ridge or cycle count in this dataset.
+   - **Scope limits:** Laboratory RPT pulses at about 25 °C, RPT index as age proxy, 21 sealed cells.
 2. **Interval Coverage for $SOH_C$:**
    - Conformal interval coverage was **91.2%**, falling short of the 95.0% nominal level (undercoverage).
 3. **$SOH_R$ Estimation:**
