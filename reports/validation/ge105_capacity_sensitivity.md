@@ -16,13 +16,13 @@
 
 ## 1. Executive Summary & Objective
 
-The Gustave Eiffel 105 Ah dataset records dynamic WLTC drive profiles at temperatures of 25 °C, 40 °C, and 0 °C. The standard baseline evaluations across the project utilize a global nominal capacity of $105.042655\ \text{Ah}$ (derived from the initial reference discharge test of development cell `BUGE388` at 25 °C and recorded in `configs/validation/ge105.yaml`).
+The Gustave Eiffel 105 Ah dataset records dynamic WLTC drive profiles at temperatures of 25 °C, 40 °C, and 0 °C. The standard baseline evaluations across the project utilize a global nominal capacity of $105.042655\ \text{Ah}$ (derived from the initial reference discharge test of development cell `BUGE388` at 25 °C and recorded in `configs/validation/ge105_config.yaml`).
 
 However, each processed data MAT file in the dataset contains individual metadata (`metadata.nominal_capacity_ah`, extracted from the file's reference cycle) that reflects slight manufacturing cell-to-cell variations and thermal/cycling capacity differences ($\sim 103.0\ \text{Ah}$ to $105.75\ \text{Ah}$, a spread of approximately $-1.9\%$ to $+0.7\%$).
 
 This report investigates the sensitivity of the closed-loop estimators to nominal capacity parameterization on the development partition:
 1. **E0 (Coulomb Counting Baseline):** Assesses whether the small non-zero error ($\sim 0.01$–$0.04\ \text{pp}$ RMSE) observed in the baseline E0 evaluation is attributable to the capacity mismatch between the fixed $105.04\ \text{Ah}$ constant and the per-file capacity.
-2. **E7v3 GE105 (`BmsSocEstimatorRef`):** Evaluates whether the closed-loop E7v3 estimator remains stable and robust when parameterized with each cell's per-file measured nominal capacity.
+2. **E7v3 GE105 (`BmsSocEstimatorRef`):** Quantifies the change in closed-loop E7v3 tracking error when parameterized with each cell's per-file measured nominal capacity.
 
 > [!IMPORTANT]
 > In accordance with Task V1.12 rules, this sensitivity study is restricted strictly to development cells (`BUGE388` and `BUGE389`). Sealed test cells (`BUGE390` and `BUGE391`) are not evaluated here.
@@ -78,15 +78,15 @@ The table below lists all 12 nominal-initialisation development scenarios (evalu
 
 ## 4. Key Findings and Discussion
 
-1. **Resolution of E0 Baseline Error:**
+1. **Resolution of E0 Baseline Error & Reference Independence Caveat:**
    - In baseline evaluations, E0 exhibited a residual tracking error of up to $0.074\ \text{pp}$ max error and $0.038\ \text{pp}$ RMSE (most pronounced at 0 °C where capacity was 103.03 Ah vs 105.04 Ah baseline).
    - When E0 is parameterized with each file's specific `nom_capacity`, the maximum tracking error across all 12 scenarios drops to $\le 0.002\ \text{pp}$ (RMSE $\le 0.001\ \text{pp}$).
-   - This mathematically proves that the ground-truth SOC signal in the Gustave Eiffel dataset was constructed via Coulomb counting using each file's individual reference capacity, confirming that the baseline E0 error was purely an artifact of using a constant $105.042655\ \text{Ah}$ parameter.
+   - **Crucial Independence Note:** The E0 error falls to the stated values because the reference `profiles.soc` is an Ah integral computed with each file's own `nom_capacity`, so this result confirms the reference is not independent of E0. It mathematically proves that the ground-truth SOC signal in the Gustave Eiffel dataset was constructed via Coulomb counting using each file's individual reference capacity, confirming that the baseline E0 error was purely an artifact of using a constant $105.042655\ \text{Ah}$ parameter.
 
-2. **E7v3 Robustness Within Declared Calibration Envelope ($[20, 45]^\circ\text{C}$):**
+2. **E7v3 Sensitivity on Nominal Scenarios:**
+   - E7v3 changed by at most 0.14 pp RMSE on in-envelope nominal scenarios (and at most 0.49 pp RMSE overall across all nominal scenarios), whose reference shares E0's integral; no robustness claim follows.
    - At 25 °C and 40 °C, the change in E7v3 RMSE when adjusting capacity to match the individual cell files ranges between $-0.047\ \text{pp}$ and $+0.140\ \text{pp}$.
    - The estimator's tracking error is dominated by the initial plateau bias and slow relaxation dynamics rather than small ($\pm 1.5\%$) variations in nominal capacity.
-   - This indicates that within its declared operating envelope, E7v3 is insensitive to cell-to-cell capacity variations.
 
 3. **Behavior Outside Envelope ($0^\circ\text{C}$):**
    - At 0 °C (outside the declared $[20, 45]^\circ\text{C}$ calibration envelope), adjusting capacity increases RMSE by up to $+0.485\ \text{pp}$ on `BUGE389`.
