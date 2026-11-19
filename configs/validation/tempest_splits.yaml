@@ -1,0 +1,53 @@
+# TEMPEST 280 Ah Prismatic LFP Dataset Splits (Zenodo: https://zenodo.org/records/19632939; DOI: UNVERIFIED)
+# Characterisation analysis on a single cell ('LIC').
+# There is NO sealed cell partition and NO SOH degradation data.
+dataset_id: "tempest_zenodo"
+version: "1.0"
+split_policy: "SINGLE_CELL_CHARACTERISATION"
+
+dev_cells:
+  train_cells:
+    - "cell_tempest_lic"
+  val_cells:
+    - "cell_tempest_lic"
+
+sealed_test_cells: []
+
+# Held-out characterisation schemes:
+validation_schemes:
+  leave_one_temperature_out:
+    description: "Identify 2RC ECM parameters on 4 chamber temperatures, validate held-out on the 5th; cycle through all 5 temperatures."
+    all_temperatures_c: [15, 20, 25, 30, 35]
+    folds:
+      - fold_id: "LOTO_15C"
+        train_temperatures_c: [20, 25, 30, 35]
+        val_temperature_c: 15
+      - fold_id: "LOTO_20C"
+        train_temperatures_c: [15, 25, 30, 35]
+        val_temperature_c: 20
+      - fold_id: "LOTO_25C"
+        train_temperatures_c: [15, 20, 30, 35]
+        val_temperature_c: 25
+      - fold_id: "LOTO_30C"
+        train_temperatures_c: [15, 20, 25, 35]
+        val_temperature_c: 30
+      - fold_id: "LOTO_35C"
+        train_temperatures_c: [15, 20, 25, 30]
+        val_temperature_c: 35
+  alternate_soc_holdout:
+    description: "Identify 2RC ECM parameters on alternating SOC grid points, validate on interleaved held-out SOC setpoints."
+    grid_all_soc: [0.95, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15, 0.05]
+    folds:
+      - fold_id: "ALT_ODD_FIT"
+        train_soc_points: [0.95, 0.75, 0.55, 0.35, 0.15]
+        val_soc_points: [0.85, 0.65, 0.45, 0.25, 0.05]
+      - fold_id: "ALT_EVEN_FIT"
+        train_soc_points: [0.85, 0.65, 0.45, 0.25, 0.05]
+        val_soc_points: [0.95, 0.75, 0.55, 0.35, 0.15]
+
+acceptance_gates:
+  open_loop_model_gate:
+    source_reference: "reports/flexipod1/model_gate.md"
+    bias_mv_max: 2.0
+    rmse_mv_max: 6.0
+    implied_soc_error_pp_max: 2.5
