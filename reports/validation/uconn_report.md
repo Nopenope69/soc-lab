@@ -493,3 +493,107 @@ tests/test_uconn_loader.py ........                                      [100%]
 
 ============ 394 passed, 1 skipped, 1 warning in 454.74s (0:07:34) =============
 ```
+
+---
+
+## 14. Revision History & Audit Synthesis (Task V2.13)
+
+### 14.1 Audit & Correction Items Summary (V2.13.1 – V2.13.6)
+- **V2.13.1 (Direct Zip vs Extracted Verification):** Authored and executed `scripts/validation/verify_uconn_extracted_vs_zip.py`, comparing SHA-256 digests of all 207 extracted CSV files in `$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/` directly against the members inside `$SOC_DATA_DIR/uconn_reil/rpt_data.zip`. Result: 207 identical files, 0 different, 0 missing (`VERIFICATION SUCCESS`). Clarified in reports and inventory that `scripts/verify_datasets.py` audits extracted files against `data/manifests/uconn_reil_dataset5_extracted.sha256` rather than reading members inside `rpt_data.zip`.
+- **V2.13.2 (Condition-Holdout Count Reconciliation):** Clarified the condition-holdout sample count across all reports: `uconn_eval_sealed.py` evaluated the condition holdout on `df_dev[group_id in [3, 6]]`, which contains **196 samples across 8 DEV cells** (`14, 15, 16, 17, 32, 33, 34, 35`). Across all 64 cells in the dataset, Groups 3 & 6 contain **292 total RPT samples across 12 cells** (135 in Group 3, 157 in Group 6; 196 DEV + 96 SEALED). The mislabeled "497" was an erroneous count from earlier text and was corrected across all files.
+- **V2.13.3 (Ridge Variant Labeling & Audit):** Explicitly labeled both Ridge results across all reports:
+  - **Ridge (sealed script)** (`scripts/validation/uconn_eval_sealed.py`): SOH_C MAE 0.01994, SOH_R MAE 0.009106.
+  - **Ridge (post-hoc script)** (`scripts/validation/uconn_age_baseline.py`): SOH_C MAE 0.0196 [0.0167, 0.0246], SOH_R MAE 0.0089 [0.0073, 0.0117].
+  Documented from code inspection that feature sets (14 candidate features), training cells (32 DEV train cells), and normalization (`StandardScaler` on DEV train) are identical; the sole code difference is regularization penalty $\alpha$ ($\alpha = 1.0$ in sealed script vs $\alpha = 0.005$ in post-hoc script; marked `UNVERIFIED` for anything the code cannot show).
+- **V2.13.4 ($SOH_R$ Headline Assessment):** Updated headline statements in report and status docs: ground-truth label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse. A trivial baseline ($r_{10\text{s}} / \bar{r}_0$ over DEV train cells, $\bar{r}_0 = 0.031755\ \Omega$) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on condition holdout (candidate 0.0117). Conclusion: **no evidence of estimation skill for $SOH_R$**.
+- **V2.13.5 ($SOH_C$ Performance Statement):** Updated $SOH_C$ performance statement: Sealed MAE with cell-bootstrap 95% intervals: Ridge (post-hoc) 0.0196 [0.0167, 0.0246] (sealed script 0.01994), `soh_pulse_v2` 0.0211 [0.0181, 0.0260], Age-Quadratic 0.0221 [0.0199, 0.0281]; DEV validation MAE 0.0222, 0.0225, and 0.0227. Conclusion: pulse features are not shown to add value over ridge or cycle count in this dataset. Scope limits: laboratory RPT pulses at about 25 °C, RPT index as age proxy, 21 sealed cells.
+- **V2.13.6 (Handover, Readme, and Status Updates):** Updated `HANDOVER.md`, `README.md`, and `docs/SOH_STATUS.md` to state clearly that:
+  - pulse ElasticNet has not been shown to outperform ridge or cycle-count baselines on UConn;
+  - $SOH_R$ shows no evidence of skill;
+  - the C export (`soh_pulse_elasticnet_v2.h`) comes from the 11-feature post-hoc candidate and is `UNQUALIFIED`;
+  - nothing is validated for 100 Ah cells.
+
+### 14.2 Full Test Suite Verification Output (Task V2.13)
+The complete pytest test suite was executed against the repository:
+```bash
+.venv/bin/pytest tests/
+```
+**Real Execution Output:**
+```text
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/tecbusiness/Desktop/random/SOC
+configfile: pyproject.toml
+plugins: platformdirs-4.14.5
+collected 395 items
+
+tests/soh/test_baseline_estimator.py ..                                  [  0%]
+tests/soh/test_benchmarks.py ...                                         [  1%]
+tests/soh/test_common.py ....                                            [  2%]
+tests/soh/test_data_loaders.py ...                                       [  3%]
+tests/soh/test_degradation.py ....                                       [  4%]
+tests/soh/test_embedded.py ..                                            [  4%]
+tests/soh/test_fusion.py ............                                    [  7%]
+tests/soh/test_gru_sequence_isolation.py .                               [  7%]
+tests/soh/test_ica.py ...                                                [  8%]
+tests/soh/test_ica_gpr_ekf.py ..                                         [  9%]
+tests/soh/test_missing_soh_r_labels.py ...                               [  9%]
+tests/soh/test_phase6_1_qualification.py ......                          [ 11%]
+tests/soh/test_phase6_2_qualification.py ........                        [ 13%]
+tests/soh/test_phase6_3_qualification.py ..........                      [ 15%]
+tests/soh/test_phase6_shadow_validation.py .......                       [ 17%]
+tests/soh/test_pinn.py ........                                          [ 19%]
+tests/soh/test_pinn_ablation.py ......                                   [ 21%]
+tests/soh/test_pinn_phase5_2.py ......                                   [ 22%]
+tests/soh/test_pulse_ecm.py ...                                          [ 23%]
+tests/soh/test_pulse_elastic_net.py .                                    [ 23%]
+tests/soh/test_python_c_pulse_parity.py ..                               [ 24%]
+tests/soh/test_robustness.py .....                                       [ 25%]
+tests/test_assumptions_loader.py ..........                              [ 28%]
+tests/test_assumptions_schema.py .....                                   [ 29%]
+tests/test_bms_soc_hardening.py .......                                  [ 31%]
+tests/test_bms_soc_ref.py .....                                          [ 32%]
+tests/test_calibration.py ....                                           [ 33%]
+tests/test_cell_model.py ........                                        [ 35%]
+tests/test_e10_estimator.py ........                                     [ 37%]
+tests/test_e2_anchored.py .......                                        [ 39%]
+tests/test_e2_rate_hyst.py ......                                        [ 40%]
+tests/test_e3_ukf.py ......                                              [ 42%]
+tests/test_e4_rls_r0.py .......                                          [ 44%]
+tests/test_e4v2.py .......                                               [ 45%]
+tests/test_e5_observability_ekf.py ....                                  [ 46%]
+tests/test_e5v3.py ......                                                [ 48%]
+tests/test_e5v4.py ......                                                [ 49%]
+tests/test_e6_rbc_dekf.py ....                                           [ 50%]
+tests/test_e6v2.py .......                                               [ 52%]
+tests/test_e7v2.py .......                                               [ 54%]
+tests/test_e7v3.py ........                                              [ 56%]
+tests/test_e7v3_d4.py .....                                              [ 57%]
+tests/test_e8_estimator.py .......                                       [ 59%]
+tests/test_e8_lgbm_estimator.py ............                             [ 62%]
+tests/test_e9_estimator.py .......                                       [ 64%]
+tests/test_estimator_isolation.py ....                                   [ 65%]
+tests/test_estimators.py ..........                                      [ 67%]
+tests/test_ge105_loader.py .......                                       [ 69%]
+tests/test_golden_vectors.py ..                                          [ 70%]
+tests/test_harness_stream.py ....                                        [ 71%]
+tests/test_import_all_modules.py ..                                      [ 71%]
+tests/test_innovation_gating.py ........                                 [ 73%]
+tests/test_metrics_analytic.py .....................................     [ 83%]
+tests/test_no_hardcoded_constants.py ..                                  [ 83%]
+tests/test_parameter_mutability.py ..............                        [ 87%]
+tests/test_plant_simulator.py .......                                    [ 88%]
+tests/test_real_data_validation.py ........s........                     [ 93%]
+tests/test_report_generator.py ...                                       [ 93%]
+tests/test_sealed_split.py .....                                         [ 95%]
+tests/test_self_consistency.py ...........                               [ 97%]
+tests/test_uconn_loader.py ........                                      [100%]
+
+=============================== warnings summary ===============================
+tests/soh/test_ica_gpr_ekf.py::test_ica_gpr_ekf_fit_and_predict
+  /Users/tecbusiness/Desktop/random/SOC/.venv/lib/python3.14/site-packages/sklearn/gaussian_process/kernels.py:455: ConvergenceWarning: The optimal value found for dimension 0 of parameter k1__k2__length_scale is close to the specified upper bound 100.0. Increasing the bound and calling fit again may find a better value.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============ 394 passed, 1 skipped, 1 warning in 443.34s (0:07:23) =============
+```
