@@ -2,6 +2,7 @@
 
 > [!NOTE] Revision (V2.13 Verification & Precision Fixes)
 > - **Zip Member Verification**: Clarified that member-by-member byte-identity verification between `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` and the 207 extracted CSV files on disk is performed directly by `scripts/validation/verify_uconn_extracted_vs_zip.py` (207/207 members identical, 0 different, 0 missing). `scripts/verify_datasets.py` (lines 98–112) verifies extracted files against `data/manifests/uconn_reil_dataset5_extracted.sha256` and the archive against `data/manifests/uconn_reil_dataset5.sha256`, but does not itself inspect or read members inside `rpt_data.zip`.
+> - **Condition Holdout Sample Count Correction**: Corrected condition holdout sample count from erroneous 497 to real counts: 196 samples across 8 DEV cells evaluated in `uconn_eval_sealed.py` (and 292 total RPT samples across all 12 cells in Groups 3 & 6 of the full dataset).
 
 > [!NOTE] Revision (V2.12 Reproduction, Data Integrity & Tautology Audit)  
 > - **Reproduction & Manifest Reconciliation**: Verified that primary manifest `data/manifests/uconn_reil_dataset5.sha256` tracks the 2 download files (`rpt_data.zip`, `README_Uconn.txt`). Extracted CSV files (207 files across 64 physical cells) are tracked in `data/manifests/uconn_reil_dataset5_extracted.sha256` and verified 100% byte-identical to members inside `rpt_data.zip` via dedicated script `scripts/validation/verify_uconn_extracted_vs_zip.py`. Corrected file distribution per cell: 18 cells with 2 files, 20 cells with 3 files, 19 cells with 4 files, 7 cells with 5 files (total 207).  
@@ -126,7 +127,7 @@ flowchart TD
     Dataset --> Sealed["Sealed Test Partition<br>(21 Cells, 956 RPT Cycles)"]
     Dev --> Train["Train Sub-split<br>(32 Cells, 1,431 Cycles)"]
     Dev --> Val["Validation Sub-split<br>(11 Cells, 468 Cycles)"]
-    Dataset --> CondHoldout["Condition Holdout<br>(Groups 3 & 6: 12 Cells, 497 Cycles)"]
+    Dataset --> CondHoldout["Condition Holdout<br>(Groups 3 & 6: 12 Cells, 292 Cycles)"]
 ```
 
 - **Train Set (32 cells):** Used exclusively for model fitting and ECM feature scaling.
@@ -184,7 +185,7 @@ $$\sigma = [0.000656, 0.000557, 35.38, 0.005498, 102.16, 0.005842, 0.5226, 7.669
 
 ## 7. Sealed Test Partition Evaluation Results (V2.8)
 
-The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was executed once against the 21 untouched test cells (956 test cycles) and condition holdout groups (12 cells, 497 cycles).
+The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was executed once against the 21 untouched test cells (956 test cycles) and condition holdout groups (12 cells, 292 cycles total in dataset; 196 evaluated from DEV partition; was misreported as 497).
 
 ### 7.1 Cell-Held-Out Sealed Partition Performance (21 Cells, 956 Samples)
 

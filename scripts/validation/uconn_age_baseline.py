@@ -165,7 +165,7 @@ def run_age_baseline_evaluation() -> Dict[str, Any]:
                 "ci_95_hi": float(ci_hi),
             }
 
-    # 4. Condition holdout (Groups 3 and 6: 12 cells, 497 samples)
+    # 4. Condition holdout (Groups 3 and 6: 12 cells, 292 samples)
     df_cond_tr = df_all[df_all["group_id"].isin(dev_conditions)]
     df_cond_te = df_all[df_all["group_id"].isin(held_out_groups)]
 
@@ -208,7 +208,7 @@ def main():
                 f"Cell Mean MAE = {boot['mean_cell_mae']:.4f} [95% CI: {boot['ci_95_lo']:.4f}, {boot['ci_95_hi']:.4f}]"
             )
 
-    print("\n=== CONDITION HOLDOUT (Groups 3 & 6: 12 cells, 497 samples) [POST-HOC] ===")
+    print("\n=== CONDITION HOLDOUT (Groups 3 & 6: 12 cells, 292 samples) [POST-HOC] ===")
     for k, v in res["condition_holdout"].items():
         print(f"  {k:22s}: MAE = {v:.4f}")
 

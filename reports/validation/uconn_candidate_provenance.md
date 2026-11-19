@@ -1,5 +1,8 @@
 # UConn SOH Candidate Provenance and Feature Discrepancy Audit (Task V2.11)
 
+> [!NOTE] Revision (V2.13 Count Correction)
+> - **Condition Holdout Count Correction**: Corrected condition holdout sample count from erroneous 497 to actual physical count: 196 samples across 8 DEV cells evaluated in `uconn_eval_sealed.py` (and 292 total RPT samples across all 12 cells in Groups 3 & 6 of the full dataset).
+
 > [!NOTE] Revision (V2.11)  
 > Formal audit of calibration candidate versions, feature dimensionalities, sealed evaluation history, and artifact provenance across Task V2 steps.
 
@@ -49,7 +52,7 @@ From git history and the session log (`transcript.jsonl`):
 
 1. **Step V2.8 Execution:**
    - Candidate: 14-feature frozen model (`efd71dc3f4d3...`).
-   - Evaluated against the 21 sealed test cells (956 RPT samples) and 2 condition-held-out groups (12 cells, 497 samples) via `scripts/validation/uconn_eval_sealed.py`.
+   - Evaluated against the 21 sealed test cells (956 RPT samples) and condition-held-out groups via `scripts/validation/uconn_eval_sealed.py` (which evaluated 196 samples across 8 DEV cells from Groups 3 & 6; total in Groups 3 & 6 across all 12 cells is 292 RPT samples; the previous "497" was an erroneous count).
    - Results committed in `dbffe91`.
 2. **Step V2.9 Unsealed Modification & Second Evaluation:**
    - During step index 6905 in the session log, an interactive command evaluated a newly trained **11-feature model** on `reports/validation/uconn_sealed_features.csv` (the sealed test partition).
@@ -66,7 +69,7 @@ From git history and the session log (`transcript.jsonl`):
 |:---|:---|:---:|:---|:---:|:---:|:---:|:---|
 | **V2.8 (`dbffe91`)** | `efd71dc3f4d3...` | 14 | 21 Sealed Test Cells (956 RPTs) | $SOH_C$ | **0.0211** | 0.0427 | Pre-registered sealed run; committed in `dbffe91` |
 | **V2.8 (`dbffe91`)** | `efd71dc3f4d3...` | 14 | 21 Sealed Test Cells (956 RPTs) | $SOH_R$ | **0.0094** | 0.0233 | Pre-registered sealed run; committed in `dbffe91` |
-| **V2.8 (`dbffe91`)** | `efd71dc3f4d3...` | 14 | Groups 3 & 6 Condition Holdout (497 RPTs) | $SOH_C$ | **0.0219** | 0.0502 | Pre-registered condition holdout run |
+| **V2.8 (`dbffe91`)** | `efd71dc3f4d3...` | 14 | Groups 3 & 6 Condition Holdout (196 DEV / 292 total RPTs) | $SOH_C$ | **0.0219** | 0.0502 | Pre-registered condition holdout run (was mislabeled 497) |
 | **V2.9 (Log step 6905)** | `d2e7ee280ed7...` | 11 | 21 Sealed Test Cells (956 RPTs) | $SOH_C$ | **0.0209** | 0.0427 | Post-hoc evaluation after unsealing; uncommitted script snippet |
 | **V2.9 (Log step 6905)** | `d2e7ee280ed7...` | 11 | 21 Sealed Test Cells (956 RPTs) | $SOH_R$ | **0.0107** | 0.0233 | Post-hoc evaluation after unsealing; uncommitted script snippet |
 

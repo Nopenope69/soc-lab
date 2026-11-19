@@ -1,5 +1,8 @@
 # Reproduction Audit and Metric Verification: UConn SOH Pulse V2
 
+> [!NOTE] Revision (V2.13 Count Correction)
+> - **Condition Holdout Count**: Corrected condition holdout sample count header to 292 samples across 12 cells (196 samples across 8 cells evaluated in `uconn_eval_sealed.py` from DEV partition; 497 was an erroneous string).
+
 ## 1. Code Diff Analysis (`scripts/validation/uconn_eval_sealed.py`)
 
 Diff between initial unsealing commit `dbffe91` and current `HEAD`:
@@ -155,7 +158,7 @@ Output:
   age_linear      : Sample MAE = 0.0195 | Cell Mean MAE = 0.0204 [95% CI: 0.0180, 0.0228]
   age_quadratic   : Sample MAE = 0.0195 | Cell Mean MAE = 0.0203 [95% CI: 0.0179, 0.0226]
 
-=== CONDITION HOLDOUT (Groups 3 & 6: 12 cells, 497 samples) [POST-HOC] ===
+=== CONDITION HOLDOUT (Groups 3 & 6: 12 cells, 292 samples) [POST-HOC] ===
   constant_mean_mae     : MAE = 0.0499
   soh_pulse_v2_mae      : MAE = 0.0219
   age_linear_mae        : MAE = 0.0475
