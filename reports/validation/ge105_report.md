@@ -256,7 +256,7 @@ The closed-loop recovery response of E7v3 (GE105 calibration) across the 8 pertu
 1. **Coulomb Counting (E0) Limitations:** While E0 appears near-perfect when initialized with zero error (by definition, as `profiles.soc` is an Ah integration), it has zero feedback capability and preserves initialization errors indefinitely.
 2. **CALCE Capacity-Mismatch Demo vs. Fair Baseline:** Applying the unscaled 1.06 Ah CALCE calibration to a 105 Ah cell causes ~100x internal current-to-capacity scaling distortions, resulting in severe state saturation and 70–88 pp errors; this was purely a demonstration of capacity mismatch. When CALCE's nominal capacity is properly scaled to 105.04 Ah via `ParamSet` (evaluated post-hoc after unsealing), frozen E7v3 achieves 3.82–5.88 pp RMSE on test cells at 40 °C (~90% SOC).
 3. **Matched E7v3 Performance:** E7v3 equipped with `ge105_v1.json` demonstrates good nominal tracking on physical cells, but disturbance recovery is non-uniform across SOC operating regions.
-4. **Reference Implementation Parity:** Concurrent execution of `deliverable/bms_soc_ref.py` confirmed 100% agreement on operating status flags (`['OK']` at 40 °C, `['OUT_OF_ENVELOPE']` at 0 °C) and numerical tracking discrepancy $\le 0.3\ \text{pp}$ (attributed to `bms_soc_ref.py` utilizing the full cell-specific scheduled $Q(T)$ table).
+4. **Reference Implementation Parity Discrepancy:** Concurrent execution of `deliverable/bms_soc_ref.py` confirmed 100% agreement on operating status flags (`['OK']` at 40 °C, `['OUT_OF_ENVELOPE']` at 0 °C) and near-zero error under nominal conditions ($1.1\times 10^{-3}$ to $3.1\times 10^{-3}$ max $|d\text{SOC}|$). However, under perturbed conditions in-envelope, discrepancy reaches **up to 3.61 pp** ($3.61\times 10^{-2}$), and out of envelope up to **9.82 pp** ($9.82\times 10^{-2}$). This occurs because `deliverable/bms_soc_ref.py` uses the calibration file's capacity and temperature-dependent $Q(T)$ table directly, whereas research `e7v3.py` linearly scales CALCE's $Q(T)$ curve by nominal capacity.
 
 ---
 
@@ -275,3 +275,63 @@ To prevent misleading claims, the following boundaries must be observed:
    - The Gustave Eiffel cells are EVE Energy 105 Ah prismatic LFP cells.
    - FlexiPod uses a distinct pack architecture and battery chemistry/supplier.
    - Consequently, this report provides **transfer evidence** demonstrating that the E7v3 architecture scales from 1 Ah cylindrical cells to 105 Ah prismatic LFP cells. It does **NOT** constitute direct production deployment validation for FlexiPod.
+
+---
+
+## 8. V1.11: Reproducibility, Transparency and Baseline Corrections
+
+This section summarises the reproducibility and honesty corrections completed during Task V1.11:
+
+1. **Recovery and Tracking of Evaluation Scripts (Item 1 & 12):**
+   - Step V1.9 evaluated sealed test cells using a script residing only in the temporary scratch directory (`eval_test_cells.py`), backed up to `/Users/tecbusiness/soc_backup/v1_scratch/eval_test_cells.py`.
+   - Clean, reproducible, repository-tracked scripts were established: `scripts/validation/ge105_eval_dev.py` and `scripts/validation/ge105_eval_test.py`, using portable path resolution via `resolve_dataset_dir('gustave_eiffel_g02iye')` and YAML configurations (`configs/validation/ge105_splits.yaml`).
+   - Clean-shell execution produced `reports/validation/ge105_reproduction.md`, proving 0.00 pp discrepancy against all committed tables.
+   - Exact git timestamps and commit provenance were documented in `reports/validation/ge105_spec_provenance.md`.
+
+2. **Relabeling to DEVELOPMENT (Item 3):**
+   - In accordance with the revised LABEL RULE, GE105 test results were reclassified from `LAB_VALIDATED` to `DEVELOPMENT` in `reports/validation/ge105_report.md`, `reports/validation/ge105_closed_loop_test.md`, and `docs/SOH_STATUS.md` due to unmet criteria (c) (spec committed before test evaluation), (d) (beating fair baseline on independent reference), and (e) (sufficient data to support claim).
+
+3. **Plateau Disturbance Divergence Characterisation (Item 4):**
+   - Replaced optimistic summary phrasing with exact metrics across all 8 perturbed scenarios.
+   - Highlighted that for +10 pp perturbations at ~50% SOC, the filter drifts away from truth on the flat plateau, ending at **12.15 pp** on `BUGE390` and **16.23 pp** on `BUGE391` (worse than the initial 10.0 pp disturbance and worse than Coulomb counting E0).
+
+4. **Nominal Baseline Clarification (Item 5):**
+   - Clarified that nominal-initialisation RMSE is identical between E0 and E7v3 (0.01 pp to 0.02 pp) because `profiles.soc` is an Ah current integral carrying no independent electrochemical ground truth.
+   - Documented that dynamic in-envelope sealed evidence is strictly limited to 12 scenarios of 986 s at 40 °C only, and cell temperature is a chamber setpoint.
+
+5. **Post-Hoc Fair Scaled CALCE Baseline (Item 6):**
+   - Relabeled the raw CALCE column as a capacity-mismatch demonstration (1.06 Ah vs 105 Ah).
+   - Added a fair baseline using CALCE parameters scaled to 105.04 Ah via the existing `ParamSet` mechanism, which achieves 3.82–5.88 pp RMSE on test cells at 40 °C (~90% SOC), evaluated post-hoc.
+
+6. **Model Gate Corrections & Out-of-Sample Cross-Validation (Item 7):**
+   - Separated acceptance criteria: FlexiPod failed voltage tracking (RMSE 23–87 mV vs $\le 20\ \text{mV}$); GE105 passes voltage tracking ($\le 3.12\ \text{mV}$) but fails implied-SOC ($6.1\text{--}14.3\ \text{pp}$) due to plateau flatness.
+   - Documented that Step V1.4 parameter identification was in-sample; executed out-of-sample cross-validation between `BUGE388` and `BUGE389`, showing out-of-sample voltage RMSE passes at $\le 2.97\ \text{mV}$ at 40 °C (50% SOC).
+
+7. **Reference Implementation Parity & Open Decision (Item 8):**
+   - Documented numerical discrepancy between `deliverable/bms_soc_ref.py` and research `src/soc/estimators/e7v3.py` (up to 3.61 pp perturbed in-envelope, up to 9.82 pp out-of-envelope) due to $Q(T)$ handling.
+   - Recorded open architectural decision DEC-06 in `HANDOVER.md`.
+
+8. **Operational Envelope Limits & Hysteresis Precision (Item 9):**
+   - Printed lines 245–264 of `deliverable/calibrations/ge105_v1.json` and step 5540 code; documented that envelope bounds $[20.0, 45.0]\ ^\circ\text{C}$ represent an analytical assumption not covered by dynamic driving data.
+   - Removed phrasing claiming CALCE 25 °C calibration was suspect; stated that a different cell (105 Ah prismatic) shows a larger pseudo-OCV hysteresis gap than a 26650 cylindrical cell.
+
+9. **Metadata Capacity Variation Across Files (Item 10):**
+   - Printed per-cell `result.metadata.cell.nom_capacity` across all 36 files; documented that the constant `105.042655` matches only `BUGE388` 25 °C full test.
+
+### Verification Commands & Test Results
+- **Reproduction Scripts:**
+  ```bash
+  .venv/bin/python scripts/validation/ge105_eval_dev.py
+  .venv/bin/python scripts/validation/ge105_eval_test.py
+  ```
+- **Frozen File SHA-256 Hashes:**
+  ```bash
+  shasum -a 256 src/soc/estimators/e7v3.py src/soc/estimators/base.py deliverable/bms_soc_ref.py deliverable/calibrations/ge105_v1.json
+  ```
+- **Full Test Suite Execution:**
+  ```bash
+  .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+  ```
+  **Output:**
+  `385 passed, 1 skipped, 1 warning in 418.42s (0:06:58)`  
+  *(1 skipped: `tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.`)*
