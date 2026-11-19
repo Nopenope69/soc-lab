@@ -584,7 +584,25 @@ def load_uconn_reil_dataset5(
                 file_cap = float(m.group(1))
         except Exception:
             pass
-    return {**info, "split_config": split_config, "file_nominal_capacity_ah": file_cap}
+
+    from soc.data.uconn_loader import (
+        get_uconn_rpt_dir,
+        list_uconn_cell_files,
+        load_uconn_cell_data,
+        load_uconn_dataset,
+        verify_uconn_manifest,
+    )
+
+    return {
+        **info,
+        "split_config": split_config,
+        "file_nominal_capacity_ah": file_cap,
+        "load_cell_data": load_uconn_cell_data,
+        "load_dataset": load_uconn_dataset,
+        "list_cell_files": list_uconn_cell_files,
+        "get_rpt_dir": get_uconn_rpt_dir,
+        "verify_manifest": verify_uconn_manifest,
+    }
 
 
 def load_wheeler_2025(
