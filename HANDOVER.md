@@ -102,4 +102,6 @@ The following architectural decisions were resolved during the hardening pass:
 - **FlexiPod Dataset:** Contains beginning-of-life (BOL) characterization data only (`reports/flexipod1/`); no cycle degradation data or aged cell measurements.
 - **HPPC Cohort:** Analytical simulation generated via `StandardizedHppcCohortGenerator` (`src/soh/data/pulse_hppc_cohort.py`), not physically measured test-bench hardware.
 - **SOH Research Status (Task V2 / UConn):** Pulse ElasticNet has not been shown to outperform ridge or cycle-count baselines on UConn; SOH_R shows no evidence of skill; the C export (`soh_pulse_elasticnet_v2.h`) comes from the 11-feature post-hoc candidate and is `UNQUALIFIED`; and nothing is validated for 100 Ah cells.
+- **TEMPEST 280 Ah Dataset (Task V3):** Single-cell beginning-of-life (BOL) characterisation data only (`reports/validation/tempest_report.md`); zero cycle or calendar aging data; does not provide SOH evidence or dynamic drive cycle SOC validation. 2 of 5 LOTO folds pass (25 °C, 30 °C); 3 fail (15 °C, 20 °C, 35 °C); both Alternate-SOC folds fail; classified strictly `DEVELOPMENT`.
+- **Project Memory:** See [MEMORY.md](file:///Users/tecbusiness/Desktop/random/SOC/MEMORY.md) for complete multi-branch state, frozen SHA-256 digests, and validation summaries.
 
