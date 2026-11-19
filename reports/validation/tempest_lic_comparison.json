@@ -1,0 +1,574 @@
+{
+  "dataset_id": "tempest_zenodo",
+  "capacity_comparison": {
+    "source_files": [
+      "reports/validation/tempest_capacity_results.json",
+      "$SOC_DATA_DIR/tempest_280ah/LIC_capacity_analysis.csv"
+    ],
+    "units": "Ah (no conversion)",
+    "rows": [
+      {
+        "temperature_c": 15,
+        "our_discharge_ah": 299.026479,
+        "lic_reference_ah": 299.0264792,
+        "discrepancy_ah": -2e-07,
+        "discrepancy_pct": -0.0
+      },
+      {
+        "temperature_c": 20,
+        "our_discharge_ah": 301.017604,
+        "lic_reference_ah": 301.0176039,
+        "discrepancy_ah": 1e-07,
+        "discrepancy_pct": 0.0
+      },
+      {
+        "temperature_c": 25,
+        "our_discharge_ah": 302.308724,
+        "lic_reference_ah": 302.3087238,
+        "discrepancy_ah": 2e-07,
+        "discrepancy_pct": 0.0
+      },
+      {
+        "temperature_c": 30,
+        "our_discharge_ah": 303.459843,
+        "lic_reference_ah": 303.4598428,
+        "discrepancy_ah": 2e-07,
+        "discrepancy_pct": 0.0
+      },
+      {
+        "temperature_c": 35,
+        "our_discharge_ah": 303.732067,
+        "lic_reference_ah": 303.7320668,
+        "discrepancy_ah": 2e-07,
+        "discrepancy_pct": 0.0
+      }
+    ]
+  },
+  "r0_comparison": {
+    "source_files": [
+      "reports/validation/tempest_ecm_results.json",
+      "$SOC_DATA_DIR/tempest_280ah/LIC_hppc_analysis.csv"
+    ],
+    "units": "Ohm (1 mOhm = 1e-3 Ohm, 1 uOhm = 1e-6 Ohm)",
+    "mean_abs_diff_uohm": 3.339,
+    "max_abs_diff_uohm": 10.127,
+    "mean_abs_diff_pct": 0.818,
+    "rows": [
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.95,
+        "our_r0_ohm": 0.00054102,
+        "lic_r0_ohm": 0.00053938,
+        "diff_uohm": 1.643,
+        "diff_pct": 0.305
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.85,
+        "our_r0_ohm": 0.00055481,
+        "lic_r0_ohm": 0.0005518,
+        "diff_uohm": 3.012,
+        "diff_pct": 0.546
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.75,
+        "our_r0_ohm": 0.0005594,
+        "lic_r0_ohm": 0.00055683,
+        "diff_uohm": 2.571,
+        "diff_pct": 0.462
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.65,
+        "our_r0_ohm": 0.00056322,
+        "lic_r0_ohm": 0.00056308,
+        "diff_uohm": 0.137,
+        "diff_pct": 0.024
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.55,
+        "our_r0_ohm": 0.00058343,
+        "lic_r0_ohm": 0.00058346,
+        "diff_uohm": -0.035,
+        "diff_pct": -0.006
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.45,
+        "our_r0_ohm": 0.00059084,
+        "lic_r0_ohm": 0.00058959,
+        "diff_uohm": 1.249,
+        "diff_pct": 0.212
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.35,
+        "our_r0_ohm": 0.00059183,
+        "lic_r0_ohm": 0.0005892,
+        "diff_uohm": 2.629,
+        "diff_pct": 0.446
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.25,
+        "our_r0_ohm": 0.000583,
+        "lic_r0_ohm": 0.00058276,
+        "diff_uohm": 0.241,
+        "diff_pct": 0.041
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.15,
+        "our_r0_ohm": 0.0005789,
+        "lic_r0_ohm": 0.00057859,
+        "diff_uohm": 0.313,
+        "diff_pct": 0.054
+      },
+      {
+        "temperature_c": 15,
+        "soc_nominal": 0.05,
+        "our_r0_ohm": 0.0005961,
+        "lic_r0_ohm": 0.00058597,
+        "diff_uohm": 10.127,
+        "diff_pct": 1.728
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.95,
+        "our_r0_ohm": 0.0004588,
+        "lic_r0_ohm": 0.00045803,
+        "diff_uohm": 0.763,
+        "diff_pct": 0.167
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.85,
+        "our_r0_ohm": 0.00046758,
+        "lic_r0_ohm": 0.00046738,
+        "diff_uohm": 0.202,
+        "diff_pct": 0.043
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.75,
+        "our_r0_ohm": 0.00047026,
+        "lic_r0_ohm": 0.00047116,
+        "diff_uohm": -0.898,
+        "diff_pct": -0.191
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.65,
+        "our_r0_ohm": 0.00047066,
+        "lic_r0_ohm": 0.00047394,
+        "diff_uohm": -3.283,
+        "diff_pct": -0.693
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.55,
+        "our_r0_ohm": 0.00048634,
+        "lic_r0_ohm": 0.00048678,
+        "diff_uohm": -0.436,
+        "diff_pct": -0.09
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.45,
+        "our_r0_ohm": 0.0004915,
+        "lic_r0_ohm": 0.00049319,
+        "diff_uohm": -1.692,
+        "diff_pct": -0.343
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.35,
+        "our_r0_ohm": 0.000493,
+        "lic_r0_ohm": 0.00049529,
+        "diff_uohm": -2.293,
+        "diff_pct": -0.463
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.25,
+        "our_r0_ohm": 0.0004849,
+        "lic_r0_ohm": 0.00048943,
+        "diff_uohm": -4.531,
+        "diff_pct": -0.926
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.15,
+        "our_r0_ohm": 0.00048083,
+        "lic_r0_ohm": 0.0004879,
+        "diff_uohm": -7.072,
+        "diff_pct": -1.449
+      },
+      {
+        "temperature_c": 20,
+        "soc_nominal": 0.05,
+        "our_r0_ohm": 0.00049364,
+        "lic_r0_ohm": 0.00049738,
+        "diff_uohm": -3.736,
+        "diff_pct": -0.751
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.95,
+        "our_r0_ohm": 0.00040307,
+        "lic_r0_ohm": 0.00040335,
+        "diff_uohm": -0.281,
+        "diff_pct": -0.07
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.85,
+        "our_r0_ohm": 0.00040936,
+        "lic_r0_ohm": 0.00041018,
+        "diff_uohm": -0.823,
+        "diff_pct": -0.201
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.75,
+        "our_r0_ohm": 0.00041056,
+        "lic_r0_ohm": 0.00041185,
+        "diff_uohm": -1.298,
+        "diff_pct": -0.315
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.65,
+        "our_r0_ohm": 0.00040876,
+        "lic_r0_ohm": 0.00041397,
+        "diff_uohm": -5.204,
+        "diff_pct": -1.257
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.55,
+        "our_r0_ohm": 0.00042161,
+        "lic_r0_ohm": 0.00042427,
+        "diff_uohm": -2.668,
+        "diff_pct": -0.629
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.45,
+        "our_r0_ohm": 0.00042575,
+        "lic_r0_ohm": 0.00042874,
+        "diff_uohm": -2.997,
+        "diff_pct": -0.699
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.35,
+        "our_r0_ohm": 0.00042805,
+        "lic_r0_ohm": 0.00043236,
+        "diff_uohm": -4.311,
+        "diff_pct": -0.997
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.25,
+        "our_r0_ohm": 0.00042099,
+        "lic_r0_ohm": 0.00042608,
+        "diff_uohm": -5.093,
+        "diff_pct": -1.195
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.15,
+        "our_r0_ohm": 0.00041761,
+        "lic_r0_ohm": 0.0004254,
+        "diff_uohm": -7.793,
+        "diff_pct": -1.832
+      },
+      {
+        "temperature_c": 25,
+        "soc_nominal": 0.05,
+        "our_r0_ohm": 0.00043731,
+        "lic_r0_ohm": 0.00043236,
+        "diff_uohm": 4.952,
+        "diff_pct": 1.145
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.95,
+        "our_r0_ohm": 0.00035941,
+        "lic_r0_ohm": 0.00036065,
+        "diff_uohm": -1.24,
+        "diff_pct": -0.344
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.85,
+        "our_r0_ohm": 0.00036318,
+        "lic_r0_ohm": 0.00036387,
+        "diff_uohm": -0.681,
+        "diff_pct": -0.187
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.75,
+        "our_r0_ohm": 0.00036377,
+        "lic_r0_ohm": 0.00036526,
+        "diff_uohm": -1.494,
+        "diff_pct": -0.409
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.65,
+        "our_r0_ohm": 0.00036145,
+        "lic_r0_ohm": 0.00036721,
+        "diff_uohm": -5.759,
+        "diff_pct": -1.568
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.55,
+        "our_r0_ohm": 0.00036958,
+        "lic_r0_ohm": 0.00037321,
+        "diff_uohm": -3.629,
+        "diff_pct": -0.972
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.45,
+        "our_r0_ohm": 0.00037237,
+        "lic_r0_ohm": 0.00037558,
+        "diff_uohm": -3.207,
+        "diff_pct": -0.854
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.35,
+        "our_r0_ohm": 0.000374,
+        "lic_r0_ohm": 0.00037823,
+        "diff_uohm": -4.234,
+        "diff_pct": -1.119
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.25,
+        "our_r0_ohm": 0.00036886,
+        "lic_r0_ohm": 0.00037558,
+        "diff_uohm": -6.722,
+        "diff_pct": -1.79
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.15,
+        "our_r0_ohm": 0.00036671,
+        "lic_r0_ohm": 0.00037587,
+        "diff_uohm": -9.163,
+        "diff_pct": -2.438
+      },
+      {
+        "temperature_c": 30,
+        "soc_nominal": 0.05,
+        "our_r0_ohm": 0.00038443,
+        "lic_r0_ohm": 0.00038144,
+        "diff_uohm": 2.989,
+        "diff_pct": 0.784
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.95,
+        "our_r0_ohm": 0.00033539,
+        "lic_r0_ohm": 0.00033736,
+        "diff_uohm": -1.964,
+        "diff_pct": -0.582
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.85,
+        "our_r0_ohm": 0.00033838,
+        "lic_r0_ohm": 0.00034001,
+        "diff_uohm": -1.63,
+        "diff_pct": -0.479
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.75,
+        "our_r0_ohm": 0.0003385,
+        "lic_r0_ohm": 0.00034084,
+        "diff_uohm": -2.341,
+        "diff_pct": -0.687
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.65,
+        "our_r0_ohm": 0.00033599,
+        "lic_r0_ohm": 0.00034182,
+        "diff_uohm": -5.834,
+        "diff_pct": -1.707
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.55,
+        "our_r0_ohm": 0.00034152,
+        "lic_r0_ohm": 0.00034531,
+        "diff_uohm": -3.793,
+        "diff_pct": -1.098
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.45,
+        "our_r0_ohm": 0.0003435,
+        "lic_r0_ohm": 0.00034782,
+        "diff_uohm": -4.323,
+        "diff_pct": -1.243
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.35,
+        "our_r0_ohm": 0.00034436,
+        "lic_r0_ohm": 0.00034935,
+        "diff_uohm": -4.996,
+        "diff_pct": -1.43
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.25,
+        "our_r0_ohm": 0.00034101,
+        "lic_r0_ohm": 0.00034796,
+        "diff_uohm": -6.956,
+        "diff_pct": -1.999
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.15,
+        "our_r0_ohm": 0.00033996,
+        "lic_r0_ohm": 0.00034894,
+        "diff_uohm": -8.981,
+        "diff_pct": -2.574
+      },
+      {
+        "temperature_c": 35,
+        "soc_nominal": 0.05,
+        "our_r0_ohm": 0.00034893,
+        "lic_r0_ohm": 0.00035368,
+        "diff_uohm": -4.756,
+        "diff_pct": -1.345
+      }
+    ]
+  },
+  "ocv_entropy_comparison": {
+    "source_files": [
+      "reports/validation/tempest_ecm_results.json",
+      "$SOC_DATA_DIR/tempest_280ah/LIC_entropy_analysis.csv"
+    ],
+    "units": "V (no conversion)",
+    "mean_abs_diff_mv": 7.142,
+    "rows": [
+      {
+        "soc": 0.1,
+        "temperature_c": 15,
+        "our_ocv_v": 3.2138,
+        "lic_ocv_v": 3.2108,
+        "diff_mv": 3.035
+      },
+      {
+        "soc": 0.1,
+        "temperature_c": 25,
+        "our_ocv_v": 3.2144,
+        "lic_ocv_v": 3.21,
+        "diff_mv": 4.382
+      },
+      {
+        "soc": 0.1,
+        "temperature_c": 35,
+        "our_ocv_v": 3.2159,
+        "lic_ocv_v": 3.209,
+        "diff_mv": 6.918
+      },
+      {
+        "soc": 0.3,
+        "temperature_c": 15,
+        "our_ocv_v": 3.2743,
+        "lic_ocv_v": 3.2833,
+        "diff_mv": -9.072
+      },
+      {
+        "soc": 0.3,
+        "temperature_c": 25,
+        "our_ocv_v": 3.2793,
+        "lic_ocv_v": 3.2832,
+        "diff_mv": -3.883
+      },
+      {
+        "soc": 0.3,
+        "temperature_c": 35,
+        "our_ocv_v": 3.2863,
+        "lic_ocv_v": 3.2828,
+        "diff_mv": 3.472
+      },
+      {
+        "soc": 0.5,
+        "temperature_c": 15,
+        "our_ocv_v": 3.2832,
+        "lic_ocv_v": 3.294,
+        "diff_mv": -10.792
+      },
+      {
+        "soc": 0.5,
+        "temperature_c": 25,
+        "our_ocv_v": 3.2868,
+        "lic_ocv_v": 3.2955,
+        "diff_mv": -8.77
+      },
+      {
+        "soc": 0.5,
+        "temperature_c": 35,
+        "our_ocv_v": 3.2916,
+        "lic_ocv_v": 3.2972,
+        "diff_mv": -5.584
+      },
+      {
+        "soc": 0.7,
+        "temperature_c": 15,
+        "our_ocv_v": 3.3223,
+        "lic_ocv_v": 3.3336,
+        "diff_mv": -11.312
+      },
+      {
+        "soc": 0.7,
+        "temperature_c": 25,
+        "our_ocv_v": 3.3246,
+        "lic_ocv_v": 3.3337,
+        "diff_mv": -9.13
+      },
+      {
+        "soc": 0.7,
+        "temperature_c": 35,
+        "our_ocv_v": 3.3275,
+        "lic_ocv_v": 3.3337,
+        "diff_mv": -6.205
+      },
+      {
+        "soc": 0.9,
+        "temperature_c": 15,
+        "our_ocv_v": 3.3242,
+        "lic_ocv_v": 3.335,
+        "diff_mv": -10.76
+      },
+      {
+        "soc": 0.9,
+        "temperature_c": 25,
+        "our_ocv_v": 3.3273,
+        "lic_ocv_v": 3.3353,
+        "diff_mv": -8.012
+      },
+      {
+        "soc": 0.9,
+        "temperature_c": 35,
+        "our_ocv_v": 3.3296,
+        "lic_ocv_v": 3.3354,
+        "diff_mv": -5.806
+      }
+    ]
+  }
+}
