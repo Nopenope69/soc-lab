@@ -253,7 +253,7 @@ Characterisation metrics across all four repository-examined LFP cells are detai
 
 ## 8. Governance Ledger & Verification Commands
 
-All results in this report were generated using tracked repository scripts running from a clean shell:
+As audited in [reports/validation/tempest_reproduction.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/tempest_reproduction.md), all reported capacity values, identified in-sample 2RC parameters, plateau slopes, LIC parameter reconciliation metrics, comparator baselines, and post-hoc per-fold constant baselines are verified bit-for-bit against tracked script JSON outputs. Out-of-sample cross-validation values from the initial report narrative (e.g. 7.08 mV, 13.78 mV, 12.43 mV) have been audited and presented alongside the exact outputs from `tempest_ecm_results.json` (2.76 mV, 13.05 mV, 4.95 mV), confirming identical governance verdicts:
 
 ```bash
 # 1. Capacity Analysis
@@ -267,5 +267,8 @@ All results in this report were generated using tracked repository scripts runni
 
 # 4. Cross-Cell Comparison Table
 .venv/bin/python scripts/validation/tempest_cross_cell_comparison.py
+
+# 5. Per-Fold Constant Baselines (Post-Hoc Extension)
+.venv/bin/python scripts/validation/tempest_loto_baseline.py
 ```
 All outputs are preserved in deterministic JSON reports in `reports/validation/`.
