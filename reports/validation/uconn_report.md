@@ -3,7 +3,7 @@
 > [!NOTE] Revision (V2.12 Reproduction, Data Integrity & Tautology Audit)  
 > - **Reproduction & Manifest Reconciliation**: Verified that primary manifest `data/manifests/uconn_reil_dataset5.sha256` tracks the 2 download files (`rpt_data.zip`, `README_Uconn.txt`). Extracted CSV files (207 files across 64 physical cells) are tracked in `data/manifests/uconn_reil_dataset5_extracted.sha256` and verified 100% byte-identical to zip members via `scripts/verify_datasets.py`. Corrected file distribution per cell: 18 cells with 2 files, 20 cells with 3 files, 19 cells with 4 files, 7 cells with 5 files (total 207).  
 > - **Comparative Baseline Honesty**: Ridge regression achieves lower MAE than frozen `soh_pulse_v2` on both outputs on sealed cells ($SOH_C$: 0.01994 vs 0.02107; $SOH_R$: 0.009106 vs 0.009392); ElasticNet shows no improvement over Ridge. Error reductions of 50.6% ($SOH_C$) and 56.5% (condition holdout) are relative to constant-mean ONLY. Conformal coverage for $SOH_C$ is 91.2% (under-covering 95% nominal level).  
-> - **Post-Hoc Age-Only Baseline**: Added linear and non-linear (quadratic) age-only baselines fitted strictly on DEV train cells. On sealed cells, pulse $SOH_C$ (0.0211 MAE) only marginally edges out age-quadratic (0.0221 MAE) with overlapping cell bootstrap 95% CIs ([0.0181, 0.0260] vs [0.0199, 0.0281]); pulse model beats age-only on $SOH_R$ (0.0094 vs 0.0195) and under severe condition holdout (0.0219 vs 0.0473).  
+> - **Post-Hoc Age-Only Baseline**: Added linear and non-linear (quadratic) age-only baselines fitted strictly on DEV train cells. On sealed cells, pulse $SOH_C$ (0.0211 MAE) only marginally edges out age-quadratic (0.0221 MAE) with overlapping cell bootstrap 95% CIs ([0.0181, 0.0260] vs [0.0199, 0.0281]); on $SOH_R$, label and feature are the same physical measurement ($R_{10\text{s}}$ from Step 20 pulse), so lower error than age-only is an identity rather than evidence of estimation skill.  
 > - **Candidate & Feature Provenance**: Documented that committed sealed results in `uconn_sealed_results.json` reflect the 14-feature model (`uconn_soh_pulse_v2_frozen_v27.json`), whereas `soh_pulse_elasticnet_v2.h` was exported from a post-hoc 11-feature model modified after unsealing.  
 > - **Governance Relabeling**: Reclassified all UConn SOH qualification determinations from `LAB_VALIDATED` to **`DEVELOPMENT`** due to unmet criteria (d) and (e) of the 5-point governance rule.
 
@@ -230,24 +230,33 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 | **DEV Validation** (11 cells, 468 samples) | Constant-Training-Mean | 0.0435 | — | 0.0238 | — |
 | | Age Linear | 0.0227 | — | 0.0175 | — |
 | | Age Quadratic | 0.0227 | — | 0.0175 | — |
-| | Ridge Regression | 0.0222 | — | 0.0091 | — |
-| | **Frozen `soh_pulse_v2`** | **0.0225** | — | **0.0073** | — |
+| | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0060 | — |
+| | Ridge Regression (14 feat) | 0.0222 | — | 0.0091 | — |
+| | **Frozen `soh_pulse_v2` (14 feat)** | **0.0225** | — | **0.0073** | — |
+| | Post-Hoc Candidate (11 feat) | 0.0224 | — | 0.0090 | — |
 |---|---|---|---|---|---|
-| **Sealed Cells** (21 cells, 956 samples) | Constant-Training-Mean | 0.0427 | 0.0438 [0.0424, 0.0454] | 0.0233 | 0.0248 [0.0225, 0.0271] |
+| **Sealed Cells** (21 cells, 956 samples) | Constant-Training-Mean | 0.0427 | 0.0438 [0.0424, 0.0454] | 0.0233 | 0.0248 [0.0226, 0.0270] |
 | *(Post-hoc, added after unsealing)* | Age Linear | 0.0227 | 0.0247 [0.0208, 0.0289] | 0.0195 | 0.0204 [0.0180, 0.0228] |
 | | Age Quadratic | 0.0221 | 0.0238 [0.0199, 0.0281] | 0.0195 | 0.0203 [0.0179, 0.0226] |
-| | **Ridge Regression** | **0.0196** | **0.0201 [0.0167, 0.0246]** | **0.0089** | **0.0094 [0.0073, 0.0117]** |
-| | **Frozen `soh_pulse_v2`** | **0.0211** | **0.0217 [0.0181, 0.0260]** | **0.0094** | **0.0099 [0.0073, 0.0126]** |
+| | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0095 | 0.0095 [0.0066, 0.0126] |
+| | **Ridge Regression (14 feat)** | **0.0196** | **0.0201 [0.0167, 0.0246]** | **0.0089** | **0.0094 [0.0073, 0.0117]** |
+| | **Frozen `soh_pulse_v2` (14 feat)** | **0.0211** | **0.0217 [0.0181, 0.0260]** | **0.0094** | **0.0099 [0.0073, 0.0127]** |
+| | Post-Hoc Candidate (11 feat) | 0.0209 | — | 0.0107 | 0.0112 [0.0091, 0.0134] |
 |---|---|---|---|---|---|
-| **Condition Holdout** (Groups 3 & 6, 12 cells, 497 samples) | Constant-Training-Mean | 0.0499 | — | — | — |
+| **Condition Holdout** (Groups 3 & 6, 12 cells, 497 samples) | Constant-Training-Mean | 0.0499 | — | 0.0299 | — |
 | *(Post-hoc, added after unsealing)* | Age Linear | 0.0475 | — | — | — |
-| | Age Quadratic | 0.0473 | — | — | — |
-| | **Frozen `soh_pulse_v2`** | **0.0219** | — | — | — |
+| | Age Quadratic | 0.0473 | — | 0.0243 | — |
+| | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0103 | — |
+| | Ridge Regression (14 feat) | — | — | 0.0098 | — |
+| | **Frozen `soh_pulse_v2` (14 feat)** | **0.0219** | — | 0.0117 | — |
+| | Post-Hoc Candidate (11 feat) | — | — | 0.0132 | — |
 
-#### Plain Assessment: Does the Pulse Model Beat the Age-Only Baseline?
-- **On $SOH_C$ (Cell Holdout):** The pulse model achieves sample MAE of **0.0211**, which is only marginally better than the trivial Age-Quadratic baseline (**0.0221**) and Age-Linear baseline (**0.0227**). When evaluated by cell with a 95% bootstrap confidence interval over the 21 independent cells, `soh_pulse_v2` (0.0217 [0.0181, 0.0260]) substantially overlaps with Age-Quadratic (0.0238 [0.0199, 0.0281]) and Age-Linear (0.0247 [0.0208, 0.0289]). Thus, for cells aging under nominal laboratory conditions, pulse feature extraction provides almost no statistically distinguishable gain over a calendar/cycle counter for capacity tracking.
-- **On $SOH_R$ (Cell Holdout):** The pulse model decisively beats the age-only baselines (Sample MAE **0.0094** vs **0.0195**; Cell Mean MAE **0.0099 [0.0073, 0.0126]** vs **0.0203 [0.0179, 0.0226]**). Impedance degradation varies non-linearly across individual cells, where pulse ECM features capture physical resistance growth that age alone cannot resolve.
-- **On Condition Holdout (Groups 3 and 6):** Under severe stress cycling, cells degrade significantly faster per cycle. Age-only models fail (MAE ~0.047), while `soh_pulse_v2` achieves **0.0219 MAE**, demonstrating that pulse features track accelerated electrochemical degradation across varying stress regimes.
+#### Plain Assessment: Comparative Performance Against Baselines & Identity Audit
+- **On $SOH_C$ (Cell Holdout):** The pulse model achieves sample MAE of **0.0211**, which is statistically indistinguishable from the trivial Age-Quadratic baseline (**0.0221**) and beaten by Ridge regression (**0.0199**). When evaluated by cell with a 95% bootstrap confidence interval over the 21 independent cells, `soh_pulse_v2` (0.0217 [0.0181, 0.0260]) substantially overlaps with Age-Quadratic (0.0238 [0.0199, 0.0281]). Thus, for cells aging under nominal laboratory conditions, pulse feature extraction provides no demonstrable gain over a cycle counter or simple linear Ridge regression for capacity tracking.
+- **On $SOH_R$ (Feature-Label Identity & Tautology):** $SOH_R$ results do NOT represent evidence of degradation estimation skill because the label and feature are the exact same physical measurement. The ground truth label is $SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ (`src/soc/data/uconn_loader.py:128-140`), computed from Step 20 `slowpulse`. The 14-feature candidate includes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from that identical pulse. A trivial baseline fitted on DEV train cells only:
+  $$\widehat{SOH}_R = \frac{r_{10\text{s},\text{ohm}}}{\text{mean}(r_{10\text{s},\text{RPT}_0,\text{train}})}$$
+  achieves Sample MAE **0.0060** on DEV validation (beating `soh_pulse_v2` at 0.0073) and **0.0095** on sealed test cells (matching `soh_pulse_v2` at 0.0094 and Ridge at 0.0089). When the 11-feature model was evaluated with $r_{10\text{s},\text{ohm}}$ and $\Delta V$ removed, $SOH_R$ MAE changed from 0.0094 to 0.0107 (reported as an empirical observation without asserting a cause). Presenting "beats age-only on SOH_R" is not a positive finding demonstrating estimation skill.
+- **On Condition Holdout (Groups 3 and 6):** Evaluated as a post-hoc supplementary check. Under stress cycling, `soh_pulse_v2` achieves **0.0219 MAE** vs constant-mean baseline 0.0499 and age-quadratic 0.0473.
 - **Independent Units:** Evaluated on **21 sealed cells** (within-condition) and **2 held-out condition groups** (12 cells).
 
 ---
@@ -343,7 +352,7 @@ pytest tests/test_uconn_loader.py tests/soh/test_python_c_pulse_parity.py
   The ElasticNet formulation provides zero predictive advantage over Ridge.
 - **Constant-Mean Anchor:** Headline error reductions (50.6% and 56.5%) are strictly relative to the naive constant-training-mean baseline.
 - **Conformal Interval Coverage:** Empirical coverage for $SOH_C$ is **91.2%** on sealed cells (under-covering 95% nominal level), while $SOH_R$ is **98.6%** (overconservative).
-- **Age-Only Baseline Comparison:** On $SOH_C$, `soh_pulse_v2` (0.0211 sample MAE) is statistically indistinguishable from a simple quadratic age baseline (0.0221 sample MAE) with overlapping 95% bootstrap confidence intervals over the 21 cells ([0.0181, 0.0260] vs [0.0199, 0.0281]). Pulse features provide clear separation over age only for $SOH_R$ (0.0094 vs 0.0195) and under severe cross-condition cycling (0.0219 vs 0.0473).
+- **Age-Only Baseline Comparison:** On $SOH_C$, `soh_pulse_v2` (0.0211 sample MAE) is statistically indistinguishable from a simple quadratic age baseline (0.0221 sample MAE) with overlapping 95% bootstrap confidence intervals over the 21 cells ([0.0181, 0.0260] vs [0.0199, 0.0281]). For $SOH_R$, lower error relative to age-only is not evidence of estimation skill because the label and feature are the identical Step 20 pulse measurement. Under severe cross-condition cycling, the pulse model achieves 0.0219 vs 0.0473 for age-quadratic.
 
 ### 11.3 Reference Independence & Governance Label Determination
 - **Reference Independence:** $SOH_C$ ground truth originates from Step 28 (independent full CC discharge; criterion d pass). $SOH_R$ ground truth originates from Step 20 DCIR, which shares the physical voltage response with the ECM feature extractor ($R_0, R_{10\text{s}}$); criterion (d) is NOT met for $SOH_R$.

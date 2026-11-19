@@ -1,5 +1,8 @@
 # UConn REIL Dataset 5: SOH_C and SOH_R Labels Extraction
 
+> [!NOTE] Revision (V2.12 Tautology and Feature-Label Identity Audit)  
+> Documented that $SOH_R$ label and input features are the exact same measurement: the label $SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ (`src/soc/data/uconn_loader.py:128-140`) is computed from Step 20 `slowpulse`, and the 14-feature candidate includes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from that identical pulse. A trivial baseline $\widehat{SOH}_R = r_{10\text{s},\text{ohm}} / \text{mean}(r_{10\text{s},\text{RPT}_0,\text{train}})$ achieves 0.0060 MAE on DEV validation and 0.0095 MAE on sealed test cells, matching or beating the candidate model. Therefore, $SOH_R$ results do NOT represent evidence of degradation estimation skill.
+
 > [!NOTE] Revision (V2.11)  
 > Added formal Reference Independence Assessment (Section 1.3): $SOH_C$ reference originates from Step 28 (independent full discharge; criterion d met); $SOH_R$ reference originates from Step 20 (`slowpulse`), which shares the voltage response used for ECM feature extraction ($R_0, R_{10\text{s}}$), so criterion (d) is NOT met for $SOH_R$.
 
@@ -38,13 +41,25 @@ $$SOH_R = \frac{R_{\text{pulse}}(\text{RPT})}{R_{\text{pulse}}(\text{RPT 0})}$$
   $$R_{1s} = \frac{|\Delta V_{1s}|}{|\Delta I|} = \frac{|V(t_0 + 1\text{s}) - V(t_0)|}{|I_{1C} - I_{C/5}|}$$
 - **Missing Label Rule:** If pulse sequence at the target SOC is absent or non-physical ($R \le 0$), $SOH_R = \text{None}$ and the sample is excluded. Never defaulted to 1.0.
 
-### 1.3 Reference Independence Assessment (Governance Criterion d)
+### 1.3 Reference Independence & Feature-Label Identity Assessment (Governance Criterion d)
 
 Under Governance Rule Criterion (d), validation requires an independent ground truth reference:
 - **$SOH_C$ Reference Independence (Criterion d: PASS):**  
   The capacity ground truth is measured during **Step 28** (`ref_dchg`), a complete constant-current discharge down to 2.00 V. The pulse estimator uses features extracted exclusively during **Step 20** (`slowpulse`). Because the capacity reference is derived from full-discharge charge integration independent of the 100-second pulse, criterion (d) is met for $SOH_C$.
-- **$SOH_R$ Reference Independence (Criterion d: FAIL):**  
-  The resistance ground truth is measured as DCIR during **Step 20** (`slowpulse`). The estimator features ($R_0, R_1, C_1, R_2, C_2, R_{10\text{s}}$) are extracted from the ECM fit to the voltage response of the **very same Step 20 pulse in the same RPT**. Because the ground-truth label and the input features are derived from the identical physical excitation event, the reference is not independent of the feature extractor. Therefore, **for $SOH_R$, Criterion (d) is NOT MET**.
+- **$SOH_R$ Feature-Label Identity & Tautology (Criterion d: FAIL):**  
+  The resistance ground truth is calculated as:
+  $$SOH_R = \frac{r_{\text{pulse, 10s}}(\text{RPT}_k)}{r_{\text{pulse, 10s}}(\text{RPT}_0)}$$
+  per cell (`src/soc/data/uconn_loader.py` lines 128-140), computed directly from the Step 20 `slowpulse`.
+  The 14-feature candidate estimator takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ directly from that exact same Step 20 pulse!
+  Because the label is mathematically the feature scaled by the initial cell resistance $R_0$, predicting $SOH_R$ is a measurement identity / tautology, not an estimation of degradation.
+  A trivial baseline fitted strictly on DEV train cells:
+  $$\widehat{SOH}_R = \frac{r_{10\text{s},\text{ohm}}}{\text{mean}(r_{10\text{s},\text{RPT}_0} \text{ over DEV train cells})}$$
+  evaluated in `scripts/validation/uconn_soh_r_tautology_eval.py` achieves:
+  - **DEV Validation (11 cells):** Sample MAE = **0.0060** (beating frozen candidate `soh_pulse_v2` at 0.0073 and Ridge at 0.0091).
+  - **Sealed Test Cells (21 cells, post-hoc):** Sample MAE = **0.0095** (virtually identical to `soh_pulse_v2` at 0.0094 and Ridge at 0.0089).
+  - **Condition Holdout (12 cells, post-hoc):** Sample MAE = **0.0103** (beating `soh_pulse_v2` at 0.0117).
+  
+  Therefore, $SOH_R$ validation results do NOT represent evidence of degradation estimation skill. Criterion (d) is strictly **FAIL**.
 
 ---
 

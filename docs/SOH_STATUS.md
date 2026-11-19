@@ -1,5 +1,8 @@
 # SOH Estimator Qualification Status Matrix
 
+> [!NOTE] Revision (V2.12 Tautology & Feature-Label Identity Audit)  
+> Documented that $SOH_R$ results do NOT represent evidence of degradation estimation skill because the ground-truth label ($SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$) and input features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) are derived from the exact same Step 20 `slowpulse` measurement. A trivial baseline $\widehat{SOH}_R = r_{10\text{s},\text{ohm}} / \bar{r}_0$ achieves 0.0095 MAE on sealed cells, matching the candidate model. The 11-feature model's SOH_R MAE changed from 0.0094 to 0.0107 when $r_{10\text{s}}$ was omitted (reported as an empirical observation without asserting a cause).
+
 > [!NOTE] Revision (V2.11)  
 > Reclassified Candidate 2 (`soh_pulse_v2`) from `LAB_VALIDATED` to **`DEVELOPMENT`** on UConn REIL Dataset 5 per Governance Label Rule audit:
 > - $SOH_C$: Failed criterion (d) (committed spec named only constant-mean baseline; Ridge matches or beats candidate at 0.0199 vs 0.0211 MAE; no age-only baseline was pre-registered in spec; candidate modified post-unsealing) and criterion (e) (counted in independent units: 21 sealed cells).
@@ -153,11 +156,11 @@ Task V2 executed laboratory evaluation of pulse-based SOH estimation across all 
    - **Criterion (c) [PASS]:** Specification and partitions committed before unsealing test cells (`f4a8d87`, `f592bc7`).
    - **Criterion (d) [FAIL]:**
      - $SOH_C$: Committed spec named only constant-mean baseline; Ridge regression matches or beats candidate (0.0199 vs 0.0211 MAE); no age-only baseline was named in spec; candidate calibration was modified post-unsealing.
-     - $SOH_R$: Ground-truth reference (Step 20 DCIR) shares the voltage response with features extracted from the same Step 20 pulse; Ridge matches or beats candidate (0.0091 vs 0.0094 MAE).
+     - $SOH_R$: Ground-truth reference (Step 20 DCIR) shares the voltage response with features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) extracted from the exact same Step 20 pulse; $SOH_R$ results are not evidence of estimation skill because label and feature are the same physical measurement. A trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ achieves 0.0095 MAE on sealed cells, matching the candidate model (0.0094) and Ridge (0.0089). When evaluated without $r_{10\text{s}}$ in the 11-feature post-hoc model, SOH_R MAE changed from 0.0094 to 0.0107 (reported as an empirical observation without asserting a cause).
    - **Criterion (e) [FAIL]:** Counted in independent units (21 sealed cells, and only 2 condition groups).
 2. **Predictive Performance on Sealed Partition (21 sealed cells, 956 RPT observations):**
-   - $SOH_C$ Sealed MAE: 0.0211 (vs Ridge 0.0199; vs Age-Quadratic 0.0221; vs Baseline 0.0427).
-   - $SOH_R$ Sealed MAE: 0.0094 (vs Ridge 0.0091; vs Age-Quadratic 0.0195; vs Baseline 0.0233).
+   - $SOH_C$ Sealed MAE: 0.0211 (vs Ridge 0.0199; vs Age-Quadratic 0.0221; vs Baseline 0.0427). Overlapping bootstrap intervals with age-quadratic indicate no statistically significant advantage over a cycle counter.
+   - $SOH_R$ Sealed MAE: 0.0094 (vs Ridge 0.0091; vs Trivial Baseline 0.0095; vs 11-Feature Candidate 0.0107; vs Age-Quadratic 0.0195; vs Baseline 0.0233). Lower error than age-only is an artifact of measuring resistance directly in the feature, not evidence of degradation estimation skill.
    - Domain Generalization: Out-of-distribution transfer to severe stress condition groups 3 & 6 achieves 0.0219 MAE (vs baseline 0.0499; vs Age-Quadratic 0.0473).
 3. **Qualification Boundary:**
    - Classified as **`DEVELOPMENT`** for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
