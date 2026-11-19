@@ -86,13 +86,14 @@ Ground-truth SOH metrics were extracted across all 2,855 available RPT records i
 - **Measurement Step:** Step 28 (`ref_dchg`), 0.40 A (C/3) constant-current discharge from 3.60 V to 2.00 V cutoff at 25 °C.
 - **Definition:**
   $$SOH_C = \frac{C_{\text{measured}}}{C_0} = \frac{\int_{t_{\text{start}}}^{t_{\text{end}}} I_{\text{repo}}(t)\, dt}{C_{\text{cell}, \text{RPT}_0}}$$
-- **Independence:** This complete discharge is completely independent of the 100-second characterisation pulse performed at 50% SOC (Step 20), satisfying criterion (d).
+- **Independence Assessment (Criterion d: PASS):** This complete discharge (Step 28) is physically and temporally decoupled from the 100-second characterisation pulse (Step 20), satisfying criterion (d) for $SOH_C$.
 
 ### 3.2 Resistance State of Health ($SOH_R$)
 - **Measurement Step:** Step 20 (`slowpulse`), 100-second discharge pulse at 50% nominal SOC.
 - **Definition:**
   $$R_{10\text{s}} = \frac{V_{\text{initial}} - V(t_0 + 10\,\text{s})}{I_{\text{pulse}}}$$
   $$SOH_R = \frac{R_{10\text{s}}}{R_{10\text{s}, \text{RPT}_0}}$$
+- **Independence Assessment (Criterion d: FAIL):** The resistance ground truth is measured as DCIR during Step 20 (`slowpulse`). However, the estimator features ($R_0, R_1, C_1, R_2, C_2, R_{10\text{s}}$) are extracted from the ECM fit to the voltage response of the **very same Step 20 pulse in the same RPT**. Because the ground-truth target and the estimator features originate from the identical pulse waveform, the reference is NOT independent of the feature extractor. Therefore, **for $SOH_R$, Criterion (d) is NOT MET**.
 
 ---
 

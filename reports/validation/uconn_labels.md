@@ -1,5 +1,8 @@
 # UConn REIL Dataset 5: SOH_C and SOH_R Labels Extraction
 
+> [!NOTE] Revision (V2.11)  
+> Added formal Reference Independence Assessment (Section 1.3): $SOH_C$ reference originates from Step 28 (independent full discharge; criterion d met); $SOH_R$ reference originates from Step 20 (`slowpulse`), which shares the voltage response used for ECM feature extraction ($R_0, R_{10\text{s}}$), so criterion (d) is NOT met for $SOH_R$.
+
 **Date:** 2026-11-19  
 **Source Dataset:** UConn-ISU-ILCC LFP/Gr Battery Aging Dataset (Dataset 5)  
 **Citation:** Nowacki et al., *Journal of Power Sources* 628 (2025) 235813  
@@ -23,7 +26,7 @@ $$SOH_C = \frac{C_{\text{measured}}(\text{RPT})}{C_{\text{measured}}(\text{RPT 0
 
 $$SOH_R = \frac{R_{\text{pulse}}(\text{RPT})}{R_{\text{pulse}}(\text{RPT 0})}$$
 
-- **Reference Segment:** `slowpulse` at matched SOC (nominal 50.0% SOC discharge primary; 20.0% and 90.0% auxiliary) and room temperature (~25 °C).
+- **Reference Segment:** Step 20 (`slowpulse`) at matched SOC (nominal 50.0% SOC discharge primary; 20.0% and 90.0% auxiliary) and room temperature (~25 °C).
 - **Pulse Structure:**
   - 30 s CC discharge at C/5 ($-0.24\ \text{A}$ in raw file, $+0.24\ \text{A}$ in repo convention).
   - 10 s CC discharge at 1C ($-1.20\ \text{A}$ in raw file, $+1.20\ \text{A}$ in repo convention).
@@ -34,6 +37,14 @@ $$SOH_R = \frac{R_{\text{pulse}}(\text{RPT})}{R_{\text{pulse}}(\text{RPT 0})}$$
 - **Fast Resistance Time Window ($R_{1s}$):**
   $$R_{1s} = \frac{|\Delta V_{1s}|}{|\Delta I|} = \frac{|V(t_0 + 1\text{s}) - V(t_0)|}{|I_{1C} - I_{C/5}|}$$
 - **Missing Label Rule:** If pulse sequence at the target SOC is absent or non-physical ($R \le 0$), $SOH_R = \text{None}$ and the sample is excluded. Never defaulted to 1.0.
+
+### 1.3 Reference Independence Assessment (Governance Criterion d)
+
+Under Governance Rule Criterion (d), validation requires an independent ground truth reference:
+- **$SOH_C$ Reference Independence (Criterion d: PASS):**  
+  The capacity ground truth is measured during **Step 28** (`ref_dchg`), a complete constant-current discharge down to 2.00 V. The pulse estimator uses features extracted exclusively during **Step 20** (`slowpulse`). Because the capacity reference is derived from full-discharge charge integration independent of the 100-second pulse, criterion (d) is met for $SOH_C$.
+- **$SOH_R$ Reference Independence (Criterion d: FAIL):**  
+  The resistance ground truth is measured as DCIR during **Step 20** (`slowpulse`). The estimator features ($R_0, R_1, C_1, R_2, C_2, R_{10\text{s}}$) are extracted from the ECM fit to the voltage response of the **very same Step 20 pulse in the same RPT**. Because the ground-truth label and the input features are derived from the identical physical excitation event, the reference is not independent of the feature extractor. Therefore, **for $SOH_R$, Criterion (d) is NOT MET**.
 
 ---
 
