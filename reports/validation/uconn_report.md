@@ -11,7 +11,7 @@
 **Repository:** `/Users/tecbusiness/Desktop/random/SOC`  
 **Data Root:** `/Users/tecbusiness/soc_data` (`$SOC_DATA_DIR`)  
 **Dataset Source:** University of Connecticut / Renewable Energy & Intelligent Systems Laboratory (UConn REIL) Dataset 5  
-**Cell Chemistry & Geometry:** LithiumWerks APR18650M1B, 1.2 Ah nominal, 18650 cylindrical, Lithium Iron Phosphate (LFP/Graphite)  
+**Cell Chemistry & Geometry:** LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah (source: `README_Uconn.txt` line 16, stating 1.2 Ah nominal and aging to 80% SOH, about 0.96 Ah), LFP/Graphite  
 **Branch:** `validation/uconn`  
 **Evaluation Protocol:** Strict Cell Holdout (43 Dev cells, 21 Sealed Test cells) & Condition Holdout (Groups 3 and 6)  
 **Estimators Evaluated:**  
@@ -19,7 +19,7 @@
 - **V1 Model**: ElasticNet estimator with legacy hyperparameters ($\alpha = 0.05, \rho = 0.50$)  
 - **Ridge Regression**: $L_2$-regularized linear model ($\alpha = 0.005$)  
 - **Frozen `soh_pulse_v2`**: 2-RC ECM feature extractor + tuned ElasticNet ($\alpha = 0.005, \rho_C = 0.10, \rho_R = 0.30$)  
-- **C Implementation**: `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h` (compiled and verified via ctypes)
+- **C Implementation**: `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h` (compiled and verified via ctypes; placeholder/unvalidated)
 
 ---
 
@@ -35,23 +35,29 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
 > (a) real files with verified manifest hashes;  
 > (b) every evaluation script tracked in the repo and reproduced from a clean shell;  
 > (c) a spec committed BEFORE the sealed set is evaluated;  
-> (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral;  
-> (e) enough data to support the claim, stated in numbers.  
+> (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own computation, where the fair baselines were named in the committed spec;  
+> (e) enough data to support the claim, counted in independent units (cells and condition groups, not repeated RPTs).  
 > Everything else is `DEVELOPMENT`.
 
 | Criterion | Evaluation / Evidence | Determination |
 |:---|:---|:---:|
 | **(a) Real Files & Manifest Hashes** | Evaluated on real laboratory CSV data (`$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/`). All 207 files match SHA-256 checksums in `data/manifests/uconn_reil_dataset5.sha256` verified by `scripts/verify_datasets.py` (`INTEGRITY_OK`). Zero synthetic or defaulted labels. | **PASS** |
-| **(b) Tracked Scripts & Reproduction** | Every step executed from tracked scripts in `scripts/validation/` (`uconn_inventory_scan.py`, `uconn_extract_labels.py`, `uconn_eval_dev.py`, `uconn_pulse_fit_comparison.py`, `uconn_export_v2_c.py`, `uconn_eval_sealed.py`) and verified through pytest suites. | **PASS** |
-| **(c) Spec Committed Prior to Unsealing** | Formal partition specification `reports/validation/uconn_spec_frozen.md` committed in `f4a8d87`. Candidate specification `reports/validation/uconn_soh_pulse_v2_spec.md` and calibration `deliverable/calibrations/uconn_soh_pulse_v2.json` committed in `f592bc7` *before* the sealed evaluation script touched test cells in commit `dbffe91`. | **PASS** |
-| **(d) Held-Out Result Beats Fair Baseline on Independent Reference** | Reference $SOH_C$ measured by independent 0.4A complete discharge to 2.0V cutoff (Step 28), completely decoupled from the 50% SOC pulse sequence (Step 20). Frozen `soh_pulse_v2` achieved **0.0211 MAE** vs baseline **0.0427 MAE** on sealed cells (Ratio **0.494x**, 50.6% error reduction) and **0.0219 MAE** vs baseline **0.0502 MAE** on held-out condition groups (Ratio **0.435x**, 56.5% error reduction). | **PASS** |
-| **(e) Sufficient Data Volume in Numbers** | 64 physical cells across 11 cycling conditions. 2,855 total RPT characterisation observations; 1,899 development samples (32 train cells [1,431], 11 val cells [468]); 956 sealed test samples (21 test cells); 497 condition-held-out test samples across 12 cells. | **PASS** |
+| **(b) Tracked Scripts & Reproduction** | Every step executed from tracked scripts in `scripts/validation/` (`uconn_inventory_scan.py`, `uconn_extract_labels.py`, `uconn_eval_dev.py`, `uconn_pulse_fit_comparison.py`, `uconn_export_v2_c.py`, `uconn_eval_sealed.py`, `uconn_age_baseline.py`) and reproduced from clean shell. | **PASS** |
+| **(c) Spec Committed Prior to Unsealing** | Formal partition specification `reports/validation/uconn_spec_frozen.md` committed in `f4a8d87`. Candidate specification `reports/validation/uconn_soh_pulse_v2_spec.md` and calibration `deliverable/calibrations/uconn_soh_pulse_v2.json` committed in `f592bc7` *before* the sealed evaluation script ran in commit `dbffe91`. | **PASS** |
+| **(d) Held-Out Result Beats Fair Baseline on Independent Reference (Named in Spec)** | - **$SOH_C$**: **FAIL / UNMET**. The committed spec named only the constant-training-mean baseline. Ridge regression matches or beats the candidate (0.0199 vs 0.0211), and no age-only baseline was pre-registered in the spec. Furthermore, the candidate calibration was modified post-unsealing.<br>- **$SOH_R$**: **FAIL / UNMET**. The reference label (Step 20 DCIR) is not independent of the features ($R_0, R_{10\text{s}}$) extracted from the very same Step 20 pulse in the same RPT. Furthermore, Ridge regression beats the candidate (0.0091 vs 0.0094). | **FAIL** |
+| **(e) Sufficient Data Volume Counted in Independent Units** | Evaluated on 21 sealed cells (956 RPT observations) for cell holdout, and only 2 condition groups for condition holdout. When counted in independent units (cells and condition groups, rather than repeated RPT cycles), data volume is insufficient to establish broad statistical validity across general operating environments. | **FAIL** |
 
 ### 1.2 Formal Qualification Determination
 
 - **Target Scope 1: 1.2 Ah Cylindrical APR18650M1B LFP Cells (Laboratory RPTs):**
-  - **Status: `LAB_VALIDATED`**
-  - Justification: Meets all 5 governance criteria (a)–(e) under standardized reference performance tests (RPTs) at 25 °C following multi-stress cycling.
+  - **Status: `DEVELOPMENT`**
+  - **Failed Governance Items per Output Channel:**
+    - **$SOH_C$ Point & Uncertainty:**
+      1. *Criterion (d) Failed*: Committed spec named only constant-mean as the fair baseline. Ridge regression beats candidate (0.0199 vs 0.0211 MAE). No age-only baseline was named in the spec. Furthermore, candidate calibration was modified post-unsealing.
+      2. *Criterion (e) Failed*: Data volume counted in independent units (21 sealed cells) is limited; cross-condition test covers only 2 condition groups that overlap with dev cells.
+    - **$SOH_R$ Point & Uncertainty:**
+      1. *Criterion (d) Failed*: The ground-truth reference label (Step 20 DCIR) is not independent of the feature extractor (features $R_0, R_{10\text{s}}$ are extracted from the very same Step 20 pulse). Ridge regression beats candidate (0.0091 vs 0.0094 MAE).
+      2. *Criterion (e) Failed*: Counted in independent cell units.
 - **Target Scope 2: 100 Ah Prismatic/Pouch Automotive & Grid Pack Deployment:**
   - **Status: `DEVELOPMENT` / `UNQUALIFIED`**
   - **Failed Governance Items for 100 Ah Pack Deployment:**

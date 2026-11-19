@@ -1,7 +1,10 @@
 # SOH Estimator Qualification Status Matrix
 
-> [!NOTE] Revision (V2.10)  
-> Evaluated Candidate 2 (`PulseElasticNetEstimator` / `soh_pulse_v2`) on real physical battery degradation data from the UConn REIL Dataset 5 (64 cells, 2,855 RPT cycles, 207 manifest-verified CSV files). Candidate 2 is awarded **`LAB_VALIDATED`** status for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory reference performance testing, but remains strictly **`UNQUALIFIED`** for 100 Ah pack deployment due to cell geometry, lack of dynamic drive cycle validation, and lack of fleet operational data.
+> [!NOTE] Revision (V2.11)  
+> Reclassified Candidate 2 (`soh_pulse_v2`) from `LAB_VALIDATED` to **`DEVELOPMENT`** on UConn REIL Dataset 5 per Governance Label Rule audit:
+> - $SOH_C$: Failed criterion (d) (committed spec named only constant-mean baseline; Ridge matches or beats candidate at 0.0199 vs 0.0211 MAE; no age-only baseline was pre-registered in spec; candidate modified post-unsealing) and criterion (e) (counted in independent units: 21 sealed cells).
+> - $SOH_R$: Failed criterion (d) (reference Step 20 DCIR is not independent of features $R_0, R_{10\text{s}}$ extracted from the same Step 20 pulse; Ridge matches or beats candidate at 0.0091 vs 0.0094 MAE) and criterion (e).
+> Cell model cited per `README_Uconn.txt` line 16: "LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah" (aged until 80% SOH, approximately 0.96 Ah). Exported C model is strictly PLACEHOLDER / UNVALIDATED.
 
 > [!NOTE] Revision (V1.12)  
 > Harmonized `LAB_VALIDATED` definition with the 5-point governance rule across status classifications and qualification roadmaps.
@@ -18,12 +21,12 @@
 
 ## 1. Executive Summary: Real-Cell Data Status
 
-> **REAL-CELL SOH STATUS UPDATE (Task V2)**:  
-> As established by the Task V2 laboratory evaluation, **Candidate 2 (`PulseElasticNetEstimator` / `soh_pulse_v2`) has been evaluated on physical laboratory degradation data** from the University of Connecticut Renewable Energy & Intelligent Systems Laboratory (UConn REIL) Dataset 5 (64 cells, 2,855 RPT cycles, 207 manifest-verified CSV files).  
+> **REAL-CELL SOH STATUS UPDATE (Tasks V2 & V2.11)**:  
+> As established by the Task V2 laboratory evaluation and Task V2.11 governance audit on the University of Connecticut Renewable Energy & Intelligent Systems Laboratory (UConn REIL) Dataset 5 (64 physical cells, 2,855 RPT cycles, 207 manifest-verified CSV files):  
 > 
 > Under the 5-point governance rule:
-> - **Candidate 2 (`soh_pulse_v2`) is awarded `LAB_VALIDATED` status for 1.2 Ah APR18650M1B cylindrical LFP cells** under standardized laboratory RPT characterisation checkups at 25 °C. On 21 sealed test cells (956 cycles), it achieved $SOH_C$ MAE of 0.0211 (50.6% error reduction over constant-mean baseline) and $SOH_R$ MAE of 0.0094 (59.6% error reduction). On 12 held-out condition cells (Groups 3 & 6), it achieved $SOH_C$ MAE of 0.0219 (56.5% error reduction).
-> - **Candidate 2 remains `UNQUALIFIED` for 100 Ah automotive/grid pack deployment.** (Failed criteria for 100 Ah pack: no 100 Ah prismatic/pouch cell data, no dynamic drive cycles, no in-service fleet operational data).
+> - **Candidate 2 (`soh_pulse_v2`) is classified as `DEVELOPMENT` for LithiumWerks 18650 (APR18650M1B) 1.2 Ah cells** (source: `README_Uconn.txt` line 16). While evaluated on real laboratory data across 21 sealed cells (956 RPT observations), it fails Criterion (d) (committed spec named only constant-mean; Ridge matches or beats candidate on both channels; reference label for $SOH_R$ shares voltage response with feature extractor; candidate modified post-unsealing) and Criterion (e) (counted in independent cell units).
+> - **Candidate 2 remains strictly `UNQUALIFIED` for 100 Ah automotive/grid pack deployment.** (Failed criteria for 100 Ah pack: no 100 Ah prismatic/pouch cell data, no dynamic drive cycles, no in-service fleet operational data).
 > - **All other SOH estimators (Candidates 1, 3, 4, 5, 6) remain `SIM_VALIDATED`, `EXPERIMENTAL`, or `UNVALIDATED`** on physical cells, as their prior cohorts were generated synthetically or in simulation.
 
 ---
@@ -43,14 +46,14 @@
 ---
 
 ### Candidate 2: Pulse ECM + ElasticNet (`PulseElasticNetEstimator` / `soh_pulse_v2`)
-*Methodology*: Thevenin 2-RC equivalent circuit parameter identification ($R_0, R_1, C_1, R_2, C_2$) under standardized current pulses with regularized ElasticNet regression ($\alpha=0.005, \rho_C=0.10, \rho_R=0.30$) and 95% conformal uncertainty intervals.
+*Methodology*: Thevenin 2-RC equivalent circuit parameter identification ($R_0, R_1, C_1, R_2, C_2$) under standardized current pulses with regularized ElasticNet regression ($\alpha=0.005, \rho_C=0.10, \rho_R=0.30$) and 95% conformal uncertainty intervals. Cell description: LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah (source: `README_Uconn.txt` line 16).
 
 | Output Channel | Dataset Used | Data Nature | Cells Evaluated | Split Methodology | Metric Achieved | Qualification Status | Notes |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **$SOH_C$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 0.0211 MAE (2.54% RMSE, -0.16% bias) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real 1.2 Ah APR18650M1B cells. Beats constant-mean baseline (0.0427 MAE) by 50.6% on independent C/3 discharge reference. Unqualified for 100 Ah pack. |
-| **$SOH_C$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 91.2% empirical coverage ($q_{95}=0.0430$) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. |
-| **$SOH_R$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 0.0094 MAE (1.19% RMSE, +0.30% bias) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real 1.2 Ah APR18650M1B cells. Beats constant-mean baseline (0.0233 MAE) by 59.6% on 10s DCIR reference. Unqualified for 100 Ah pack. |
-| **$SOH_R$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 98.6% empirical coverage ($q_{95}=0.0285$) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. |
+| **$SOH_C$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed cells, 956 RPT observations) | Cell Holdout (Pre-registered sealed test) | 0.0211 MAE (2.54% RMSE, -0.16% bias) | **`DEVELOPMENT`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real LithiumWerks 18650 (APR18650M1B) cells (README_Uconn.txt line 16). Classified `DEVELOPMENT`: failed criterion (d) (Ridge achieves lower MAE 0.0199; spec named only constant-mean; no age-only baseline named; modified post-unsealing) and (e) (counted in cells). Unqualified for 100 Ah pack. |
+| **$SOH_C$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed cells, 956 RPT observations) | Cell Holdout (Pre-registered sealed test) | 91.2% empirical coverage ($q_{95}=0.0430$) | **`DEVELOPMENT`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. Undercovers 95% nominal level on sealed cells. Classified `DEVELOPMENT`. |
+| **$SOH_R$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed cells, 956 RPT observations) | Cell Holdout (Pre-registered sealed test) | 0.0094 MAE (1.19% RMSE, +0.30% bias) | **`DEVELOPMENT`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real LithiumWerks 18650 cells. Classified `DEVELOPMENT`: failed criterion (d) (reference Step 20 DCIR is not independent of Step 20 pulse features; Ridge achieves lower MAE 0.0091) and (e). Unqualified for 100 Ah pack. |
+| **$SOH_R$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed cells, 956 RPT observations) | Cell Holdout (Pre-registered sealed test) | 98.6% empirical coverage ($q_{95}=0.0285$) | **`DEVELOPMENT`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. Overconservative coverage. Classified `DEVELOPMENT`. |
 
 ---
 
@@ -133,27 +136,30 @@ Key verification findings regarding SOH:
 
 ---
 
-## 5. UConn REIL Dataset 5 SOH Validation Summary (Task V2)
+## 5. UConn REIL Dataset 5 SOH Validation Summary (Task V2 & V2.11)
 
 > **Dataset:** UConn REIL Dataset 5 (207 manifest-verified CSV files, 2,855 RPT cycles)  
-> **Target Chemistry & Geometry:** LithiumWerks APR18650M1B 1.2 Ah LFP/graphite cylindrical cells (64 physical cells)  
+> **Target Chemistry & Geometry:** LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah (source: `README_Uconn.txt` line 16, stating 1.2 Ah nominal and aging to 80% SOH, about 0.96 Ah), 64 physical cells  
 > **Evaluation Reference:** `reports/validation/uconn_report.md`, `reports/validation/uconn_sealed_test.md`  
-> **Calibration Artifact:** `deliverable/calibrations/uconn_soh_pulse_v2.json`  
-> **C Header:** `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`
+> **Calibration Artifact:** `deliverable/calibrations/uconn_soh_pulse_v2.json` (re-labeled post-hoc candidate, modified after unsealing)  
+> **C Header:** `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h` (placeholder / unvalidated)
 
 ### Summary of Results
-Task V2 executed physical laboratory validation of pulse-based SOH estimation across all 64 cells in UConn REIL Dataset 5, spanning 2,855 RPT characterisation cycles across 11 cycling conditions.
+Task V2 executed laboratory evaluation of pulse-based SOH estimation across all 64 cells in UConn REIL Dataset 5, spanning 2,855 RPT characterisation cycles across 11 cycling conditions.
 
-1. **Governance Compliance:** Meets all 5 requirements of the `LAB_VALIDATED` rule:
-   - Manifest-verified files (`data/manifests/uconn_reil_dataset5.sha256`, 100% hash match).
-   - Tracked scripts in `scripts/validation/` reproducible from clean shell.
-   - Specification and partitions committed before unsealing test cells (`f4a8d87`, `f592bc7`).
-   - Independent reference ($SOH_C$ from independent C/3 complete discharge; $SOH_R$ from 10s DCIR).
-   - Substantial data volume: 956 sealed test samples, 497 condition-held-out test samples.
-2. **Predictive Performance on Sealed Cells:**
-   - $SOH_C$ Sealed MAE: 0.0211 (Ratio to fair baseline = 0.494x, 50.6% error reduction).
-   - $SOH_R$ Sealed MAE: 0.0094 (Ratio to fair baseline = 0.404x, 59.6% error reduction).
-   - Domain Generalization: Out-of-distribution transfer to severe stress condition groups 3 & 6 achieves 0.0219 MAE (56.5% error reduction over baseline).
+1. **Governance Compliance & Relabeling:** Reclassified to **`DEVELOPMENT`** due to unmet criteria (d) and (e):
+   - **Criterion (a) [PASS]:** Manifest-verified files (`data/manifests/uconn_reil_dataset5.sha256`, 100% hash match).
+   - **Criterion (b) [PASS]:** Tracked scripts in `scripts/validation/` reproducible from clean shell.
+   - **Criterion (c) [PASS]:** Specification and partitions committed before unsealing test cells (`f4a8d87`, `f592bc7`).
+   - **Criterion (d) [FAIL]:**
+     - $SOH_C$: Committed spec named only constant-mean baseline; Ridge regression matches or beats candidate (0.0199 vs 0.0211 MAE); no age-only baseline was named in spec; candidate calibration was modified post-unsealing.
+     - $SOH_R$: Ground-truth reference (Step 20 DCIR) shares the voltage response with features extracted from the same Step 20 pulse; Ridge matches or beats candidate (0.0091 vs 0.0094 MAE).
+   - **Criterion (e) [FAIL]:** Counted in independent units (21 sealed cells, and only 2 condition groups).
+2. **Predictive Performance on Sealed Partition (21 sealed cells, 956 RPT observations):**
+   - $SOH_C$ Sealed MAE: 0.0211 (vs Ridge 0.0199; vs Age-Quadratic 0.0221; vs Baseline 0.0427).
+   - $SOH_R$ Sealed MAE: 0.0094 (vs Ridge 0.0091; vs Age-Quadratic 0.0195; vs Baseline 0.0233).
+   - Domain Generalization: Out-of-distribution transfer to severe stress condition groups 3 & 6 achieves 0.0219 MAE (vs baseline 0.0499; vs Age-Quadratic 0.0473).
 3. **Qualification Boundary:**
-   - Awarded **`LAB_VALIDATED`** strictly for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
-   - Remains **`UNQUALIFIED`** for 100 Ah automotive/grid pack deployment due to cell format mismatch, lack of dynamic drive cycle evaluation, and lack of fleet operational data.
+   - Classified as **`DEVELOPMENT`** for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
+   - Strictly **`UNQUALIFIED`** for 100 Ah automotive/grid pack deployment due to cell format mismatch, lack of dynamic drive cycle evaluation, and lack of fleet operational data.
+   - Exported C model is strictly PLACEHOLDER / UNVALIDATED (`qual_c = UNQUALIFIED`, `qual_r = UNQUALIFIED`).
