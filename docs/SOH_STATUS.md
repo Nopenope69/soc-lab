@@ -161,7 +161,7 @@ Task V2 executed laboratory evaluation of pulse-based SOH estimation across all 
 2. **Predictive Performance on Sealed Partition (21 sealed cells, 956 RPT observations):**
    - $SOH_C$ Sealed MAE: 0.0211 (vs Ridge 0.0199; vs Age-Quadratic 0.0221; vs Baseline 0.0427). Overlapping bootstrap intervals with age-quadratic indicate no statistically significant advantage over a cycle counter.
    - $SOH_R$ Sealed MAE: 0.0094 (vs Ridge 0.0091; vs Trivial Baseline 0.0095; vs 11-Feature Candidate 0.0107; vs Age-Quadratic 0.0195; vs Baseline 0.0233). Lower error than age-only is an artifact of measuring resistance directly in the feature, not evidence of degradation estimation skill.
-   - Domain Generalization: Out-of-distribution transfer to severe stress condition groups 3 & 6 achieves 0.0219 MAE (vs baseline 0.0499; vs Age-Quadratic 0.0473).
+   - Supplementary Condition Holdout: Labeled contaminated, supplementary, not a headline result (17 of 21 sealed cells served as training cells; 8 dev cells served as test cells). On this split, Ridge achieves 0.0201 SOH_C MAE, beating soh_pulse_v2 (0.0219).
 3. **Qualification Boundary:**
    - Classified as **`DEVELOPMENT`** for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
    - Strictly **`UNQUALIFIED`** for 100 Ah automotive/grid pack deployment due to cell format mismatch, lack of dynamic drive cycle evaluation, and lack of fleet operational data.

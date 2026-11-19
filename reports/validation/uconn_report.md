@@ -208,14 +208,26 @@ The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was execu
    - $SOH_R$: Empirical coverage on sealed cells is **98.6%**, proving overconservative.
    - By comparison, Ridge achieved **92.4%** ($SOH_C$) and **97.9%** ($SOH_R$), while the constant-mean baseline severely undercovered at **56.6%** ($SOH_C$) and **67.8%** ($SOH_R$).
 
-### 7.2 Condition-Held-Out Domain Generalization (Groups 3 and 6, 497 Samples)
+### 7.2 Supplementary Condition Holdout Evaluation (Groups 3 and 6, 292 Samples across 12 Cells)
 
-Operating conditions in Groups 3 and 6 involve severe high-stress cycling protocols. These groups were excluded entirely from training to evaluate out-of-distribution transfer:
+> [!WARNING] Contaminated Split / Supplementary Result (Not a Headline Result)  
+> **Split Independence Audit:** 17 of the 21 cell-holdout sealed cells are training cells in the condition holdout, and 8 dev cells (6 train, 2 validation, the validation cells having been used for hyperparameter selection) are test cells there. Because the two splits mutually contaminate each other, every condition-holdout number is classified as **contaminated, supplementary, and not a headline result**, and is excluded from headline claims.
 
-| Estimator Model | Target | Condition-Held-Out MAE | Ratio to Baseline | Error Reduction | Determination |
-|:---|:---:|:---:|:---:|:---:|:---:|
-| **Constant-Training-Mean Baseline** | $SOH_C$ | 0.0502 | 1.000x | 0.0% | Fair Reference |
-| **Frozen `soh_pulse_v2`** | $SOH_C$ | **0.0219** | **0.435x** | **56.5%** | **BEATS BASELINE BY >50%** |
+Operating conditions in Groups 3 and 6 involve severe high-stress cycling protocols. The 12 test cells in Groups 3 and 6 comprise 292 valid RPT samples (196 samples from dev cells, 96 from sealed cells).
+
+| Estimator Model | Target | Condition-Held-Out MAE | Status / Determination |
+|:---|:---:|:---:|:---|
+| **Constant-Training-Mean Baseline** | $SOH_C$ | 0.0502 | Naive mean reference on 9 dev conditions |
+| **Age Linear Baseline** | $SOH_C$ | 0.0475 | Post-hoc baseline trained on 9 dev conditions |
+| **Age Quadratic Baseline** | $SOH_C$ | 0.0473 | Post-hoc baseline trained on 9 dev conditions |
+| **Ridge Regression (14 feat)** | $SOH_C$ | **0.0201** | Post-hoc baseline fitted on same training cells as candidate (no tuning on test) |
+| **Frozen `soh_pulse_v2` (14 feat)** | $SOH_C$ | **0.0219** | Contaminated, supplementary, not a headline result |
+| **Constant-Training-Mean Baseline** | $SOH_R$ | 0.0299 | Naive mean reference on 9 dev conditions |
+| **Age Quadratic Baseline** | $SOH_R$ | 0.0243 | Post-hoc baseline trained on 9 dev conditions |
+| **Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$)** | $SOH_R$ | **0.0103** | Post-hoc baseline fitted on same training cells as candidate (no tuning on test) |
+| **Ridge Regression (14 feat)** | $SOH_R$ | **0.0098** | Post-hoc baseline fitted on same training cells as candidate (no tuning on test) |
+| **Frozen `soh_pulse_v2` (14 feat)** | $SOH_R$ | **0.0117** | Contaminated, supplementary, not a headline result |
+| **Post-Hoc Candidate (11 feat)** | $SOH_R$ | 0.0132 | Evaluated without $r_{10\text{s}}$ |
 
 ### 7.3 Post-Hoc Age-Only Baseline Evaluation (Added After Unsealing)
 
@@ -243,11 +255,11 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 | | **Frozen `soh_pulse_v2` (14 feat)** | **0.0211** | **0.0217 [0.0181, 0.0260]** | **0.0094** | **0.0099 [0.0073, 0.0127]** |
 | | Post-Hoc Candidate (11 feat) | 0.0209 | — | 0.0107 | 0.0112 [0.0091, 0.0134] |
 |---|---|---|---|---|---|
-| **Condition Holdout** (Groups 3 & 6, 12 cells, 497 samples) | Constant-Training-Mean | 0.0499 | — | 0.0299 | — |
-| *(Post-hoc, added after unsealing)* | Age Linear | 0.0475 | — | — | — |
-| | Age Quadratic | 0.0473 | — | 0.0243 | — |
+| **Condition Holdout Split** (Groups 3 & 6, 12 cells, 292 samples)<br>*(Contaminated, supplementary, not a headline result)* | Constant-Training-Mean | 0.0499 | — | 0.0299 | — |
+| *(Post-hoc, added after unsealing)* | Age Linear (trained on 9 dev conditions) | 0.0475 | — | — | — |
+| | Age Quadratic (trained on 9 dev conditions) | 0.0473 | — | 0.0243 | — |
 | | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0103 | — |
-| | Ridge Regression (14 feat) | — | — | 0.0098 | — |
+| | Ridge Regression (14 feat, fitted on DEV train) | 0.0201 | — | 0.0098 | — |
 | | **Frozen `soh_pulse_v2` (14 feat)** | **0.0219** | — | 0.0117 | — |
 | | Post-Hoc Candidate (11 feat) | — | — | 0.0132 | — |
 
@@ -256,7 +268,7 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 - **On $SOH_R$ (Feature-Label Identity & Tautology):** $SOH_R$ results do NOT represent evidence of degradation estimation skill because the label and feature are the exact same physical measurement. The ground truth label is $SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ (`src/soc/data/uconn_loader.py:128-140`), computed from Step 20 `slowpulse`. The 14-feature candidate includes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from that identical pulse. A trivial baseline fitted on DEV train cells only:
   $$\widehat{SOH}_R = \frac{r_{10\text{s},\text{ohm}}}{\text{mean}(r_{10\text{s},\text{RPT}_0,\text{train}})}$$
   achieves Sample MAE **0.0060** on DEV validation (beating `soh_pulse_v2` at 0.0073) and **0.0095** on sealed test cells (matching `soh_pulse_v2` at 0.0094 and Ridge at 0.0089). When the 11-feature model was evaluated with $r_{10\text{s},\text{ohm}}$ and $\Delta V$ removed, $SOH_R$ MAE changed from 0.0094 to 0.0107 (reported as an empirical observation without asserting a cause). Presenting "beats age-only on SOH_R" is not a positive finding demonstrating estimation skill.
-- **On Condition Holdout (Groups 3 and 6):** Evaluated as a post-hoc supplementary check. Under stress cycling, `soh_pulse_v2` achieves **0.0219 MAE** vs constant-mean baseline 0.0499 and age-quadratic 0.0473.
+- **On Condition Holdout (Groups 3 and 6):** Labeled **contaminated, supplementary, not a headline result** due to mutual contamination (17 of 21 sealed test cells served as training cells; 8 dev cells served as test cells). On this supplementary split, Ridge regression achieves **0.0201 SOH_C MAE** (beating frozen `soh_pulse_v2` at 0.0219), while the trivial baseline achieves **0.0103 SOH_R MAE** (beating `soh_pulse_v2` at 0.0117). Age-only models were trained on the 9 dev conditions (groups 1, 2, 4, 5, 7, 8, 9, 10, 11).
 - **Independent Units:** Evaluated on **21 sealed cells** (within-condition) and **2 held-out condition groups** (12 cells).
 
 ---
