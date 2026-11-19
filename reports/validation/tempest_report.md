@@ -272,3 +272,23 @@ As audited in [reports/validation/tempest_reproduction.md](file:///Users/tecbusi
 .venv/bin/python scripts/validation/tempest_loto_baseline.py
 ```
 All outputs are preserved in deterministic JSON reports in `reports/validation/`.
+
+---
+
+## 9. Specification Completeness & Traceability Matrix (Item 8)
+
+The table below audits every deliverable, scheme, gate, and baseline promised in the pre-registered specification ([reports/validation/tempest_spec_frozen.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/tempest_spec_frozen.md)):
+
+| Promised Specification Item | Spec Section | Target / Threshold | Execution Status | Report Section | Execution & Verification Notes |
+| :--- | :---: | :--- | :---: | :---: | :--- |
+| **Capacity vs Temperature** | Spec §0 | 5 temperatures (15, 20, 25, 30, 35 °C) C/10 CC-CV | **DONE** | Section 3 | Evaluated via `tempest_capacity_analysis.py`. Monotonic rise 299.03 to 303.73 Ah; matches author CSV to $< 10^{-7}$ Ah. |
+| **2RC Equivalent Circuit Identification** | Spec §0 | 10 SOC points per temp on 10s discharge pulses | **DONE** | Section 4.1 | Evaluated via `tempest_ecm_identification.py`. 50 pulses fitted with discrete 2RC simulation. |
+| **In-Sample Voltage Model Gate** | Spec §3 | Bias $\le 2.0$ mV, RMSE $\le 6.0$ mV, Implied SOC $\le 2.5$ pp | **DONE** | Section 4.1 | Passes at all 5 temperatures (RMSE 0.26 to 0.70 mV, bias 0.00 mV). |
+| **Leave-One-Temperature-Out (LOTO) Folds** | Spec §2.1 | 5 rotation folds (15, 20, 25, 30, 35 °C) | **DONE** | Section 1.1 & 4.2 | Evaluated via linear parameter interpolation. 2 pass (25, 30 °C); 3 fail (15, 20, 35 °C). |
+| **Alternate-SOC Holdout Folds** | Spec §2.2 | 2 folds (odd vs even SOC setpoints) | **DONE** | Section 1.1 & 4.2 | Evaluated via linear SOC interpolation. Both folds FAIL (RMSE 17.31 mV & 8.99 mV). |
+| **Plateau Slope ($d\text{OCV}/d\text{SOC}$)** | Spec §3, §4 | Calculated on plateau (20%–80% SOC) | **DONE** | Section 4.1 & 6 | Evaluated at all 5 temps ($1.356\text{--}1.422\text{ mV/pp}$); reconciled with local $< 1\text{ mV}/\%$ slope. |
+| **Constant-Parameter 2RC Baseline** | Spec §5.1 | Temperature-invariant mean 2RC parameters | **DONE** | Section 4.4 & 4.3 | Global constant evaluated at 25 °C (RMSE 9.92 mV). Extended per-fold in Section 4.3. |
+| **CALCE A123 Rescaled Baseline** | Spec §5.2 | Scaled by capacity ratio ($280 / 1.06356$) | **DONE** | Section 4.4 | Evaluated at 25 °C: RMSE 54.04 mV, Bias 38.44 mV (post-hoc cross-format comparator). |
+| **Gustave Eiffel GE105 Rescaled Baseline** | Spec §5.3 | Scaled by capacity ratio ($280 / 105.0427$) | **DONE** | Section 4.4 | Evaluated at 25 °C: RMSE 28.01 mV, Bias 19.41 mV (post-hoc cross-cell comparator). |
+| **Evaluation Metrics Completeness** | Spec §4 | Bias, RMSE, Max Error, Implied SOC Error | **DONE** | Section 4.1, 4.2, 4.3 | All 4 metrics tracked and reported across in-sample, LOTO, Alternate-SOC, and baselines. |
+
