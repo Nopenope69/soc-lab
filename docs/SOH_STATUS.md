@@ -1,5 +1,8 @@
 # SOH Estimator Qualification Status Matrix
 
+> [!NOTE] Revision (V3 TEMPEST 280 Ah Characterisation Assessment)
+> Documented that TEMPEST 280 Ah LFP dataset (Zenodo record `19632939`, University of Bath) consists of single-cell beginning-of-life (BOL) characterisation data only and provides **NO SOH EVIDENCE** (zero aging or degradation cycling; exactly one physical cell fails criterion (e); classified strictly **`DEVELOPMENT`**).
+
 > [!NOTE] Revision (V2.13 Precision & Baseline Audit)
 > - **$SOH_R$ Estimation Skill Assessment**: In headline text and qualification records: The $SOH_R$ ground-truth label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$, where $\bar{r}_0 = 0.031755\ \Omega$ is the mean RPT-0 $r_{10\text{s}}$ over the training cells) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
 
@@ -188,3 +191,18 @@ Based on the laboratory evaluation, split independence audit, baseline compariso
    - **Zero evidence for 100 Ah cells** (evaluation was strictly on 1.2 Ah cylindrical cells under laboratory characterisation protocols).
 5. **C Implementation Status:**
    - The exported C header is **unvalidated and derived from the post-hoc 11-feature model** modified after unsealing.
+
+---
+
+## 7. TEMPEST 280 Ah LFP Cell Characterisation Assessment (Task V3)
+
+> **Dataset:** TEMPEST 280 Ah LFP Cell Data (Zenodo record `19632939`, University of Bath, 14 manifest-verified files)  
+> **Status:** NO SOH EVIDENCE (Beginning-of-Life Characterisation Only)
+
+The TEMPEST dataset contains characterisation tests on **exactly one physical cell** (a 280 Ah prismatic LFP "LIC" cell) across five temperatures (15 °C, 20 °C, 25 °C, 30 °C, 35 °C).
+
+Key verification findings regarding SOH:
+1. **Zero Degradation Cycling:** The cell was not subjected to long-term cycle aging or calendar aging campaigns. Accumulated throughput is strictly limited to characterisation checkups (1 C/10 CC-CV cycle and 1 10-point HPPC test per temperature).
+2. **Single Unit Sample Size:** Data from a single cell fails criterion (e) of the 5-point governance rule (a single physical unit cannot support generalized statistical qualification).
+3. **Qualification Implication:** This dataset provides zero degradation trajectories ($SOH_C$ or $SOH_R$). Therefore, **no SOH estimators can be qualified or awarded `LAB_VALIDATED` status from this dataset**. All characterisation models are classified strictly as **`DEVELOPMENT`**.
+
