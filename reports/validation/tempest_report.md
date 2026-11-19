@@ -208,22 +208,35 @@ The extracted parameters were benchmarked directly against the author-published 
 ## 6. Cross-Cell Characterisation Comparison (V3.7)
 
 Characterisation metrics across all four repository-examined LFP cells are detailed below.
-> *Notice: Asserting NO causes and NO scaling laws from four points. All values extracted directly from committed repository files.*
+> *Notice: Values are listed as measured under the stated conditions; no inference about size dependence is possible from four cells. Asserting NO causes and NO scaling laws from four points. All values extracted directly from committed repository files with explicit provenance.*
 
-| Metric | CALCE A123 | GE105 | FlexiPod 100 Ah | TEMPEST 280 Ah |
+| Metric | CALCE A123 | GE105 (EVE Energy LF105) | FlexiPod (100 Ah) | TEMPEST 280 Ah ('LIC') |
 | :--- | :---: | :---: | :---: | :---: |
-| **Cell Identifier** | APR18650M1A | EVE LF105 | 100 Ah Prismatic | 280 Ah "LIC" Prismatic |
-| **Form Factor** | 18650 Cylindrical | Prismatic | Prismatic | Prismatic |
-| **Chemistry** | LFP / Graphite | LFP / Graphite | LFP / Graphite | LFP / Graphite |
-| **Nominal Capacity** | 1.10 Ah | 105.00 Ah | 100.00 Ah | 280.00 Ah |
+| **Cell Identifier / Description** | A123 LiFePO4 cell, format UNVERIFIED; measured capacity 1.0636 Ah (A1-007, 25 C) | EVE Energy LF105 LFP cell (BUGE388..BUGE391) | FlexiPod 100 Ah cell | 280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell) |
+| **Form Factor** | format UNVERIFIED | prismatic (general knowledge of the product; not stated in dataset files) | prismatic (general knowledge of the product; not stated in dataset files) | prismatic (per `LIC_characterisation_readme.txt` line 2) |
+| **Chemistry** | LFP / Graphite | LFP / Graphite | LFP | LFP |
+| **Nominal Capacity** | UNVERIFIED | 105.0 Ah | 100.0 Ah | 280.0 Ah |
+| **Nominal Capacity Source** | UNVERIFIED | `deliverable/calibrations/ge105_v1.json:nominal_capacity_ah` | `deliverable/calibrations/flexipod_100ah_v1.json:nominal_capacity_ah` | `reports/validation/tempest_capacity_results.json` |
 | **Measured Capacity (25 °C)** | 1.0636 Ah | 105.0427 Ah | 95.1521 Ah | 302.3087 Ah |
-| **Ohmic Resistance $R_0$ (25 °C)** | 158.51 m$\Omega$ (27.3 °C) | 0.5815 m$\Omega$ | 0.8940 m$\Omega$ | 0.4216 m$\Omega$ (55% SOC) |
+| **Measured Capacity Source** | `deliverable/calibrations/calce_a123_v4.json:nominal_capacity_ah` | `deliverable/calibrations/ge105_v1.json:nominal_capacity_ah` | `deliverable/calibrations/flexipod_100ah_v1.json:nominal_capacity_ah` | `reports/validation/tempest_capacity_results.json:discharge_ah[T=25C]` |
+| **Ohmic Resistance $R_0$** | 158.51 m$\Omega$ | 0.5815 m$\Omega$ | 0.8940 m$\Omega$ | 0.4216 m$\Omega$ |
+| **$R_0$ Condition & Comparability** | 27.3 °C, SOC-averaged table value | 25.0 °C, SOC-averaged table value | 25.0 °C, SOC-averaged table value | 25.0 °C, 55% SOC single-pulse fit (mean across 10 SOC points at 25 °C is 0.4183 m$\Omega$) |
+| **$R_0$ Direct Comparability** | *Not directly comparable* (evaluated at different temperatures, SOCs, and aggregation methods) | *Not directly comparable* | *Not directly comparable* | *Not directly comparable* |
+| **$R_0$ Source** | `deliverable/calibrations/calce_a123_v4.json:r0_table['27.3']` | `deliverable/calibrations/ge105_v1.json:r0_table['25.0']` | `deliverable/calibrations/flexipod_100ah_v1.json:r0_table['25.0']` | `reports/validation/tempest_ecm_results.json:in_sample_pulse_parameters[T=25,SOC=0.55]:r0_ohm` |
 | **Plateau Slope ($d\text{OCV}/d\text{SOC}$)** | 1.598 mV/pp (0.1598 V/unit) | 1.372 mV/pp (0.1372 V/unit) | 1.387 mV/pp (0.1387 V/unit) | 1.386 mV/pp (0.1386 V/unit) |
-| **Measured Hysteresis** | 17.19 mV | 31.76 mV | 12.01 mV | N/A (no continuous loop) |
+| **Plateau Slope Definition** | Linear secant slope between SOC 0.20 and 0.80 from 27.3 °C OCV table | Linear secant slope between SOC 0.20 and 0.80 from 25.0 °C OCV table | Linear secant slope between SOC 0.20 and 0.80 from 25.0 °C OCV table | Linear secant slope between SOC 0.25 (3.2553 V) and 0.75 (3.3246 V) from 25 °C HPPC relaxed OCV |
+| **Plateau Slope Source** | `deliverable/calibrations/calce_a123_v4.json:ocv_table['27.3']` | `deliverable/calibrations/ge105_v1.json:ocv_table['25.0']` | `deliverable/calibrations/flexipod_100ah_v1.json:ocv_table['25.0']` | `reports/validation/tempest_ecm_results.json:plateau_slopes_by_temp['25']` |
+| **Measured Hysteresis** | 17.19 mV | 31.76 mV | 12.01 mV | N/A |
+| **Hysteresis Definition** | Model parameter: saturation voltage parameter `m_table_v[25C]` | Experimental measurement: pseudo-OCV half-gap at 50% SOC between C/15 charge and discharge ramps | Model parameter: calibration table parameter `m_table_v[25C]` | UNVERIFIED (No continuous pseudo-OCV charge/discharge loop in dataset) |
+| **Hysteresis Source** | `deliverable/calibrations/calce_a123_v4.json:m_table_v[1]` | `deliverable/calibrations/ge105_v1.json:m_table_v[4]` | `deliverable/calibrations/flexipod_100ah_v1.json:m_table_v[3]` | UNVERIFIED |
 
-### Key Observations:
-- **Plateau Slope Invariance:** The central plateau slope ($20\%\text{--}80\%$ SOC) of large-format prismatic LFP cells is remarkably consistent across manufacturers and capacities: $1.372$ mV/pp (GE105), $1.387$ mV/pp (FlexiPod), and $1.386$ mV/pp (TEMPEST 280 Ah), compared to $1.598$ mV/pp for the smaller cylindrical 18650 cell.
-- **Internal Resistance:** Ohmic resistance $R_0$ decreases with active area / nominal capacity: 158.5 m$\Omega$ (1.1 Ah), 0.89 m$\Omega$ (95 Ah), 0.58 m$\Omega$ (105 Ah), and 0.42 m$\Omega$ (302 Ah).
+### Methodological Context & Reconciliation:
+1. **Values Listed as Measured:** Values are listed as measured under the stated conditions; no inference about size dependence is possible from four cells.
+2. **Reconciliation of Plateau Slope Definitions:**
+   - In cross-cell tables, the plateau slope is evaluated as a wide-window secant slope across 20% to 80% SOC ($\Delta\text{OCV}/\Delta\text{SOC}$), yielding $1.37\text{--}1.39\text{ mV/pp}$ ($0.137\text{--}0.139\text{ V/unit}$) across large-format cells.
+   - In contrast, statements in `reports/validation/ge105_report.md` (and `ge105_spec_frozen.md`) noting $d\text{OCV}/d\text{SOC} < 1\ \text{mV}/\%$ refer strictly to the *local* derivative at the central flat core around 50% SOC (in GE105, between 40% and 50% SOC $\Delta\text{OCV}/\Delta\text{SOC} = 0.38\ \text{mV}/\%$, and between 50% and 60% SOC it is $0.88\ \text{mV}/\%$). Both definitions are mathematically sound within their respective evaluation scopes.
+3. **Non-Comparability of $R_0$:** The reported $R_0$ values are not directly comparable because CALCE, GE105, and FlexiPod values represent SOC-averaged calibration table parameters across multiple test profiles, whereas TEMPEST represents a single 140 A pulse at 55% SOC (its 10-pulse mean is $0.4183\text{ m}\Omega$).
+4. **Disparate Hysteresis Quantities:** The hysteresis row reflects different metrics: CALCE and FlexiPod report model saturation voltages ($M$), GE105 reports a measured pseudo-OCV half-gap from C/15 loops, and TEMPEST contains no continuous loop data.
 
 ---
 

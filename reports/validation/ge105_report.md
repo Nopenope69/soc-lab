@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
+> [!NOTE] Revision (V3.9 Plateau Slope Definition Reconciliation)
+> Added Erratum Note reconciling the local central plateau slope ($< 1\ \text{mV}/\%$ around 50% SOC, where local $d\text{OCV}/d\text{SOC}$ is $0.38\text{--}0.88\ \text{mV}/\%$) with the wide-window secant slope across 20%–80% SOC ($1.372\ \text{mV/pp}$ or $0.1372\ \text{V/unit}$) reported in cross-cell comparisons.
+
 > [!NOTE] Revision (V1.13 Capacity Sensitivity Tracking and Provenance Corrections)  
 > - Tracked `scripts/validation/ge105_capacity_sensitivity.py` and reproduced all 12 nominal scenarios in `reports/validation/ge105_reproduction.md` with 0.00 pp discrepancy.  
 > - Documented that `scripts/validation/ge105_eval_dev.py` applies the repository spec efficiency convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$). On dev cells, re-running E0 under $\eta = 1.0$ shifts Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).  
@@ -124,7 +127,8 @@ The open-loop model gate evaluates two distinct criteria that must not be confla
    - **Gustave Eiffel (In-Sample):** 2RC voltage tracking **passes** on the plateau at 50% SOC with terminal voltage RMSE of **2.62 mV to 3.12 mV** (passing $\le 6.0\ \text{mV}$) and bias of **-1.18 mV to -1.41 mV** (passing $\le 2.0\ \text{mV}$).
 2. **Implied-SOC Error Inversion:** Evaluates open-loop voltage error mapped into SOC space ($\frac{|\Delta V|}{d\text{OCV}/d\text{SOC}} \le 2.5\ \text{pp}$ or $\le 5.0\ \text{pp}$).
    - **Gustave Eiffel:** Implied-SOC error **fails across all conditions**, yielding **6.1 pp to 7.5 pp at 50% SOC** and **12.5 pp to 14.3 pp at 90% SOC** (failing both $\le 2.5\ \text{pp}$ and $\le 5.0\ \text{pp}$).
-   - **Physical Cause:** The derivative $d\text{OCV}/d\text{SOC}$ on the LFP two-phase plateau is near zero ($< 1\ \text{mV}/\%$). Any minute unmodeled polarization or hysteresis residual of merely $2\text{--}3\ \text{mV}$ directly causes an open-loop implied SOC error of $6\text{--}14\ \text{pp}$. The implied-SOC criterion is plateau-limited on any LFP cell and this was known in advance.
+   - **Physical Cause:** The derivative $d\text{OCV}/d\text{SOC}$ on the LFP two-phase plateau is near zero ($< 1\ \text{mV}/\%$). Any minute unmodeled polarization or hysteresis residual of merely $2\text{--}3\ \text{mV}$ directly causes an open-loop implied SOC error of $6\text{--}14\ \text{pp}$. The implied-SOC criterion is plateau-limited on any LFP cell and this was known in advance.  
+     *(Erratum Note (V3.9 Plateau Slope Definition Reconciliation): The statement $d\text{OCV}/d\text{SOC} < 1\ \text{mV}/\%$ refers strictly to the local derivative at the flat central core around 50% SOC, where local $d\text{OCV}/d\text{SOC}$ is $0.38\text{--}0.88\ \text{mV}/\%$. In contrast, cross-cell comparisons evaluate a wide 20% to 80% SOC secant window reporting $1.372\ \text{mV/pp} = 0.1372\ \text{V/unit}$, which includes the rising shoulders outside the 40%–60% central flat core. Both numbers are mathematically correct under their stated evaluation windows).*
 3. **Closed-Loop Divergence Risk:** The filter does **not** automatically correct for plateau divergence. As demonstrated in closed-loop testing on held-out test cells (Item 4), when disturbed by +10 pp at 50% SOC, E7v3 diverges on the flat plateau, ending at **12.15 pp** on `BUGE390` and **16.23 pp** on `BUGE391` (worse than open-loop Coulomb counting E0).
 
 ### In-Sample Identification & Out-of-Sample Cross-Validation

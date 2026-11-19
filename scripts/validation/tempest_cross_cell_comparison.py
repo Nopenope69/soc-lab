@@ -2,16 +2,17 @@
 """Cross-Cell Comparison Table Across Four LFP Cells in this Repository.
 
 Cells compared (from files in this repository only):
-1. CALCE A123: deliverable/calibrations/calce_a123_v4.json (1.06 Ah cylindrical)
-2. GE105: deliverable/calibrations/ge105_v1.json (105.04 Ah prismatic)
-3. FlexiPod: deliverable/calibrations/flexipod_100ah_v1.json (95.15 Ah prismatic)
-4. TEMPEST: reports/validation/tempest_capacity_results.json & tempest_ecm_results.json (302.31 Ah prismatic)
+1. CALCE A123: deliverable/calibrations/calce_a123_v4.json
+2. GE105: deliverable/calibrations/ge105_v1.json
+3. FlexiPod: deliverable/calibrations/flexipod_100ah_v1.json
+4. TEMPEST: reports/validation/tempest_capacity_results.json & tempest_ecm_results.json
 
 Metrics compared:
-- Cell nominal and measured capacity (Ah)
-- Ohmic resistance R0 at the temperature nearest 25 °C (mOhm)
-- Plateau slope dOCV/dSOC across 20% to 80% SOC (V/unit and mV/pp)
-- Measured hysteresis if available (mV)
+- Cell format and description
+- Cell nominal and measured capacity (Ah) with explicit file sources
+- Ohmic resistance R0 with explicit temperature, SOC, and method (not directly comparable)
+- Plateau slope dOCV/dSOC across stated SOC window (V/unit and mV/pp)
+- Measured hysteresis with explicit definition per cell
 
 Rules Enforced:
 - Facts only from committed repository files.
@@ -32,9 +33,9 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def build_cross_cell_table() -> Dict[str, Any]:
-    print("=" * 100)
+    print("=" * 115)
     print("FOUR-CELL CROSS-DATASET CHARACTERISATION COMPARISON (REPO-LOCAL FILES ONLY)")
-    print("=" * 100)
+    print("=" * 115)
 
     rows: List[Dict[str, Any]] = []
 
@@ -43,93 +44,95 @@ def build_cross_cell_table() -> Dict[str, Any]:
     with open(calce_path, "r", encoding="utf-8") as f:
         calce_data = json.load(f)
 
-    calce_cap_ah = calce_data["nominal_capacity_ah"]  # 1.06356 Ah
-    # Nearest temp to 25C is 27.3C or 25.0C in table
-    # r0_table['27.3']: 0.15851 Ohm (fitted from real test bench DST); '25.0': 0.0010 Ohm
-    calce_r0_ohm = calce_data["r0_table"]["27.3"]
-    calce_r0_temp_c = 27.3
-    # OCV plateau 20-80%:
-    calce_ocv_80 = calce_data["ocv_table"]["27.3"][9]  # SOC 0.80 -> 3.3447
-    calce_ocv_20 = calce_data["ocv_table"]["27.3"][3]  # SOC 0.20 -> 3.2488
+    calce_cap_ah = calce_data["nominal_capacity_ah"]  # 1.06356 Ah (key: nominal_capacity_ah, line 5)
+    calce_r0_ohm = calce_data["r0_table"]["27.3"]      # 0.15851 Ohm (key: r0_table['27.3'], line 25)
+    calce_ocv_80 = calce_data["ocv_table"]["27.3"][9]  # SOC 0.80 -> 3.3447 V (key: ocv_table['27.3'], line 38)
+    calce_ocv_20 = calce_data["ocv_table"]["27.3"][3]  # SOC 0.20 -> 3.2488 V (key: ocv_table['27.3'], line 32)
     calce_slope = (calce_ocv_80 - calce_ocv_20) / (0.80 - 0.20)
-    # Hysteresis m_table_v at 25C: index 1 in m_table_temps_c [20, 25, 30, 40, 50]
-    calce_hyst_mv = calce_data["m_table_v"][1] * 1000.0  # 17.19 mV
+    calce_hyst_mv = calce_data["m_table_v"][1] * 1000.0  # 17.19 mV (key: m_table_v[1], 25C, line 18)
 
     rows.append({
-        "cell_id": "CALCE A123 (A123 APR18650M1A)",
-        "form_factor": "18650 Cylindrical",
+        "cell_id": "CALCE A123",
+        "description": "A123 LiFePO4 cell, format UNVERIFIED; measured capacity 1.0636 Ah (A1-007, 25 C)",
+        "form_factor": "format UNVERIFIED",
         "chemistry": "LFP/Graphite",
-        "capacity_source_file": "deliverable/calibrations/calce_a123_v4.json",
-        "nominal_capacity_ah": 1.1,
+        "nominal_capacity_ah": "UNVERIFIED",
         "measured_capacity_ah": round(calce_cap_ah, 4),
-        "r0_source_file": "deliverable/calibrations/calce_a123_v4.json:r0_table['27.3']",
-        "r0_eval_temperature_c": calce_r0_temp_c,
+        "capacity_source": "deliverable/calibrations/calce_a123_v4.json:nominal_capacity_ah",
         "r0_mohm": round(calce_r0_ohm * 1e3, 3),
-        "plateau_slope_source_file": "deliverable/calibrations/calce_a123_v4.json:ocv_table['27.3']",
+        "r0_condition": "27.3 °C, SOC-averaged table value (not directly comparable to single-SOC pulses)",
+        "r0_source": "deliverable/calibrations/calce_a123_v4.json:r0_table['27.3']",
         "plateau_slope_v_per_unit_soc": round(calce_slope, 4),
         "plateau_slope_mv_per_pp": round(calce_slope * 10.0, 3),
-        "hysteresis_source_file": "deliverable/calibrations/calce_a123_v4.json:m_table_v[25C]",
+        "plateau_slope_definition": "Linear slope between SOC 0.20 and 0.80 from 27.3 °C OCV table",
+        "plateau_slope_source": "deliverable/calibrations/calce_a123_v4.json:ocv_table['27.3']",
         "measured_hysteresis_mv": round(calce_hyst_mv, 2),
+        "hysteresis_definition": "Calibration table saturation parameter m_table_v at 25 °C (model parameter)",
+        "hysteresis_source": "deliverable/calibrations/calce_a123_v4.json:m_table_v[1]",
     })
 
-    # 2. GE105 (Univ Gustave Eiffel / EVE Energy 105 Ah)
+    # 2. GE105
     ge105_path = REPO_ROOT / "deliverable" / "calibrations" / "ge105_v1.json"
     with open(ge105_path, "r", encoding="utf-8") as f:
         ge105_data = json.load(f)
 
-    ge105_cap_ah = ge105_data["nominal_capacity_ah"]  # 105.0427 Ah
-    ge105_r0_ohm = ge105_data["r0_table"]["25.0"]  # 0.0005815 Ohm
-    ge105_ocv_80 = ge105_data["ocv_table"]["25.0"][9]  # 3.33755 V
-    ge105_ocv_20 = ge105_data["ocv_table"]["25.0"][3]  # 3.25520 V
+    ge105_cap_ah = ge105_data["nominal_capacity_ah"]  # 105.0427 Ah (key: nominal_capacity_ah, line 4)
+    ge105_r0_ohm = ge105_data["r0_table"]["25.0"]      # 0.0005815 Ohm (key: r0_table['25.0'], line 28)
+    ge105_ocv_80 = ge105_data["ocv_table"]["25.0"][9]  # 3.33755 V (key: ocv_table['25.0'], line 42)
+    ge105_ocv_20 = ge105_data["ocv_table"]["25.0"][3]  # 3.25520 V (key: ocv_table['25.0'], line 36)
     ge105_slope = (ge105_ocv_80 - ge105_ocv_20) / (0.80 - 0.20)
-    # Hysteresis m_table_v at 25C: index 4 in [0, 10, 15, 20, 25, 30, 35, 40]
-    ge105_hyst_mv = ge105_data["m_table_v"][4] * 1000.0  # 31.76 mV
+    ge105_hyst_mv = ge105_data["m_table_v"][4] * 1000.0  # 31.76 mV (key: m_table_v[4], 25C, line 20)
 
     rows.append({
         "cell_id": "GE105 (EVE Energy LF105)",
-        "form_factor": "Prismatic",
+        "description": "EVE Energy LF105 LFP cell (BUGE388..BUGE391)",
+        "form_factor": "prismatic (general knowledge of the product; not stated in dataset files)",
         "chemistry": "LFP/Graphite",
-        "capacity_source_file": "deliverable/calibrations/ge105_v1.json",
         "nominal_capacity_ah": 105.0,
         "measured_capacity_ah": round(ge105_cap_ah, 4),
-        "r0_source_file": "deliverable/calibrations/ge105_v1.json:r0_table['25.0']",
-        "r0_eval_temperature_c": 25.0,
+        "capacity_source": "deliverable/calibrations/ge105_v1.json:nominal_capacity_ah",
         "r0_mohm": round(ge105_r0_ohm * 1e3, 4),
-        "plateau_slope_source_file": "deliverable/calibrations/ge105_v1.json:ocv_table['25.0']",
+        "r0_condition": "25.0 °C, SOC-averaged table value (not directly comparable to single-SOC pulses)",
+        "r0_source": "deliverable/calibrations/ge105_v1.json:r0_table['25.0']",
         "plateau_slope_v_per_unit_soc": round(ge105_slope, 4),
         "plateau_slope_mv_per_pp": round(ge105_slope * 10.0, 3),
-        "hysteresis_source_file": "deliverable/calibrations/ge105_v1.json:m_table_v[25C]",
+        "plateau_slope_definition": "Linear slope between SOC 0.20 and 0.80 from 25.0 °C OCV table",
+        "plateau_slope_source": "deliverable/calibrations/ge105_v1.json:ocv_table['25.0']",
         "measured_hysteresis_mv": round(ge105_hyst_mv, 2),
+        "hysteresis_definition": "Pseudo-OCV half-gap at 50% SOC between C/15 charge and discharge ramps",
+        "hysteresis_source": "deliverable/calibrations/ge105_v1.json:m_table_v[4]",
     })
 
-    # 3. FlexiPod (FlexiPod 100 Ah)
+    # 3. FlexiPod (100 Ah)
     flexi_path = REPO_ROOT / "deliverable" / "calibrations" / "flexipod_100ah_v1.json"
     with open(flexi_path, "r", encoding="utf-8") as f:
         flexi_data = json.load(f)
 
-    flexi_cap_ah = flexi_data["nominal_capacity_ah"]  # 95.1521 Ah
-    flexi_r0_ohm = flexi_data["r0_table"]["25.0"]  # 0.000894 Ohm
-    flexi_ocv_80 = flexi_data["ocv_table"]["25.0"][9]  # 3.33525 V
-    flexi_ocv_20 = flexi_data["ocv_table"]["25.0"][3]  # 3.25203 V
+    flexi_cap_ah = flexi_data["nominal_capacity_ah"]  # 95.1521 Ah (key: nominal_capacity_ah, line 4)
+    flexi_r0_ohm = flexi_data["r0_table"]["25.0"]      # 0.000894 Ohm (key: r0_table['25.0'], line 26)
+    flexi_ocv_80 = flexi_data["ocv_table"]["25.0"][9]  # 3.33525 V (key: ocv_table['25.0'], line 40)
+    flexi_ocv_20 = flexi_data["ocv_table"]["25.0"][3]  # 3.25203 V (key: ocv_table['25.0'], line 34)
     flexi_slope = (flexi_ocv_80 - flexi_ocv_20) / (0.80 - 0.20)
-    # Hysteresis m_table_v at 25C: index 3 in [5, 10, 15, 20, 25, 35]
-    flexi_hyst_mv = flexi_data["m_table_v"][3] * 1000.0  # 12.01 mV
+    flexi_hyst_mv = flexi_data["m_table_v"][3] * 1000.0  # 12.01 mV (key: m_table_v[3], 25C, line 18)
 
     rows.append({
-        "cell_id": "FlexiPod (100 Ah Prismatic)",
-        "form_factor": "Prismatic",
+        "cell_id": "FlexiPod (100 Ah)",
+        "description": "FlexiPod 100 Ah cell",
+        "form_factor": "prismatic (general knowledge of the product; not stated in dataset files)",
         "chemistry": "LFP",
-        "capacity_source_file": "deliverable/calibrations/flexipod_100ah_v1.json",
         "nominal_capacity_ah": 100.0,
         "measured_capacity_ah": round(flexi_cap_ah, 4),
-        "r0_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:r0_table['25.0']",
-        "r0_eval_temperature_c": 25.0,
+        "capacity_source": "deliverable/calibrations/flexipod_100ah_v1.json:nominal_capacity_ah",
         "r0_mohm": round(flexi_r0_ohm * 1e3, 4),
-        "plateau_slope_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:ocv_table['25.0']",
+        "r0_condition": "25.0 °C, SOC-averaged table value (not directly comparable to single-SOC pulses)",
+        "r0_source": "deliverable/calibrations/flexipod_100ah_v1.json:r0_table['25.0']",
         "plateau_slope_v_per_unit_soc": round(flexi_slope, 4),
         "plateau_slope_mv_per_pp": round(flexi_slope * 10.0, 3),
-        "hysteresis_source_file": "deliverable/calibrations/flexipod_100ah_v1.json:m_table_v[25C]",
+        "plateau_slope_definition": "Linear slope between SOC 0.20 and 0.80 from 25.0 °C OCV table",
+        "plateau_slope_source": "deliverable/calibrations/flexipod_100ah_v1.json:ocv_table['25.0']",
         "measured_hysteresis_mv": round(flexi_hyst_mv, 2),
+        "hysteresis_definition": "Calibration table parameter m_table_v at 25 °C",
+        "hysteresis_source": "deliverable/calibrations/flexipod_100ah_v1.json:m_table_v[3]",
     })
 
     # 4. TEMPEST 280 Ah
@@ -141,40 +144,39 @@ def build_cross_cell_table() -> Dict[str, Any]:
     tempest_ecm_path = REPO_ROOT / "reports" / "validation" / "tempest_ecm_results.json"
     with open(tempest_ecm_path, "r", encoding="utf-8") as f:
         t_ecm_data = json.load(f)
-    # R0 at 55% SOC, 25C:
-    t_25_r0 = [p for p in t_ecm_data["in_sample_pulse_parameters"] if p["temperature_c"] == 25 and p["soc_nominal"] == 0.55][0]["r0_ohm"]
+    t_25_r0_55 = [p for p in t_ecm_data["in_sample_pulse_parameters"] if p["temperature_c"] == 25 and p["soc_nominal"] == 0.55][0]["r0_ohm"]
     t_25_slope = t_ecm_data["plateau_slopes_by_temp"]["25"]["slope_v_per_unit_soc"]
 
     rows.append({
         "cell_id": "TEMPEST 280 Ah ('LIC')",
-        "form_factor": "Prismatic",
+        "description": "280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell)",
+        "form_factor": "prismatic (per LIC_characterisation_readme.txt line 2)",
         "chemistry": "LFP",
-        "capacity_source_file": "reports/validation/tempest_capacity_results.json (T=25C)",
         "nominal_capacity_ah": 280.0,
         "measured_capacity_ah": round(t_25_cap["discharge_ah"], 4),
-        "r0_source_file": "reports/validation/tempest_ecm_results.json (T=25C, SOC=0.55)",
-        "r0_eval_temperature_c": 25.0,
-        "r0_mohm": round(t_25_r0 * 1e3, 4),
-        "plateau_slope_source_file": "reports/validation/tempest_ecm_results.json (T=25C)",
+        "capacity_source": "reports/validation/tempest_capacity_results.json:discharge_ah[T=25C]",
+        "r0_mohm": round(t_25_r0_55 * 1e3, 4),
+        "r0_condition": "25.0 °C, 55% SOC single-pulse fit (mean across 10 SOC points at 25 °C is 0.4183 mOhm; not directly comparable to SOC-averaged tables)",
+        "r0_source": "reports/validation/tempest_ecm_results.json:in_sample_pulse_parameters[T=25,SOC=0.55]:r0_ohm",
         "plateau_slope_v_per_unit_soc": round(t_25_slope, 4),
         "plateau_slope_mv_per_pp": round(t_25_slope * 10.0, 3),
-        "hysteresis_source_file": "N/A (No continuous pseudo-OCV charge/discharge loop in dataset)",
+        "plateau_slope_definition": "Linear slope between SOC 0.25 (3.2553 V) and 0.75 (3.3246 V) from 25 °C HPPC relaxed OCV",
+        "plateau_slope_source": "reports/validation/tempest_ecm_results.json:plateau_slopes_by_temp['25']",
         "measured_hysteresis_mv": None,
+        "hysteresis_definition": "N/A (No continuous pseudo-OCV charge/discharge loop in dataset)",
+        "hysteresis_source": "UNVERIFIED",
     })
 
-    # Print Table
-    print(f"{'Cell Identifier':<30} | {'Nom Cap (Ah)':>12} | {'Meas Cap (Ah)':>13} | {'R0 (mOhm)':>10} | {'Eval T (°C)':>11} | {'Slope (mV/pp)':>13} | {'Hysteresis (mV)':>16}")
+    # Print summary
+    print(f"{'Cell Identifier':<25} | {'Nom (Ah)':>10} | {'Meas (Ah)':>11} | {'R0 (mOhm)':>10} | {'Slope (mV/pp)':>13} | {'Hysteresis':<30}")
     print("-" * 115)
     for r in rows:
-        hyst_str = f"{r['measured_hysteresis_mv']:16.2f}" if r["measured_hysteresis_mv"] is not None else f"{'N/A':>16}"
-        print(
-            f"{r['cell_id']:<30} | {r['nominal_capacity_ah']:12.1f} | {r['measured_capacity_ah']:13.4f} | "
-            f"{r['r0_mohm']:10.4f} | {r['r0_eval_temperature_c']:11.1f} | {r['plateau_slope_mv_per_pp']:13.3f} | "
-            f"{hyst_str}"
-        )
+        nom_str = f"{r['nominal_capacity_ah']}" if isinstance(r['nominal_capacity_ah'], (int, float)) else "UNVERIFIED"
+        hyst_str = f"{r['measured_hysteresis_mv']:.2f} mV" if r["measured_hysteresis_mv"] is not None else "N/A"
+        print(f"{r['cell_id']:<25} | {nom_str:>10} | {r['measured_capacity_ah']:11.4f} | {r['r0_mohm']:10.4f} | {r['plateau_slope_mv_per_pp']:13.3f} | {hyst_str:<30}")
 
     output = {
-        "disclaimer": "Asserting NO causes and NO scaling laws from four points. All values extracted directly from committed repository files.",
+        "disclaimer": "Values are listed as measured under the stated conditions; no inference about size dependence is possible from four cells. Asserting NO causes and NO scaling laws from four points.",
         "cells": rows,
     }
 
