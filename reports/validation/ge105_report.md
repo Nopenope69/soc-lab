@@ -121,17 +121,13 @@ The evaluation was executed across 36 development scenarios and 24 sealed test s
                                   NOMINAL INITIALIZATION (~90% SOC, 40 °C)
       Estimator               BUGE390 (Test)           BUGE391 (Test)          Verdict
   --------------------------------------------------------------------------------------
-  E0 (Coulomb Counting)      0.05 pp Max / 0.02 RMSE  0.03 pp Max / 0.01 RMSE   Anchored Ref
-  E7v3 (CALCE Calib)        69.62 pp Max / 27.96 RMSE 68.89 pp Max / 27.84 RMSE  FAIL (Diverged)
-  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   DEVELOPMENT (Item 3)
-
-                                  PERTURBED INITIALIZATION (+10 pp, 40 °C)
-      Estimator               BUGE390 (Final Error)    BUGE391 (Final Error)   Verdict
-  --------------------------------------------------------------------------------------
-  E0 (Coulomb Counting)     10.01 pp (No Correction)  10.03 pp (No Correction)  Open Loop
-  E7v3 (CALCE Calib)        88.22 pp (Diverged)       88.05 pp (Diverged)       FAIL
-  E7v3 (GE105 Calib)         5.03 pp (Converging)      5.17 pp (Converging)     Closed Loop OK
+  E0 (Coulomb Counting)      0.05 pp Max / 0.02 RMSE  0.03 pp Max / 0.01 RMSE   Anchored Ref (Ah Integral)
+  E7v3 (CALCE Calib)        69.62 pp Max / 27.96 RMSE 68.89 pp Max / 27.84 RMSE  FAIL (Capacity Mismatch)
+  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   DEVELOPMENT (No Acc Info)
 ```
+
+> **Critical Note on Nominal Results:**  
+> Nominal-initialisation RMSE is identical between E0 and E7v3 (0.01 pp to 0.02 pp) because the reference `profiles.soc` is simply an Ah-counting current integral re-anchored at full-charge events. It is not an independent electrochemical ground truth. Consequently, near-zero tracking error under nominal initialization **carries no accuracy information** regarding the true physical SOC. Furthermore, the in-envelope sealed evidence is strictly limited to **12 scenarios of 986 s at 40 °C only**, as `BUGE390` and `BUGE391` 25 °C full files contain no WLTC segments. Cell temperature is an external climatic chamber setpoint, not measured cell core or surface temperature.
 
 ### Disturbance Recovery Characterisation (8 Perturbed In-Envelope Scenarios)
 

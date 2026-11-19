@@ -29,13 +29,10 @@
 This document presents the unsealed, single-run evaluation of the held-out test partition (`BUGE390` and `BUGE391`) against the frozen specification (`reports/validation/ge105_spec_frozen.md`). No estimator algorithms, hyperparameters, or calibration files were modified after unsealing.
 
 ### Key Validation Outcomes:
-1. **Held-Out Generalization (Nominal Initialization):**
-   - On the in-envelope dynamic WLTC cycles (40 °C), the matched E7v3 estimator achieved near-zero tracking error:
-     - **BUGE390 (~90% SOC):** Max error **0.05 pp**, RMSE **0.02 pp**.
-     - **BUGE390 (~50% SOC):** Max error **0.06 pp**, RMSE **0.02 pp**.
-     - **BUGE391 (~90% SOC):** Max error **0.12 pp**, RMSE **0.05 pp**.
-     - **BUGE391 (~50% SOC):** Max error **0.14 pp**, RMSE **0.06 pp**.
-   - All held-out nominal tracking metrics easily passed the frozen acceptance gates ($\text{RMSE} \le 3.5\ \text{pp}$ at 90% SOC, $\le 7.0\ \text{pp}$ at 50% SOC).
+1. **Nominal Initialization & Scope Limitations:**
+   - **Identical Tracking with E0:** Nominal-initialisation RMSE is identical between E0 and E7v3 (0.01 pp to 0.02 pp RMSE) because the reference ground truth (`profiles.soc`) is itself an Ah-counting current integral re-anchored at full-charge events. Consequently, nominal tracking comparison against this reference **carries no independent accuracy information** regarding electrochemical state of charge.
+   - **Limited In-Envelope Test Volume:** The in-envelope sealed evidence is strictly limited to **12 scenarios of 986 s at 40 °C only** (6 scenarios per cell: 2 segments $\times$ 3 perturbation levels). The `BUGE390` and `BUGE391` 25 °C full protocol files date from 2023-06-27 and terminated at phase 166 before WLTC segments were added to the test procedure; thus zero 25 °C sealed test data exists.
+   - **Chamber Setpoint Temperature:** Cell temperature telemetry is absent from the dataset (`profiles.T` is empty); temperature input is purely the climatic chamber setpoint. Thermal self-heating during high-rate dynamic WLTC transients is unmeasured.
 2. **Cross-Scale Calibration Divergence:**
    - Frozen E7v3 with the CALCE A123 calibration (`calce_a123_v4.json`, 1.06 Ah nominal) diverged catastrophically on the 105 Ah cells, experiencing maximum errors of **68.89 pp to 88.69 pp** and RMSE up to **72.87 pp**.
    - This provides definitive proof that cell-level calibrations cannot be transferred across cell capacity scales without matched capacity scaling.
