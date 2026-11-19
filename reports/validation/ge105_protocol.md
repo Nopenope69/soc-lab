@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Validation Protocol (V1.3)
 
+> [!NOTE] Revision (V2.11 Sealed Execution Provenance Correction)  
+> Replaced the draft statement that sealed cells were "Evaluated exactly once after freezing the specification" with the facts documented in `reports/validation/ge105_spec_provenance.md`: the sealed test partition was executed twice successfully (steps 5667 and 5681, producing bit-for-bit identical outputs) following 10 failed mechanical attempts (12 total attempts), and the specification was first committed to git simultaneously with the sealed test results in commit `847843c`.
+
 > [!NOTE] Revision (V1.13 Efficiency Convention Clarification)  
 > Documented the Coulombic efficiency conventions used by E0 across scripts: `scripts/validation/ge105_eval_dev.py` applies the repository spec convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$ for all currents). Re-running dev cells under $\eta = 1.0$ changes Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).
 
@@ -37,8 +40,8 @@ Cell partitioning strictly separates model parameter identification and tuning f
 |:---|:---:|:---|:---|
 | **Development (Train)** | `BUGE388` | ECM parameter identification, OCV curve fitting, and calibration tuning | Freely accessible during development |
 | **Development (Val)** | `BUGE389` | Hyperparameter selection, filter tuning, and threshold verification | Freely accessible during development |
-| **Sealed Test** | `BUGE390` | Held-out validation cell 1 | **SEALED.** Evaluated exactly once after freezing the specification |
-| **Sealed Test** | `BUGE391` | Held-out validation cell 2 | **SEALED.** Evaluated exactly once after freezing the specification |
+| **Sealed Test** | `BUGE390` | Held-out validation cell 1 | **SEALED.** Executed twice successfully (steps 5667 & 5681, identical output) following 10 failed mechanical attempts (see ge105_spec_provenance.md); spec first committed together with results in `847843c` |
+| **Sealed Test** | `BUGE391` | Held-out validation cell 2 | **SEALED.** Executed twice successfully (steps 5667 & 5681, identical output) following 10 failed mechanical attempts (see ge105_spec_provenance.md); spec first committed together with results in `847843c` |
 
 ### Sealed Test Set Access Enforcement
 - Access to cells `BUGE390` and `BUGE391` is guarded by `ValidationSplitConfig.get_test_cells(final=True)` in `src/soc/data/registry.py`.
