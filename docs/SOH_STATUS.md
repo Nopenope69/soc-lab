@@ -109,6 +109,9 @@ To achieve `LAB_VALIDATED` status for any SOH estimator, the following strict cr
 
 ## 4. Gustave Eiffel 105 Ah LFP Dataset SOH Evidence Assessment
 
+> [!NOTE] Revision (V1.11 Relabeling Notice)  
+> In accordance with Task V1.11 LABEL RULE, LAB_VALIDATED requires: (a) real files with verified manifest hashes; (b) evaluation scripts tracked in the repository and reproduced from a clean shell; (c) a spec committed before sealed evaluation; (d) a held-out result that beats a fair baseline on an independent reference; (e) sufficient data volume. All GE105 results are classified as `DEVELOPMENT` (zero SOH evidence, BOL characterisation only).
+
 > **Dataset:** Gustave Eiffel 105 Ah LFP Dataset (`DOI: 10.57745/G02IYE`, parameters `10.57745/SBNO8W`)  
 > **Status:** NO SOH EVIDENCE (Beginning-of-Life Characterisation Only)
 

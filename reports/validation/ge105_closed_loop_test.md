@@ -1,5 +1,12 @@
 # Gustave Eiffel 105 Ah LFP Closed-Loop Validation on Sealed Test Cells (V1.9)
 
+> [!NOTE] Revision (V1.11 Relabeling Notice)  
+> In accordance with Task V1.11 LABEL RULE, the qualification label for all GE105 test cell results is reclassified from `LAB_VALIDATED` to **`DEVELOPMENT`**.  
+> **Unmet LABEL RULE Criteria:**  
+> - **Criterion (c):** Specification was not committed prior to unsealing (first committed in `847843c` alongside results).  
+> - **Criterion (d):** Reference `profiles.soc` is an Ah-counting integral (not independent of the estimator's own current integral); nominal RMSE is identical between E0 and E7v3.  
+> - **Criterion (e):** Insufficient data volume: in-envelope test data comprises only 12 scenarios of 986 s at 40 °C (BUGE390 and BUGE391 25 °C full files contain no WLTC segments).
+
 > **Document ID:** EVAL-GE105-TEST-001  
 > **Date:** 2026-11-19  
 > **Status:** UNSEALED & EVALUATED (Single Evaluation Post-Spec Freeze)  
@@ -12,7 +19,7 @@
 > 4. **Reference BMS Implementation**: `deliverable/bms_soc_ref.py` (executed in parallel)  
 > **Drive Cycles:** Dynamic WLTC Segments (~90% SOC and ~50% SOC, 986 s each)  
 > **Status Labels:**  
-> - 40 °C In-Envelope: **LAB_VALIDATED** (Real files, verified manifest hashes, cell-held-out test result)  
+> - 40 °C In-Envelope: **DEVELOPMENT** (Reclassified from LAB_VALIDATED per V1.11 LABEL RULE items c, d, e)  
 > - 0 °C Out-of-Envelope: **DEVELOPMENT** (Flagged `OUT_OF_ENVELOPE`)
 
 ---
@@ -47,7 +54,7 @@ This document presents the unsealed, single-run evaluation of the held-out test 
 
 ## 2. Comprehensive Test Partition Results Matrix
 
-### Table 1: In-Envelope Evaluation (40 °C, Status: `LAB_VALIDATED`)
+### Table 1: In-Envelope Evaluation (40 °C, Status: `DEVELOPMENT`)
 
 | Cell | Temp | Target SOC | Scenario | Initial Err | E0 Max/RMSE (pp) | E7 CALCE Max/RMSE (pp) | E7 GE105 Max/RMSE (pp) | E7 GE105 Final Err (pp) | Status Flags | Ref Parity (max \|dSOC\|) |
 |:---|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|

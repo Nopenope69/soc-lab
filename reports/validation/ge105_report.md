@@ -1,5 +1,12 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
+> [!NOTE] Revision (V1.11 Relabeling Notice)  
+> In accordance with Task V1.11 LABEL RULE, all GE105 test cell results are reclassified from `LAB_VALIDATED` to **`DEVELOPMENT`**.  
+> **Unmet LABEL RULE Criteria:**  
+> - **Criterion (c):** Specification was not committed to git prior to unsealing (committed simultaneously with results in `847843c`).  
+> - **Criterion (d):** Reference `profiles.soc` is an Ah-counting current integral, not an independent electrochemical ground truth; nominal tracking is identical to E0.  
+> - **Criterion (e):** Insufficient data volume: in-envelope test data covers only 12 scenarios of 986 s at 40 °C (25 °C full tests for BUGE390/391 lack WLTC segments).
+
 > **Document ID:** VAL-GE105-FINAL-001  
 > **Date:** 2026-11-19  
 > **Repository:** `/Users/tecbusiness/Desktop/random/SOC`  
@@ -22,11 +29,11 @@ This report synthesizes the end-to-end laboratory validation of state-of-charge 
 
 ### Formal Qualification Labels
 
-In compliance with the Phase 6 / Hardening validation rules:
+In compliance with the Phase 6 / Hardening validation rules and V1.11 LABEL RULE:
 
 | Evaluation Scope | Partition | Operating Condition | Result Label | Justification |
 |:---|:---|:---:|:---:|:---|
-| **Dynamic WLTC Tracking** | Test (`BUGE390`, `BUGE391`) | 40 °C (In-Envelope) | **`LAB_VALIDATED`** | Real physical cell files, non-placeholder SHA-256 manifests, cell-held-out evaluation executed once against frozen spec. Nominal RMSE $\le 0.05\ \text{pp}$, max error $\le 0.14\ \text{pp}$. |
+| **Dynamic WLTC Tracking** | Test (`BUGE390`, `BUGE391`) | 40 °C (In-Envelope) | **`DEVELOPMENT`** | Reclassified from LAB_VALIDATED per V1.11 LABEL RULE criteria (c), (d), and (e). Test evaluation script tracked and reproduced from clean shell. |
 | **Dynamic WLTC Tracking** | Dev (`BUGE388`, `BUGE389`) | 25 °C & 40 °C | **`DEVELOPMENT`** | Used for calibration parameter extraction and sanity checks. Nominal RMSE 1.19–2.12 pp. |
 | **Low-Temperature Tracking** | All 4 Cells | 0 °C (Out-of-Envelope) | **`DEVELOPMENT`** | Filter safely self-reports `OUT_OF_ENVELOPE` on 100% of samples (operational envelope $20\text{--}45\ ^\circ\text{C}$). |
 | **Cross-Scale Baseline** | All 4 Cells | E7v3 CALCE Calibration | **`FAIL`** | Catastrophic divergence (68–88 pp error). Empirically proves calibration non-transferability across cell capacity scales. |
@@ -116,7 +123,7 @@ The evaluation was executed across 36 development scenarios and 24 sealed test s
   --------------------------------------------------------------------------------------
   E0 (Coulomb Counting)      0.05 pp Max / 0.02 RMSE  0.03 pp Max / 0.01 RMSE   Anchored Ref
   E7v3 (CALCE Calib)        69.62 pp Max / 27.96 RMSE 68.89 pp Max / 27.84 RMSE  FAIL (Diverged)
-  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   LAB_VALIDATED
+  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   DEVELOPMENT (Item 3)
 
                                   PERTURBED INITIALIZATION (+10 pp, 40 °C)
       Estimator               BUGE390 (Final Error)    BUGE391 (Final Error)   Verdict
