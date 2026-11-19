@@ -278,7 +278,15 @@ Numerical parity between Python and C was tested via ctypes compilation in `test
 | **V2.7** | Froze candidate calibration `soh_pulse_v2` and spec report | `f592bc7` | Complete |
 | **V2.8** | Evaluated sealed test partition and condition holdout partition | `dbffe91` | Complete |
 | **V2.9** | Exported standalone C header and verified exact Python/C parity | `9f01f09` | Complete |
-| **V2.10** | Comprehensive validation report and SOH status documentation update | Pending | Current Step |
+| **V2.10** | Comprehensive validation report and SOH status documentation update | `9956b40` | Complete |
+| **V2.11.1** | Candidate provenance audit, 14 vs 11 feature analysis, V2.7 frozen preservation | `985cbf4` | Complete |
+| **V2.11.2** | Sealed run reproduction with frozen V2.7 candidate | `df70e53` | Complete |
+| **V2.11.4** | Post-hoc age baselines, Ridge comparative analysis, cell-level bootstrap CIs | `b138ff0` | Complete |
+| **V2.11.5** | Reference independence and RPT step attribution audit (Step 28 vs Step 20) | `42f00ba` | Complete |
+| **V2.11.6** | Audit split provenance, pre-freeze data visibility, and cross-split cell overlap | `482dfdf` | Complete |
+| **V2.11.7** | Relabel UConn SOH results to DEVELOPMENT and cite README_Uconn.txt line 16 | `50d73d5` | Complete |
+| **V2.11.8** | Correct sealed test invocation provenance in ge105 protocol | `9305073` | Complete |
+| **V2.11.10** | Append V2.11 governance audit synthesis and full test suite verification | Pending | Current Step |
 
 ---
 
@@ -299,9 +307,35 @@ python scripts/validation/uconn_eval_dev.py
 # 4. Compare pulse fit waveforms
 python scripts/validation/uconn_pulse_fit_comparison.py
 
-# 5. Evaluate sealed test partition (reproduces uconn_sealed_results.json)
-python scripts/validation/uconn_eval_sealed.py
+# 5. Evaluate sealed test partition with frozen candidate (reproduces uconn_sealed_results.json)
+python scripts/validation/uconn_eval_sealed.py --candidate deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json
 
-# 6. Run full pytest suite including C parity
+# 6. Run post-hoc age-only and comparative baseline evaluation
+python scripts/validation/uconn_age_baseline.py
+
+# 7. Run full pytest suite including C parity
 pytest tests/test_uconn_loader.py tests/soh/test_python_c_pulse_parity.py
 ```
+
+---
+
+## 11. Revision History & Audit Findings (Task V2.11)
+
+### 11.1 Candidate Provenance & Feature Count Discrepancy
+- **Committed Sealed Results (`dbffe91`):** Produced exclusively using the **14-feature model** frozen at V2.7 (`deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json`, SHA-256 `efd71dc3f4d34698169250df6e62331add594087a37109f499a352df2795c095`).
+- **Post-Hoc 11-Feature Candidate (`9f01f09`):** An 11-feature model was evaluated on sealed test cells in step index 6905 of the session log (`SOH_C` MAE = 0.0209, `SOH_R` MAE = 0.0107) and saved as `uconn_soh_pulse_v2.json` (SHA-256 `d2e7ee280ed7e1ec50dd017e3c83d54f1b56ca023fe0f6a387c81fb45d61cca7`). This file was formally re-labeled `"post-hoc candidate (modified after unsealing)"`.
+- **C Header Provenance:** `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h` was exported from the 11-feature post-hoc model. Because feature dimensions differ (11 vs 14), the committed sealed evaluation results do not describe this C header.
+
+### 11.2 Baseline Comparative Performance
+- **Ridge Dominance:** On the sealed cells, pure $L_2$ Ridge regression achieves lower error than `soh_pulse_v2` on both targets:
+  - $SOH_C$: Ridge MAE = **0.01994** vs `soh_pulse_v2` **0.02107**
+  - $SOH_R$: Ridge MAE = **0.009106** vs `soh_pulse_v2` **0.009392**
+  The ElasticNet formulation provides zero predictive advantage over Ridge.
+- **Constant-Mean Anchor:** Headline error reductions (50.6% and 56.5%) are strictly relative to the naive constant-training-mean baseline.
+- **Conformal Interval Coverage:** Empirical coverage for $SOH_C$ is **91.2%** on sealed cells (under-covering 95% nominal level), while $SOH_R$ is **98.6%** (overconservative).
+- **Age-Only Baseline Comparison:** On $SOH_C$, `soh_pulse_v2` (0.0211 sample MAE) is statistically indistinguishable from a simple quadratic age baseline (0.0221 sample MAE) with overlapping 95% bootstrap confidence intervals over the 21 cells ([0.0181, 0.0260] vs [0.0199, 0.0281]). Pulse features provide clear separation over age only for $SOH_R$ (0.0094 vs 0.0195) and under severe cross-condition cycling (0.0219 vs 0.0473).
+
+### 11.3 Reference Independence & Governance Label Determination
+- **Reference Independence:** $SOH_C$ ground truth originates from Step 28 (independent full CC discharge; criterion d pass). $SOH_R$ ground truth originates from Step 20 DCIR, which shares the physical voltage response with the ECM feature extractor ($R_0, R_{10\text{s}}$); criterion (d) is NOT met for $SOH_R$.
+- **Split Provenance & Independence:** Neither split configuration documents a random seed or selection algorithm (UNVERIFIED). Furthermore, 17 sealed test cells from Split 1 were used as training cells in Split 2, and 8 development cells from Split 1 served as test cells in Split 2; the two splits are mutually contaminated and not independent.
+- **Final Classification:** All UConn SOH results are classified as **`DEVELOPMENT`**. Cell model is cited per `README_Uconn.txt` line 16 ("LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah", aged to 80% SOH, ~0.96 Ah). Exported C code is strictly PLACEHOLDER / UNVALIDATED.
