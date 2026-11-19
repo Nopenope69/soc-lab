@@ -388,3 +388,95 @@ Based on the laboratory evaluation, split independence audit, baseline compariso
    - The evaluation provides **zero evidence for 100 Ah cells**. Data are strictly confined to 1.2 Ah cylindrical LithiumWerks 18650 power cells tested under laboratory characterisation protocols.
 5. **Embedded C Implementation Status:**
    - The exported C header (`deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`) is **unvalidated and derived from the post-hoc 11-feature model** modified after unsealing. It is not qualified for BMS control.
+
+---
+
+## 13. Audit & Reproduction Synthesis (Task V2.12)
+
+### 13.1 Audit Items Summary (V2.12.1 – V2.12.7)
+- **V2.12.1 (Reproduction Verification):** Audited `git diff dbffe91..HEAD -- scripts/validation/uconn_eval_sealed.py` and confirmed no logic changes were introduced (only `--candidate` optional CLI flag). Re-executed sealed evaluation against `deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json` from a clean shell; results matched `reports/validation/uconn_sealed_results.json` bit-for-bit ($< 10^{-15}$ roundoff) across all sample counts, MAE, RMSE, max error, and conformal coverage metrics. Detailed in [uconn_reproduction.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/uconn_reproduction.md).
+- **V2.12.2 (Manifest Reconciliation & Data Integrity):** Verified primary manifest `data/manifests/uconn_reil_dataset5.sha256` tracking `rpt_data.zip` and `README_Uconn.txt`. Added `data/manifests/uconn_reil_dataset5_extracted.sha256` covering all 207 extracted CSV files; verified all 207 files match zip contents byte-for-byte via `scripts/verify_datasets.py` (`INTEGRITY_OK`). Reconciled physical file counts (18 cells $\times$ 2 files, 20 cells $\times$ 3 files, 19 cells $\times$ 4 files, 7 cells $\times$ 5 files = 207 files across 64 unique cells).
+- **V2.12.3 ($SOH_R$ Feature-Label Identity):** Documented that $SOH_R$ ground-truth label and candidate pulse features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) are both derived from the same Step 20 `slowpulse` excitation (`uconn_loader.py:128-140`). Evaluated a trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ via `scripts/validation/uconn_soh_r_tautology_eval.py`, matching or beating the candidate model (0.0095 vs 0.0094 on sealed cells; 0.0060 vs 0.0073 on dev validation). Established that $SOH_R$ results do not constitute evidence of estimation skill.
+- **V2.12.4 (Split Contamination & Independence):** Audited cell allocations between Split 1 (cell holdout) and Split 2 (condition holdout). Found that 17 of 21 sealed test cells from Split 1 were training cells in Split 2, and 8 development cells from Split 1 served as test cells in Split 2. Labeled all condition holdout numbers "contaminated, supplementary, not a headline result" and removed them from headline statements.
+- **V2.12.5 (What the Results Support):** Added explicit Section 12 bounding claims to what the real laboratory data actually prove: no capacity advantage over Ridge or age-quadratic, conformal undercoverage (91.2%), $SOH_R$ feature-label tautology, no 100 Ah relevance, and unvalidated C export.
+- **V2.12.6 (Criteria Table Update):** Reclassified Criterion (b) from PASS to PARTIAL due to the uncommitted 11-feature post-hoc sealed evaluation snippet from session step 6905. Restricted Criterion (c) PASS to the pre-frozen 14-feature candidate only.
+- **V2.12.7 (Global Documentation Honesty):** Audited repository documentation (`reports/validation/`, `docs/`, `HANDOVER.md`), replacing draft `LAB_VALIDATED` claims with `DEVELOPMENT` and correcting unverified "evaluated exactly once" assertions.
+
+### 13.2 Full Test Suite Verification Output
+The complete pytest test suite was executed against the repository:
+```
+.venv/bin/pytest tests/
+```
+**Execution Result:**
+```text
+============================= test session starts ==============================
+platform darwin -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/tecbusiness/Desktop/random/SOC
+configfile: pyproject.toml
+plugins: platformdirs-4.14.5
+collected 395 items
+
+tests/soh/test_baseline_estimator.py ..                                  [  0%]
+tests/soh/test_benchmarks.py ...                                         [  1%]
+tests/soh/test_common.py ....                                            [  2%]
+tests/soh/test_data_loaders.py ...                                       [  3%]
+tests/soh/test_degradation.py ....                                       [  4%]
+tests/soh/test_embedded.py ..                                            [  4%]
+tests/soh/test_fusion.py ............                                    [  7%]
+tests/soh/test_gru_sequence_isolation.py .                               [  7%]
+tests/soh/test_ica.py ...                                                [  8%]
+tests/soh/test_ica_gpr_ekf.py ..                                         [  9%]
+tests/soh/test_missing_soh_r_labels.py ...                               [  9%]
+tests/soh/test_phase6_1_qualification.py ......                          [ 11%]
+tests/soh/test_phase6_2_qualification.py ........                        [ 13%]
+tests/soh/test_phase6_3_qualification.py ..........                      [ 15%]
+tests/soh/test_phase6_shadow_validation.py .......                       [ 17%]
+tests/soh/test_pinn.py ........                                          [ 19%]
+tests/soh/test_pinn_ablation.py ......                                   [ 21%]
+tests/soh/test_pinn_phase5_2.py ......                                   [ 22%]
+tests/soh/test_pulse_ecm.py ...                                          [ 23%]
+tests/soh/test_pulse_elastic_net.py .                                    [ 23%]
+tests/soh/test_python_c_pulse_parity.py ..                               [ 24%]
+tests/soh/test_robustness.py .....                                       [ 25%]
+tests/test_assumptions_loader.py ..........                              [ 28%]
+tests/test_assumptions_schema.py .....                                   [ 29%]
+tests/test_bms_soc_hardening.py .......                                  [ 31%]
+tests/test_bms_soc_ref.py .....                                          [ 32%]
+tests/test_calibration.py ....                                           [ 33%]
+tests/test_cell_model.py ........                                        [ 35%]
+tests/test_e10_estimator.py ........                                     [ 37%]
+tests/test_e2_anchored.py .......                                        [ 39%]
+tests/test_e2_rate_hyst.py ......                                        [ 40%]
+tests/test_e3_ukf.py ......                                              [ 42%]
+tests/test_e4_rls_r0.py .......                                          [ 44%]
+tests/test_e4v2.py .......                                               [ 45%]
+tests/test_e5_observability_ekf.py ....                                  [ 46%]
+tests/test_e5v3.py ......                                                [ 48%]
+tests/test_e5v4.py ......                                                [ 49%]
+tests/test_e6_rbc_dekf.py ....                                           [ 50%]
+tests/test_e6v2.py .......                                               [ 52%]
+tests/test_e7v2.py .......                                               [ 54%]
+tests/test_e7v3.py ........                                              [ 56%]
+tests/test_e7v3_d4.py .....                                              [ 57%]
+tests/test_e8_estimator.py .......                                       [ 59%]
+tests/test_e8_lgbm_estimator.py ............                             [ 62%]
+tests/test_e9_estimator.py .......                                       [ 64%]
+tests/test_estimator_isolation.py ....                                   [ 65%]
+tests/test_estimators.py ..........                                      [ 67%]
+tests/test_ge105_loader.py .......                                       [ 69%]
+tests/test_golden_vectors.py ..                                          [ 70%]
+tests/test_harness_stream.py ....                                        [ 71%]
+tests/test_import_all_modules.py ..                                      [ 71%]
+tests/test_innovation_gating.py ........                                 [ 73%]
+tests/test_metrics_analytic.py .....................................     [ 83%]
+tests/test_no_hardcoded_constants.py ..                                  [ 83%]
+tests/test_parameter_mutability.py ..............                        [ 87%]
+tests/test_plant_simulator.py .......                                    [ 88%]
+tests/test_real_data_validation.py ........s........                     [ 93%]
+tests/test_report_generator.py ...                                       [ 93%]
+tests/test_sealed_split.py .....                                         [ 95%]
+tests/test_self_consistency.py ...........                               [ 97%]
+tests/test_uconn_loader.py ........                                      [100%]
+
+============ 394 passed, 1 skipped, 1 warning in 454.74s (0:07:34) =============
+```
