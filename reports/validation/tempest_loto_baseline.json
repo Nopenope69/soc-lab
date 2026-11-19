@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "title": "Per-fold Constant Parameter Baseline Evaluation for TEMPEST 280 Ah",
+    "spec_status": "post-hoc extension, not in the committed spec if the spec did not require it",
+    "gates": {
+      "bias_mv_max": 2.0,
+      "rmse_mv_max": 6.0,
+      "implied_soc_error_pp_max": 2.5
+    }
+  },
+  "loto_comparison": [
+    {
+      "held_out_temperature_c": 15,
+      "train_temperatures_c": [
+        20,
+        25,
+        30,
+        35
+      ],
+      "interpolation": {
+        "mean_rmse_mv": 13.05,
+        "mean_bias_mv": 9.516,
+        "mean_implied_soc_error_pp": 9.624,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 24.139,
+        "mean_bias_mv": 17.892,
+        "mean_implied_soc_error_pp": 17.802,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -11.09,
+      "relative_performance": "interp_beats_const"
+    },
+    {
+      "held_out_temperature_c": 20,
+      "train_temperatures_c": [
+        15,
+        25,
+        30,
+        35
+      ],
+      "interpolation": {
+        "mean_rmse_mv": 2.757,
+        "mean_bias_mv": 2.012,
+        "mean_implied_soc_error_pp": 2.018,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": true,
+        "soc_gate_pass": true,
+        "verdict": "FAIL"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 7.967,
+        "mean_bias_mv": 6.052,
+        "mean_implied_soc_error_pp": 5.832,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -5.21,
+      "relative_performance": "interp_beats_const"
+    },
+    {
+      "held_out_temperature_c": 25,
+      "train_temperatures_c": [
+        15,
+        20,
+        30,
+        35
+      ],
+      "interpolation": {
+        "mean_rmse_mv": 0.89,
+        "mean_bias_mv": 0.679,
+        "mean_implied_soc_error_pp": 0.642,
+        "bias_gate_pass": true,
+        "rmse_gate_pass": true,
+        "soc_gate_pass": true,
+        "verdict": "PASS"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 1.692,
+        "mean_bias_mv": 0.838,
+        "mean_implied_soc_error_pp": 1.221,
+        "bias_gate_pass": true,
+        "rmse_gate_pass": true,
+        "soc_gate_pass": true,
+        "verdict": "PASS"
+      },
+      "rmse_difference_mv": -0.802,
+      "relative_performance": "interp_beats_const"
+    },
+    {
+      "held_out_temperature_c": 30,
+      "train_temperatures_c": [
+        15,
+        20,
+        25,
+        35
+      ],
+      "interpolation": {
+        "mean_rmse_mv": 1.658,
+        "mean_bias_mv": 1.302,
+        "mean_implied_soc_error_pp": 1.182,
+        "bias_gate_pass": true,
+        "rmse_gate_pass": true,
+        "soc_gate_pass": true,
+        "verdict": "PASS"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 11.809,
+        "mean_bias_mv": 8.936,
+        "mean_implied_soc_error_pp": 8.423,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -10.151,
+      "relative_performance": "interp_beats_const"
+    },
+    {
+      "held_out_temperature_c": 35,
+      "train_temperatures_c": [
+        15,
+        20,
+        25,
+        30
+      ],
+      "interpolation": {
+        "mean_rmse_mv": 4.949,
+        "mean_bias_mv": 3.839,
+        "mean_implied_soc_error_pp": 3.48,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": true,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 18.025,
+        "mean_bias_mv": 13.793,
+        "mean_implied_soc_error_pp": 12.676,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -13.077,
+      "relative_performance": "interp_beats_const"
+    }
+  ],
+  "alt_soc_comparison": [
+    {
+      "fold_id": "ALT_ODD_FIT",
+      "interpolation": {
+        "mean_rmse_mv": 17.309,
+        "mean_bias_mv": 17.163,
+        "mean_implied_soc_error_pp": 12.482,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 49.855,
+        "mean_bias_mv": 49.738,
+        "mean_implied_soc_error_pp": 35.96,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -32.546,
+      "relative_performance": "interp_beats_const"
+    },
+    {
+      "fold_id": "ALT_EVEN_FIT",
+      "interpolation": {
+        "mean_rmse_mv": 8.988,
+        "mean_bias_mv": 8.871,
+        "mean_implied_soc_error_pp": 6.477,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "constant_baseline_posthoc": {
+        "label": "post-hoc extension, not in the committed spec if the spec did not require it",
+        "mean_rmse_mv": 45.028,
+        "mean_bias_mv": 44.927,
+        "mean_implied_soc_error_pp": 32.482,
+        "bias_gate_pass": false,
+        "rmse_gate_pass": false,
+        "soc_gate_pass": false,
+        "verdict": "FAIL"
+      },
+      "rmse_difference_mv": -36.04,
+      "relative_performance": "interp_beats_const"
+    }
+  ]
+}

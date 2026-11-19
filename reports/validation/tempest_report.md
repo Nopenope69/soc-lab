@@ -158,7 +158,33 @@ Odd vs even SOC setpoint holdouts with linear SOC interpolation:
 - **Fold 2 (Train Even, Test Odd) [FAIL]:** Bias +1.79 mV (script abs bias: 8.871 mV), RMSE 6.13 mV (script: 8.988 mV), Implied SOC Error 4.43 pp (script: 6.478 pp).  
 *Causal attribution:* Hypothesis (not tested): 20% SOC step interpolation fails to capture steep curvature at low SOC ($< 20\%$) and high SOC ($> 90\%$).
 
-### 4.3 Baseline Comparisons (Evaluated at 25 °C)
+### 4.3 Per-Fold Constant-Parameter Baselines (Post-Hoc Extension)
+
+> *Notice: Labelled 'post-hoc extension, not in the committed spec if the spec did not require it'.*  
+> Computed by `scripts/validation/tempest_loto_baseline.py` and stored in `reports/validation/tempest_loto_baseline.json`.
+
+Under the same acceptance gates (Mean Bias $\le 2.0$ mV, Voltage RMSE $\le 6.0$ mV, Implied SOC Error $\le 2.5$ pp), a constant-parameter baseline was evaluated by setting parameters to the arithmetic mean of the training folds (across temperatures for LOTO, and across SOC points for Alternate-SOC):
+
+#### 1. LOTO Folds: Linear Interpolation vs Constant Baseline
+| Fold | Linear Interp RMSE | Linear Interp Bias | Interp SOC Error | Interp Verdict | Constant Baseline RMSE | Constant Baseline Bias | Constant SOC Error | Constant Verdict | Relative Performance |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **15 °C** | 13.05 mV | 9.52 mV | 9.62 pp | **FAIL** | 24.14 mV | 17.89 mV | 17.80 pp | **FAIL** | Interpolation beats constant by 11.09 mV |
+| **20 °C** | 2.76 mV | 2.01 mV | 2.02 pp | **FAIL** | 7.97 mV | 6.05 mV | 5.83 pp | **FAIL** | Interpolation beats constant by 5.21 mV |
+| **25 °C** | 0.89 mV | 0.68 mV | 0.64 pp | **PASS** | 1.69 mV | 0.84 mV | 1.22 pp | **PASS** | Interpolation beats constant by 0.80 mV |
+| **30 °C** | 1.66 mV | 1.30 mV | 1.18 pp | **PASS** | 11.81 mV | 8.94 mV | 8.42 pp | **FAIL** | Interpolation beats constant by 10.15 mV |
+| **35 °C** | 4.95 mV | 3.84 mV | 3.48 pp | **FAIL** | 18.02 mV | 13.79 mV | 12.68 pp | **FAIL** | Interpolation beats constant by 13.07 mV |
+
+**Comparison Summary:** Linear temperature interpolation beats the constant-parameter baseline on all 5 LOTO folds. At 25 °C, both models pass all gates. At 30 °C, interpolation passes while the constant baseline fails. At 15 °C, 20 °C, and 35 °C, both fail the committed gates, but interpolation reduces error by 5.2 to 13.1 mV.
+
+#### 2. Alternate-SOC Folds: Linear Interpolation vs Constant Baseline
+| Fold | Linear Interp RMSE | Linear Interp Bias | Interp SOC Error | Interp Verdict | Constant Baseline RMSE | Constant Baseline Bias | Constant SOC Error | Constant Verdict | Relative Performance |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **ALT_ODD_FIT** | 17.31 mV | 17.16 mV | 12.48 pp | **FAIL** | 49.85 mV | 49.74 mV | 35.96 pp | **FAIL** | Interpolation beats constant by 32.54 mV |
+| **ALT_EVEN_FIT** | 8.99 mV | 8.87 mV | 6.48 pp | **FAIL** | 45.03 mV | 44.93 mV | 32.48 pp | **FAIL** | Interpolation beats constant by 36.04 mV |
+
+**Comparison Summary:** Linear SOC interpolation beats the constant baseline on both alternate-SOC folds by >32 mV RMSE, though both models fail the pre-registered gates due to unmodeled SOC non-linearities.
+
+### 4.4 Global Baseline Comparisons (Evaluated at 25 °C)
 - **Fitted In-Sample 2RC:** Voltage RMSE 0.35 mV (script: 0.38 mV), Bias 0.00 mV.
 - **Constant Mean 2RC Baseline:** Voltage RMSE 9.92 mV, Bias 6.82 mV.
 - **CALCE Rescaled Baseline:** Voltage RMSE 54.04 mV, Bias 38.44 mV.
