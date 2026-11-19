@@ -1,10 +1,17 @@
 # TEMPEST 280 Ah LFP Cell Characterisation Report (Task V3)
 
+> [!NOTE] Revision (V3.9 Title, Out-of-Sample Prominence, Baseline & Provenance Audit)
+> - Title: Corrected dataset record title from unverified expansion to *"record title not captured from the dataset files (UNVERIFIED); project name TEMPEST and 'LIC' cell as stated in the dataset files"*. Line 2 of `LIC_characterisation_readme.txt` on disk states: `- Cell info: 280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell)`.
+> - Out-of-sample evaluated first: Leave-one-temperature-out (2 of 5 pass: 25 C and 30 C; 3 of 5 fail: 20 C RMSE 7.08 mV; 15 C RMSE 13.78 mV and bias -2.71 mV; 35 C RMSE 12.43 mV) and alternate-SOC holdout (both fail: 7.03 mV and 6.13 mV) presented ahead of in-sample fits.
+> - Causal statements re-labeled as "Hypothesis (not tested)".
+> - Added per-fold constant-parameter baselines.
+> - Cross-cell comparison updated with explicit sources per cell; removed unwarranted scaling inferences.
+
 > **Document ID:** VAL-TEMPEST-FINAL-001  
 > **Date:** 2026-11-19  
 > **Repository:** `/Users/tecbusiness/Desktop/random/SOC`  
 > **Data Root:** `/Users/tecbusiness/soc_data` (`$SOC_DATA_DIR/tempest_280ah/`)  
-> **Dataset Source:** University of Bath / Zenodo record `19632939` (title: *TEMPEST: Thermal, Electrical, and Mechanical Properties of an Electric-vehicle System's Technology*)  
+> **Dataset Source:** University of Bath / Zenodo record `19632939` (record title not captured from the dataset files (UNVERIFIED); project name TEMPEST and 'LIC' cell as stated in the dataset files)  
 > **Cell Chemistry & Geometry:** 280 Ah Lithium Iron Phosphate (LFP) prismatic cell (designated "LIC" in author files; manufacturer unverified in dataset files)  
 > **Branch:** `validation/tempest`  
 > **Evaluation Protocol:** Single-Cell Beginning-of-Life (BOL) Characterisation (Leave-One-Temperature-Out & Alternate-SOC Holdout)  

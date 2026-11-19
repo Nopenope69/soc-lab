@@ -346,7 +346,7 @@ DATASET_METADATA: Dict[str, DatasetMetadata] = {
     ),
     "tempest_zenodo": DatasetMetadata(
         dataset_id="tempest_zenodo",
-        name="TEMPEST project 280 Ah LFP prismatic cell dataset",
+        name="record title not captured from the dataset files (UNVERIFIED); project name TEMPEST and 'LIC' cell as stated in the dataset files",
         doi="UNVERIFIED",
         source_url="https://zenodo.org/records/19632939",
         licence="UNVERIFIED",

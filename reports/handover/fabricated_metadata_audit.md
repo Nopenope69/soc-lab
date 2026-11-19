@@ -49,3 +49,14 @@ During Hardening 3 and Hardening 4, an audit was conducted comparing the reporte
 6. **`uconn_reil_dataset1`:** Earlier 0b audit draft (`commit f667ee8`) claimed version `1.1` and 8 files [UNVERIFIED: not found in quarantine manifest]. The actual quarantined manifest (`data/manifests/_quarantine_fabricated/uconn_reil_dataset1.sha256`) contained: Version `1.0`, and 6 files with placeholder hashes (`aa11bb22...` to `ff660011...`). Corrected.
 7. **`wheeler_2025`:** Earlier 0b audit draft (`commit f667ee8`) claimed old values: version `2.1`, licence `MIT`, 24 files, DOI `10.1038/s41597-025-04567-8`, and Source URL `https://zenodo.org/records/10876543` [UNVERIFIED: none of these existed in `data/manifests/_quarantine_fabricated/wheeler_2025.sha256` or elsewhere in git history]. The actual quarantined manifest (`data/manifests/_quarantine_fabricated/wheeler_2025.sha256`) contained: Title `Aging Study on Twenty A123 18650 Graphite/LFP 1.1 Ah Cells`, Source URL `https://doi.org/10.57745/OLBXKT` (an invented Recherche Data Gouv URL), DOI `10.1038/s41597-025-04712-7` (the article DOI), Licence `Creative Commons Attribution 4.0 International (CC BY 4.0)`, Version `1.0`, Download Date `2026-11-16`, and 6 placeholder file hashes. For production, the corrected entry has `no data repository URL verified (UNVERIFIED)` (the invented URL `https://doi.org/10.57745/OLBXKT` was removed and must never appear as a valid URL), and the dataset is tracked via a stub manifest with `Status: NOT_DOWNLOADED`, DOI `UNVERIFIED`, Licence `UNVERIFIED`, Version `UNVERIFIED`, Download Date `NOT_DOWNLOADED`, and 0 file hashes.
 8. **Removed Fabricated Identifiers from Summary:** Removed mentions of `10.57745/CALCE_A123`, `10.5281/zenodo.10654321`, `10.5281/zenodo.10876543`, `10.1038/s41597-025-04567-8`, and `deadbeef...` from the executive summary, as an audit of `data/manifests/_quarantine_fabricated/` and git history confirmed they were not present in the quarantined manifests (they were invented solely in the 0b report draft narrative in `commit f667ee8`).
+
+---
+
+## 5. Corrections (V3.9)
+
+During Task V3.9, an audit of the TEMPEST dataset record title was performed:
+- `reports/validation/tempest_report.md` initially cited the deposit title as *"TEMPEST: Thermal, Electrical, and Mechanical Properties of an Electric-vehicle System's Technology"*.
+- A search across all 14 files in `$SOC_DATA_DIR/tempest_280ah/` revealed that this long title does not appear anywhere in the dataset files. The only description present in the files is line 2 of `LIC_characterisation_readme.txt`: `- Cell info: 280 Ah LFP prismatic cell (project TEMPEST 'LIC' cell)`.
+- Accordingly, the record title was updated across all repository locations (`reports/validation/tempest_report.md`, `docs/data_sources.md`, `src/soc/data/registry.py`) to:
+  `record title not captured from the dataset files (UNVERIFIED); project name TEMPEST and 'LIC' cell as stated in the dataset files`.
+
