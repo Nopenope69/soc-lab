@@ -109,8 +109,9 @@ Capacity was evaluated from C/10 CC-CV charge and C/10 discharge protocols execu
 
 ### Key Findings:
 1. **Capacity Scaling:** Discharge capacity increases monotonically with temperature from 299.03 Ah at 15 °C to 303.73 Ah at 35 °C (a 1.57% total variation over 20 °C).
-2. **Bit-for-Bit Reproduction:** Calculated discharge capacities match `LIC_capacity_analysis.csv` to within $< 10^{-7}$ Ah across all temperatures.
-3. **Repeat Spread:** Exactly 0.0 Ah spread (single cycle performed at each temperature setpoint).
+2. **Agreement with Published Summary:** Agreement with `LIC_capacity_analysis.csv` to $< 10^{-7}$ Ah; both come from the same measured discharge and the same integral, so this is not an independent check.
+3. **Capacity Offset Observation:** As an observation only, the measured discharge capacity (299.03 to 303.73 Ah) is about 7% above the 280 Ah stated in the file description (`LIC_characterisation_readme.txt` line 2).
+4. **Repeat Spread:** Exactly 0.0 Ah spread (single cycle performed at each temperature setpoint).
 
 ---
 
