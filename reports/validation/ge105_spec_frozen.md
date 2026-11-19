@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Evaluation Specification (Frozen Prior to Test Unsealing)
 
+> [!NOTE] Revision (V1.13 Execution Count Clarification)  
+> Corrected the unverified draft statement that sealed test cells were "evaluated exactly once". As established by the session log and audited in [ge105_spec_provenance.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/ge105_spec_provenance.md), there were two successful sealed executions (steps 5667 and 5681) producing bit-for-bit identical outputs following 10 failed attempts (12 total invocations). In addition, test cell filenames were originally guessed and corrected at step 5649 after a FileNotFoundError at step 5641.
+
 > [!WARNING] Revision (V1.11 Provenance Notice)  
 > The claim below that this specification was "frozen and committed prior to unsealing test cells" is **not supported by git history**.  
 > As documented in [ge105_spec_provenance.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/ge105_spec_provenance.md), this document was first committed in commit `847843c` together with the sealed test results (`ge105_closed_loop_test.md`). The test evaluation script was edited until 92 seconds prior to that commit. While the edits were syntax and interface corrections only, the protocol requirement of committing the frozen specification to git before unsealing was violated.
@@ -8,7 +11,7 @@
 > **Status:** FROZEN  
 > **Date:** 2026-11-19  
 > **Target Evaluation:** Held-Out Sealed Test Cells `BUGE390` and `BUGE391`  
-> **Guarantee:** Frozen prior to unsealing test cells. Evaluated exactly once. No calibration, code, or hyperparameter modifications permitted post-unsealing.
+> **Execution History:** Two successful sealed executions (steps 5667 and 5681) producing identical outputs following 10 failed attempts (12 total invocations; see reports/validation/ge105_spec_provenance.md); no calibration, estimator code, or hyperparameter modifications occurred post-unsealing.
 
 ---
 
