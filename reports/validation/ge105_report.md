@@ -1,7 +1,9 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
-> [!NOTE] Revision (V1.12 Format and Transparency Corrections)  
-> Updated cell format descriptions across report: replaced cylindrical/26650 assertions with "CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)" and noted format unverified in readmes for 105 Ah cells.
+> [!NOTE] Revision (V1.12 Documentation Honesty and Provenance Auditing)  
+> - Updated cell format descriptions: replaced cylindrical/26650 assertions with "CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)" and noted format unverified in readmes for 105 Ah cells.  
+> - Model Gate: Added full 8-condition out-of-sample cross-validation table (Section 4.3), corrected voltage-RMSE bar to pre-registered 6.0 mV (citing reports/flexipod1/model_gate.md), replaced inter-cell impedance variation speculation with untested attribution, and marked Kalman gain scaling as untested (no ablation).  
+> - Appended Section 9 detailing V1.12 audit and governance findings, commands run, and real test counts.
 
 > [!NOTE] Revision (V1.11 Relabeling Notice)  
 > In accordance with Task V1.11 LABEL RULE, all GE105 test cell results are reclassified from `LAB_VALIDATED` to **`DEVELOPMENT`**.  
@@ -342,3 +344,65 @@ This section summarises the reproducibility and honesty corrections completed du
   **Output:**
   `385 passed, 1 skipped, 1 warning in 418.42s (0:06:58)`  
   *(1 skipped: `tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.`)*
+
+---
+
+## 9. V1.12: Documentation Honesty and Provenance Auditing
+
+This section documents the documentation honesty, audit reconciliation, and sensitivity analyses completed during Task V1.12:
+
+1. **Label Rule Definition Harmonisation (Item 1):**
+   - Harmonised the definition of `LAB_VALIDATED` across `reports/validation/PROTOCOL.md`, `reports/validation/ge105_protocol.md`, and `docs/SOH_STATUS.md` to the 5-point governance requirement:
+     `"LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT."`
+   - In `reports/validation/ge105_protocol.md`, updated the operational envelope statement to: `"declared calibration envelope [20, 45] C (ge105_v1.json); dynamic evidence exists at 25 and 40 C (dev) and 40 C (test) only"`.
+
+2. **Cell-Format Terminology Harmonisation (Item 2):**
+   - Removed unverified assumptions that CALCE cells are "26650", "cylindrical", or "1.1 Ah cylindrical", replacing with `"CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)"` across `ge105_report.md`, `ge105_cell_variation_and_hysteresis.md`, `ge105_protocol.md`, and `ge105_closed_loop_dev.md`.
+   - Documented the EVE 105 Ah format in `ge105_inventory.md` as `"(prismatic format from general knowledge of the EVE LF105 product; not stated in the dataset readmes)"`, and used `"105 Ah cell"` elsewhere.
+   - Reframed diffusion explanation in `ge105_parameter_comparison.md` as `"Hypothesis (not tested): The 986 s WLTC cycle excites longer-term concentration gradients across the 105 Ah cell, manifesting as a slow diffusion branch with $\tau_2 \approx 170\ \text{s}$."`
+   - Clarified hysteresis scaling in `ge105_cell_variation_and_hysteresis.md`: `"one CALCE value (21.6 mV at 40 C) and one GE105 value (26.0 mV); no inference about scaling is possible from two cells"`.
+
+3. **Out-of-Sample Model Gate Evaluation & Voltage Threshold Correction (Item 3):**
+   - Evaluated the complete 8-condition cross-validation matrix between development cells `BUGE388` and `BUGE389` (2 temperatures $\times$ 2 SOCs $\times$ 2 transfer directions).
+   - Documented the full results in `reports/validation/ge105_model_gate.md` and `ge105_report.md`: 8 conditions evaluated, 4 pass bias gate ($\le 2.0\ \text{mV}$), 6 pass voltage RMSE gate ($\le 6.0\ \text{mV}$), worst RMSE 7.92 mV (at 25 °C/90% SOC BUGE388 $\to$ BUGE389; 6.59 mV reverse), best RMSE 2.85 mV (at 40 °C/50% SOC; 2.97 mV reverse), implied SOC fails everywhere.
+   - Replaced speculative attribution with: `"degradation at 25 C/90% SOC (RMSE 6.59 and 7.92 mV, above the 6.0 mV bar); cause not tested"`.
+   - Marked Kalman gain scaling statement as `"not tested (no ablation)"`.
+   - Documented that the FlexiPod comparison (RMSE 23 to 87 mV) is between different test regimes (constant-current discharge curves vs dynamic WLTC segments), so a gap exists but its cause is not established.
+   - Corrected all report instances of a "20 mV" voltage-RMSE bar to the pre-registered 6.0 mV (citing `reports/flexipod1/model_gate.md`).
+
+4. **Sealed-Test Run Count Reconciliation (Item 4):**
+   - Conducted an exhaustive audit of session logs in `reports/validation/ge105_spec_provenance.md`, documenting every invocation of a sealed-test evaluation (all 12 invocations from step 5591 to 5681: step ID, command, exit code, error text, and edit made).
+   - Reconciled Definition A (6 scratch script execution attempts, steps 5607–5661) and Definition B (10 total invocations prior to clean exit).
+
+5. **Dev Reproducibility Clarification (Item 5):**
+   - Documented in `reports/validation/ge105_reproduction.md` that `scripts/validation/ge105_eval_dev.py` was recovered from session transcript step 5559 (not an on-disk file existing at the time of V1.8), and that the evidence demonstrating equivalence is matching outputs only (0.00 pp discrepancy across all 36 scenarios).
+
+6. **Nominal Capacity Sensitivity Evaluation (Item 6):**
+   - Evaluated all 12 nominal-initialisation development scenarios using each cell's per-file measured `nom_capacity` ($103.03\ \text{Ah}$ to $105.75\ \text{Ah}$) versus the global baseline ($105.042655\ \text{Ah}$), documented in `reports/validation/ge105_capacity_sensitivity.md`.
+   - Demonstrated that E0 tracking error drops to $\le 0.002\ \text{pp}$ Max / $\le 0.001\ \text{pp}$ RMSE when matched to per-file capacity, proving that baseline E0 non-zero error was purely an artifact of using a constant $105.04\ \text{Ah}$ parameter.
+   - Confirmed closed-loop E7v3 in-envelope robustness ($\Delta \text{RMSE} \le 0.14\ \text{pp}$ across 25 °C and 40 °C).
+
+### Verification Commands & Test Results
+- **Development Capacity Sensitivity:**
+  ```bash
+  .venv/bin/python -c "from scripts.validation.ge105_eval_dev import ..." # evaluated in reports/validation/ge105_capacity_sensitivity.md
+  ```
+- **Frozen File SHA-256 Hashes:**
+  ```bash
+  shasum -a 256 src/soc/estimators/e7v3.py src/soc/estimators/base.py deliverable/bms_soc_ref.py deliverable/calibrations/ge105_v1.json
+  ```
+  Verified:
+  - `src/soc/estimators/e7v3.py`: `057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e`
+  - `src/soc/estimators/base.py`: `33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da`
+  - `deliverable/bms_soc_ref.py`: `1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431`
+  - `deliverable/calibrations/ge105_v1.json`: `b5bb35137e08e1b6da985cbe03fb9d611748ad886d016783af530187cdb9111c`
+- **Full Test Suite Execution:**
+  ```bash
+  .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+  ```
+  **Real Output:**
+  ```text
+  SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.
+  385 passed, 1 skipped, 1 warning in 419.50s (0:06:59)
+  ```
+
