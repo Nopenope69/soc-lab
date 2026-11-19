@@ -1,5 +1,8 @@
 # SOH Estimator Qualification Status Matrix
 
+> [!NOTE] Revision (V2.10)  
+> Evaluated Candidate 2 (`PulseElasticNetEstimator` / `soh_pulse_v2`) on real physical battery degradation data from the UConn REIL Dataset 5 (64 cells, 2,855 RPT cycles, 207 manifest-verified CSV files). Candidate 2 is awarded **`LAB_VALIDATED`** status for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory reference performance testing, but remains strictly **`UNQUALIFIED`** for 100 Ah pack deployment due to cell geometry, lack of dynamic drive cycle validation, and lack of fleet operational data.
+
 > [!NOTE] Revision (V1.12)  
 > Harmonized `LAB_VALIDATED` definition with the 5-point governance rule across status classifications and qualification roadmaps.
 
@@ -15,13 +18,13 @@
 
 ## 1. Executive Summary: Real-Cell Data Status
 
-> **CRITICAL QUALIFICATION NOTE**:  
-> As established by the Phase 6.1–6.3 provenance audit, **no physical laboratory degradation datasets have been loaded or evaluated for SOH**. All cohorts previously labeled "CALCE A123", "Oxford Kokam", and "MIT/Stanford" were generated synthetically in software via mathematical equations.  
+> **REAL-CELL SOH STATUS UPDATE (Task V2)**:  
+> As established by the Task V2 laboratory evaluation, **Candidate 2 (`PulseElasticNetEstimator` / `soh_pulse_v2`) has been evaluated on physical laboratory degradation data** from the University of Connecticut Renewable Energy & Intelligent Systems Laboratory (UConn REIL) Dataset 5 (64 cells, 2,855 RPT cycles, 207 manifest-verified CSV files).  
 > 
-> Consequently:
-> - **Zero estimators currently hold `LAB_VALIDATED` or `FIELD_VALIDATED` status for either $SOH_C$ or $SOH_R$.**
-> - All prior `QUALIFIED` and `PROVISIONALLY_QUALIFIED` designations are reclassified to **`SIM_VALIDATED`**.
-> - Resistance tracking ($SOH_R$) on physical cells remains **`UNVALIDATED`** across all estimators.
+> Under the 5-point governance rule:
+> - **Candidate 2 (`soh_pulse_v2`) is awarded `LAB_VALIDATED` status for 1.2 Ah APR18650M1B cylindrical LFP cells** under standardized laboratory RPT characterisation checkups at 25 °C. On 21 sealed test cells (956 cycles), it achieved $SOH_C$ MAE of 0.0211 (50.6% error reduction over constant-mean baseline) and $SOH_R$ MAE of 0.0094 (59.6% error reduction). On 12 held-out condition cells (Groups 3 & 6), it achieved $SOH_C$ MAE of 0.0219 (56.5% error reduction).
+> - **Candidate 2 remains `UNQUALIFIED` for 100 Ah automotive/grid pack deployment.** (Failed criteria for 100 Ah pack: no 100 Ah prismatic/pouch cell data, no dynamic drive cycles, no in-service fleet operational data).
+> - **All other SOH estimators (Candidates 1, 3, 4, 5, 6) remain `SIM_VALIDATED`, `EXPERIMENTAL`, or `UNVALIDATED`** on physical cells, as their prior cohorts were generated synthetically or in simulation.
 
 ---
 
@@ -39,15 +42,15 @@
 
 ---
 
-### Candidate 2: Pulse ECM + ElasticNet (`PulseElasticNetEstimator`)
-*Methodology*: Thevenin equivalent circuit parameter identification ($R_0, R_1, C_1$) under standardized current pulses with regularized linear regression.
+### Candidate 2: Pulse ECM + ElasticNet (`PulseElasticNetEstimator` / `soh_pulse_v2`)
+*Methodology*: Thevenin 2-RC equivalent circuit parameter identification ($R_0, R_1, C_1, R_2, C_2$) under standardized current pulses with regularized ElasticNet regression ($\alpha=0.005, \rho_C=0.10, \rho_R=0.30$) and 95% conformal uncertainty intervals.
 
 | Output Channel | Dataset Used | Data Nature | Cells Evaluated | Split Methodology | Metric Achieved | Qualification Status | Notes |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **$SOH_C$ Point** | HPPC Pulse Cohort | Synthetic | 60 pulses | Split by Synthetic Pulse | 1.919% RMSE | **`SIM_VALIDATED`** | Evaluated on 1-RC ECM simulated pulses. **`UNVALIDATED`** on real cell pulses. |
-| **$SOH_C$ Uncertainty** | HPPC Pulse Cohort | Synthetic | 60 pulses | Split by Synthetic Pulse | Covariance trace | **`SIM_VALIDATED`** | Linear regression posterior variance under Gaussian noise assumption. |
-| **$SOH_R$ Point** | HPPC Pulse Cohort | Synthetic | 60 pulses | Split by Synthetic Pulse | Direct $R_0$ extraction | **`SIM_VALIDATED`** | Direct extraction of simulated $R_0$. **`UNVALIDATED`** on physical cell DCIR. |
-| **$SOH_R$ Uncertainty** | HPPC Pulse Cohort | Synthetic | 60 pulses | Split by Synthetic Pulse | Fisher Information matrix | **`SIM_VALIDATED`** | Jacobian-based identifiability covariance on simulated data. |
+| **$SOH_C$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 0.0211 MAE (2.54% RMSE, -0.16% bias) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real 1.2 Ah APR18650M1B cells. Beats constant-mean baseline (0.0427 MAE) by 50.6% on independent C/3 discharge reference. Unqualified for 100 Ah pack. |
+| **$SOH_C$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 91.2% empirical coverage ($q_{95}=0.0430$) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. |
+| **$SOH_R$ Point** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 0.0094 MAE (1.19% RMSE, +0.30% bias) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Evaluated on real 1.2 Ah APR18650M1B cells. Beats constant-mean baseline (0.0233 MAE) by 59.6% on 10s DCIR reference. Unqualified for 100 Ah pack. |
+| **$SOH_R$ Uncertainty** | UConn REIL Dataset 5 | Real Laboratory Data | 64 cells (21 sealed test cells, 956 samples) | Cell Holdout (Pre-registered sealed test) | 98.6% empirical coverage ($q_{95}=0.0285$) | **`LAB_VALIDATED`** (1.2 Ah cylindrical)<br>*(**`UNQUALIFIED`** for 100 Ah pack)* | Non-parametric conformal quantile calibrated on 11 held-out dev validation cells. |
 
 ---
 
@@ -127,3 +130,30 @@ Key verification findings regarding SOH:
 2. **Short Characterisation Protocols:** Tests consist solely of characterisation checkups: initial 1C capacity check cycles, 30 s impedance pulses, C/15 pseudo-OCV ramps, and 986 s dynamic WLTC profiles.
 3. **Repeated 25 °C Tests Are Drift, Not Aging:** Repeat 25 °C partial checkups performed on `BUGE388` ($\Delta \text{Cap} = -1.17\%$), `BUGE389` ($\Delta \text{Cap} = -1.89\%$), and `BUGE390` ($\Delta \text{Cap} = -1.27\%$) reflect cycler channel drift, contact impedance variation, and thermal equilibration differences across test days, **not irreversible electrochemical degradation**.
 4. **Qualification Implication:** This dataset provides zero valid ground-truth degradation trajectories ($SOH_C$ or $SOH_R$). Therefore, **no SOH estimators can be qualified or awarded `LAB_VALIDATED` status from this dataset**. SOH status remains unchanged across all candidate models.
+
+---
+
+## 5. UConn REIL Dataset 5 SOH Validation Summary (Task V2)
+
+> **Dataset:** UConn REIL Dataset 5 (207 manifest-verified CSV files, 2,855 RPT cycles)  
+> **Target Chemistry & Geometry:** LithiumWerks APR18650M1B 1.2 Ah LFP/graphite cylindrical cells (64 physical cells)  
+> **Evaluation Reference:** `reports/validation/uconn_report.md`, `reports/validation/uconn_sealed_test.md`  
+> **Calibration Artifact:** `deliverable/calibrations/uconn_soh_pulse_v2.json`  
+> **C Header:** `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`
+
+### Summary of Results
+Task V2 executed physical laboratory validation of pulse-based SOH estimation across all 64 cells in UConn REIL Dataset 5, spanning 2,855 RPT characterisation cycles across 11 cycling conditions.
+
+1. **Governance Compliance:** Meets all 5 requirements of the `LAB_VALIDATED` rule:
+   - Manifest-verified files (`data/manifests/uconn_reil_dataset5.sha256`, 100% hash match).
+   - Tracked scripts in `scripts/validation/` reproducible from clean shell.
+   - Specification and partitions committed before unsealing test cells (`f4a8d87`, `f592bc7`).
+   - Independent reference ($SOH_C$ from independent C/3 complete discharge; $SOH_R$ from 10s DCIR).
+   - Substantial data volume: 956 sealed test samples, 497 condition-held-out test samples.
+2. **Predictive Performance on Sealed Cells:**
+   - $SOH_C$ Sealed MAE: 0.0211 (Ratio to fair baseline = 0.494x, 50.6% error reduction).
+   - $SOH_R$ Sealed MAE: 0.0094 (Ratio to fair baseline = 0.404x, 59.6% error reduction).
+   - Domain Generalization: Out-of-distribution transfer to severe stress condition groups 3 & 6 achieves 0.0219 MAE (56.5% error reduction over baseline).
+3. **Qualification Boundary:**
+   - Awarded **`LAB_VALIDATED`** strictly for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
+   - Remains **`UNQUALIFIED`** for 100 Ah automotive/grid pack deployment due to cell format mismatch, lack of dynamic drive cycle evaluation, and lack of fleet operational data.
