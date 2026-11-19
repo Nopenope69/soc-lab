@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Evaluation Reproduction Report (V1.11)
 
+> [!NOTE] Revision (V1.12 Dev Reproducibility Clarification)  
+> Documented that `scripts/validation/ge105_eval_dev.py` was recovered from the session transcript (step 5559) rather than an on-disk file existing at the time of V1.8, and clarified that the evidence demonstrating equivalence is matching outputs only.
+
 > **Document ID:** REPRO-GE105-001  
 > **Date:** 2026-11-19  
 > **Status:** VERIFIED & REPRODUCED  
@@ -19,7 +22,7 @@
 In Task V1.11 Item 1, the closed-loop evaluation scripts previously residing only in temporary scratch directories or session logs were recovered, audited, parameterized, and tracked into the repository under `scripts/validation/`.
 
 Both scripts were executed from a clean shell using `.venv/bin/python`:
-1. **Development Partition (`scripts/validation/ge105_eval_dev.py`):** Recovered from session log step 5559. Evaluated across 36 scenarios on cells `BUGE388` and `BUGE389`.
+1. **Development Partition (`scripts/validation/ge105_eval_dev.py`):** Recovered from the session transcript (step 5559), not from a file that existed on disk at the time of the V1.8 run. The evidence showing it is the same code consists exclusively of matching outputs (the re-executed script matches the committed table in `reports/validation/ge105_closed_loop_dev.md` with 0.00 pp discrepancy across all 36 scenarios).
 2. **Sealed Test Partition (`scripts/validation/ge105_eval_test.py`):** Parameterized from the original scratch script (`eval_test_cells.py`). Evaluated across 24 scenarios on cells `BUGE390` and `BUGE391`.
 3. **Original Backup Scratch Verification:** The original, unedited backup script `/Users/tecbusiness/soc_backup/v1_scratch/eval_test_cells.py` was executed independently once from a clean shell.
 
