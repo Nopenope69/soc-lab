@@ -58,6 +58,49 @@ In compliance with the Phase 6 / Hardening validation rules and V1.11 LABEL RULE
    - Temperature input is strictly mapped to the thermal chamber setpoint extracted from the canonical filename regex `^(\d{8})_(\d{4})_(.+?)_(\d+)C(?:_([a-zA-Z0-9]+))?_([a-zA-Z0-9]+)_dattes\.mat$`.
 5. **WLTC Structure Across Files:**
    - All full-protocol files contain exactly two 44-phase dynamic WLTC segments (986 seconds each) at ~90% SOC and ~50% SOC, except the earliest test files for `BUGE390` 25C and `BUGE391` 25C (both 2023-06-27), which terminated at phase 166 before WLTC was incorporated into the test script.
+6. **Per-Cell Metadata Capacity Variation (`result.metadata.cell.nom_capacity`):**
+   Inspection of the MAT structure field `result.metadata.cell.nom_capacity` across all 36 files reveals that in DATTES, this field does not represent a static nameplate specification, but rather a run-specific measured capacity that varies across tests:
+
+| Cell ID | File Name | `result.metadata.cell.nom_capacity` (Ah) | Matches `105.042655`? |
+|:---|:---|:---:|:---:|
+| **BUGE388** | `20230804_1122_full_0C_buge388_dattes.mat` | 103.664478 | No |
+| **BUGE388** | `20230808_1118_partial_10C_buge388_dattes.mat` | 105.387856 | No |
+| **BUGE388** | `20230810_1112_partial_15C_buge388_dattes.mat` | 105.303818 | No |
+| **BUGE388** | `20230825_1333_full_25C_buge388_dattes.mat` | **105.042655** | **YES (Exact match)** |
+| **BUGE388** | `20230829_1115_partial_20C_buge388_dattes.mat` | 104.729185 | No |
+| **BUGE388** | `20231110_1642_partial_25C_buge388_dattes.mat` | 103.799427 | No |
+| **BUGE388** | `20231116_1716_partial_30C_buge388_dattes.mat` | 103.809594 | No |
+| **BUGE388** | `20231120_1103_partial_35C_buge388_dattes.mat` | 103.798772 | No |
+| **BUGE388** | `20231123_1349_full_40C_buge388_dattes.mat` | 103.847153 | No |
+| **BUGE389** | `20230808_1242_full_25C_buge389_dattes.mat` | 105.750278 | No |
+| **BUGE389** | `20230812_2136_full_0C_buge389_dattes.mat` | 103.031451 | No |
+| **BUGE389** | `20230816_1246_partial_35C_buge389_dattes.mat` | 104.233152 | No |
+| **BUGE389** | `20230822_1420_partial_20C_buge389_dattes.mat` | 103.739411 | No |
+| **BUGE389** | `20230825_1339_full_40C_buge389_dattes.mat` | 104.276614 | No |
+| **BUGE389** | `20230830_1602_partial_30C_buge389_dattes.mat` | 103.498032 | No |
+| **BUGE389** | `20230901_1054_partiel_15C_buge389_dattes.mat` | 103.446786 | No |
+| **BUGE389** | `20230904_1341_partial_10C_buge389_dattes.mat` | 102.888420 | No |
+| **BUGE389** | `20230905_1721_partial_25C_buge389_dattes.mat` | 103.196057 | No |
+| **BUGE390** | `20230627_1131_full_25C_buge390_dattes.mat` | 106.635223 | No |
+| **BUGE390** | `20230703_1138_pseudoOCV_25C_buge390_dattes.mat` | 105.991817 | No |
+| **BUGE390** | `20230710_1503_partial_15C_buge390_dattes.mat` | 105.402544 | No |
+| **BUGE390** | `20230712_1137_full_0C_buge390_dattes.mat` | 103.905782 | No |
+| **BUGE390** | `20230717_1001_partial_20C_buge390_dattes.mat` | 105.323820 | No |
+| **BUGE390** | `20230718_1510_partial_30C_buge390_dattes.mat` | 105.508861 | No |
+| **BUGE390** | `20230720_1112_partial_35C_buge390_dattes.mat` | 105.491448 | No |
+| **BUGE390** | `20230721_2113_full_40C_buge390_dattes.mat` | 105.867902 | No |
+| **BUGE390** | `20230724_1505_partial_10C_buge390_dattes.mat` | 104.737433 | No |
+| **BUGE390** | `20230726_0918_partial_25C_final_buge390_dattes.mat` | 104.886871 | No |
+| **BUGE391** | `20230627_1135_full_25C_buge391_dattes.mat` | 106.537465 | No |
+| **BUGE391** | `20230712_1137_full_0C_buge391_dattes.mat` | 104.200387 | No |
+| **BUGE391** | `20231205_1137_partial_20C_buge391_dattes.mat` | 104.157114 | No |
+| **BUGE391** | `20231207_1254_partial_15C_buge391_dattes.mat` | 104.202208 | No |
+| **BUGE391** | `20231211_1606_partial_10C_buge391_dattes.mat` | 103.675439 | No |
+| **BUGE391** | `20231214_1526_partial_30C_buge391_dattes.mat` | 103.943779 | No |
+| **BUGE391** | `20240130_1403_partial_35C_buge391_dattes.mat` | 103.532242 | No |
+| **BUGE391** | `20240201_1650_full_40C_buge391_dattes.mat` | 104.435322 | No |
+
+**Conclusion:** The constant `105.042655` hardcoded in `src/soc/data/ge105_loader.py` and allowlisted in `tests/allowlisted_constants.json` matches **only one single file** (`BUGE388` 25 °C full test). It does not match the other three cells (`BUGE389`, `BUGE390`, `BUGE391`) or even other tests on the same cell (`BUGE388`), which range between 102.88 Ah and 106.64 Ah. No code changes are made to frozen loaders or allowlists per task instructions.
 
 ---
 
