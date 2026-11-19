@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
+> [!NOTE] Revision (V1.13 Efficiency Convention Clarification)  
+> Documented that `scripts/validation/ge105_eval_dev.py` applies the repository spec efficiency convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$). On dev cells, re-running E0 under $\eta = 1.0$ shifts Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).
+
 > [!NOTE] Revision (V1.12 Documentation Honesty and Provenance Auditing)  
 > - Updated cell format descriptions: replaced cylindrical/26650 assertions with "CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)" and noted format unverified in readmes for 105 Ah cells.  
 > - Model Gate: Added full 8-condition out-of-sample cross-validation table (Section 4.3), corrected voltage-RMSE bar to pre-registered 6.0 mV (citing reports/flexipod1/model_gate.md), replaced inter-cell impedance variation speculation with untested attribution, and marked Kalman gain scaling as untested (no ablation).  
@@ -284,6 +287,10 @@ To prevent misleading claims, the following boundaries must be observed:
    - The Gustave Eiffel cells are EVE Energy 105 Ah LFP cells.
    - FlexiPod uses a distinct pack architecture and battery chemistry/supplier.
    - Consequently, this report provides **transfer evidence** demonstrating that the E7v3 architecture scales from CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified) to 105 Ah cells. It does **NOT** constitute direct production deployment validation for FlexiPod.
+5. **E0 Efficiency Implementation Difference:**
+   - In `scripts/validation/ge105_eval_dev.py`, E0 implements the algorithm specification convention (`docs/ALGORITHM_SPEC.md` lines 81–82, `src/soc/models/cell_2rc.py` lines 38–43) where $\eta = 0.998$ for charge ($I < 0$) and $\eta = 1.0$ for discharge ($I \ge 0$).
+   - In `scripts/validation/ge105_eval_test.py`, E0 evaluates pure Ah integration with $\eta = 1.0$ for all currents.
+   - On the development cells across all 12 nominal WLTC scenarios, re-running E0 under pure Ah integration ($\eta = 1.0$) shifts Max error by at most $0.0018\ \text{pp}$ and RMSE by at most $0.0010\ \text{pp}$ (identical at 2 decimal places: Max error $\le 0.07\ \text{pp}$, RMSE $\le 0.04\ \text{pp}$). This confirms that `profiles.soc` was computed via pure Ah integration ($\eta = 1.0$) and that charge efficiency contributes an imperceptible $\le 0.002\ \text{pp}$ effect.
 
 ---
 

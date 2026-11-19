@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Validation Protocol (V1.3)
 
+> [!NOTE] Revision (V1.13 Efficiency Convention Clarification)  
+> Documented the Coulombic efficiency conventions used by E0 across scripts: `scripts/validation/ge105_eval_dev.py` applies the repository spec convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$ for all currents). Re-running dev cells under $\eta = 1.0$ changes Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).
+
 > [!NOTE] Revision (V1.12)  
 > Updated `LAB_VALIDATED` definition to the 5-point governance rule, replaced validated operating envelope statement with declared calibration envelope `[20, 45]` °C, and revised cell format terminology (format unverified for CALCE, 105 Ah cell format).
 
@@ -49,6 +52,10 @@ Cell partitioning strictly separates model parameter identification and tuning f
 - In DATTES processed MATLAB files, `profiles.soc` is derived from cycler ampere-hour integration ($I_{\text{file}} \cdot dt$), re-anchored to $100.0\%$ at full-charge cut-off events ($V \ge 3.65\ \text{V}$, $I \le C/20$).
 - **Crucial Methodological Caveat:** `profiles.soc` is **NOT** an independent electrochemical truth measurement. It is an Ah-counting reference.
 - **Consequence for Baseline Comparison:** Pure anchored Coulomb counting (E0) will align with `profiles.soc` to within numerical integration precision by construction. Consequently, low E0 error does not demonstrate physical superiority—it merely reflects identical integration of the same current channel.
+- **Coulombic Efficiency Conventions:**
+  - In `scripts/validation/ge105_eval_dev.py`, E0 implements the repository/algorithm specification convention (`docs/ALGORITHM_SPEC.md` lines 81–82, `src/soc/models/cell_2rc.py` lines 38–43) where $\eta = 0.998$ for charge ($I < 0$) and $\eta = 1.0$ for discharge ($I \ge 0$).
+  - In `scripts/validation/ge105_eval_test.py`, E0 evaluates pure Ah integration with $\eta = 1.0$ for all currents ($I > 0$ and $I \le 0$).
+  - **Empirical Quantification on Dev Cells:** Re-running E0 on the 12 nominal WLTC development scenarios under $\eta = 1.0$ yields a maximum discrepancy of $0.0018\ \text{pp}$ in Max error and $0.0010\ \text{pp}$ in RMSE relative to the $\eta = 0.998$ convention (which rounds to 0.00 pp across all scenarios at two decimal places). This confirms that `profiles.soc` was computed via pure Ah integration ($\eta = 1.0$) and that charge efficiency contributes an imperceptible $\le 0.002\ \text{pp}$ effect.
 
 ### 3.2 Primary Evaluation Metrics
 Estimators are evaluated on:

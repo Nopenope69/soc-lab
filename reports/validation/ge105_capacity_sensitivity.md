@@ -1,5 +1,10 @@
 # Gustave Eiffel 105 Ah Capacity Sensitivity Analysis (Dev Partition)
 
+> [!NOTE] Revision (V1.13 Efficiency Convention and File Path Corrections)  
+> - Corrected Section 2.2 prose to match implementation: $\eta = 0.998$ for charge ($I < 0$) and $\eta = 1.0$ for discharge ($I \ge 0$).  
+> - Corrected config path to `configs/validation/ge105_config.yaml`.  
+> - Replaced robustness phrasing with exact bounded shift ($\le 0.14\ \text{pp}$ in-envelope, $\le 0.49\ \text{pp}$ overall) and added note that reference `profiles.soc` is an Ah integral computed with each file's own `nom_capacity`, confirming the reference is not independent of E0.
+
 > **Document ID:** SENS-GE105-001  
 > **Date:** 2026-11-19  
 > **Status:** DEVELOPMENT (Development Cells Only; No Sealed Test Cells Used)  
@@ -42,7 +47,7 @@ For each MAT file evaluated in `scripts/validation/ge105_eval_dev.py`, the per-f
 Using the logic from `scripts/validation/ge105_eval_dev.py`:
 - **E0 (Coulomb Counting):** 
   $$\Delta z_k = -\frac{\eta \cdot I_k \cdot \Delta t}{3600 \cdot Q}$$
-  where $\eta = 0.998$ for discharge ($I > 0$) and $\eta = 1.0$ for charge ($I \le 0$). Evaluated with $Q = Q_{\text{base}}$ (Baseline) versus $Q = Q_{\text{file}}$ (Sensitivity).
+  where $\eta = 0.998$ for charge ($I < 0$) and $\eta = 1.0$ for discharge ($I \ge 0$). Evaluated with $Q = Q_{\text{base}}$ (Baseline) versus $Q = Q_{\text{file}}$ (Sensitivity).
 - **E7v3 GE105 (`BmsSocEstimatorRef`):**
   The reference estimator uses `calib.q_table_ah` to interpolate capacity across temperature. For sensitivity evaluation, `nominal_capacity_ah` is updated to $Q_{\text{file}}$ and `q_table_ah` is scaled by $Q_{\text{file}} / Q_{\text{base}}$:
   $$Q_{T,\text{sens}} = Q_{T,\text{base}} \times \frac{Q_{\text{file}}}{Q_{\text{base}}}$$
