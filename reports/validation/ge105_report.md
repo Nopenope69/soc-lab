@@ -111,8 +111,8 @@ In compliance with the Phase 6 / Hardening validation rules and V1.11 LABEL RULE
 
 ### Separation of Criteria: Voltage Tracking vs. Implied-SOC Inversion
 The open-loop model gate evaluates two distinct criteria that must not be conflated:
-1. **Dynamic Voltage Tracking:** Evaluates terminal voltage tracking error ($|\text{Bias}_V| \le 2.0\ \text{mV}$, $\text{RMSE}_V \le 6.0\ \text{mV}$, or general threshold $\le 20.0\ \text{mV}$).
-   - **FlexiPod:** The model **failed on voltage tracking**, exhibiting terminal voltage RMSE of **23 to 87 mV** (threshold $\le 20\ \text{mV}$). This was a genuine voltage tracking failure that was never explained by method.
+1. **Dynamic Voltage Tracking:** Evaluates terminal voltage tracking error ($|\text{Bias}_V| \le 2.0\ \text{mV}$, $\text{RMSE}_V \le 6.0\ \text{mV}$; cite `reports/flexipod1/model_gate.md`).
+   - **FlexiPod:** The model **failed on voltage tracking**, exhibiting terminal voltage RMSE of **23 to 87 mV** (well exceeding the pre-registered $\le 6.0\ \text{mV}$ threshold; cite `reports/flexipod1/model_gate.md`). Note that the FlexiPod comparison is between different tests (continuous constant-current discharge curves versus dynamic WLTC segments), so a gap exists but its cause is not established.
    - **Gustave Eiffel (In-Sample):** 2RC voltage tracking **passes** on the plateau at 50% SOC with terminal voltage RMSE of **2.62 mV to 3.12 mV** (passing $\le 6.0\ \text{mV}$) and bias of **-1.18 mV to -1.41 mV** (passing $\le 2.0\ \text{mV}$).
 2. **Implied-SOC Error Inversion:** Evaluates open-loop voltage error mapped into SOC space ($\frac{|\Delta V|}{d\text{OCV}/d\text{SOC}} \le 2.5\ \text{pp}$ or $\le 5.0\ \text{pp}$).
    - **Gustave Eiffel:** Implied-SOC error **fails across all conditions**, yielding **6.1 pp to 7.5 pp at 50% SOC** and **12.5 pp to 14.3 pp at 90% SOC** (failing both $\le 2.5\ \text{pp}$ and $\le 5.0\ \text{pp}$).
@@ -134,7 +134,11 @@ The open-loop model gate evaluates two distinct criteria that must not be confla
 | **BUGE389** | **BUGE388** | 40 °C | 90% | -1.92 | 5.06 | 12.53 | **PASS** | FAIL |
 | **BUGE389** | **BUGE388** | 40 °C | 50% | -0.62 | 2.85 | 7.42 | **PASS** | FAIL |
 
-Out-of-sample voltage RMSE remains $\le 2.97\ \text{mV}$ on the 40 °C plateau, confirming model parameter transferability between physical cells at 40 °C, while implied SOC error consistently fails due to plateau flatness.
+**Out-of-Sample Results:** Across 8 conditions evaluated out-of-sample:
+- **Pass Rates:** 4 of 8 conditions pass the bias gate ($|\text{Bias}_V| \le 2.0\ \text{mV}$); 6 of 8 conditions pass the voltage RMSE gate ($\text{RMSE}_V \le 6.0\ \text{mV}$).
+- **RMSE Extremes:** Worst voltage RMSE is **7.92 mV** (at 25 °C / 90% SOC BUGE388 $\to$ BUGE389; 6.59 mV in reverse direction), showing degradation at 25 °C / 90% SOC (RMSE 6.59 and 7.92 mV, above the 6.0 mV bar); cause not tested. Best voltage RMSE is **2.85 mV** (at 40 °C / 50% SOC; 2.97 mV in reverse direction).
+- **Implied SOC:** Fails across all 8 conditions (7.07 pp to 15.60 pp vs $\le 2.5\ \text{pp}$) due to plateau flatness.
+- **Closed-Loop Gating:** The assertion that observability-based Kalman gain scaling is essential to prevent plateau runaway is marked as **not tested (no ablation)**.
 
 ### ECM Parameter Agreement with Published Dataset (SBNO8W)
 - **Ohmic Resistance ($R_0$):** Our WLTC regression yielded $0.565\ \text{m}\Omega$ at 25 °C and $0.461\ \text{m}\Omega$ at 40 °C. The author's published pulse extraction in `batt_data.mat` reported $0.537\ \text{m}\Omega$ at 25 °C (5.2% difference) and $0.435\ \text{m}\Omega$ at 40 °C (5.9% difference).
@@ -307,7 +311,7 @@ This section summarises the reproducibility and honesty corrections completed du
    - Added a fair baseline using CALCE parameters scaled to 105.04 Ah via the existing `ParamSet` mechanism, which achieves 3.82–5.88 pp RMSE on test cells at 40 °C (~90% SOC), evaluated post-hoc.
 
 6. **Model Gate Corrections & Out-of-Sample Cross-Validation (Item 7):**
-   - Separated acceptance criteria: FlexiPod failed voltage tracking (RMSE 23–87 mV vs $\le 20\ \text{mV}$); GE105 passes voltage tracking ($\le 3.12\ \text{mV}$) but fails implied-SOC ($6.1\text{--}14.3\ \text{pp}$) due to plateau flatness.
+   - Separated acceptance criteria: FlexiPod failed voltage tracking (RMSE 23–87 mV vs pre-registered $\le 6.0\ \text{mV}$; cite `reports/flexipod1/model_gate.md`); GE105 passes voltage tracking ($\le 3.12\ \text{mV}$) but fails implied-SOC ($6.1\text{--}14.3\ \text{pp}$) due to plateau flatness. Note that FlexiPod used constant-current discharge curves versus WLTC dynamic segments.
    - Documented that Step V1.4 parameter identification was in-sample; executed out-of-sample cross-validation between `BUGE388` and `BUGE389`, showing out-of-sample voltage RMSE passes at $\le 2.97\ \text{mV}$ at 40 °C (50% SOC).
 
 7. **Reference Implementation Parity & Open Decision (Item 8):**

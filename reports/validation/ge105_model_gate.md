@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Open-Loop Model Gate Report (V1.4)
 
+> [!NOTE] Revision (V1.12)  
+> Corrected voltage RMSE threshold citation to pre-registered 6.0 mV (per `reports/flexipod1/model_gate.md`), expanded out-of-sample results across all 8 conditions, noted test regime divergence for FlexiPod comparison, and marked untested hypotheses.
+
 > **Document ID:** GATE-GE105-001  
 > **Date:** 2026-11-19  
 > **Evaluated Cells:** Development Cells `BUGE388` and `BUGE389`  
@@ -7,7 +10,7 @@
 > **Profiles:** WLTC Dynamic Segments at ~90% SOC and ~50% SOC (Resampled to uniform 1.0 s grid)  
 > **Target Thresholds:**  
 > - $|\text{Bias}_V| \le 2.0\ \text{mV}$  
-> - $\text{RMSE}_V \le 6.0\ \text{mV}$  
+> - $\text{RMSE}_V \le 6.0\ \text{mV}$ (cite `reports/flexipod1/model_gate.md`)  
 > - $\text{Implied SOC Error} \le 2.5\ \text{pp}$  
 > **Status:** Completed on Dev Cells (Held-out Test Cells BUGE390/391 remain sealed)
 
@@ -19,8 +22,8 @@ The open-loop model gate evaluates whether an equivalent circuit model (ECM) can
 
 ### Separation of Acceptance Criteria & Comparison with FlexiPod
 To evaluate open-loop model validity honestly, the two acceptance criteria must be separated:
-1. **Dynamic Voltage Tracking Criterion:** Evaluates terminal voltage tracking error ($|\text{Bias}_V| \le 2.0\ \text{mV}$, $\text{RMSE}_V \le 6.0\ \text{mV}$, or general gate $\le 20.0\ \text{mV}$).
-   - **FlexiPod Outcome:** The model **failed on voltage tracking**, exhibiting large terminal voltage RMSE of **23 to 87 mV** (well exceeding the $\le 20\ \text{mV}$ threshold). This was a genuine voltage tracking failure that was never explained by method.
+1. **Dynamic Voltage Tracking Criterion:** Evaluates terminal voltage tracking error ($|\text{Bias}_V| \le 2.0\ \text{mV}$, $\text{RMSE}_V \le 6.0\ \text{mV}$; cite `reports/flexipod1/model_gate.md`).
+   - **FlexiPod Outcome:** The model **failed on voltage tracking**, exhibiting large terminal voltage RMSE of **23 to 87 mV** (well exceeding the pre-registered $\le 6.0\ \text{mV}$ threshold; cite `reports/flexipod1/model_gate.md`). Note that the FlexiPod comparison is between different tests (continuous constant-current discharge curves versus dynamic WLTC segments), so a gap exists but its cause is not established.
    - **Gustave Eiffel Outcome:** On commercial 105 Ah LFP dev cells (`BUGE388`, `BUGE389`), 2RC voltage tracking **passes** on the plateau at 50% SOC with terminal voltage RMSE of **2.62 mV to 3.12 mV** (passing $\le 6.0\ \text{mV}$) and bias of **-1.18 mV to -1.41 mV** (passing $\le 2.0\ \text{mV}$). Across all 25 °C and 40 °C conditions, voltage RMSE is $\le 6.83\ \text{mV}$.
 2. **Implied-SOC Error Criterion:** Evaluates open-loop voltage error inversion into state space ($\text{Implied SOC Error} = \frac{|\Delta V|}{d\text{OCV}/d\text{SOC}} \le 2.5\ \text{pp}$ or $\le 5.0\ \text{pp}$).
    - **Gustave Eiffel Outcome:** Implied-SOC error **fails across all conditions**, yielding **6.1 pp to 7.5 pp at 50% SOC** and **12.5 pp to 14.3 pp at 90% SOC** (failing both $\le 2.5\ \text{pp}$ and $\le 5.0\ \text{pp}$).
@@ -95,14 +98,17 @@ To evaluate parameter generalizability without data leakage, parameters identifi
 | **BUGE389** | **BUGE388** | 40 °C | 90% | -1.92 | **PASS** | 5.06 | **PASS** | 12.53 | FAIL | **V-PASS / IMP-FAIL** |
 | **BUGE389** | **BUGE388** | 40 °C | 50% | -0.62 | **PASS** | 2.85 | **PASS** | 7.42 | FAIL | **V-PASS / IMP-FAIL** |
 
-**Out-of-Sample Observations:**
-1. **Voltage Tracking Passes at 40 °C (50% SOC):** Out-of-sample voltage tracking passes both bias ($\le 2.0\ \text{mV}$) and RMSE ($\le 6.0\ \text{mV}$) gates between cells at 40 °C on the plateau (e.g., BUGE388 $\to$ BUGE389 yields -0.77 mV bias, 2.97 mV RMSE; BUGE389 $\to$ BUGE388 yields -0.62 mV bias, 2.85 mV RMSE).
-2. **Implied SOC Error Consistently Fails:** Implied SOC error remains between 7.0 pp and 15.6 pp across all out-of-sample conditions due to the flat LFP OCV derivative.
-
 ---
 
 ## 5. Key Takeaways for Estimator Design
 
-1. **Clear Criterion Separation:** The FlexiPod failure was a dynamic voltage tracking failure (RMSE 23 to 87 mV) that was not explained by method. On Gustave Eiffel dev cells, 2RC voltage RMSE passes ($\le 3.12\ \text{mV}$ in-sample, $\le 2.97\ \text{mV}$ out-of-sample at 40 °C 50% SOC), but implied-SOC error fails ($6.1\text{--}15.6\ \text{pp}$) purely because of the flat $d\text{OCV}/d\text{SOC}$ curve.
-2. **No Automatic Closed-Loop Correction:** Closed-loop E7v3 does **not** magically eliminate plateau ambiguity. On the contrary, when disturbed by +10 pp at 50% SOC on held-out test cells, the closed-loop filter drifts and ends at 12.15 pp to 16.23 pp error (worse than open-loop Coulomb counter E0). Observability-based Kalman gain scaling is essential to prevent plateau runaway.
-3. **In-Sample vs. Out-of-Sample Distinction:** Step V1.4 parameter identification was in-sample; out-of-sample cross-validation confirms that voltage tracking transfers between physical cells at 40 °C but exhibits slight degradation at 25 °C due to inter-cell impedance variations.
+1. **Full Out-of-Sample Result:** Across 8 conditions evaluated out-of-sample:
+   - **Conditions Evaluated:** 8 total cross-validation scenarios across 25 °C and 40 °C at 90% and 50% SOC.
+   - **Bias Gate ($|\text{Bias}_V| \le 2.0\ \text{mV}$):** 4 of 8 conditions pass.
+   - **Voltage RMSE Gate ($\text{RMSE}_V \le 6.0\ \text{mV}$):** 6 of 8 conditions pass.
+   - **RMSE Range:** Worst voltage RMSE is **7.92 mV** (at 25 °C / 90% SOC BUGE388 $\to$ BUGE389; 6.59 mV in reverse direction); best voltage RMSE is **2.85 mV** (at 40 °C / 50% SOC; 2.97 mV in reverse direction).
+   - **Implied SOC Gate ($\le 2.5\ \text{pp}$):** Fails everywhere (7.07 pp to 15.60 pp) due to the ultra-flat LFP plateau derivative.
+   - **Degradation at 25 °C / 90% SOC:** Degradation at 25 °C / 90% SOC (RMSE 6.59 and 7.92 mV, above the 6.0 mV bar); cause not tested.
+2. **Context on FlexiPod Comparison:** On FlexiPod, voltage RMSE was 23 to 87 mV (failing the pre-registered 6.0 mV bar; cite `reports/flexipod1/model_gate.md`). However, this comparison is between different tests (continuous constant-current discharge curves versus dynamic WLTC segments), so a gap exists but its cause is not established.
+3. **No Automatic Closed-Loop Correction:** Closed-loop E7v3 does **not** magically eliminate plateau ambiguity. On the contrary, when disturbed by +10 pp at 50% SOC on held-out test cells, the closed-loop filter drifts and ends at 12.15 pp to 16.23 pp error (worse than open-loop Coulomb counter E0). The assertion that observability-based Kalman gain scaling is essential to prevent plateau runaway is **not tested (no ablation)**.
+4. **In-Sample vs. Out-of-Sample Distinction:** Step V1.4 parameter identification was in-sample; out-of-sample cross-validation shows parameter transferability on the 40 °C plateau, while 25 °C 90% SOC exceeds the 6.0 mV threshold.
