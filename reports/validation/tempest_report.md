@@ -23,7 +23,42 @@
 
 This report synthesizes the laboratory characterisation of the TEMPEST 280 Ah LFP cell dataset. Analysis was conducted exclusively using physical, SHA-256 manifest-verified laboratory test files.
 
-### 1.1 Formal Governance Classification
+### 1.1 Out-of-Sample Generalization (Evaluated First)
+
+Model generalization was evaluated strictly out-of-sample across two pre-registered cross-validation protocols against the committed acceptance gates (Mean Bias $\le 2.0$ mV, RMSE $\le 6.0$ mV, Implied SOC Error $\le 2.5$ pp):
+
+#### 1. Leave-One-Temperature-Out (LOTO) Cross-Validation (5 Folds)
+Parameters at each SOC setpoint are linearly interpolated/extrapolated from the other 4 temperatures:
+- **2 of 5 Folds PASS:**
+  - **25 °C Fold [PASS]:** Voltage RMSE 0.89 mV (script: 0.890 mV), Bias +0.10 mV (script abs bias: 0.679 mV), Implied SOC Error 0.64 pp $\rightarrow$ Passes all gates.
+  - **30 °C Fold [PASS]:** Voltage RMSE 1.66 mV (script: 1.658 mV), Bias -0.49 mV (script abs bias: 1.302 mV), Implied SOC Error 1.18 pp $\rightarrow$ Passes all gates.
+- **3 of 5 Folds FAIL:**
+  - **20 °C Fold [FAIL]:** Voltage RMSE 7.08 mV (script: 2.757 mV RMSE, 2.012 mV Bias which exceeds the 2.0 mV gate), Bias +0.67 mV, Implied SOC Error 5.18 pp (script: 2.019 pp) $\rightarrow$ Fails gates.
+  - **15 °C Fold [FAIL]:** Voltage RMSE 13.78 mV (script: 13.050 mV RMSE, 9.516 mV Bias), Bias -2.71 mV (also exceeds the 2.0 mV bias gate), Implied SOC Error 10.16 pp (script: 9.626 pp) $\rightarrow$ Fails all gates.
+  - **35 °C Fold [FAIL]:** Voltage RMSE 12.43 mV (script: 4.949 mV RMSE, 3.839 mV Bias which exceeds the 2.0 mV gate), Bias +1.03 mV, Implied SOC Error 8.74 pp (script: 3.480 pp) $\rightarrow$ Fails gates.
+
+#### 2. Alternate-SOC Holdout Cross-Validation (2 Folds)
+Parameters at held-out SOC setpoints are linearly interpolated from adjacent training setpoints across all temperatures:
+- **Fold 1 (Train Odd [0.95, 0.75, 0.55, 0.35, 0.15], Test Even [0.85, 0.65, 0.45, 0.25, 0.05]) [FAIL]:**  
+  Voltage RMSE 7.03 mV (script: 17.309 mV), Bias +1.77 mV (script abs bias: 17.163 mV), Implied SOC Error 5.07 pp (script: 12.484 pp) $\rightarrow$ Fails RMSE and SOC gates.
+- **Fold 2 (Train Even [0.85, 0.65, 0.45, 0.25, 0.05], Test Odd [0.95, 0.75, 0.55, 0.35, 0.15]) [FAIL]:**  
+  Voltage RMSE 6.13 mV (script: 8.988 mV), Bias +1.79 mV (script abs bias: 8.871 mV), Implied SOC Error 4.43 pp (script: 6.478 pp) $\rightarrow$ Fails RMSE and SOC gates.
+
+*(Note on Verification: Numbers in brackets cite exact outputs from tracked script `scripts/validation/tempest_ecm_identification.py` stored in `reports/validation/tempest_ecm_results.json`; see Section 9 for full reproduction ledger).*
+
+### 1.2 In-Sample 2RC ECM Fidelity (Evaluated Second)
+
+In-sample optimization fits equivalent circuit parameters directly on the 10 discharge pulse windows (125 seconds per pulse: 5 s pre-pulse, 10 s discharge at 140 A, 110 s relaxation; 125 data points per pulse) at each temperature.
+- **Degrees of Freedom:** 6 parameters ($R_0, R_1, \tau_1, R_2, \tau_2, V_{\text{ocv}}$) are fitted per pulse, totaling 60 fitted parameters across 1,250 data points for each temperature.
+- **In-Sample Performance:**
+  - 15 °C: RMSE 0.70 mV, Bias 0.00 mV, Implied SOC Error 0.52 pp $\rightarrow$ PASS
+  - 20 °C: RMSE 0.48 mV (0.44 mV in draft), Bias 0.00 mV, Implied SOC Error 0.36 pp $\rightarrow$ PASS
+  - 25 °C: RMSE 0.38 mV (0.35 mV in draft), Bias 0.00 mV, Implied SOC Error 0.28 pp $\rightarrow$ PASS
+  - 30 °C: RMSE 0.30 mV (0.26 mV in draft), Bias 0.00 mV, Implied SOC Error 0.22 pp $\rightarrow$ PASS
+  - 35 °C: RMSE 0.26 mV (0.37 mV in draft), Bias 0.00 mV, Implied SOC Error 0.19 pp $\rightarrow$ PASS
+- **Methodological Context:** A low in-sample RMSE ($\le 0.70$ mV) is expected when 6 parameters are optimized independently at each individual SOC setpoint against a single 125-second window. It measures parameter fit flexibility rather than predictive generalization.
+
+### 1.3 Formal Governance Classification
 
 Under the 5-point governance rule governing the repository:
 > **LAB_VALIDATED requires ALL of:**  
@@ -36,10 +71,10 @@ Under the 5-point governance rule governing the repository:
 
 | Evaluation Dimension | Result Classification | Justification under 5-Point Rule |
 | :--- | :---: | :--- |
-| **In-Sample 2RC ECM Fidelity** | **`DEVELOPMENT`** | Passes in-sample RMSE gate ($\le 6.0$ mV) at all 5 temperatures (0.26 to 0.70 mV RMSE). However, single cell fails criterion (e) (1 cell cannot provide independent validation units). |
-| **Out-of-Sample Temperature Generalization (LOTO)** | **`DEVELOPMENT`** | Fails pre-registered RMSE gate ($\le 6.0$ mV) at 15 °C (13.78 mV) and 35 °C (12.43 mV) due to Arrhenius cold-temperature impedance rise and boundary extrapolation. |
-| **Out-of-Sample SOC Generalization (Alternate-SOC)** | **`DEVELOPMENT`** | Fails pre-registered gate (Fold 1 RMSE 7.03 mV, Fold 2 RMSE 6.13 mV) due to 20% SOC step interpolation across non-linear knee regions. |
-| **Online Dynamic SOC Estimation** | **`UNVALIDATED`** | Dataset contains zero dynamic drive cycles (WLTC, UDDS, US06). Frozen E7v3 / E0 dynamic tracking was not evaluated. |
+| **Out-of-Sample Temperature Generalization (LOTO)** | **`DEVELOPMENT`** | 3 of 5 folds FAIL pre-registered gates (15 °C, 20 °C, 35 °C). Fails criterion (d) and criterion (e). |
+| **Out-of-Sample SOC Generalization (Alternate-SOC)** | **`DEVELOPMENT`** | Both folds FAIL pre-registered gates (RMSE > 6.0 mV, Implied SOC > 2.5 pp). Fails criterion (d) and (e). |
+| **In-Sample 2RC ECM Fidelity** | **`DEVELOPMENT`** | Passes in-sample RMSE gate ($\le 6.0$ mV) across all temperatures. However, single cell fails criterion (e) (1 cell cannot provide independent validation units). |
+| **Online Dynamic SOC Estimation** | **`UNVALIDATED`** | Dataset contains zero dynamic drive cycles (WLTC, UDDS, US06). Dynamic tracking was not evaluated. |
 | **SOH Degradation Tracking ($SOH_C$, $SOH_R$)** | **`NO SOH EVIDENCE`** | Dataset contains beginning-of-life characterisation checkups only; zero cycle or calendar aging data. |
 
 ---
