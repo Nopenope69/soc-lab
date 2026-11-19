@@ -1,0 +1,118 @@
+# UConn REIL Dataset 5 Evaluation Splits
+# Rule R3: Splits are strictly by CELL or by CONDITION. Sealed test sets must NEVER be accessed during tuning.
+dataset_id: "uconn_reil_dataset5"
+version: "1.0"
+
+# -----------------------------------------------------------------------------
+# Split 1: Cell-Held-Out Split (Within-condition generalization)
+# -----------------------------------------------------------------------------
+cell_holdout:
+  split_policy: "BY_CELL"
+  total_cells: 64
+
+  # Development partition (43 cells total)
+  dev_cells:
+    train_cells:
+      # 32 cells (3 cells per group for groups 1-10, 2 cells for group 11)
+      - "02"
+      - "03"
+      - "04"
+      - "08"
+      - "09"
+      - "10"
+      - "14"
+      - "15"
+      - "16"
+      - "20"
+      - "21"
+      - "22"
+      - "26"
+      - "27"
+      - "28"
+      - "32"
+      - "33"
+      - "34"
+      - "38"
+      - "39"
+      - "40"
+      - "44"
+      - "45"
+      - "46"
+      - "50"
+      - "51"
+      - "52"
+      - "56"
+      - "57"
+      - "58"
+      - "62"
+      - "63"
+    val_cells:
+      # 11 cells (1 cell per group)
+      - "05"
+      - "11"
+      - "17"
+      - "23"
+      - "29"
+      - "35"
+      - "41"
+      - "47"
+      - "53"
+      - "59"
+      - "64"
+
+  # Sealed test partition (21 cells: 2 cells per group for groups 1-10, 1 cell for group 11)
+  # EVALUATED ONCE ONLY AFTER SPEC IS FROZEN
+  sealed_test_cells:
+    - "06"
+    - "07"
+    - "12"
+    - "13"
+    - "18"
+    - "19"
+    - "24"
+    - "25"
+    - "30"
+    - "31"
+    - "36"
+    - "37"
+    - "42"
+    - "43"
+    - "48"
+    - "49"
+    - "54"
+    - "55"
+    - "60"
+    - "61"
+    - "65"
+
+# -----------------------------------------------------------------------------
+# Split 2: Condition-Held-Out Split (Cross-condition domain generalization)
+# -----------------------------------------------------------------------------
+condition_holdout:
+  split_policy: "BY_CONDITION"
+  dev_conditions:
+    - 1
+    - 2
+    - 4
+    - 5
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+  sealed_test_conditions:
+    - 3  # High-rate rapid aging (cells 14-19)
+    - 6  # Severe degradation regime (cells 32-37)
+  sealed_test_cells:
+    - "14"
+    - "15"
+    - "16"
+    - "17"
+    - "18"
+    - "19"
+    - "32"
+    - "33"
+    - "34"
+    - "35"
+    - "36"
+    - "37"
