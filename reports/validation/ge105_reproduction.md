@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Evaluation Reproduction Report (V1.11)
 
+> [!NOTE] Revision (V1.13 Capacity Sensitivity Script Tracking)  
+> Tracked `scripts/validation/ge105_capacity_sensitivity.py` and added Section 4 verifying clean-shell reproduction of all 12 scenarios and per-file capacities in `reports/validation/ge105_capacity_sensitivity.md` with 0.00 pp discrepancy.
+
 > [!NOTE] Revision (V1.12 Dev Reproducibility Clarification)  
 > Documented that `scripts/validation/ge105_eval_dev.py` was recovered from the session transcript (step 5559) rather than an on-disk file existing at the time of V1.8, and clarified that the evidence demonstrating equivalence is matching outputs only.
 
@@ -9,6 +12,7 @@
 > **Scripts Tracked:**  
 > - Dev partition evaluation: `scripts/validation/ge105_eval_dev.py`  
 > - Sealed test partition evaluation: `scripts/validation/ge105_eval_test.py`  
+> - Dev capacity sensitivity evaluation: `scripts/validation/ge105_capacity_sensitivity.py`  
 > **Original Scratch Sources:**  
 > - Scratch path: `/Users/tecbusiness/.gemini/antigravity/brain/8270f035-7beb-4f11-ba37-1a3b6b61035a/scratch/eval_test_cells.py`  
 > - Backup copy: `/Users/tecbusiness/soc_backup/v1_scratch/eval_test_cells.py`  
@@ -107,3 +111,44 @@ Evaluation of cells `BUGE388` and `BUGE389` across 25 °C, 40 °C, and 0 °C:
 | **BUGE389** | 0 °C | 50% | Nominal | 0.0 pp | 23.40 / 10.11 | 23.40 / 10.11 | **0.00 pp** |
 | BUGE389 | 0 °C | 50% | +10 pp | +10.0 pp | 25.43 / 12.23 | 25.43 / 12.23 | **0.00 pp** |
 | BUGE389 | 0 °C | 50% | -10 pp | -10.0 pp | 15.85 / 9.01 | 15.85 / 9.01 | **0.00 pp** |
+
+---
+
+## 4. Development Capacity Sensitivity Reproduction
+
+In Task V1.13, `scripts/validation/ge105_capacity_sensitivity.py` was tracked into the repository to reproduce every number in `reports/validation/ge105_capacity_sensitivity.md` directly from the repository code and data roots (`$SOC_DATA_DIR`).
+
+The script was executed from a clean shell using:
+```bash
+.venv/bin/python scripts/validation/ge105_capacity_sensitivity.py
+```
+
+### 4.1 Per-File Capacity Reproduction (Section 2.1)
+All 6 evaluated MAT files in the development partition (`BUGE388` and `BUGE389`) match bit-for-bit:
+
+| Cell | Ambient Temp (°C) | Evaluated MAT File | Committed $Q_{\text{file}}$ (Ah) | Tracked Script $Q_{\text{file}}$ (Ah) | Discrepancy |
+|:---|:---:|:---|:---:|:---:|:---:|
+| `BUGE388` | 25 | `20230825_1333_full_25C_buge388_dattes.mat` | 105.042655 | 105.042655 | **0.000000 Ah** |
+| `BUGE388` | 40 | `20231123_1349_full_40C_buge388_dattes.mat` | 103.847153 | 103.847153 | **0.000000 Ah** |
+| `BUGE388` | 0 | `20230804_1122_full_0C_buge388_dattes.mat` | 103.664478 | 103.664478 | **0.000000 Ah** |
+| `BUGE389` | 25 | `20230808_1242_full_25C_buge389_dattes.mat` | 105.750278 | 105.750278 | **0.000000 Ah** |
+| `BUGE389` | 40 | `20230825_1339_full_40C_buge389_dattes.mat` | 104.276614 | 104.276614 | **0.000000 Ah** |
+| `BUGE389` | 0 | `20230812_2136_full_0C_buge389_dattes.mat` | 103.031451 | 103.031451 | **0.000000 Ah** |
+
+### 4.2 Scenario Metrics Side-by-Side Comparison (Section 3)
+Evaluation of 12 nominal-initialisation development scenarios:
+
+| Cell | Temp | Target SOC | Committed E0 Base Max/RMSE (pp) | Script E0 Base Max/RMSE (pp) | Committed E0 Sens Max/RMSE (pp) | Script E0 Sens Max/RMSE (pp) | Committed E7v3 Base Max/RMSE (pp) | Script E7v3 Base Max/RMSE (pp) | Committed E7v3 Sens Max/RMSE (pp) | Script E7v3 Sens Max/RMSE (pp) | Discrepancy |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `BUGE388` | 25 °C | ~90% | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 | 2.82 / 1.90 | 2.82 / 1.90 | 2.82 / 1.90 | 2.82 / 1.90 | **0.00 pp** |
+| `BUGE388` | 25 °C | ~50% | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 | 15.36 / 5.48 | 15.36 / 5.48 | 15.36 / 5.48 | 15.36 / 5.48 | **0.00 pp** |
+| `BUGE388` | 40 °C | ~90% | 0.04 / 0.02 | 0.04 / 0.02 | 0.00 / 0.00 | 0.00 / 0.00 | 3.05 / 1.19 | 3.05 / 1.19 | 3.08 / 1.20 | 3.08 / 1.20 | **0.00 pp** |
+| `BUGE388` | 40 °C | ~50% | 0.04 / 0.02 | 0.04 / 0.02 | 0.00 / 0.00 | 0.00 / 0.00 | 9.56 / 3.02 | 9.56 / 3.02 | 9.75 / 3.10 | 9.75 / 3.10 | **0.00 pp** |
+| `BUGE388` | 0 °C | ~90% | 0.05 / 0.03 | 0.05 / 0.03 | 0.00 / 0.00 | 0.00 / 0.00 | 11.10 / 7.75 | 11.10 / 7.75 | 11.10 / 7.73 | 11.10 / 7.73 | **0.00 pp** |
+| `BUGE388` | 0 °C | ~50% | 0.05 / 0.03 | 0.05 / 0.03 | 0.00 / 0.00 | 0.00 / 0.00 | 25.43 / 11.60 | 25.43 / 11.60 | 25.49 / 11.66 | 25.49 / 11.66 | **0.00 pp** |
+| `BUGE389` | 25 °C | ~90% | 0.03 / 0.01 | 0.03 / 0.01 | 0.00 / 0.00 | 0.00 / 0.00 | 2.97 / 2.12 | 2.97 / 2.12 | 2.97 / 2.12 | 2.97 / 2.12 | **0.00 pp** |
+| `BUGE389` | 25 °C | ~50% | 0.03 / 0.01 | 0.03 / 0.01 | 0.00 / 0.00 | 0.00 / 0.00 | 10.64 / 3.31 | 10.64 / 3.31 | 10.53 / 3.26 | 10.53 / 3.26 | **0.00 pp** |
+| `BUGE389` | 40 °C | ~90% | 0.03 / 0.01 | 0.03 / 0.01 | 0.00 / 0.00 | 0.00 / 0.00 | 3.09 / 1.22 | 3.09 / 1.22 | 3.11 / 1.23 | 3.11 / 1.23 | **0.00 pp** |
+| `BUGE389` | 40 °C | ~50% | 0.03 / 0.01 | 0.03 / 0.01 | 0.00 / 0.00 | 0.00 / 0.00 | 9.70 / 3.17 | 9.70 / 3.17 | 10.05 / 3.31 | 10.05 / 3.31 | **0.00 pp** |
+| `BUGE389` | 0 °C | ~90% | 0.07 / 0.04 | 0.07 / 0.04 | 0.00 / 0.00 | 0.00 / 0.00 | 13.24 / 8.03 | 13.24 / 8.03 | 13.23 / 8.52 | 13.23 / 8.52 | **0.00 pp** |
+| `BUGE389` | 0 °C | ~50% | 0.07 / 0.04 | 0.07 / 0.04 | 0.00 / 0.00 | 0.00 / 0.00 | 23.40 / 10.11 | 23.40 / 10.11 | 24.15 / 10.46 | 24.15 / 10.46 | **0.00 pp** |
