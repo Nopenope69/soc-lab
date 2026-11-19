@@ -1,11 +1,14 @@
 # UConn REIL Dataset 5: Inventory and RPT Structure Audit
 
+> [!NOTE] Revision (V2.13 Verification Audit)
+> - **Zip Member Verification**: All 207 extracted CSV files on disk are verified 100% byte-identical to members inside `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` via dedicated script `scripts/validation/verify_uconn_extracted_vs_zip.py`. The dataset audit script `scripts/verify_datasets.py` (lines 98–112) audits extracted files against `data/manifests/uconn_reil_dataset5_extracted.sha256` and the zip file against `data/manifests/uconn_reil_dataset5.sha256`, but does not inspect or extract zip members directly.
+
 **Date:** 2026-11-19  
 **Dataset:** UConn-ISU-ILCC LFP/Gr Battery Aging Dataset (Dataset 5)  
 **Citation:** Nowacki et al., *Journal of Power Sources*, 628 (2025) 235813. DOI: [10.1016/j.jpowsour.2024.235813](https://doi.org/10.1016/j.jpowsour.2024.235813)  
 **Licence:** Creative Commons Attribution 4.0 International (CC BY 4.0)  
-**Archive:** `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` (verified manifest hash in `scripts/verify_datasets.py`)  
-**Working Directory:** `$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/` (207 CSV files)  
+**Archive:** `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` (verified manifest hash in `data/manifests/uconn_reil_dataset5.sha256`)  
+**Working Directory:** `$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/` (207 CSV files verified byte-identical to archive via `scripts/validation/verify_uconn_extracted_vs_zip.py`)  
 
 ---
 
