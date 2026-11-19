@@ -36,7 +36,7 @@ In compliance with the Phase 6 / Hardening validation rules and V1.11 LABEL RULE
 | **Dynamic WLTC Tracking** | Test (`BUGE390`, `BUGE391`) | 40 °C (In-Envelope) | **`DEVELOPMENT`** | Reclassified from LAB_VALIDATED per V1.11 LABEL RULE criteria (c), (d), and (e). Test evaluation script tracked and reproduced from clean shell. |
 | **Dynamic WLTC Tracking** | Dev (`BUGE388`, `BUGE389`) | 25 °C & 40 °C | **`DEVELOPMENT`** | Used for calibration parameter extraction and sanity checks. Nominal RMSE 1.19–2.12 pp. |
 | **Low-Temperature Tracking** | All 4 Cells | 0 °C (Out-of-Envelope) | **`DEVELOPMENT`** | Filter safely self-reports `OUT_OF_ENVELOPE` on 100% of samples (operational envelope $20\text{--}45\ ^\circ\text{C}$). |
-| **Cross-Scale Baseline** | All 4 Cells | E7v3 CALCE Calibration | **`FAIL`** | Catastrophic divergence (68–88 pp error). Empirically proves calibration non-transferability across cell capacity scales. |
+| **Capacity-Mismatch Demo** | All 4 Cells | E7v3 CALCE Raw (1.06 Ah) | **`FAIL`** | Capacity-mismatch demonstration (1.06 Ah table on 105 Ah cell), not a transfer result. Fair scaled CALCE achieves 3.8–5.9 pp RMSE. |
 | **SOH Tracking ($SOH_C$, $SOH_R$)** | All 4 Cells | All Temperatures | **`NO SOH EVIDENCE`** | Dataset contains beginning-of-life (BOL) characterisation only; zero cycle or calendar aging data. |
 
 ---
@@ -120,10 +120,11 @@ The evaluation was executed across 36 development scenarios and 24 sealed test s
 ```
                                   NOMINAL INITIALIZATION (~90% SOC, 40 °C)
       Estimator               BUGE390 (Test)           BUGE391 (Test)          Verdict
-  --------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------------------------
   E0 (Coulomb Counting)      0.05 pp Max / 0.02 RMSE  0.03 pp Max / 0.01 RMSE   Anchored Ref (Ah Integral)
-  E7v3 (CALCE Calib)        69.62 pp Max / 27.96 RMSE 68.89 pp Max / 27.84 RMSE  FAIL (Capacity Mismatch)
-  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   DEVELOPMENT (No Acc Info)
+  E7v3 CALCE Raw (1.06 Ah)  69.62 pp Max / 27.96 RMSE 68.89 pp Max / 27.84 RMSE  FAIL (Capacity Mismatch)
+  E7v3 CALCE Fair (105 Ah)  12.79 pp Max /  5.88 RMSE 11.10 pp Max /  3.82 RMSE  Post-Hoc Fair Baseline
+  E7v3 (GE105 Calib)         0.05 pp Max / 0.02 RMSE  0.12 pp Max / 0.05 RMSE   DEVELOPMENT (Item 3)
 ```
 
 > **Critical Note on Nominal Results:**  
@@ -151,7 +152,7 @@ The closed-loop recovery response of E7v3 (GE105 calibration) across the 8 pertu
 
 ### Key Closed-Loop Insights:
 1. **Coulomb Counting (E0) Limitations:** While E0 appears near-perfect when initialized with zero error (by definition, as `profiles.soc` is an Ah integration), it has zero feedback capability and preserves initialization errors indefinitely.
-2. **CALCE Scale Catastrophe:** Applying the 1.06 Ah CALCE calibration to a 105 Ah cell causes 100× internal current-to-capacity scaling distortions, resulting in severe state saturation and 70–88 pp errors.
+2. **CALCE Capacity-Mismatch Demo vs. Fair Baseline:** Applying the unscaled 1.06 Ah CALCE calibration to a 105 Ah cell causes ~100x internal current-to-capacity scaling distortions, resulting in severe state saturation and 70–88 pp errors; this was purely a demonstration of capacity mismatch. When CALCE's nominal capacity is properly scaled to 105.04 Ah via `ParamSet` (evaluated post-hoc after unsealing), frozen E7v3 achieves 3.82–5.88 pp RMSE on test cells at 40 °C (~90% SOC).
 3. **Matched E7v3 Performance:** E7v3 equipped with `ge105_v1.json` demonstrates good nominal tracking on physical cells, but disturbance recovery is non-uniform across SOC operating regions.
 4. **Reference Implementation Parity:** Concurrent execution of `deliverable/bms_soc_ref.py` confirmed 100% agreement on operating status flags (`['OK']` at 40 °C, `['OUT_OF_ENVELOPE']` at 0 °C) and numerical tracking discrepancy $\le 0.3\ \text{pp}$ (attributed to `bms_soc_ref.py` utilizing the full cell-specific scheduled $Q(T)$ table).
 

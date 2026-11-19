@@ -63,41 +63,45 @@ This document presents the unsealed, single-run evaluation of the held-out test 
 
 ## 2. Comprehensive Test Partition Results Matrix
 
+> [!NOTE] Post-Hoc Baseline Addition (Task V1.11 Item 6)  
+> The column **"CALCE Mismatch (1.06 Ah)"** is a demonstration of extreme capacity mismatch (applying a 1.06 Ah table to a 105 Ah cell), not a meaningful cross-cell transfer result.  
+> The column **"Fair Scaled CALCE (105 Ah, Post-Hoc)"** evaluates frozen E7v3 with CALCE A123 parameters where nominal capacity is properly scaled to 105.04 Ah via the existing `ParamSet` mechanism. It scales CALCE's baseline $Q(T)$ curve ($[1.0652, 1.0636, 1.0730, 1.0802, 1.0810]\ \text{Ah}$ at $[20, 25, 30, 40, 50]\ ^\circ\text{C}$) by $\frac{105.042655}{1.06356167} = 98.765$ (yielding $106.685\ \text{Ah}$ at 40 °C and $105.206\ \text{Ah}$ at 0 °C clamped). This baseline was evaluated post-hoc after unsealing and does not alter any frozen outputs.
+
 ### Table 1: In-Envelope Evaluation (40 °C, Status: `DEVELOPMENT`)
 
-| Cell | Temp | Target SOC | Scenario | Initial Err | E0 Max/RMSE (pp) | E7 CALCE Max/RMSE (pp) | E7 GE105 Max/RMSE (pp) | E7 GE105 Final Err (pp) | Status Flags | Ref Parity (max \|dSOC\|) |
-|:---|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **BUGE390** | 40 °C | ~90% | Nominal | +0.0 pp | 0.05 / 0.02 | 69.62 / 27.96 | **0.05 / 0.02** | 0.04 | `['OK']` | $1.16 \times 10^{-3}$ |
-| BUGE390 | 40 °C | ~90% | +10 pp | +10.0 pp | 9.93 / 9.90 | 88.22 / 67.70 | **8.92 / 4.95** | 5.03 | `['OK']` | $1.23 \times 10^{-3}$ |
-| BUGE390 | 40 °C | ~90% | -10 pp | -10.0 pp | 10.05 / 10.02 | 87.73 / 51.87 | **10.47 / 9.46** | 6.80 | `['OK']` | $3.14 \times 10^{-3}$ |
-| **BUGE390** | 40 °C | ~50% | Nominal | +0.0 pp | 0.05 / 0.02 | 30.65 / 10.62 | **0.06 / 0.02** | 0.06 | `['OK']` | $1.14 \times 10^{-3}$ |
-| BUGE390 | 40 °C | ~50% | +10 pp | +10.0 pp | 10.01 / 9.98 | 50.44 / 35.43 | **12.15 / 8.08** | 12.15 | `['OK']` | $9.99 \times 10^{-3}$ |
-| BUGE390 | 40 °C | ~50% | -10 pp | -10.0 pp | 10.05 / 10.02 | 33.59 / 12.91 | **10.01 / 8.17** | 4.17 | `['OK']` | $8.19 \times 10^{-3}$ |
-| **BUGE391** | 40 °C | ~90% | Nominal | +0.0 pp | 0.03 / 0.01 | 68.89 / 27.84 | **0.12 / 0.05** | 0.11 | `['OK']` | $1.11 \times 10^{-3}$ |
-| BUGE391 | 40 °C | ~90% | +10 pp | +10.0 pp | 10.03 / 10.01 | 88.05 / 67.48 | **9.00 / 5.06** | 5.17 | `['OK']` | $1.12 \times 10^{-3}$ |
-| BUGE391 | 40 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 87.24 / 46.70 | **10.38 / 9.10** | 6.02 | `['OK']` | $6.93 \times 10^{-3}$ |
-| **BUGE391** | 40 °C | ~50% | Nominal | +0.0 pp | 0.03 / 0.01 | 29.63 / 10.09 | **0.14 / 0.06** | 0.13 | `['OK']` | $1.06 \times 10^{-3}$ |
-| BUGE391 | 40 °C | ~50% | +10 pp | +10.0 pp | 10.03 / 10.01 | 29.41 / 10.22 | **16.86 / 9.51** | 16.23 | `['OK']` | $3.61 \times 10^{-2}$ |
-| BUGE391 | 40 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 29.33 / 10.27 | **10.09 / 8.22** | 5.73 | `['OK']` | $2.28 \times 10^{-3}$ |
+| Cell | Temp | Target SOC | Scenario | Initial Err | E0 Max/RMSE (pp) | CALCE Mismatch (1.06 Ah) Max/RMSE | Fair Scaled CALCE (105 Ah) Max/RMSE | E7 GE105 Max/RMSE (pp) | E7 GE105 Final Err (pp) | Status Flags | Ref Parity (max \|dSOC\|) |
+|:---|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **BUGE390** | 40 °C | ~90% | Nominal | +0.0 pp | 0.05 / 0.02 | 69.62 / 27.96 | 12.79 / 5.88 | **0.05 / 0.02** | 0.04 | `['OK']` | $1.16 \times 10^{-3}$ |
+| BUGE390 | 40 °C | ~90% | +10 pp | +10.0 pp | 9.93 / 9.90 | 88.22 / 67.70 | 11.44 / 3.95 | **8.92 / 4.95** | 5.03 | `['OK']` | $1.23 \times 10^{-3}$ |
+| BUGE390 | 40 °C | ~90% | -10 pp | -10.0 pp | 10.05 / 10.02 | 87.73 / 51.87 | 11.44 / 7.42 | **10.47 / 9.46** | 6.80 | `['OK']` | $3.14 \times 10^{-3}$ |
+| **BUGE390** | 40 °C | ~50% | Nominal | +0.0 pp | 0.05 / 0.02 | 30.65 / 10.62 | 37.16 / 14.80 | **0.06 / 0.02** | 0.06 | `['OK']` | $1.14 \times 10^{-3}$ |
+| BUGE390 | 40 °C | ~50% | +10 pp | +10.0 pp | 10.01 / 9.98 | 50.44 / 35.43 | 50.21 / 38.94 | **12.15 / 8.08** | 12.15 | `['OK']` | $9.99 \times 10^{-3}$ |
+| BUGE390 | 40 °C | ~50% | -10 pp | -10.0 pp | 10.05 / 10.02 | 33.59 / 12.91 | 50.59 / 35.47 | **10.01 / 8.17** | 4.17 | `['OK']` | $8.19 \times 10^{-3}$ |
+| **BUGE391** | 40 °C | ~90% | Nominal | +0.0 pp | 0.03 / 0.01 | 68.89 / 27.84 | 11.10 / 3.82 | **0.12 / 0.05** | 0.11 | `['OK']` | $1.11 \times 10^{-3}$ |
+| BUGE391 | 40 °C | ~90% | +10 pp | +10.0 pp | 10.03 / 10.01 | 88.05 / 67.48 | 11.59 / 3.91 | **9.00 / 5.06** | 5.17 | `['OK']` | $1.12 \times 10^{-3}$ |
+| BUGE391 | 40 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 87.24 / 46.70 | 10.89 / 4.24 | **10.38 / 9.10** | 6.02 | `['OK']` | $6.93 \times 10^{-3}$ |
+| **BUGE391** | 40 °C | ~50% | Nominal | +0.0 pp | 0.03 / 0.01 | 29.63 / 10.09 | 38.77 / 15.28 | **0.14 / 0.06** | 0.13 | `['OK']` | $1.06 \times 10^{-3}$ |
+| BUGE391 | 40 °C | ~50% | +10 pp | +10.0 pp | 10.03 / 10.01 | 29.41 / 10.22 | 53.14 / 42.31 | **16.86 / 9.51** | 16.23 | `['OK']` | $3.61 \times 10^{-2}$ |
+| BUGE391 | 40 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 29.33 / 10.27 | 53.14 / 38.22 | **10.09 / 8.22** | 5.73 | `['OK']` | $2.28 \times 10^{-3}$ |
 
 ---
 
 ### Table 2: Out-of-Envelope Evaluation (0 °C, Status: `DEVELOPMENT`, Flagged `OUT_OF_ENVELOPE`)
 
-| Cell | Temp | Target SOC | Scenario | Initial Err | E0 Max/RMSE (pp) | E7 CALCE Max/RMSE (pp) | E7 GE105 Max/RMSE (pp) | E7 GE105 Final Err (pp) | Status Flags | Ref Parity (max \|dSOC\|) |
-|:---|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **BUGE390** | 0 °C | ~90% | Nominal | +0.0 pp | 0.05 / 0.02 | 86.99 / 57.25 | 0.65 / 0.38 | 0.63 | `['OUT_OF_ENVELOPE']` | $4.07 \times 10^{-3}$ |
-| BUGE390 | 0 °C | ~90% | +10 pp | +10.0 pp | 10.05 / 10.01 | 86.86 / 52.77 | 9.00 / 1.70 | 3.79 | `['OUT_OF_ENVELOPE']` | $6.55 \times 10^{-2}$ |
-| BUGE390 | 0 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 88.64 / 72.84 | 17.25 / 11.61 | 3.36 | `['OUT_OF_ENVELOPE']` | $9.82 \times 10^{-2}$ |
-| **BUGE390** | 0 °C | ~50% | Nominal | +0.0 pp | 0.05 / 0.02 | 48.48 / 38.69 | 1.00 / 0.41 | 0.98 | `['OUT_OF_ENVELOPE']` | $6.65 \times 10^{-3}$ |
-| BUGE390 | 0 °C | ~50% | +10 pp | +10.0 pp | 10.05 / 10.01 | 34.18 / 12.12 | 23.76 / 10.64 | 23.21 | `['OUT_OF_ENVELOPE']` | $6.79 \times 10^{-2}$ |
-| BUGE390 | 0 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 48.30 / 37.24 | 20.00 / 9.41 | 19.42 | `['OUT_OF_ENVELOPE']` | $5.24 \times 10^{-2}$ |
-| **BUGE391** | 0 °C | ~90% | Nominal | +0.0 pp | 0.04 / 0.01 | 87.00 / 55.58 | 0.53 / 0.39 | 0.49 | `['OUT_OF_ENVELOPE']` | $3.13 \times 10^{-3}$ |
-| BUGE391 | 0 °C | ~90% | +10 pp | +10.0 pp | 10.04 / 10.01 | 87.00 / 53.11 | 9.00 / 1.45 | 3.33 | `['OUT_OF_ENVELOPE']` | $5.59 \times 10^{-2}$ |
-| BUGE391 | 0 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 88.69 / 72.87 | 18.74 / 12.83 | 1.32 | `['OUT_OF_ENVELOPE']` | $9.78 \times 10^{-2}$ |
-| **BUGE391** | 0 °C | ~50% | Nominal | +0.0 pp | 0.04 / 0.01 | 48.59 / 38.85 | 0.87 / 0.35 | 0.87 | `['OUT_OF_ENVELOPE']` | $5.88 \times 10^{-3}$ |
-| BUGE391 | 0 °C | ~50% | +10 pp | +10.0 pp | 10.04 / 10.01 | 34.66 / 12.31 | 21.81 / 9.22 | 21.56 | `['OUT_OF_ENVELOPE']` | $8.54 \times 10^{-2}$ |
-| BUGE391 | 0 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 48.38 / 40.18 | 15.20 / 8.33 | 15.01 | `['OUT_OF_ENVELOPE']` | $6.17 \times 10^{-2}$ |
+| Cell | Temp | Target SOC | Scenario | Initial Err | E0 Max/RMSE (pp) | CALCE Mismatch (1.06 Ah) Max/RMSE | Fair Scaled CALCE (105 Ah) Max/RMSE | E7 GE105 Max/RMSE (pp) | E7 GE105 Final Err (pp) | Status Flags | Ref Parity (max \|dSOC\|) |
+|:---|:---:|:---:|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **BUGE390** | 0 °C | ~90% | Nominal | +0.0 pp | 0.05 / 0.02 | 86.99 / 57.25 | 17.09 / 9.51 | 0.65 / 0.38 | 0.63 | `['OUT_OF_ENVELOPE']` | $4.07 \times 10^{-3}$ |
+| BUGE390 | 0 °C | ~90% | +10 pp | +10.0 pp | 10.05 / 10.01 | 86.86 / 52.77 | 26.62 / 18.05 | 9.00 / 1.70 | 3.79 | `['OUT_OF_ENVELOPE']` | $6.55 \times 10^{-2}$ |
+| BUGE390 | 0 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 88.64 / 72.84 | 13.93 / 10.37 | 17.25 / 11.61 | 3.36 | `['OUT_OF_ENVELOPE']` | $9.82 \times 10^{-2}$ |
+| **BUGE390** | 0 °C | ~50% | Nominal | +0.0 pp | 0.05 / 0.02 | 48.48 / 38.69 | 8.99 / 4.32 | 1.00 / 0.41 | 0.98 | `['OUT_OF_ENVELOPE']` | $6.65 \times 10^{-3}$ |
+| BUGE390 | 0 °C | ~50% | +10 pp | +10.0 pp | 10.05 / 10.01 | 34.18 / 12.12 | 51.49 / 36.87 | 23.76 / 10.64 | 23.21 | `['OUT_OF_ENVELOPE']` | $6.79 \times 10^{-2}$ |
+| BUGE390 | 0 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 48.30 / 37.24 | 30.56 / 9.67 | 20.00 / 9.41 | 19.42 | `['OUT_OF_ENVELOPE']` | $5.24 \times 10^{-2}$ |
+| **BUGE391** | 0 °C | ~90% | Nominal | +0.0 pp | 0.04 / 0.01 | 87.00 / 55.58 | 10.94 / 4.12 | 0.53 / 0.39 | 0.49 | `['OUT_OF_ENVELOPE']` | $3.13 \times 10^{-3}$ |
+| BUGE391 | 0 °C | ~90% | +10 pp | +10.0 pp | 10.04 / 10.01 | 87.00 / 53.11 | 23.01 / 14.13 | 9.00 / 1.45 | 3.33 | `['OUT_OF_ENVELOPE']` | $5.59 \times 10^{-2}$ |
+| BUGE391 | 0 °C | ~90% | -10 pp | -10.0 pp | 10.01 / 9.99 | 88.69 / 72.87 | 13.92 / 10.35 | 18.74 / 12.83 | 1.32 | `['OUT_OF_ENVELOPE']` | $9.78 \times 10^{-2}$ |
+| **BUGE391** | 0 °C | ~50% | Nominal | +0.0 pp | 0.04 / 0.01 | 48.59 / 38.85 | 11.60 / 5.76 | 0.87 / 0.35 | 0.87 | `['OUT_OF_ENVELOPE']` | $5.88 \times 10^{-3}$ |
+| BUGE391 | 0 °C | ~50% | +10 pp | +10.0 pp | 10.04 / 10.01 | 34.66 / 12.31 | 51.59 / 35.80 | 21.81 / 9.22 | 21.56 | `['OUT_OF_ENVELOPE']` | $8.54 \times 10^{-2}$ |
+| BUGE391 | 0 °C | ~50% | -10 pp | -10.0 pp | 10.01 / 9.99 | 48.38 / 40.18 | 28.77 / 8.95 | 15.20 / 8.33 | 15.01 | `['OUT_OF_ENVELOPE']` | $6.17 \times 10^{-2}$ |
 
 ---
 
