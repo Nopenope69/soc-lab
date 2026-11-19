@@ -1,5 +1,9 @@
 # Gustave Eiffel 105 Ah LFP Evaluation Specification (Frozen Prior to Test Unsealing)
 
+> [!WARNING] Revision (V1.11 Provenance Notice)  
+> The claim below that this specification was "frozen and committed prior to unsealing test cells" is **not supported by git history**.  
+> As documented in [ge105_spec_provenance.md](file:///Users/tecbusiness/Desktop/random/SOC/reports/validation/ge105_spec_provenance.md), this document was first committed in commit `847843c` together with the sealed test results (`ge105_closed_loop_test.md`). The test evaluation script was edited until 92 seconds prior to that commit. While the edits were syntax and interface corrections only, the protocol requirement of committing the frozen specification to git before unsealing was violated.
+
 > **Document ID:** SPEC-GE105-FROZEN-001  
 > **Status:** FROZEN  
 > **Date:** 2026-11-19  
