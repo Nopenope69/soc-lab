@@ -1,5 +1,8 @@
 # Frozen Evaluation Specification: UConn REIL Dataset 5 Pulse-Based SOH
 
+> [!NOTE] Revision (V2.12 Provenance & Invocation Audit)  
+> As documented in `reports/validation/uconn_spec_provenance.md` and `reports/validation/uconn_reproduction.md`, Section 7 Item 4 originally drafted that test cells would be "evaluated exactly ONCE". In reality, the sealed test cells were executed initially at `dbffe91`, followed by an interactive 11-feature evaluation at step 6905, reproduction at V2.11.2 (`df70e53`), age baseline evaluation at V2.11.4 (`b138ff0`), and tautology baseline evaluation at V2.12.3 (`be97d44`). The initial 14-feature candidate frozen at V2.7 reproduced bit-for-bit per V2.12 Item 1.
+
 **Document Status:** FROZEN PRIOR TO EVALUATION  
 **Date:** 2026-11-19  
 **Specification Version:** 1.0  

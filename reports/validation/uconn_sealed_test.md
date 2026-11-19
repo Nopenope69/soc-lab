@@ -1,9 +1,16 @@
 # Sealed Test Partition Evaluation: UConn REIL Dataset 5
 
+> [!NOTE] Revision (V2.12 Audit & Synthesis)  
+> - **Invocation & Provenance**: Replaced the unverified draft claim that the sealed partition was "evaluated exactly once after spec was frozen" with the audited facts: initial unsealed execution at `dbffe91`, followed by an untracked interactive 11-feature evaluation at step 6905, reproduction at V2.11.2 (`df70e53`), age baseline evaluation at V2.11.4 (`b138ff0`), and tautology evaluation at V2.12.3 (`be97d44`).  
+> - **Candidate Calibration**: The committed sealed results were produced by the 14-feature frozen model (`deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json`), not the post-hoc 11-feature file `uconn_soh_pulse_v2.json`.  
+> - **Split Contamination**: The condition holdout partition is a contaminated supplementary split (17 of 21 sealed test cells served as training cells; 8 dev cells served as test cells) and is excluded from headline claims.  
+> - **SOH_R Tautology**: $SOH_R$ results do NOT represent evidence of degradation estimation skill because the label and feature are the exact same physical measurement ($R_{10\text{s}}$ from Step 20 `slowpulse`).  
+> - **Governance Label**: In accordance with the 5-point governance rule, all results are classified as **`DEVELOPMENT`**.
+
 **Date:** 2026-11-19  
-**Evaluation Mode:** SEALED TEST (EVALUATED EXACTLY ONCE AFTER SPEC WAS FROZEN)  
+**Evaluation Mode:** SEALED TEST (INITIAL RUN AT `dbffe91`, REPRODUCED PER V2.12)  
 **Spec Document:** `reports/validation/uconn_soh_pulse_v2_spec.md`  
-**Candidate Calibration:** `deliverable/calibrations/uconn_soh_pulse_v2.json`  
+**Candidate Calibration:** `deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json` (14 features)  
 **Evaluation Script:** `scripts/validation/uconn_eval_sealed.py`  
 **Results JSON:** `reports/validation/uconn_sealed_results.json`  
 
@@ -37,14 +44,19 @@
 
 ---
 
-## 3. Condition-Held-Out Domain Generalization
+## 3. Supplementary Condition-Held-Out Evaluation (Contaminated, Supplementary Split)
 
-Cross-condition test with Groups 3 and 6 held out entirely from training:
+Cross-condition test with Groups 3 and 6 (292 samples across 12 cells). This split is contaminated (17 of 21 sealed test cells served as training cells; 8 dev cells served as test cells) and is not a headline result:
 
 | Estimator | Target | Condition-Held-Out MAE | Ratio to Baseline | Status |
 |---|---|---|---|---|
-| **Constant-Training-Mean Baseline** | $SOH_C$ | 0.0502 | 1.000x | Fair Reference |
-| **Frozen soh_pulse_v2** | $SOH_C$ | **0.0219** | **0.435x** | **BEATS BASELINE (56.5% error reduction)** |
+| **Constant-Training-Mean Baseline** | $SOH_C$ | 0.0502 | 1.000x | Fair Reference (9 dev conditions) |
+| **Ridge Regression (14 feat)** | $SOH_C$ | **0.0201** | **0.400x** | Post-hoc baseline on DEV train cells |
+| **Frozen `soh_pulse_v2` (14 feat)** | $SOH_C$ | **0.0219** | **0.435x** | Contaminated, supplementary, not headline |
+| **Constant-Training-Mean Baseline** | $SOH_R$ | 0.0299 | 1.000x | Fair Reference (9 dev conditions) |
+| **Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$)** | $SOH_R$ | **0.0103** | **0.344x** | Post-hoc baseline on DEV train cells |
+| **Ridge Regression (14 feat)** | $SOH_R$ | **0.0098** | **0.328x** | Post-hoc baseline on DEV train cells |
+| **Frozen `soh_pulse_v2` (14 feat)** | $SOH_R$ | **0.0117** | **0.391x** | Contaminated, supplementary, not headline |
 
 ---
 
@@ -79,7 +91,8 @@ Cross-condition test with Groups 3 and 6 held out entirely from training:
 ## 5. Acceptance Gate Decision
 
 - **GATE-1 ($SOH_C \le 0.030$):** **PASS** (0.0211 $\le 0.030$)
-- **GATE-2 ($SOH_R \le 0.050$):** **PASS** (0.0094 $\le 0.050$)
-- **GATE-3 (Beat Fair Baseline $\le 0.90\times$):** **PASS** (Ratio = 0.494 $\le 0.90$)
+- **GATE-2 ($SOH_R \le 0.050$):** **PASS** (0.0094 $\le 0.050$; note feature-label identity)
+- **GATE-3 (Beat Fair Baseline $\le 0.90\times$):** **PASS vs constant-mean only** (Ratio = 0.494 $\le 0.90$; beaten by Ridge at 0.0199)
 - **GATE-4 (Active Physical Features $\ge 2$):** **PASS** (C: 9 active, R: 6 active)
 - **GATE-5 (Deterministic Execution):** **PASS**
+- **Overall Governance Qualification Determination:** **`DEVELOPMENT`** (Unmet criteria d and e; unqualified for 100 Ah pack)
