@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Parameter Comparison: Identified vs Published (V1.5)
 
+> [!NOTE] Revision (V1.12)  
+> Marked slow diffusion mechanism as an untested hypothesis and revised format terminology.
+
 > **Document ID:** PARAM-GE105-001  
 > **Date:** 2026-11-19  
 > **Dataset References:** Experimental [10.57745/G02IYE](https://doi.org/10.57745/G02IYE); Published Parameters [10.57745/SBNO8W](https://doi.org/10.57745/SBNO8W)  
@@ -56,7 +59,7 @@ The table below contrasts our identified parameters on the development cell (`BU
   - In a continuous driving cycle (WLTC), high-frequency current ripples average out; the primary dynamic mode identified corresponds to solid-state diffusion in the active particle surface layers ($\tau \sim 10\ \text{s}$).
 - **Published $\tau_2 \approx 20\text{--}25\ \text{s}$ vs WLTC $\tau_2 \approx 160\text{--}185\ \text{s}$:**
   - The author's 180 s rest period truncates relaxation identification at ~25 s.
-  - The 986 s WLTC cycle excites longer-term concentration gradients across the thick 105 Ah prismatic jelly roll, manifesting as a slow diffusion branch with $\tau_2 \approx 170\ \text{s}$.
+  - Hypothesis (not tested): The 986 s WLTC cycle excites longer-term concentration gradients across the 105 Ah cell, manifesting as a slow diffusion branch with $\tau_2 \approx 170\ \text{s}$.
 - **Impact on Total DC Resistance:**
   - Over a sustained drive cycle, total apparent impedance is approximately 40% higher ($1.92\ \text{m}\Omega$ vs $1.38\ \text{m}\Omega$ at 25 °C) due to cumulative concentration polarization.
 

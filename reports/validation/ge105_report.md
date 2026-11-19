@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
+> [!NOTE] Revision (V1.12 Format and Transparency Corrections)  
+> Updated cell format descriptions across report: replaced cylindrical/26650 assertions with "CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)" and noted format unverified in readmes for 105 Ah cells.
+
 > [!NOTE] Revision (V1.11 Relabeling Notice)  
 > In accordance with Task V1.11 LABEL RULE, all GE105 test cell results are reclassified from `LAB_VALIDATED` to **`DEVELOPMENT`**.  
 > **Unmet LABEL RULE Criteria:**  
@@ -12,7 +15,7 @@
 > **Repository:** `/Users/tecbusiness/Desktop/random/SOC`  
 > **Data Root:** `/Users/tecbusiness/soc_data` (`$SOC_DATA_DIR`)  
 > **Dataset Source:** Université Gustave Eiffel / DATTES (DOI `10.57745/G02IYE`, parameters `10.57745/SBNO8W`)  
-> **Cell Chemistry & Geometry:** EVE Energy 105 Ah Prismatic Lithium Iron Phosphate (LFP)  
+> **Cell Chemistry & Geometry:** EVE Energy 105 Ah Lithium Iron Phosphate (LFP) (format unverified in dataset readmes)  
 > **Branch:** `validation/ge105`  
 > **Evaluation Protocol:** Strictly Cell-Held-Out (Dev: `BUGE388`, `BUGE389`; Sealed Test: `BUGE390`, `BUGE391`)  
 > **Estimators Evaluated:**  
@@ -151,7 +154,7 @@ Out-of-sample voltage RMSE remains $\le 2.97\ \text{mV}$ on the 40 °C plateau, 
 3. **Pseudo-OCV Hysteresis Comparison (GE105 vs. CALCE):**
    - In `calce_a123_v4.json`, the calibrated hysteresis amplitude at 25 °C was $17.19\ \text{mV}$, while at 40 °C it was $21.55\ \text{mV}$.
    - The Gustave Eiffel physical measurements demonstrate that pseudo-OCV hysteresis decreases monotonically with increasing temperature ($M(0^\circ\text{C}) \approx 62.5\text{--}75.0\ \text{mV} > M(25^\circ\text{C}) \approx 30.7\text{--}33.1\ \text{mV} > M(40^\circ\text{C}) \approx 25.1\text{--}26.4\ \text{mV}$).
-   - A different cell (105 Ah prismatic) shows a larger pseudo-OCV hysteresis gap than the 26650 cylindrical cell; this says nothing about whether the CALCE calibration was suspect.
+   - A different cell (105 Ah cell) shows a larger pseudo-OCV hysteresis gap than the CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified); this says nothing about whether the CALCE calibration was suspect.
 
 ---
 
@@ -272,9 +275,9 @@ To prevent misleading claims, the following boundaries must be observed:
 3. **Reference Truth Definition:**
    - Ground truth `profiles.soc` is an Ah-counting reference derived from cycler current integration re-anchored at full charge events, not an independent electrochemical or chemical measurement.
 4. **Transfer Evidence vs. Deployment Validation:**
-   - The Gustave Eiffel cells are EVE Energy 105 Ah prismatic LFP cells.
+   - The Gustave Eiffel cells are EVE Energy 105 Ah LFP cells.
    - FlexiPod uses a distinct pack architecture and battery chemistry/supplier.
-   - Consequently, this report provides **transfer evidence** demonstrating that the E7v3 architecture scales from 1 Ah cylindrical cells to 105 Ah prismatic LFP cells. It does **NOT** constitute direct production deployment validation for FlexiPod.
+   - Consequently, this report provides **transfer evidence** demonstrating that the E7v3 architecture scales from CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified) to 105 Ah cells. It does **NOT** constitute direct production deployment validation for FlexiPod.
 
 ---
 
@@ -313,7 +316,7 @@ This section summarises the reproducibility and honesty corrections completed du
 
 8. **Operational Envelope Limits & Hysteresis Precision (Item 9):**
    - Printed lines 245–264 of `deliverable/calibrations/ge105_v1.json` and step 5540 code; documented that envelope bounds $[20.0, 45.0]\ ^\circ\text{C}$ represent an analytical assumption not covered by dynamic driving data.
-   - Removed phrasing claiming CALCE 25 °C calibration was suspect; stated that a different cell (105 Ah prismatic) shows a larger pseudo-OCV hysteresis gap than a 26650 cylindrical cell.
+   - Removed phrasing claiming CALCE 25 °C calibration was suspect; stated that a different cell (105 Ah cell) shows a larger pseudo-OCV hysteresis gap than the CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified).
 
 9. **Metadata Capacity Variation Across Files (Item 10):**
    - Printed per-cell `result.metadata.cell.nom_capacity` across all 36 files; documented that the constant `105.042655` matches only `BUGE388` 25 °C full test.

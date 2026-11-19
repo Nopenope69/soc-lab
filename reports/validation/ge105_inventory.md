@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Dataset Inventory (V1.1)
 
+> [!NOTE] Revision (V1.12)  
+> Clarified cell format provenance: noted that prismatic format is derived from general knowledge of the EVE LF105 product and is not stated in the dataset readmes.
+
 > **Dataset Title:** Characterisation tests of EVE Energy LFP 105Ah cells  
 > **Experimental Data DOI:** [10.57745/G02IYE](https://doi.org/10.57745/G02IYE)  
 > **Identified Parameters DOI:** [10.57745/SBNO8W](https://doi.org/10.57745/SBNO8W)  
@@ -12,7 +15,7 @@
 
 ## 1. Executive Summary
 
-The Gustave Eiffel dataset provides extensive characterisation data for four commercial EVE Energy 105 Ah Lithium Iron Phosphate (LiFePO4 / LFP) prismatic cells designated `BUGE388`, `BUGE389`, `BUGE390`, and `BUGE391`. Tests were conducted across eight ambient temperatures: 0, 10, 15, 20, 25, 30, 35, and 40 °C using a Biologic BCS 815 battery cycler inside a thermal chamber.
+The Gustave Eiffel dataset provides extensive characterisation data for four commercial EVE Energy 105 Ah Lithium Iron Phosphate (LiFePO4 / LFP) cells (prismatic format from general knowledge of the EVE LF105 product; not stated in the dataset readmes) designated `BUGE388`, `BUGE389`, `BUGE390`, and `BUGE391`. Tests were conducted across eight ambient temperatures: 0, 10, 15, 20, 25, 30, 35, and 40 °C using a Biologic BCS 815 battery cycler inside a thermal chamber.
 
 A total of **36 processed DATTES MATLAB (`.mat`) files** are present on disk under `$SOC_DATA_DIR/gustave_eiffel_105ah/main_extracted/processed_data/2_processed_data/<CELL>/`. Additionally, the repository includes the author-provided equivalent circuit model (2RC ECM) parameter file `batt_data.mat` under `params_extracted/`.
 

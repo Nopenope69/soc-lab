@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Closed-Loop Validation on Development Cells (V1.8)
 
+> [!NOTE] Revision (V1.12)  
+> Revised cell format descriptions: noted format unverified for CALCE cell.
+
 > **Document ID:** EVAL-GE105-DEV-001  
 > **Date:** 2026-11-19  
 > **Evaluated Partition:** Development Cells `BUGE388` and `BUGE389` (Sealed Test Cells BUGE390/391 remain locked)  
@@ -22,7 +25,7 @@ This report documents the closed-loop state of charge estimation performance acr
    - Under nominal start, E0 produces near-zero tracking error ($\le 0.01\ \text{pp}$) against `profiles.soc` by mathematical construction (since the ground truth is an Ah-counting reference re-anchored at full charge).
    - Under initialization error ($\pm 10\ \text{pp}$), E0 has **zero feedback capability** and retains the full $10.00\ \text{pp}$ offset permanently across the entire 16.4-minute drive cycle.
 2. **Frozen E7v3 with CALCE Calibration (`calce_a123_v4.json`):**
-   - The CALCE calibration was fitted for a ~1.06 Ah small cylindrical cell. When subjected to the 105 A currents of the Gustave Eiffel dataset, the filter experiences severe internal state saturation and scaling distortion, yielding maximum errors of **87 pp to 88 pp**.
+   - The CALCE calibration was fitted for a CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified). When subjected to the 105 A currents of the Gustave Eiffel dataset, the filter experiences severe internal state saturation and scaling distortion, yielding maximum errors of **87 pp to 88 pp**.
    - This provides empirical proof of **calibration non-transferability across cell capacity scales** ($1\ \text{Ah} \rightarrow 105\ \text{Ah}$).
 3. **E7v3 with Matched GE105 Calibration (`ge105_v1.json`):**
    - **In-Envelope Tracking (25 °C and 40 °C at 90% SOC):** Delivers excellent tracking with RMSE of **1.19 pp to 2.12 pp** and maximum error $< 3.1\ \text{pp}$.

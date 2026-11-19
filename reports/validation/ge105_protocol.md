@@ -1,11 +1,11 @@
 # Gustave Eiffel 105 Ah LFP Validation Protocol (V1.3)
 
 > [!NOTE] Revision (V1.12)  
-> Updated `LAB_VALIDATED` definition to the 5-point governance rule and replaced validated operating envelope statement with declared calibration envelope `[20, 45]` °C.
+> Updated `LAB_VALIDATED` definition to the 5-point governance rule, replaced validated operating envelope statement with declared calibration envelope `[20, 45]` °C, and revised cell format terminology (format unverified for CALCE, 105 Ah cell format).
 
 > **Document ID:** PROTOCOL-GE105-001  
 > **Date:** 2026-11-19  
-> **Dataset:** EVE Energy LFP 105Ah Prismatic Cells (BUGE388..BUGE391)  
+> **Dataset:** EVE Energy LFP 105Ah Cells (BUGE388..BUGE391)  
 > **Experimental Data DOI:** [10.57745/G02IYE](https://doi.org/10.57745/G02IYE)  
 > **Parameter Data DOI:** [10.57745/SBNO8W](https://doi.org/10.57745/SBNO8W)  
 > **Licence:** Etalab Open Licence 2.0  
@@ -19,10 +19,10 @@
 This protocol governs the real-data validation of equivalent circuit models (2RC ECM) and closed-loop State of Charge (SOC) estimators on the Gustave Eiffel 105 Ah LFP dataset.
 
 The objectives are:
-1. Validate open-loop ECM model fidelity on large-format (105 Ah) commercial prismatic LFP cells.
+1. Validate open-loop ECM model fidelity on large-format (105 Ah) commercial LFP cells.
 2. Determine whether earlier model-gate failures on FlexiPod were data-specific (synthetic pulse artifacts) or method-specific (2RC ECM limitations on LFP chemistry).
 3. Evaluate closed-loop SOC tracking accuracy and convergence for frozen E7v3 (with cross-chemistry CALCE calibration and matched GE105 calibration) against baseline Coulomb counting (E0).
-4. Establish transferability evidence from small cylindrical LFP cells (CALCE ~1.1 Ah) to large prismatic traction cells (EVE Energy 105 Ah).
+4. Establish transferability evidence from CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified) to large traction cells (EVE Energy 105 Ah).
 
 ---
 

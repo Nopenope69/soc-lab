@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Cell Variation and Hysteresis Report (V1.6)
 
+> [!NOTE] Revision (V1.12)  
+> Revised cell format descriptions, removed unproven hysteresis form-factor scaling claims, and clarified that two cell data points do not prove scaling.
+
 > **Document ID:** HYST-GE105-001  
 > **Date:** 2026-11-19  
 > **Scope:** Cell-to-cell variation across `BUGE388`, `BUGE389`, `BUGE390`, `BUGE391`; C/15 pseudo-OCV hysteresis gap at 0 °C, 25 °C, 40 °C; Comparison with CALCE A123 calibration (`calce_a123_v4.json`).  
@@ -9,7 +12,7 @@
 
 ## 1. Cell-to-Cell Variation Across the Four Cells
 
-All four cells are commercial EVE Energy 105 Ah prismatic Lithium Iron Phosphate (LiFePO4 / LFP) cells tested under identical environmental and cycling protocols.
+All four cells are commercial EVE Energy 105 Ah Lithium Iron Phosphate (LiFePO4 / LFP) cells tested under identical environmental and cycling protocols.
 
 ### 1.1 Beginning-of-Life Capacity and Ohmic Resistance
 
@@ -66,6 +69,6 @@ The calibrated hysteresis table in the frozen CALCE A123 profile (`calce_a123_v4
 | **40 °C** | 21.55 mV | **26.02 mV** | 1.21× | Close agreement across chemistries |
 
 ### Key Physical Insights:
-1. **Consistency at 40 °C:** At 40 °C, the half-gap on GE105 ($26.0\ \text{mV}$) agrees with CALCE ($21.6\ \text{mV}$) within 4.4 mV, confirming that thermodynamic LFP hysteresis scales closely across very different cell form factors (1.1 Ah cylindrical vs 105 Ah prismatic).
-2. **Confirmation of CALCE 25 °C Suspect Status:** In CALCE reports (`reports/diagnostics/b1_root_cause.md`, `configs/assumptions/profiles/calce_a123_v4.yaml`), the 25 °C value of 17.19 mV was flagged as artificially low. The GE105 data (mean $31.95\ \text{mV}$ across 4 cells) provides independent empirical proof that typical room-temperature LFP hysteresis half-gap is 28–32 mV, rather than 17 mV.
+1. **Comparison at 40 °C:** At 40 °C, one CALCE value (21.6 mV at 40 C) and one GE105 value (26.0 mV); no inference about scaling is possible from two cells.
+2. **Room-Temperature Hysteresis (25 °C):** In CALCE reports (`reports/diagnostics/b1_root_cause.md`, `configs/assumptions/profiles/calce_a123_v4.yaml`), the 25 °C value of 17.19 mV was flagged as artificially low. The GE105 data (mean $31.95\ \text{mV}$ across 4 cells) represents a different cell (105 Ah) and says nothing about whether the CALCE calibration was suspect.
 3. **Explosion at Low Temperature (0 °C):** At 0 °C, the C/15 gap more than doubles to ~135 mV ($M \approx 67.5\ \text{mV}$). Even at C/15 (7 A), solid-state Li-ion diffusion in cold LFP is sluggish, superimposing kinetic overpotential onto thermodynamic hysteresis.
