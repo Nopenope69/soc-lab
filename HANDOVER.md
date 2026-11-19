@@ -76,6 +76,7 @@ The following architectural decisions were resolved during the hardening pass:
 | **DEC-03** | Deprecated E7 Stub | Mark unversioned `E7` as deprecated alias raising `NotImplementedError` directing to `e7v3` | Eliminates ambiguity between historical stub and certified `e7v3` research candidate |
 | **DEC-04** | Experimental Neural Models | Relocated `.pt` and `.txt` weights out of `deliverable/` to `models/experimental/` | Keeps BMS delivery footprint dependency-free, standard-library only, and free of unvalidated ML artifacts |
 | **DEC-05** | FlexiPod Baselines | Retain explicit NO-GO verdict; added nominal-capacity E0 baseline | Prevents unvalidated vehicle deployment while honestly documenting Coulomb-counting capacity mismatch |
+| **DEC-06** | Reference Parity Discrepancy on Non-CALCE Calibrations | Documented discrepancy in reports; deferred code alignment | `deliverable/bms_soc_ref.py` uses the calibration file's capacity and temperature-dependent $Q(T)$ table directly, whereas research `src/soc/estimators/e7v3.py` linearly scales CALCE's $Q(T)$ curve by nominal capacity. On non-CALCE calibrations (e.g. GE105), they diverge by up to 3.61 pp when perturbed in-envelope and up to 9.82 pp out-of-envelope. A future refactor must align them (either by updating research e7v3 or the reference implementation). |
 
 ---
 

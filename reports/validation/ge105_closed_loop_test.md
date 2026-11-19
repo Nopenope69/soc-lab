@@ -55,9 +55,15 @@ This document presents the unsealed, single-run evaluation of the held-out test 
 4. **Safety & Envelope Self-Reporting:**
    - In-envelope test conditions (40 °C) generated strictly `['OK']` status flags on 100% of samples.
    - Out-of-envelope test conditions (0 °C) generated strictly `['OUT_OF_ENVELOPE']` flags on 100% of samples.
-5. **Implementation Parity & Nuance:**
-   - Bitwise parity on CALCE profile between `E7V3CompositeFilter` and `BmsSocEstimatorRef` is exactly $0.0$.
-   - On GE105, `BmsSocEstimatorRef` utilizes the cell-specific scheduled $Q(T)$ table from `ge105_v1.json`, whereas frozen `e7v3.py` linearly scales CALCE's baseline $Q(T)$ curve by nominal capacity. The maximum discrepancy between the two implementations across 986 seconds of dynamic driving was $\le 0.003\ \text{SOC}$ ($0.3\ \text{pp}$) in-envelope.
+5. **Implementation Parity Discrepancy & Root Cause:**
+   - Bitwise parity on the CALCE profile between `E7V3CompositeFilter` and `BmsSocEstimatorRef` is exactly $0.0$.
+   - On non-CALCE calibrations such as GE105, the reference implementation (`deliverable/bms_soc_ref.py`) and the research estimator (`src/soc/estimators/e7v3.py`) are **not numerically identical**.
+   - **Root Cause:** `deliverable/bms_soc_ref.py` uses the calibration file's capacity and temperature-dependent $Q(T)$ table directly, whereas research `e7v3.py` linearly scales CALCE's baseline $Q(T)$ curve using a constant capacity ratio.
+   - **Discrepancy Magnitude:**
+     - Under nominal initialization in-envelope (40 °C), max $|d\text{SOC}|$ is $1.06 \times 10^{-3}$ to $1.16 \times 10^{-3}$ (~0.1 pp).
+     - Under perturbed conditions in-envelope (40 °C), max $|d\text{SOC}|$ diverges by **up to $3.61 \times 10^{-2}$ (3.61 pp)** (e.g. `BUGE391` +10 pp at 50% SOC).
+     - Out of envelope (0 °C), max $|d\text{SOC}|$ diverges by **up to $9.82 \times 10^{-2}$ (9.82 pp)**.
+   - This discrepancy is recorded as an open architectural decision in `HANDOVER.md`.
 
 ---
 
