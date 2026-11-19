@@ -1,5 +1,8 @@
 # UConn REIL Dataset 5: Comprehensive SOH Validation Report (Task V2)
 
+> [!NOTE] Revision (V3.9 Condition Holdout Heading and Attribution Fix)
+> - **Section 7.2 Heading and Sample Count Attribution**: Clarified the heading to reflect that exactly 196 samples across 8 DEV cells were evaluated in the metrics table of `scripts/validation/uconn_eval_sealed.py`, while 96 further samples across the 4 sealed cells in Groups 3 & 6 were not evaluated in that script (292 total RPT samples across all 12 cells in Groups 3 and 6 of the full dataset).
+
 > [!NOTE] Revision (V2.13 Verification & Precision Fixes)
 > - **Zip Member Verification**: Clarified that member-by-member byte-identity verification between `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` and the 207 extracted CSV files on disk is performed directly by `scripts/validation/verify_uconn_extracted_vs_zip.py` (207/207 members identical, 0 different, 0 missing). `scripts/verify_datasets.py` (lines 98–112) verifies extracted files against `data/manifests/uconn_reil_dataset5_extracted.sha256` and the archive against `data/manifests/uconn_reil_dataset5.sha256`, but does not itself inspect or read members inside `rpt_data.zip`.
 > - **Condition Holdout Sample Count Correction**: Corrected condition holdout sample count from erroneous 497 to real counts: 196 samples across 8 DEV cells evaluated in `uconn_eval_sealed.py` (and 292 total RPT samples across all 12 cells in Groups 3 & 6 of the full dataset).
@@ -218,12 +221,12 @@ The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was execu
    - $SOH_R$: Empirical coverage on sealed cells is **98.6%**, proving overconservative.
    - By comparison, Ridge achieved **92.4%** ($SOH_C$) and **97.9%** ($SOH_R$), while the constant-mean baseline severely undercovered at **56.6%** ($SOH_C$) and **67.8%** ($SOH_R$).
 
-### 7.2 Supplementary Condition Holdout Evaluation (Groups 3 and 6, 292 Samples across 12 Cells)
+### 7.2 Supplementary Condition Holdout Evaluation (Groups 3 and 6, 196 Samples Evaluated across 8 Dev Cells; 292 Total Samples across 12 Cells in Dataset)
 
 > [!WARNING] Contaminated Split / Supplementary Result (Not a Headline Result)  
 > **Split Independence Audit:** 17 of the 21 cell-holdout sealed cells are training cells in the condition holdout, and 8 dev cells (6 train, 2 validation, the validation cells having been used for hyperparameter selection) are test cells there. Because the two splits mutually contaminate each other, every condition-holdout number is classified as **contaminated, supplementary, and not a headline result**, and is excluded from headline claims.
 
-Operating conditions in Groups 3 and 6 involve severe high-stress cycling protocols. The 12 test cells in Groups 3 and 6 comprise 292 valid RPT samples (196 samples from dev cells, 96 from sealed cells).
+Operating conditions in Groups 3 and 6 involve severe high-stress cycling protocols. The 12 test cells in Groups 3 and 6 comprise 292 valid RPT samples. In the evaluation table below (from scripts/validation/uconn_eval_sealed.py), exactly 196 samples across 8 dev cells were evaluated; 96 further samples across the 4 sealed cells in Groups 3 and 6 were not evaluated.
 
 | Estimator Model | Target | Condition-Held-Out MAE | Status / Determination |
 |:---|:---:|:---:|:---|
