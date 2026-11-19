@@ -35,8 +35,12 @@ The primary research candidate is **E7v3** (`E7V3CompositeFilter` in research, a
 >    All validations were performed on laboratory Arbin cycler data. The algorithms have not been field-validated in operational vehicles, marine packs, or grid storage racks.
 > 3. **Sub-20 °C Operation**  
 >    Evaluated at 10 °C, 0 °C, and -10 °C. While numerical stability holds (zero state explosion), convergence rates degrade gracefully due to a 4.5x impedance surge and severe hysteresis widening. Sub-20 °C deployment requires cold-temperature calibration tables.
-> 4. **State of Health (SOH)**  
->    This codebase estimates State of Charge ($z_k$). It does NOT estimate online capacity degradation or battery aging.
+> 4. **State of Health (SOH) Evaluation Status**  
+>    This codebase primary deliverable estimates State of Charge ($z_k$). Laboratory evaluation of pulse-based SOH estimation on physical degradation data (UConn REIL Dataset 5) established that:
+>    - The pulse ElasticNet (`soh_pulse_v2`) has **not been shown to outperform ridge regression or cycle-count baselines** on UConn.
+>    - **$SOH_R$ shows no evidence of skill** (ground-truth label and features are derived from the identical Step 20 pulse; a trivial baseline matches or beats the model).
+>    - The embedded C export (`deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`) comes from the 11-feature post-hoc candidate modified after unsealing and is strictly **`UNQUALIFIED`**.
+>    - **Nothing is validated for 100 Ah cells** (all evaluated degradation data are strictly from 1.2 Ah cylindrical lab cells under characterisation protocols).
 
 ---
 

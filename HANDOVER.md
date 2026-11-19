@@ -62,6 +62,11 @@ When initialized with an uncalibrated or wrong start ($|e_0| = 20\text{ to }50\t
 > - E7v3 does **NOT** track battery State of Health (SOH), capacity degradation, or calendar/cycle aging.
 > - While E7v3 adaptively estimates high-frequency polarization resistance $R_0$ via RLS for filtering precision, this fast dynamic estimate must not be confused with electrochemical degradation aging.
 > - Long-term capacity fade ($Q$) must be supplied to `CellCalibration` by an independent, qualified SOH tracking service.
+> - **SOH Evaluation Findings (Task V2 / UConn Dataset 5):** Laboratory evaluation of pulse-based SOH estimation demonstrated that:
+>   1. The pulse ElasticNet (`soh_pulse_v2`) has **not been shown to outperform ridge regression or cycle-count baselines** on UConn REIL Dataset 5.
+>   2. **$SOH_R$ shows no evidence of skill** (ground-truth label and features are derived from the identical Step 20 pulse; a trivial baseline matches or beats the model).
+>   3. The embedded C export (`deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`) was exported from the 11-feature post-hoc candidate modified after unsealing and is strictly **`UNQUALIFIED`**.
+>   4. **Nothing is validated for 100 Ah cells** (all real degradation data are strictly confined to 1.2 Ah cylindrical LithiumWerks 18650 power cells).
 
 ---
 
@@ -96,4 +101,5 @@ The following architectural decisions were resolved during the hardening pass:
 - **Remaining Useful Life (RUL):** Design specification only (`docs/rul_subsystem_design.md`). There is **zero executable code for RUL in `src/soh/`**.
 - **FlexiPod Dataset:** Contains beginning-of-life (BOL) characterization data only (`reports/flexipod1/`); no cycle degradation data or aged cell measurements.
 - **HPPC Cohort:** Analytical simulation generated via `StandardizedHppcCohortGenerator` (`src/soh/data/pulse_hppc_cohort.py`), not physically measured test-bench hardware.
+- **SOH Research Status (Task V2 / UConn):** Pulse ElasticNet has not been shown to outperform ridge or cycle-count baselines on UConn; SOH_R shows no evidence of skill; the C export (`soh_pulse_elasticnet_v2.h`) comes from the 11-feature post-hoc candidate and is `UNQUALIFIED`; and nothing is validated for 100 Ah cells.
 
