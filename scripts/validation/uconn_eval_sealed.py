@@ -147,11 +147,14 @@ def predict_soh_pulse_v2(
     return preds
 
 
-def run_evaluation(is_dry_run: bool = False) -> Dict[str, Any]:
+def run_evaluation(is_dry_run: bool = False, candidate_path: Optional[str] = None) -> Dict[str, Any]:
     root = Path(__file__).resolve().parent.parent.parent
     splits_path = root / "configs" / "validation" / "uconn_splits.yaml"
     config_path = root / "configs" / "validation" / "uconn_config.yaml"
-    calib_path = root / "deliverable" / "calibrations" / "uconn_soh_pulse_v2.json"
+    if candidate_path:
+        calib_path = Path(candidate_path)
+    else:
+        calib_path = root / "deliverable" / "calibrations" / "uconn_soh_pulse_v2.json"
 
     with open(splits_path, "r", encoding="utf-8") as f:
         splits = yaml.safe_load(f)
@@ -460,9 +463,10 @@ Cross-condition test with Groups 3 and 6 held out entirely from training:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="Dry run on DEV cells only")
+    parser.add_argument("--candidate", type=str, default=None, help="Path to calibration candidate JSON")
     args = parser.parse_args()
 
-    run_evaluation(is_dry_run=args.dry_run)
+    run_evaluation(is_dry_run=args.dry_run, candidate_path=args.candidate)
 
 
 if __name__ == "__main__":
