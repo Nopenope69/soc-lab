@@ -63,7 +63,7 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
       1. *Criterion (d) Failed*: Committed spec named only constant-mean as the fair baseline. Ridge beats candidate (Ridge (sealed script): SOH_C MAE 0.01994; Ridge (post-hoc script): SOH_C 0.0196 vs `soh_pulse_v2` 0.0211). No age-only baseline was named in the spec. Furthermore, candidate calibration was modified post-unsealing.
       2. *Criterion (e) Failed*: Data volume counted in independent units (21 sealed cells) is limited; cross-condition test covers only 2 condition groups that overlap with dev cells.
     - **$SOH_R$ Point & Uncertainty:**
-      1. *Criterion (d) Failed*: The ground-truth reference label (Step 20 DCIR) is not independent of the feature extractor (features $R_0, R_{10\text{s}}$ are extracted from the very same Step 20 pulse). Ridge beats candidate (Ridge (sealed script): SOH_R 0.009106; Ridge (post-hoc script): SOH_R 0.0089 vs `soh_pulse_v2` 0.0094).
+      1. *Criterion (d) Failed*: The ground-truth reference label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
       2. *Criterion (e) Failed*: Counted in independent cell units.
 - **Target Scope 2: 100 Ah Prismatic/Pouch Automotive & Grid Pack Deployment:**
   - **Status: `DEVELOPMENT` / `UNQUALIFIED`**
@@ -394,7 +394,7 @@ Based on the laboratory evaluation, split independence audit, baseline compariso
 2. **Conformal Uncertainty Bounds for $SOH_C$:**
    - Empirical coverage on the sealed cells was **91.2%**, failing to meet the nominal 95.0% target level (undercoverage).
 3. **Resistance Estimation ($SOH_R$):**
-   - **No evidence of estimation skill** is demonstrated. The ground-truth label ($SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$) and the candidate features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) are derived from the exact same Step 20 `slowpulse` excitation. A trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ matches or beats the model (0.0095 vs 0.0094 MAE).
+   - The label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$ over the training cells, $\bar{r}_0 = 0.031755\ \Omega$) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
 4. **Scale & Form Factor Boundaries:**
    - The evaluation provides **zero evidence for 100 Ah cells**. Data are strictly confined to 1.2 Ah cylindrical LithiumWerks 18650 power cells tested under laboratory characterisation protocols.
 5. **Embedded C Implementation Status:**

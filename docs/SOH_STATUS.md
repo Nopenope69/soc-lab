@@ -1,5 +1,8 @@
 # SOH Estimator Qualification Status Matrix
 
+> [!NOTE] Revision (V2.13 Precision & Baseline Audit)
+> - **$SOH_R$ Estimation Skill Assessment**: In headline text and qualification records: The $SOH_R$ ground-truth label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$, where $\bar{r}_0 = 0.031755\ \Omega$ is the mean RPT-0 $r_{10\text{s}}$ over the training cells) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
+
 > [!NOTE] Revision (V2.12 Tautology & Feature-Label Identity Audit)  
 > Documented that $SOH_R$ results do NOT represent evidence of degradation estimation skill because the ground-truth label ($SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$) and input features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) are derived from the exact same Step 20 `slowpulse` measurement. A trivial baseline $\widehat{SOH}_R = r_{10\text{s},\text{ohm}} / \bar{r}_0$ achieves 0.0095 MAE on sealed cells, matching the candidate model. The 11-feature model's SOH_R MAE changed from 0.0094 to 0.0107 when $r_{10\text{s}}$ was omitted (reported as an empirical observation without asserting a cause).
 
@@ -28,7 +31,7 @@
 > As established by the Task V2 laboratory evaluation and Task V2.11 governance audit on the University of Connecticut Renewable Energy & Intelligent Systems Laboratory (UConn REIL) Dataset 5 (64 physical cells, 2,855 RPT cycles, 207 manifest-verified CSV files):  
 > 
 > Under the 5-point governance rule:
-> - **Candidate 2 (`soh_pulse_v2`) is classified as `DEVELOPMENT` for LithiumWerks 18650 (APR18650M1B) 1.2 Ah cells** (source: `README_Uconn.txt` line 16). While evaluated on real laboratory data across 21 sealed cells (956 RPT observations), it fails Criterion (d) (committed spec named only constant-mean; Ridge matches or beats candidate on both channels; reference label for $SOH_R$ shares voltage response with feature extractor; candidate modified post-unsealing) and Criterion (e) (counted in independent cell units).
+> - **Candidate 2 (`soh_pulse_v2`) is classified as `DEVELOPMENT` for LithiumWerks 18650 (APR18650M1B) 1.2 Ah cells** (source: `README_Uconn.txt` line 16). While evaluated on real laboratory data across 21 sealed cells (956 RPT observations), it fails Criterion (d) (committed spec named only constant-mean; Ridge matches or beats candidate on both channels; reference label for $SOH_R$ shares voltage response with feature extractor; candidate modified post-unsealing) and Criterion (e) (counted in independent cell units). Furthermore, the ground-truth $SOH_R$ label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$ over DEV train cells) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
 > - **Candidate 2 remains strictly `UNQUALIFIED` for 100 Ah automotive/grid pack deployment.** (Failed criteria for 100 Ah pack: no 100 Ah prismatic/pouch cell data, no dynamic drive cycles, no in-service fleet operational data).
 > - **All other SOH estimators (Candidates 1, 3, 4, 5, 6) remain `SIM_VALIDATED`, `EXPERIMENTAL`, or `UNVALIDATED`** on physical cells, as their prior cohorts were generated synthetically or in simulation.
 
@@ -179,7 +182,7 @@ Based on the laboratory evaluation, split independence audit, baseline compariso
 2. **Interval Coverage for $SOH_C$:**
    - Conformal interval coverage was **91.2%**, falling short of the 95.0% nominal level (undercoverage).
 3. **$SOH_R$ Estimation:**
-   - **No evidence of estimation skill** (the label $SOH_R = r_{10\text{s}}(k) / r_{10\text{s}}(0)$ and feature $r_{10\text{s}}$ are the exact same Step 20 physical measurement; a trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ achieves 0.0095 MAE, matching `soh_pulse_v2` at 0.0094).
+   - The label is $r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ from Step 20 and the 14-feature model takes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from the same pulse; a trivial baseline ($r_{10\text{s}} / \bar{r}_0$ over the training cells, $\bar{r}_0 = 0.031755\ \Omega$) scores MAE 0.0060 on dev validation (candidate 0.0073), 0.0095 [0.0066, 0.0126] on sealed cells (candidate 0.0094 [0.0073, 0.0127]), and 0.0103 on the condition holdout (candidate 0.0117); conclusion: **no evidence of estimation skill for $SOH_R$**.
 4. **Scale Limitations:**
    - **Zero evidence for 100 Ah cells** (evaluation was strictly on 1.2 Ah cylindrical cells under laboratory characterisation protocols).
 5. **C Implementation Status:**
