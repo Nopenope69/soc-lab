@@ -1,7 +1,10 @@
 # Gustave Eiffel 105 Ah LFP Dataset: Comprehensive Validation Report (Task V1)
 
-> [!NOTE] Revision (V1.13 Efficiency Convention Clarification)  
-> Documented that `scripts/validation/ge105_eval_dev.py` applies the repository spec efficiency convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$). On dev cells, re-running E0 under $\eta = 1.0$ shifts Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).
+> [!NOTE] Revision (V1.13 Capacity Sensitivity Tracking and Provenance Corrections)  
+> - Tracked `scripts/validation/ge105_capacity_sensitivity.py` and reproduced all 12 nominal scenarios in `reports/validation/ge105_reproduction.md` with 0.00 pp discrepancy.  
+> - Documented that `scripts/validation/ge105_eval_dev.py` applies the repository spec efficiency convention ($\eta = 0.998$ for charge $I < 0$, $\eta = 1.0$ for discharge $I \ge 0$), whereas `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting ($\eta = 1.0$). On dev cells, re-running E0 under $\eta = 1.0$ shifts Max error by $\le 0.0018\ \text{pp}$ and RMSE by $\le 0.0010\ \text{pp}$ (identical at 2 decimal places).  
+> - Replaced unverified statements claiming the test partition was "evaluated exactly once" with the facts: two successful executions (steps 5667 and 5681) producing bit-for-bit identical outputs following 10 failed mechanical attempts (12 total attempts).  
+> - Appended Section 10 detailing V1.13 audit and reproduction findings, commands run, and real test counts.
 
 > [!NOTE] Revision (V1.12 Documentation Honesty and Provenance Auditing)  
 > - Updated cell format descriptions: replaced cylindrical/26650 assertions with "CALCE A123 LiFePO4 cell (measured capacity about 1.06 Ah, format unverified)" and noted format unverified in readmes for 105 Ah cells.  
@@ -411,5 +414,56 @@ This section documents the documentation honesty, audit reconciliation, and sens
   ```text
   SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.
   385 passed, 1 skipped, 1 warning in 419.50s (0:06:59)
+  ```
+
+---
+
+## 10. V1.13: Capacity Sensitivity Tracking and Provenance Corrections
+
+This section documents the script tracking, efficiency convention analysis, and provenance auditing completed during Task V1.13:
+
+1. **Tracked Capacity Sensitivity Script (Item 1):**
+   - Tracked `scripts/validation/ge105_capacity_sensitivity.py` into the repository, generating every number in `reports/validation/ge105_capacity_sensitivity.md` directly from repository code and dataset MAT files without any hardcoded session transcript values.
+   - Clean shell reproduction verified in Section 4 of `reports/validation/ge105_reproduction.md`, proving **0.00 pp discrepancy** across all 12 nominal scenarios and 6 per-file capacity measurements.
+
+2. **Efficiency Convention Clarification & Empirical Quantification (Item 2):**
+   - Documented the Coulombic efficiency conventions across implementations:
+     - `scripts/validation/ge105_eval_dev.py` applies the repository/algorithm specification convention (`docs/ALGORITHM_SPEC.md` lines 81–82, `src/soc/models/cell_2rc.py` lines 38–43) where $\eta = 0.998$ for charge ($I < 0$) and $\eta = 1.0$ for discharge ($I \ge 0$).
+     - `scripts/validation/ge105_eval_test.py` evaluates pure Ah counting with $\eta = 1.0$ across all currents.
+   - Corrected the explanatory text in `reports/validation/ge105_capacity_sensitivity.md` Section 2.2.
+   - Re-ran E0 across all 12 nominal WLTC development scenarios under $\eta = 1.0$: maximum shift in Max error is $0.0018\ \text{pp}$ and in RMSE is $0.0010\ \text{pp}$ (identical at 2 decimal places: Max error $\le 0.07\ \text{pp}$, RMSE $\le 0.04\ \text{pp}$). This confirms that `profiles.soc` is an Ah current integral without efficiency losses ($\eta = 1.0$), and the spec charge efficiency factor contributes $< 0.002\ \text{pp}$.
+
+3. **File Path & Ground-Truth Independence Verification (Item 3):**
+   - Corrected configuration path to `configs/validation/ge105_config.yaml` and verified all cited file paths, attributes, and MAT filenames exist on disk.
+   - Explicitly documented that E0 error drops to near-zero ($\le 0.002\ \text{pp}$) when using each file's measured `nom_capacity` because the reference `profiles.soc` is an Ah integral computed with each file's own capacity, confirming the reference is not independent of E0.
+   - Replaced robustness claims with exact bounded change: E7v3 changed by at most 0.14 pp RMSE on in-envelope nominal scenarios (and at most 0.49 pp RMSE overall across all nominal scenarios), whose reference shares E0's integral; no robustness claim follows.
+
+4. **Sealed-Test Provenance and Invocation Reconciliation (Item 4):**
+   - Replaced unverified draft statements claiming the test was "evaluated exactly once" with audited facts: two successful sealed executions (steps 5667 and 5681) producing bit-for-bit identical outputs (3,192 bytes) with zero intervening file edits, following 10 failed mechanical attempts.
+   - Documented that test cell filenames were originally guessed when creating `reports/validation/ge105_spec_frozen.md` (step 5589) and corrected from the filesystem at step 5649 following a `FileNotFoundError` at step 5641 (the sole edit to `ge105_spec_frozen.md` before commit `847843c`).
+   - Unified invocation counting to a single consistent definition of "attempt": 10 failed attempts + 2 successful executions = 12 total attempts.
+
+### Verification Commands & Test Results
+- **Capacity Sensitivity Script Execution:**
+  ```bash
+  .venv/bin/python scripts/validation/ge105_capacity_sensitivity.py
+  ```
+- **Frozen File SHA-256 Hashes:**
+  ```bash
+  shasum -a 256 src/soc/estimators/e7v3.py src/soc/estimators/base.py deliverable/bms_soc_ref.py deliverable/calibrations/ge105_v1.json
+  ```
+  Verified:
+  - `src/soc/estimators/e7v3.py`: `057f4d8547b00c80306d1ddd55fbac42dc304448f306d4bbd2fdbbb77ab9154e`
+  - `src/soc/estimators/base.py`: `33817e762e359c214cd9824c7684202b0ff129c9ef86b6994cdaf5fd8d8e04da`
+  - `deliverable/bms_soc_ref.py`: `1e49223a5aed13554d2787d29e5a289b6541c7cabd7207480e195254001fb431`
+  - `deliverable/calibrations/ge105_v1.json`: `b5bb35137e08e1b6da985cbe03fb9d611748ad886d016783af530187cdb9111c`
+- **Full Test Suite Execution:**
+  ```bash
+  .venv/bin/python -m pytest -q -p no:cacheprovider -rs
+  ```
+  **Real Output:**
+  ```text
+  SKIPPED [1] tests/test_real_data_validation.py:267: Expected skip: Dataset 'wheeler_2025' status is NOT_DOWNLOADED. External files have not been acquired.
+  385 passed, 1 skipped, 1 warning in 416.99s (0:06:56)
   ```
 
