@@ -382,5 +382,24 @@
       "float(\"280.0\")",
       "int(\"65536\")"
     ]
+  },
+  "src/soc/data/uconn_loader.py": {
+    "justification": "UConn REIL LFP/Gr raw data loader; cell count bounds, nominal ratings, and pulse window constants",
+    "allowed_calls": [
+      "float(\"0.01\")",
+      "float(\"0.1\")",
+      "float(\"1.2\")",
+      "float(\"2.0\")",
+      "float(\"3.3\")",
+      "float(\"3.6\")",
+      "float(\"50.0\")",
+      "int(\"10\")",
+      "int(\"11\")",
+      "int(\"6\")",
+      "int(\"61\")",
+      "int(\"62\")",
+      "int(\"65\")",
+      "int(\"66\")"
+    ]
   }
 }

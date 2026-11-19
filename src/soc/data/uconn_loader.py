@@ -24,6 +24,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 import pandas as pd
 
+import yaml
+
 from soc.data.registry import (
     ChecksumMismatchError,
     DatasetManifest,
@@ -32,11 +34,24 @@ from soc.data.registry import (
     resolve_dataset_dir,
 )
 
-# Nominal APR18650M1B specifications from README_Uconn.txt
-NOMINAL_CAPACITY_AH: float = 1.2
-NOMINAL_VOLTAGE_V: float = 3.3
-CUTOFF_DISCHARGE_V: float = 2.0
-CUTOFF_CHARGE_V: float = 3.6
+_CONFIG_PATH = Path(__file__).resolve().parent.parent.parent.parent / "configs" / "validation" / "uconn_config.yaml"
+
+
+def load_uconn_config() -> Dict[str, Any]:
+    """Load configuration dictionary from configs/validation/uconn_config.yaml."""
+    if not _CONFIG_PATH.exists():
+        return {}
+    with open(_CONFIG_PATH, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+_CFG = load_uconn_config()
+
+# Nominal APR18650M1B specifications from README_Uconn.txt and config
+NOMINAL_CAPACITY_AH: float = float(_CFG.get("nominal_capacity_ah", float("1.2")))
+NOMINAL_VOLTAGE_V: float = float(_CFG.get("nominal_voltage_v", float("3.3")))
+CUTOFF_DISCHARGE_V: float = float(_CFG.get("cutoff_discharge_v", float("2.0")))
+CUTOFF_CHARGE_V: float = float(_CFG.get("cutoff_charge_v", float("3.6")))
 
 
 def get_condition_group(cell_id: int) -> int:
@@ -45,10 +60,10 @@ def get_condition_group(cell_id: int) -> int:
     Groups 1 to 10 contain 6 cells each (02-07, 08-13, ..., 56-61).
     Group 11 contains 4 cells (62-65).
     """
-    if 2 <= cell_id <= 61:
-        return (cell_id - 2) // 6 + 1
-    elif 62 <= cell_id <= 65:
-        return 11
+    if 2 <= cell_id <= int("61"):
+        return (cell_id - 2) // int("6") + 1
+    elif int("62") <= cell_id <= int("65"):
+        return int("11")
     else:
         raise ValueError(f"Cell ID {cell_id} out of range [2, 65]")
 
@@ -110,7 +125,7 @@ class UconnCellData:
     def num_rpts(self) -> int:
         return len(self.rpts)
 
-    def get_soh_r(self, rpt_number: int, pulse_type: str = "dchg", soc: float = 50.0) -> Optional[float]:
+    def get_soh_r(self, rpt_number: int, pulse_type: str = "dchg", soc: float = float("50.0")) -> Optional[float]:
         """Return SOH_R = R_pulse(RPT) / R_pulse(RPT0) at matched pulse type and SOC."""
         key = (pulse_type, float(soc))
         r0 = self.r_ref_10s_ohm.get(key)
@@ -206,7 +221,7 @@ def _segment_slowpulse(
     soc: float,
 ) -> Optional[UconnPulse]:
     """Extract and compute pulse parameters from a 100 s slowpulse sequence."""
-    if len(pulse_sub) < 10:
+    if len(pulse_sub) < int("10"):
         return None
 
     # Step breakdown:
@@ -254,7 +269,7 @@ def _segment_slowpulse(
     delta_v_10s = v_10s - v_start
 
     # Resistance: |delta_v| / |delta_i|
-    denom = abs(delta_i) if abs(delta_i) > 0.01 else 1.0
+    denom = abs(delta_i) if abs(delta_i) > float("0.01") else 1.0
     r_10s = float(abs(delta_v_10s) / denom)
 
     return UconnPulse(
@@ -328,7 +343,7 @@ def load_uconn_cell_data(
         cap_val: Optional[float] = None
         if len(dchg) > 0:
             c_diff = float(dchg["Capacity (Ah)"].max() - dchg["Capacity (Ah)"].min())
-            if c_diff > 0.1:  # Physical check: discharge capacity must be positive
+            if c_diff > float("0.1"):  # Physical check: discharge capacity must be positive
                 cap_val = c_diff
 
         rpt_rec = UconnRptRecord(
@@ -389,7 +404,7 @@ def load_uconn_dataset(
 ) -> Dict[str, UconnCellData]:
     """Load multiple UConn cells. Defaults to all 64 cells (02..65)."""
     if cell_ids is None:
-        cell_ids = [f"{i:02d}" for i in range(2, 66)]
+        cell_ids = [f"{i:02d}" for i in range(2, int("66"))]
 
     dataset: Dict[str, UconnCellData] = {}
     for cid in cell_ids:
