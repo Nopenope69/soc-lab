@@ -1,0 +1,40 @@
+# TEMPEST 280 Ah Prismatic LFP Dataset Configuration
+dataset_id: "tempest_zenodo"
+name: "TEMPEST 280 Ah Prismatic LFP Characterisation (Univ of Bath)"
+source_url: "https://zenodo.org/records/19632939"
+doi: "UNVERIFIED"
+licence: "UNVERIFIED"
+
+cell:
+  chemistry: "LFP"
+  form_factor: "Prismatic"
+  nominal_capacity_ah: 280.0
+  voltage_limit_min: 2.50
+  voltage_limit_max: 3.65
+  tested_temperatures_c: [15, 20, 25, 30, 35]
+
+protocols:
+  capacity_test:
+    nominal_c_rate: 0.1
+    nominal_current_a: 28.0
+    current_threshold_a: 10.0
+    v_max_v: 3.65
+    v_min_v: 2.50
+  hppc_test:
+    nominal_c_rate: 0.5
+    pulse_current_a: 140.0
+    pulse_threshold_a: 100.0
+    pulse_duration_s: 10.0
+    rest_duration_s: 1200.0
+    soc_grid: [0.95, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15, 0.05]
+
+physical:
+  kelvin_offset: 273.15
+  read_chunk_size_bytes: 65536
+  min_current_epsilon_a: 0.001
+  hash_truncate_len: 8
+
+model_gate:
+  bias_mv_max: 2.0
+  rmse_mv_max: 6.0
+  implied_soc_error_pp_max: 2.5

@@ -354,7 +354,7 @@ DATASET_METADATA: Dict[str, DatasetMetadata] = {
         download_date="2026-11-16",
         path_pattern="tempest_280ah",
         manifest_filename="tempest_zenodo.sha256",
-        split_config_filename="tempest_zenodo_splits.yaml",
+        split_config_filename="tempest_splits.yaml",
         cell_chemistry="LFP",
         cell_form_factor="280 Ah prismatic",
         nominal_capacity_ah=float("280.0"),
@@ -620,11 +620,39 @@ def load_tempest_zenodo(
     data_dir: Optional[Path] = None,
     verify_checksums: bool = True,
 ) -> Dict[str, Any]:
-    """Loader for TEMPEST Zenodo 280 Ah Prismatic LFP dataset (DOI 10.5281/zenodo.20813753)."""
+    """Loader for TEMPEST Zenodo 280 Ah Prismatic LFP dataset (DOI UNVERIFIED, Zenodo Record 19632939)."""
     info = load_dataset_with_manifest_check("tempest_zenodo", data_dir, verify_checksums)
-    split_config = ValidationSplitConfig.load(get_split_config_path("tempest_zenodo"))
-    split_config.validate_cell_isolation()
-    return {**info, "split_config": split_config}
+    split_path = get_split_config_path("tempest_zenodo")
+    split_config = None
+    if split_path.exists():
+        split_config = ValidationSplitConfig.load(split_path)
+        split_config.validate_cell_isolation()
+
+    from soc.data.tempest_loader import (
+        get_tempest_dir,
+        load_tempest_capacity,
+        load_tempest_hppc,
+        load_tempest_lic_capacity,
+        load_tempest_lic_entropy,
+        load_tempest_lic_hppc,
+        load_tempest_raw_csv,
+        segment_tempest_hppc_pulses,
+        verify_tempest_manifest,
+    )
+
+    return {
+        **info,
+        "split_config": split_config,
+        "load_capacity": load_tempest_capacity,
+        "load_hppc": load_tempest_hppc,
+        "load_lic_capacity": load_tempest_lic_capacity,
+        "load_lic_hppc": load_tempest_lic_hppc,
+        "load_lic_entropy": load_tempest_lic_entropy,
+        "load_raw_csv": load_tempest_raw_csv,
+        "segment_hppc_pulses": segment_tempest_hppc_pulses,
+        "verify_manifest": verify_tempest_manifest,
+        "get_tempest_dir": get_tempest_dir,
+    }
 
 
 LOADER_REGISTRY: Dict[str, Callable[..., Dict[str, Any]]] = {
