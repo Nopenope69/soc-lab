@@ -1,9 +1,11 @@
 {
   "model_name": "soh_pulse_v2",
+  "label": "post-hoc candidate (modified after unsealing)",
+  "candidate_status": "post-hoc candidate (modified after unsealing)",
   "version": "2.0",
   "created_date": "2026-11-19",
   "qualification_status": "UNQUALIFIED",
-  "qualification_notes": "Trained and validated on UConn REIL 1.2 Ah APR18650M1B cylindrical cells. Unqualified for 100 Ah automotive/grid pack deployment.",
+  "qualification_notes": "post-hoc candidate (modified after unsealing). Trained and validated on UConn REIL 1.2 Ah APR18650M1B cylindrical cells with 11 ECM features. Unqualified for 100 Ah automotive/grid pack deployment.",
   "dataset": "uconn_reil_dataset5",
   "target_chemistry": "LFP/Graphite",
   "cell_form_factor": "18650 cylindrical",

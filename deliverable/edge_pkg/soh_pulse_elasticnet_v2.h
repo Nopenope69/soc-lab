@@ -1,6 +1,20 @@
 /**
  * Auto-generated 2-RC ECM Pulse ElasticNet SOH Estimator Header
  * Microcontroller deployment: fixed feature inference without external libraries.
+ *
+ * PROVENANCE AND QUALIFICATION NOTE:
+ * This C implementation was exported from the 11-feature post-hoc candidate
+ * (deliverable/calibrations/uconn_soh_pulse_v2.json, sha256 d2e7ee280ed7e1ec50dd017e3c83d54f1b56ca023fe0f6a387c81fb45d61cca7).
+ * The pre-registered sealed test results reported in reports/validation/uconn_sealed_test.md
+ * and reports/validation/uconn_sealed_results.json were generated using the 14-feature
+ * candidate frozen at V2.7 (deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json,
+ * sha256 efd71dc3f4d34698169250df6e62331add594087a37109f499a352df2795c095).
+ * Because the feature sets differ (11 features vs 14 features), the committed sealed
+ * evaluation results DO NOT describe this C header.
+ *
+ * GOVERNANCE / QUALIFICATION STATUS:
+ * Strictly PLACEHOLDER / UNVALIDATED for BMS production control or safety limits.
+ * Default qualification outputs: qual_c = UNQUALIFIED, qual_r = UNQUALIFIED.
  */
 
 #ifndef SOH_PULSE_ELASTICNET_H
