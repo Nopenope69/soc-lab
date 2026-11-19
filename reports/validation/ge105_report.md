@@ -105,21 +105,68 @@ Out-of-sample voltage RMSE remains $\le 2.97\ \text{mV}$ on the 40 °C plateau, 
    - At 25 °C: Total gap is $61.5\text{--}66.2\ \text{mV}$, corresponding to a half-gap $M \approx 30.7\text{--}33.1\ \text{mV}$.
    - At 40 °C: Total gap is $50.1\text{--}52.8\ \text{mV}$, corresponding to a half-gap $M \approx 25.1\text{--}26.4\ \text{mV}$.
    - At 0 °C: Total gap is $125\text{--}150\ \text{mV}$, corresponding to a half-gap $M \approx 62.5\text{--}75.0\ \text{mV}$.
-3. **Independent Validation of CALCE Calibration Anomaly:**
+3. **Pseudo-OCV Hysteresis Comparison (GE105 vs. CALCE):**
    - In `calce_a123_v4.json`, the calibrated hysteresis amplitude at 25 °C was $17.19\ \text{mV}$, while at 40 °C it was $21.55\ \text{mV}$.
-   - The Gustave Eiffel physical measurements demonstrate that hysteresis decreases monotonically with increasing temperature ($M(0^\circ\text{C}) > M(25^\circ\text{C}) > M(40^\circ\text{C})$).
-   - This independently validates the prior Hardening 2 finding that the CALCE 25 °C calibration point was suspect due to testing profile quirks.
+   - The Gustave Eiffel physical measurements demonstrate that pseudo-OCV hysteresis decreases monotonically with increasing temperature ($M(0^\circ\text{C}) \approx 62.5\text{--}75.0\ \text{mV} > M(25^\circ\text{C}) \approx 30.7\text{--}33.1\ \text{mV} > M(40^\circ\text{C}) \approx 25.1\text{--}26.4\ \text{mV}$).
+   - A different cell (105 Ah prismatic) shows a larger pseudo-OCV hysteresis gap than the 26650 cylindrical cell; this says nothing about whether the CALCE calibration was suspect.
 
 ---
 
-## 5. Calibration Container (`ge105_v1.json`)
+## 5. Calibration Container (`ge105_v1.json`) & Operational Envelope Analysis
 
 Constructed strictly from the development partition (`BUGE388` and `BUGE389`):
 - **Path:** `deliverable/calibrations/ge105_v1.json`
 - **SHA-256 Checksum:** `b5bb35137e08e1b6da985cbe03fb9d611748ad886d016783af530187cdb9111c`
 - **Nominal Capacity:** $105.042655\ \text{Ah}$
-- **Operational Envelope:** $T \in [20.0, 45.0]\ ^\circ\text{C}$, $V \in [2.0, 3.7]\ \text{V}$, $I \in [-120.0, 120.0]\ \text{A}$
+- **Operational Envelope Fields:** $T \in [20.0, 45.0]\ ^\circ\text{C}$, $V \in [2.0, 3.7]\ \text{V}$, $I \in [-120.0, 120.0]\ \text{A}$
 - **Strict Validation:** Passed 100% of schema checks (`CellCalibration.validate()`).
+
+### Operational Envelope Limits & Evidence Basis (Item 9)
+
+Lines 245–264 of `deliverable/calibrations/ge105_v1.json`:
+```json
+    "15.0": 179.15,
+    "20.0": 179.15,
+    "25.0": 179.15,
+    "30.0": 179.15,
+    "35.0": 179.15,
+    "40.0": 167.35
+  },
+  "temp_max_c": 45.0,
+  "temp_min_c": 20.0,
+  "temperatures_c": [
+    0.0,
+    10.0,
+    15.0,
+    20.0,
+    25.0,
+    30.0,
+    35.0,
+    40.0
+  ],
+  "validation_status": "DEVELOPMENT",
+```
+
+The code that generated this calibration envelope (step 5540):
+```python
+calib = CellCalibration(
+    calibration_id='ge105_v1',
+    schema_version='1.0',
+    validation_status='DEVELOPMENT',
+    temperatures_c=temps,
+    soc_grid=soc_grid,
+    ...
+    temp_min_c=20.0,
+    temp_max_c=45.0,
+    voltage_min_v=2.0,
+    voltage_max_v=3.7,
+    current_min_a=-120.0,
+    current_max_a=120.0,
+)
+```
+
+> [!WARNING] Operational Envelope Limitation  
+> Dynamic drive cycle data in the Gustave Eiffel dataset exists **only at 25 °C and 40 °C** (dev partition) and **40 °C** (test partition). Therefore, an operational envelope claiming validity down to 20 °C and up to 45 °C is an analytical extrapolation assumption not supported by dynamic experimental data. The frozen calibration file remains untouched per freezing rules.
 
 ---
 
