@@ -95,6 +95,9 @@ def verify_datasets(
     datasets_to_check = (
         [target_dataset] if target_dataset else list(DATASET_METADATA.keys())
     )
+    extracted_manifest_path = REPO_ROOT / "data" / "manifests" / "uconn_reil_dataset5_extracted.sha256"
+    if target_dataset is None and extracted_manifest_path.exists():
+        datasets_to_check.append("uconn_reil_dataset5_extracted")
 
     results = []
     any_corrupt = False
@@ -102,19 +105,27 @@ def verify_datasets(
     any_missing = False
 
     for ds_id in datasets_to_check:
-        if ds_id not in DATASET_METADATA:
+        if ds_id == "uconn_reil_dataset5_extracted":
+            meta_licence = "CC BY 4.0"
+            manifest_path = extracted_manifest_path
+            dataset_path = data_dir / "uconn_reil" / "extracted" / "rpt_data"
+            meta_download_date = "2026-11-16"
+        elif ds_id in DATASET_METADATA:
+            meta = DATASET_METADATA[ds_id]
+            meta_licence = meta.licence
+            manifest_path = get_manifest_path(ds_id)
+            dataset_path = resolve_dataset_dir(ds_id, custom_data_dir=data_dir)
+            meta_download_date = meta.download_date
+        else:
             print(f"ERROR: Unknown dataset '{ds_id}'")
             return 1
-
-        meta = DATASET_METADATA[ds_id]
-        manifest_path = get_manifest_path(ds_id)
 
         if not manifest_path.exists():
             print(f"[{ds_id}] Manifest missing: {manifest_path}")
             any_missing = True
             results.append({
                 "id": ds_id,
-                "licence": meta.licence,
+                "licence": meta_licence,
                 "total": 0,
                 "valid": 0,
                 "missing": 0,
@@ -125,14 +136,13 @@ def verify_datasets(
             continue
 
         manifest = DatasetManifest.load(manifest_path)
-        dataset_path = resolve_dataset_dir(ds_id, custom_data_dir=data_dir)
 
         # Check for stub / NOT_DOWNLOADED manifest
-        if manifest.status == "NOT_DOWNLOADED" or meta.download_date == "NOT_DOWNLOADED":
+        if manifest.status == "NOT_DOWNLOADED" or meta_download_date == "NOT_DOWNLOADED":
             status = "NOT_DOWNLOADED"
             results.append({
                 "id": ds_id,
-                "licence": meta.licence,
+                "licence": meta_licence,
                 "total": len(manifest.expected_hashes),
                 "valid": 0,
                 "missing": 0,
@@ -152,7 +162,7 @@ def verify_datasets(
             any_fabricated = True
             results.append({
                 "id": ds_id,
-                "licence": meta.licence,
+                "licence": meta_licence,
                 "total": len(manifest.expected_hashes),
                 "valid": 0,
                 "missing": len(manifest.expected_hashes),
@@ -202,7 +212,7 @@ def verify_datasets(
 
         results.append({
             "id": ds_id,
-            "licence": meta.licence,
+            "licence": meta_licence,
             "total": total_files,
             "valid": valid_count,
             "missing": missing_count,

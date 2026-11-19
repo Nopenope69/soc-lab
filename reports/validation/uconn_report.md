@@ -1,6 +1,7 @@
 # UConn REIL Dataset 5: Comprehensive SOH Validation Report (Task V2)
 
-> [!NOTE] Revision (V2.11 Baselines, Provenance, and Governance Audit)  
+> [!NOTE] Revision (V2.12 Reproduction, Data Integrity & Tautology Audit)  
+> - **Reproduction & Manifest Reconciliation**: Verified that primary manifest `data/manifests/uconn_reil_dataset5.sha256` tracks the 2 download files (`rpt_data.zip`, `README_Uconn.txt`). Extracted CSV files (207 files across 64 physical cells) are tracked in `data/manifests/uconn_reil_dataset5_extracted.sha256` and verified 100% byte-identical to zip members via `scripts/verify_datasets.py`. Corrected file distribution per cell: 18 cells with 2 files, 20 cells with 3 files, 19 cells with 4 files, 7 cells with 5 files (total 207).  
 > - **Comparative Baseline Honesty**: Ridge regression achieves lower MAE than frozen `soh_pulse_v2` on both outputs on sealed cells ($SOH_C$: 0.01994 vs 0.02107; $SOH_R$: 0.009106 vs 0.009392); ElasticNet shows no improvement over Ridge. Error reductions of 50.6% ($SOH_C$) and 56.5% (condition holdout) are relative to constant-mean ONLY. Conformal coverage for $SOH_C$ is 91.2% (under-covering 95% nominal level).  
 > - **Post-Hoc Age-Only Baseline**: Added linear and non-linear (quadratic) age-only baselines fitted strictly on DEV train cells. On sealed cells, pulse $SOH_C$ (0.0211 MAE) only marginally edges out age-quadratic (0.0221 MAE) with overlapping cell bootstrap 95% CIs ([0.0181, 0.0260] vs [0.0199, 0.0281]); pulse model beats age-only on $SOH_R$ (0.0094 vs 0.0195) and under severe condition holdout (0.0219 vs 0.0473).  
 > - **Candidate & Feature Provenance**: Documented that committed sealed results in `uconn_sealed_results.json` reflect the 14-feature model (`uconn_soh_pulse_v2_frozen_v27.json`), whereas `soh_pulse_elasticnet_v2.h` was exported from a post-hoc 11-feature model modified after unsealing.  
@@ -41,7 +42,7 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
 
 | Criterion | Evaluation / Evidence | Determination |
 |:---|:---|:---:|
-| **(a) Real Files & Manifest Hashes** | Evaluated on real laboratory CSV data (`$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/`). All 207 files match SHA-256 checksums in `data/manifests/uconn_reil_dataset5.sha256` verified by `scripts/verify_datasets.py` (`INTEGRITY_OK`). Zero synthetic or defaulted labels. | **PASS** |
+| **(a) Real Files & Manifest Hashes** | Evaluated on real laboratory CSV data (`$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/`). The primary download manifest `data/manifests/uconn_reil_dataset5.sha256` verifies the 2 download artifacts (`rpt_data.zip` and `README_Uconn.txt`). All 207 extracted CSV files match SHA-256 checksums in `data/manifests/uconn_reil_dataset5_extracted.sha256` and are verified 100% byte-identical to members inside `rpt_data.zip` via `scripts/verify_datasets.py` (`INTEGRITY_OK`). Zero synthetic or defaulted labels. | **PASS** |
 | **(b) Tracked Scripts & Reproduction** | Every step executed from tracked scripts in `scripts/validation/` (`uconn_inventory_scan.py`, `uconn_extract_labels.py`, `uconn_eval_dev.py`, `uconn_pulse_fit_comparison.py`, `uconn_export_v2_c.py`, `uconn_eval_sealed.py`, `uconn_age_baseline.py`) and reproduced from clean shell. | **PASS** |
 | **(c) Spec Committed Prior to Unsealing** | Formal partition specification `reports/validation/uconn_spec_frozen.md` committed in `f4a8d87`. Candidate specification `reports/validation/uconn_soh_pulse_v2_spec.md` and calibration `deliverable/calibrations/uconn_soh_pulse_v2.json` committed in `f592bc7` *before* the sealed evaluation script ran in commit `dbffe91`. | **PASS** |
 | **(d) Held-Out Result Beats Fair Baseline on Independent Reference (Named in Spec)** | - **$SOH_C$**: **FAIL / UNMET**. The committed spec named only the constant-training-mean baseline. Ridge regression matches or beats the candidate (0.0199 vs 0.0211), and no age-only baseline was pre-registered in the spec. Furthermore, the candidate calibration was modified post-unsealing.<br>- **$SOH_R$**: **FAIL / UNMET**. The reference label (Step 20 DCIR) is not independent of the features ($R_0, R_{10\text{s}}$) extracted from the very same Step 20 pulse in the same RPT. Furthermore, Ridge regression beats the candidate (0.0091 vs 0.0094). | **FAIL** |
@@ -69,10 +70,19 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
 
 ## 2. Dataset Inventory & Integrity Audit (V2.1 - V2.2)
 
-### 2.1 File & Cell Verification
-- **Dataset Manifest:** `data/manifests/uconn_reil_dataset5.sha256` (207 CSV files).
+### 2.1 File & Cell Verification & Manifest Reconciliation
+- **Primary Download Manifest:** `data/manifests/uconn_reil_dataset5.sha256` (2 non-comment hash entries: `README_Uconn.txt` and `rpt_data.zip`).
+- **Extracted CSV Manifest:** `data/manifests/uconn_reil_dataset5_extracted.sha256` (207 CSV files, verified 100% byte-identical to members of `rpt_data.zip`).
 - **Physical Cell Count:** 64 cells (`02` through `65`).
-- **File Distribution:** 63 cells have exactly 3 files each (`RPT_1`, `RPT_2`, `RPT_3`); Cell 60 has 6 files.
+- **File Distribution Across Cells (Reconciled):**
+  - Inside `rpt_data.zip`: 207 CSV files.
+  - On disk under `$SOC_DATA_DIR/uconn_reil/extracted/rpt_data`: 207 CSV files.
+  - Breakdown by cell (correcting the earlier erroneous claim that "63 cells have 3 files and cell 60 has 6"):
+    - 18 cells have 2 files: cells `[5, 14, 15, 16, 17, 18, 19, 32, 33, 34, 35, 36, 37, 44, 46, 48, 62, 65]` (36 files)
+    - 20 cells have 3 files: cells `[2, 3, 4, 6, 7, 8, 10, 11, 12, 13, 38, 40, 41, 42, 43, 45, 47, 49, 63, 64]` (60 files)
+    - 19 cells have 4 files: cells `[9, 20, 22, 23, 24, 26, 27, 28, 29, 30, 39, 50, 51, 52, 53, 54, 55, 56, 59]` (76 files)
+    - 7 cells have 5 files: cells `[21, 25, 31, 57, 58, 60, 61]` (35 files)
+    - Total files: $36 + 60 + 76 + 35 = 207$ CSV files.
 - **Cell Consistency:** All 64 cells have a valid, usable RPT 0 characterisation cycle. Initial cell capacity measured at $C_0 = 1.2134 \pm 0.0163\ \text{Ah}$ across all cells.
 - **Missing Data:** Cell 60 skips RPT cycle 76 (cycles 75 and 77 are present). All other cells exhibit contiguous integer RPT numbering.
 
