@@ -3,6 +3,7 @@
 > [!NOTE] Revision (V2.13 Verification & Precision Fixes)
 > - **Zip Member Verification**: Clarified that member-by-member byte-identity verification between `$SOC_DATA_DIR/uconn_reil/rpt_data.zip` and the 207 extracted CSV files on disk is performed directly by `scripts/validation/verify_uconn_extracted_vs_zip.py` (207/207 members identical, 0 different, 0 missing). `scripts/verify_datasets.py` (lines 98–112) verifies extracted files against `data/manifests/uconn_reil_dataset5_extracted.sha256` and the archive against `data/manifests/uconn_reil_dataset5.sha256`, but does not itself inspect or read members inside `rpt_data.zip`.
 > - **Condition Holdout Sample Count Correction**: Corrected condition holdout sample count from erroneous 497 to real counts: 196 samples across 8 DEV cells evaluated in `uconn_eval_sealed.py` (and 292 total RPT samples across all 12 cells in Groups 3 & 6 of the full dataset).
+> - **Ridge Variants Explicit Labeling**: Labeled the two Ridge results everywhere they appear: "Ridge (sealed script): SOH_C MAE 0.01994, SOH_R 0.009106" and "Ridge (post-hoc script): SOH_C 0.0196, SOH_R 0.0089". Stated exact differences from code inspection: feature set is identical (14 candidate features), training cells are identical (32 DEV train cells), and normalisation is identical (`StandardScaler` fitted on DEV train); the only code difference is regularization penalty $\alpha$ ($\alpha = 1.0$ in sealed script vs $\alpha = 0.005$ in post-hoc script; UNVERIFIED for anything the code cannot show).
 
 > [!NOTE] Revision (V2.12 Reproduction, Data Integrity & Tautology Audit)  
 > - **Reproduction & Manifest Reconciliation**: Verified that primary manifest `data/manifests/uconn_reil_dataset5.sha256` tracks the 2 download files (`rpt_data.zip`, `README_Uconn.txt`). Extracted CSV files (207 files across 64 physical cells) are tracked in `data/manifests/uconn_reil_dataset5_extracted.sha256` and verified 100% byte-identical to members inside `rpt_data.zip` via dedicated script `scripts/validation/verify_uconn_extracted_vs_zip.py`. Corrected file distribution per cell: 18 cells with 2 files, 20 cells with 3 files, 19 cells with 4 files, 7 cells with 5 files (total 207).  
@@ -22,7 +23,8 @@
 **Estimators Evaluated:**  
 - **Constant-Training-Mean Baseline**: Fair empirical mean reference trained on development cells  
 - **V1 Model**: ElasticNet estimator with legacy hyperparameters ($\alpha = 0.05, \rho = 0.50$)  
-- **Ridge Regression**: $L_2$-regularized linear model ($\alpha = 0.005$)  
+- **Ridge (sealed script)**: $L_2$-regularized linear model ($\alpha = 1.0$) in `scripts/validation/uconn_eval_sealed.py`: SOH_C MAE 0.01994, SOH_R 0.009106  
+- **Ridge (post-hoc script)**: $L_2$-regularized linear model ($\alpha = 0.005$) in `scripts/validation/uconn_age_baseline.py`: SOH_C 0.0196, SOH_R 0.0089  
 - **Frozen `soh_pulse_v2`**: 2-RC ECM feature extractor + tuned ElasticNet ($\alpha = 0.005, \rho_C = 0.10, \rho_R = 0.30$)  
 - **C Implementation**: `deliverable/edge_pkg/soh_pulse_elasticnet_v2.h` (compiled and verified via ctypes; placeholder/unvalidated)
 
@@ -49,7 +51,7 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
 | **(a) Real Files & Manifest Hashes** | Evaluated on real laboratory CSV data (`$SOC_DATA_DIR/uconn_reil/extracted/rpt_data/`). The primary download manifest `data/manifests/uconn_reil_dataset5.sha256` verifies the 2 download artifacts (`rpt_data.zip` and `README_Uconn.txt`). All 207 extracted CSV files match SHA-256 checksums in `data/manifests/uconn_reil_dataset5_extracted.sha256` (verified via `scripts/verify_datasets.py`, lines 98–112) and are verified 100% byte-identical to members inside `rpt_data.zip` via dedicated script `scripts/validation/verify_uconn_extracted_vs_zip.py`. Zero synthetic or defaulted labels. | **PASS** |
 | **(b) Tracked Scripts & Reproduction** | Committed numbers reproduce per Item 1 from clean shell via `scripts/validation/uconn_eval_sealed.py` and `scripts/validation/uconn_age_baseline.py`. However, the post-hoc 11-feature sealed evaluation (reported at session step 6905: $SOH_C$ MAE = 0.0209, $SOH_R$ MAE = 0.0107) came from an uncommitted interactive Python snippet and is not reproducible from a committed sealed evaluation script. | **PARTIAL** |
 | **(c) Spec Committed Prior to Unsealing** | Formal partition specification `reports/validation/uconn_spec_frozen.md` committed in `f4a8d87`. Candidate specification `reports/validation/uconn_soh_pulse_v2_spec.md` and 14-feature calibration `deliverable/calibrations/uconn_soh_pulse_v2_frozen_v27.json` committed in `f592bc7` *before* the sealed evaluation script ran in commit `dbffe91`. **PASS for the 14-feature candidate only**; the post-hoc 11-feature candidate failed criterion (c) as it was modified after unsealing. | **PASS (14-feat only)** |
-| **(d) Held-Out Result Beats Fair Baseline on Independent Reference (Named in Spec)** | - **$SOH_C$**: **FAIL / UNMET**. The committed spec named only the constant-training-mean baseline. Ridge regression matches or beats the candidate (0.0199 vs 0.0211), and no age-only baseline was pre-registered in the spec. Furthermore, the candidate calibration was modified post-unsealing.<br>- **$SOH_R$**: **FAIL / UNMET**. The reference label (Step 20 DCIR) is not independent of the features ($R_0, R_{10\text{s}}$) extracted from the very same Step 20 pulse in the same RPT. Furthermore, Ridge regression beats the candidate (0.0091 vs 0.0094). | **FAIL** |
+| **(d) Held-Out Result Beats Fair Baseline on Independent Reference (Named in Spec)** | - **$SOH_C$**: **FAIL / UNMET**. The committed spec named only the constant-training-mean baseline. Ridge matches or beats the candidate (Ridge (sealed script): SOH_C MAE 0.01994; Ridge (post-hoc script): SOH_C 0.0196 vs `soh_pulse_v2` 0.0211), and no age-only baseline was pre-registered in the spec. Furthermore, the candidate calibration was modified post-unsealing.<br>- **$SOH_R$**: **FAIL / UNMET**. The reference label (Step 20 DCIR) is not independent of the features ($R_0, R_{10\text{s}}$) extracted from the very same Step 20 pulse in the same RPT. Furthermore, Ridge beats the candidate (Ridge (sealed script): SOH_R 0.009106; Ridge (post-hoc script): SOH_R 0.0089 vs `soh_pulse_v2` 0.0094). | **FAIL** |
 | **(e) Sufficient Data Volume Counted in Independent Units** | Evaluated on 21 sealed cells (956 RPT observations) for cell holdout, and only 2 condition groups for condition holdout. When counted in independent units (cells and condition groups, rather than repeated RPT cycles), data volume is insufficient to establish broad statistical validity across general operating environments. | **FAIL** |
 
 ### 1.2 Formal Qualification Determination
@@ -58,10 +60,10 @@ In accordance with the project governance framework (Task V1.11 / V1.12 / Harden
   - **Status: `DEVELOPMENT`**
   - **Failed Governance Items per Output Channel:**
     - **$SOH_C$ Point & Uncertainty:**
-      1. *Criterion (d) Failed*: Committed spec named only constant-mean as the fair baseline. Ridge regression beats candidate (0.0199 vs 0.0211 MAE). No age-only baseline was named in the spec. Furthermore, candidate calibration was modified post-unsealing.
+      1. *Criterion (d) Failed*: Committed spec named only constant-mean as the fair baseline. Ridge beats candidate (Ridge (sealed script): SOH_C MAE 0.01994; Ridge (post-hoc script): SOH_C 0.0196 vs `soh_pulse_v2` 0.0211). No age-only baseline was named in the spec. Furthermore, candidate calibration was modified post-unsealing.
       2. *Criterion (e) Failed*: Data volume counted in independent units (21 sealed cells) is limited; cross-condition test covers only 2 condition groups that overlap with dev cells.
     - **$SOH_R$ Point & Uncertainty:**
-      1. *Criterion (d) Failed*: The ground-truth reference label (Step 20 DCIR) is not independent of the feature extractor (features $R_0, R_{10\text{s}}$ are extracted from the very same Step 20 pulse). Ridge regression beats candidate (0.0091 vs 0.0094 MAE).
+      1. *Criterion (d) Failed*: The ground-truth reference label (Step 20 DCIR) is not independent of the feature extractor (features $R_0, R_{10\text{s}}$ are extracted from the very same Step 20 pulse). Ridge beats candidate (Ridge (sealed script): SOH_R 0.009106; Ridge (post-hoc script): SOH_R 0.0089 vs `soh_pulse_v2` 0.0094).
       2. *Criterion (e) Failed*: Counted in independent cell units.
 - **Target Scope 2: 100 Ah Prismatic/Pouch Automotive & Grid Pack Deployment:**
   - **Status: `DEVELOPMENT` / `UNQUALIFIED`**
@@ -193,19 +195,22 @@ The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was execu
 |:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **$SOH_C$** | **Constant-Training-Mean Baseline** | 0.0427 | 0.0532 | +0.0007 | 56.6% | 1.000x | 0.0% |
 | **$SOH_C$** | V1 Model ($\alpha=0.05, \rho=0.50$) | 0.0324 | 0.0393 | -0.0010 | 70.2% | 0.760x | 24.0% |
-| **$SOH_C$** | **Ridge Regression ($\alpha=0.005$)** | **0.0199** | **0.0244** | **-0.0016** | **92.4%** | **0.467x** | **53.3%** |
+| **$SOH_C$** | **Ridge (sealed script)**: SOH_C MAE 0.01994, SOH_R 0.009106 | **0.01994** | **0.0244** | **-0.0016** | **92.4%** | **0.467x** | **53.3%** |
+| **$SOH_C$** | Ridge (post-hoc script): SOH_C 0.0196, SOH_R 0.0089 | 0.0196 | 0.0242 | -0.0015 | 92.6% | 0.459x | 54.1% |
 | **$SOH_C$** | **Frozen `soh_pulse_v2` (ElasticNet)** | **0.0211** | **0.0254** | **-0.0016** | **91.2%** | **0.494x** | **50.6%** |
 |---|---|---|---|---|---|---|---|
 | **$SOH_R$** | **Constant-Training-Mean Baseline** | 0.0233 | 0.0315 | +0.0010 | 67.8% | 1.000x | 0.0% |
 | **$SOH_R$** | V1 Model ($\alpha=0.05, \rho=0.50$) | 0.0210 | 0.0284 | +0.0013 | 74.7% | 0.905x | 9.5% |
-| **$SOH_R$** | **Ridge Regression ($\alpha=0.005$)** | **0.0091** | **0.0112** | **+0.0022** | **97.9%** | **0.392x** | **60.8%** |
+| **$SOH_R$** | **Ridge (sealed script)**: SOH_C MAE 0.01994, SOH_R 0.009106 | **0.009106** | **0.0112** | **+0.0022** | **97.9%** | **0.392x** | **60.8%** |
+| **$SOH_R$** | Ridge (post-hoc script): SOH_C 0.0196, SOH_R 0.0089 | 0.0089 | 0.0111 | +0.0021 | 98.0% | 0.382x | 61.8% |
 | **$SOH_R$** | **Frozen `soh_pulse_v2` (ElasticNet)** | **0.0094** | **0.0119** | **+0.0030** | **98.6%** | **0.404x** | **59.6%** |
 
 #### Critical Findings Regarding Baselines & Uncertainty Coverage:
 1. **Ridge Outperforms ElasticNet**: On the sealed cells, Ridge regression achieves lower MAE than `soh_pulse_v2` on both outputs:
-   - $SOH_C$: Ridge MAE = **0.01994** vs `soh_pulse_v2` **0.02107**
-   - $SOH_R$: Ridge MAE = **0.009106** vs `soh_pulse_v2` **0.009392**  
+   - $SOH_C$: **Ridge (sealed script)**: SOH_C MAE 0.01994; **Ridge (post-hoc script)**: SOH_C 0.0196 vs `soh_pulse_v2` **0.02107**
+   - $SOH_R$: **Ridge (sealed script)**: SOH_R MAE 0.009106; **Ridge (post-hoc script)**: SOH_R 0.0089 vs `soh_pulse_v2` **0.009392**  
    Consequently, the $L_1$ penalty in ElasticNet yields no predictive advantage or error reduction over pure $L_2$ regularization.
+   - *Code Differences between Ridge variants*: Both use identical 14 candidate features, identical 32 DEV train cells, and identical `StandardScaler` fitted on DEV train. The only demonstrated code difference is the regularization parameter $\alpha$: `alpha=1.0` in `scripts/validation/uconn_eval_sealed.py` vs `alpha=0.005` in `scripts/validation/uconn_age_baseline.py` (write UNVERIFIED for anything the code cannot show).
 2. **Baseline Reference Anchor**: The headline error reductions of **50.6%** ($SOH_C$) and **59.6%** ($SOH_R$) are relative to the trivial **constant-training-mean baseline ONLY**. Relative to Ridge regression, `soh_pulse_v2` demonstrates negative improvement (-5.7% relative error change for $SOH_C$ and -3.1% for $SOH_R$).
 3. **Conformal Uncertainty Coverage**:
    - $SOH_C$: Empirical coverage on sealed cells is **91.2%**, falling short of the nominal **95.0%** target (undercoverage).
@@ -247,7 +252,7 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 | | Age Linear | 0.0227 | — | 0.0175 | — |
 | | Age Quadratic | 0.0227 | — | 0.0175 | — |
 | | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0060 | — |
-| | Ridge Regression (14 feat) | 0.0222 | — | 0.0091 | — |
+| | Ridge (post-hoc script, $\alpha=0.005$) | 0.0222 | — | 0.0091 | — |
 | | **Frozen `soh_pulse_v2` (14 feat)** | **0.0225** | — | **0.0073** | — |
 | | Post-Hoc Candidate (11 feat) | 0.0224 | — | 0.0090 | — |
 |---|---|---|---|---|---|
@@ -255,7 +260,8 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 | *(Post-hoc, added after unsealing)* | Age Linear | 0.0227 | 0.0247 [0.0208, 0.0289] | 0.0195 | 0.0204 [0.0180, 0.0228] |
 | | Age Quadratic | 0.0221 | 0.0238 [0.0199, 0.0281] | 0.0195 | 0.0203 [0.0179, 0.0226] |
 | | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0095 | 0.0095 [0.0066, 0.0126] |
-| | **Ridge Regression (14 feat)** | **0.0196** | **0.0201 [0.0167, 0.0246]** | **0.0089** | **0.0094 [0.0073, 0.0117]** |
+| | **Ridge (sealed script)**: SOH_C MAE 0.01994, SOH_R 0.009106 | **0.01994** | — | **0.009106** | — |
+| | **Ridge (post-hoc script)**: SOH_C 0.0196, SOH_R 0.0089 | **0.0196** | **0.0201 [0.0167, 0.0246]** | **0.0089** | **0.0094 [0.0073, 0.0117]** |
 | | **Frozen `soh_pulse_v2` (14 feat)** | **0.0211** | **0.0217 [0.0181, 0.0260]** | **0.0094** | **0.0099 [0.0073, 0.0127]** |
 | | Post-Hoc Candidate (11 feat) | 0.0209 | — | 0.0107 | 0.0112 [0.0091, 0.0134] |
 |---|---|---|---|---|---|
@@ -263,16 +269,16 @@ To rigorously isolate the value added by pulse features over simple cycle counti
 | *(Post-hoc, added after unsealing)* | Age Linear (trained on 9 dev conditions) | 0.0475 | — | — | — |
 | | Age Quadratic (trained on 9 dev conditions) | 0.0473 | — | 0.0243 | — |
 | | Trivial Baseline ($r_{10\text{s}} / \bar{r}_0$) | — | — | 0.0103 | — |
-| | Ridge Regression (14 feat, fitted on DEV train) | 0.0201 | — | 0.0098 | — |
+| | Ridge (post-hoc script, $\alpha=0.005$) | 0.0201 | — | 0.0098 | — |
 | | **Frozen `soh_pulse_v2` (14 feat)** | **0.0219** | — | 0.0117 | — |
 | | Post-Hoc Candidate (11 feat) | — | — | 0.0132 | — |
 
 #### Plain Assessment: Comparative Performance Against Baselines & Identity Audit
-- **On $SOH_C$ (Cell Holdout):** The pulse model achieves sample MAE of **0.0211**, which is statistically indistinguishable from the trivial Age-Quadratic baseline (**0.0221**) and beaten by Ridge regression (**0.0199**). When evaluated by cell with a 95% bootstrap confidence interval over the 21 independent cells, `soh_pulse_v2` (0.0217 [0.0181, 0.0260]) substantially overlaps with Age-Quadratic (0.0238 [0.0199, 0.0281]). Thus, for cells aging under nominal laboratory conditions, pulse feature extraction provides no demonstrable gain over a cycle counter or simple linear Ridge regression for capacity tracking.
+- **On $SOH_C$ (Cell Holdout):** The pulse model achieves sample MAE of **0.0211**, which is statistically indistinguishable from the trivial Age-Quadratic baseline (**0.0221**) and beaten by Ridge regression (Ridge (sealed script): SOH_C MAE 0.01994; Ridge (post-hoc script): SOH_C 0.0196). When evaluated by cell with a 95% bootstrap confidence interval over the 21 independent cells, `soh_pulse_v2` (0.0217 [0.0181, 0.0260]) substantially overlaps with Age-Quadratic (0.0238 [0.0199, 0.0281]) and Ridge (post-hoc script: 0.0201 [0.0167, 0.0246]). Thus, for cells aging under nominal laboratory conditions, pulse feature extraction provides no demonstrable gain over a cycle counter or simple linear Ridge regression for capacity tracking.
 - **On $SOH_R$ (Feature-Label Identity & Tautology):** $SOH_R$ results do NOT represent evidence of degradation estimation skill because the label and feature are the exact same physical measurement. The ground truth label is $SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$ (`src/soc/data/uconn_loader.py:128-140`), computed from Step 20 `slowpulse`. The 14-feature candidate includes $r_{10\text{s},\text{ohm}}$ and $\Delta V_{10\text{s}}$ from that identical pulse. A trivial baseline fitted on DEV train cells only:
   $$\widehat{SOH}_R = \frac{r_{10\text{s},\text{ohm}}}{\text{mean}(r_{10\text{s},\text{RPT}_0,\text{train}})}$$
-  achieves Sample MAE **0.0060** on DEV validation (beating `soh_pulse_v2` at 0.0073) and **0.0095** on sealed test cells (matching `soh_pulse_v2` at 0.0094 and Ridge at 0.0089). When the 11-feature model was evaluated with $r_{10\text{s},\text{ohm}}$ and $\Delta V$ removed, $SOH_R$ MAE changed from 0.0094 to 0.0107 (reported as an empirical observation without asserting a cause). Presenting "beats age-only on SOH_R" is not a positive finding demonstrating estimation skill.
-- **On Condition Holdout (Groups 3 and 6):** Labeled **contaminated, supplementary, not a headline result** due to mutual contamination (17 of 21 sealed test cells served as training cells; 8 dev cells served as test cells). On this supplementary split, Ridge regression achieves **0.0201 SOH_C MAE** (beating frozen `soh_pulse_v2` at 0.0219), while the trivial baseline achieves **0.0103 SOH_R MAE** (beating `soh_pulse_v2` at 0.0117). Age-only models were trained on the 9 dev conditions (groups 1, 2, 4, 5, 7, 8, 9, 10, 11).
+  achieves Sample MAE **0.0060** on DEV validation (beating `soh_pulse_v2` at 0.0073) and **0.0095** on sealed test cells (matching `soh_pulse_v2` at 0.0094 and Ridge (post-hoc script) at 0.0089; Ridge (sealed script) at 0.009106). When the 11-feature model was evaluated with $r_{10\text{s},\text{ohm}}$ and $\Delta V$ removed, $SOH_R$ MAE changed from 0.0094 to 0.0107 (reported as an empirical observation without asserting a cause). Presenting "beats age-only on SOH_R" is not a positive finding demonstrating estimation skill.
+- **On Condition Holdout (Groups 3 and 6):** Labeled **contaminated, supplementary, not a headline result** due to mutual contamination (17 of 21 sealed test cells served as training cells; 8 dev cells served as test cells). On this supplementary split, Ridge (post-hoc script) achieves **0.0201 SOH_C MAE** (beating frozen `soh_pulse_v2` at 0.0219), while the trivial baseline achieves **0.0103 SOH_R MAE** (beating `soh_pulse_v2` at 0.0117; Ridge (post-hoc script) achieves 0.0098). Age-only models were trained on the 9 dev conditions (groups 1, 2, 4, 5, 7, 8, 9, 10, 11).
 - **Independent Units:** Evaluated on **21 sealed cells** (within-condition) and **2 held-out condition groups** (12 cells).
 
 ---
@@ -363,9 +369,10 @@ pytest tests/test_uconn_loader.py tests/soh/test_python_c_pulse_parity.py
 
 ### 11.2 Baseline Comparative Performance
 - **Ridge Dominance:** On the sealed cells, pure $L_2$ Ridge regression achieves lower error than `soh_pulse_v2` on both targets:
-  - $SOH_C$: Ridge MAE = **0.01994** vs `soh_pulse_v2` **0.02107**
-  - $SOH_R$: Ridge MAE = **0.009106** vs `soh_pulse_v2` **0.009392**
+  - $SOH_C$: **Ridge (sealed script)**: SOH_C MAE 0.01994; **Ridge (post-hoc script)**: SOH_C 0.0196 vs `soh_pulse_v2` **0.02107**
+  - $SOH_R$: **Ridge (sealed script)**: SOH_R MAE 0.009106; **Ridge (post-hoc script)**: SOH_R 0.0089 vs `soh_pulse_v2` **0.009392**
   The ElasticNet formulation provides zero predictive advantage over Ridge.
+  *Difference between Ridge scripts*: Both use identical 14 features, identical 32 DEV train cells, and identical `StandardScaler` fitted on DEV train; the only demonstrated difference in code is regularization strength $\alpha$ (1.0 in sealed script vs 0.005 in post-hoc script; UNVERIFIED for anything the code cannot show).
 - **Constant-Mean Anchor:** Headline error reductions (50.6% and 56.5%) are strictly relative to the naive constant-training-mean baseline.
 - **Conformal Interval Coverage:** Empirical coverage for $SOH_C$ is **91.2%** on sealed cells (under-covering 95% nominal level), while $SOH_R$ is **98.6%** (overconservative).
 - **Age-Only Baseline Comparison:** On $SOH_C$, `soh_pulse_v2` (0.0211 sample MAE) is statistically indistinguishable from a simple quadratic age baseline (0.0221 sample MAE) with overlapping 95% bootstrap confidence intervals over the 21 cells ([0.0181, 0.0260] vs [0.0199, 0.0281]). For $SOH_R$, lower error relative to age-only is not evidence of estimation skill because the label and feature are the identical Step 20 pulse measurement. Under severe cross-condition cycling, the pulse model achieves 0.0219 vs 0.0473 for age-quadratic.
@@ -382,8 +389,8 @@ pytest tests/test_uconn_loader.py tests/soh/test_python_c_pulse_parity.py
 Based on the laboratory evaluation, split independence audit, baseline comparisons, and feature-label identity findings on UConn REIL Dataset 5, the data specifically support the following factual conclusions:
 
 1. **Capacity Estimation ($SOH_C$) on the 21 Sealed Cells:**
-   - Evaluated sample MAE: **Ridge = 0.0199**, **`soh_pulse_v2` = 0.0211**, **Age-Quadratic = 0.0221**.
-   - With cell-level bootstrap 95% confidence intervals overlapping ([0.0181, 0.0260] for `soh_pulse_v2` vs [0.0199, 0.0281] for age-quadratic), **no advantage over Ridge regression or simple cycle counting is demonstrated** for within-condition capacity tracking.
+   - Evaluated sample MAE: **Ridge (sealed script)** = 0.01994, **Ridge (post-hoc script)** = 0.0196, **`soh_pulse_v2`** = 0.0211, **Age-Quadratic** = 0.0221.
+   - With cell-level bootstrap 95% confidence intervals overlapping ([0.0181, 0.0260] for `soh_pulse_v2` vs [0.0199, 0.0281] for age-quadratic vs [0.0167, 0.0246] for Ridge post-hoc), **no advantage over Ridge regression or simple cycle counting is demonstrated** for within-condition capacity tracking.
 2. **Conformal Uncertainty Bounds for $SOH_C$:**
    - Empirical coverage on the sealed cells was **91.2%**, failing to meet the nominal 95.0% target level (undercoverage).
 3. **Resistance Estimation ($SOH_R$):**
