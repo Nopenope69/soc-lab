@@ -166,3 +166,21 @@ Task V2 executed laboratory evaluation of pulse-based SOH estimation across all 
    - Classified as **`DEVELOPMENT`** for 1.2 Ah cylindrical APR18650M1B LFP cells under laboratory RPT conditions.
    - Strictly **`UNQUALIFIED`** for 100 Ah automotive/grid pack deployment due to cell format mismatch, lack of dynamic drive cycle evaluation, and lack of fleet operational data.
    - Exported C model is strictly PLACEHOLDER / UNVALIDATED (`qual_c = UNQUALIFIED`, `qual_r = UNQUALIFIED`).
+
+---
+
+## 6. What the UConn Results Support
+
+Based on the laboratory evaluation, split independence audit, baseline comparisons, and feature-label identity findings on UConn REIL Dataset 5:
+
+1. **$SOH_C$ on the 21 Sealed Cells:**
+   - Ridge achieved 0.0199 MAE, `soh_pulse_v2` achieved 0.0211 MAE, and Age-Quadratic achieved 0.0221 MAE with overlapping cell-bootstrap confidence intervals ([0.0181, 0.0260] vs [0.0199, 0.0281]).
+   - **No advantage over Ridge regression or simple cycle counting is demonstrated.**
+2. **Interval Coverage for $SOH_C$:**
+   - Conformal interval coverage was **91.2%**, falling short of the 95.0% nominal level (undercoverage).
+3. **$SOH_R$ Estimation:**
+   - **No evidence of estimation skill** (the label $SOH_R = r_{10\text{s}}(k) / r_{10\text{s}}(0)$ and feature $r_{10\text{s}}$ are the exact same Step 20 physical measurement; a trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ achieves 0.0095 MAE, matching `soh_pulse_v2` at 0.0094).
+4. **Scale Limitations:**
+   - **Zero evidence for 100 Ah cells** (evaluation was strictly on 1.2 Ah cylindrical cells under laboratory characterisation protocols).
+5. **C Implementation Status:**
+   - The exported C header is **unvalidated and derived from the post-hoc 11-feature model** modified after unsealing.

@@ -370,3 +370,21 @@ pytest tests/test_uconn_loader.py tests/soh/test_python_c_pulse_parity.py
 - **Reference Independence:** $SOH_C$ ground truth originates from Step 28 (independent full CC discharge; criterion d pass). $SOH_R$ ground truth originates from Step 20 DCIR, which shares the physical voltage response with the ECM feature extractor ($R_0, R_{10\text{s}}$); criterion (d) is NOT met for $SOH_R$.
 - **Split Provenance & Independence:** Neither split configuration documents a random seed or selection algorithm (UNVERIFIED). Furthermore, 17 sealed test cells from Split 1 were used as training cells in Split 2, and 8 development cells from Split 1 served as test cells in Split 2; the two splits are mutually contaminated and not independent.
 - **Final Classification:** All UConn SOH results are classified as **`DEVELOPMENT`**. Cell model is cited per `README_Uconn.txt` line 16 ("LithiumWerks 18650 (APR18650M1B), nominal capacity 1.2 Ah", aged to 80% SOH, ~0.96 Ah). Exported C code is strictly PLACEHOLDER / UNVALIDATED.
+
+---
+
+## 12. What the UConn Results Support
+
+Based on the laboratory evaluation, split independence audit, baseline comparisons, and feature-label identity findings on UConn REIL Dataset 5, the data specifically support the following factual conclusions:
+
+1. **Capacity Estimation ($SOH_C$) on the 21 Sealed Cells:**
+   - Evaluated sample MAE: **Ridge = 0.0199**, **`soh_pulse_v2` = 0.0211**, **Age-Quadratic = 0.0221**.
+   - With cell-level bootstrap 95% confidence intervals overlapping ([0.0181, 0.0260] for `soh_pulse_v2` vs [0.0199, 0.0281] for age-quadratic), **no advantage over Ridge regression or simple cycle counting is demonstrated** for within-condition capacity tracking.
+2. **Conformal Uncertainty Bounds for $SOH_C$:**
+   - Empirical coverage on the sealed cells was **91.2%**, failing to meet the nominal 95.0% target level (undercoverage).
+3. **Resistance Estimation ($SOH_R$):**
+   - **No evidence of estimation skill** is demonstrated. The ground-truth label ($SOH_R = r_{\text{pulse, 10s}}(\text{RPT}_k) / r_{\text{pulse, 10s}}(\text{RPT}_0)$) and the candidate features ($r_{10\text{s},\text{ohm}}, \Delta V_{10\text{s}}$) are derived from the exact same Step 20 `slowpulse` excitation. A trivial baseline $\widehat{SOH}_R = r_{10\text{s}} / \bar{r}_0$ matches or beats the model (0.0095 vs 0.0094 MAE).
+4. **Scale & Form Factor Boundaries:**
+   - The evaluation provides **zero evidence for 100 Ah cells**. Data are strictly confined to 1.2 Ah cylindrical LithiumWerks 18650 power cells tested under laboratory characterisation protocols.
+5. **Embedded C Implementation Status:**
+   - The exported C header (`deliverable/edge_pkg/soh_pulse_elasticnet_v2.h`) is **unvalidated and derived from the post-hoc 11-feature model** modified after unsealing. It is not qualified for BMS control.
