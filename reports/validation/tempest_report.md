@@ -292,3 +292,38 @@ The table below audits every deliverable, scheme, gate, and baseline promised in
 | **Gustave Eiffel GE105 Rescaled Baseline** | Spec §5.3 | Scaled by capacity ratio ($280 / 105.0427$) | **DONE** | Section 4.4 | Evaluated at 25 °C: RMSE 28.01 mV, Bias 19.41 mV (post-hoc cross-cell comparator). |
 | **Evaluation Metrics Completeness** | Spec §4 | Bias, RMSE, Max Error, Implied SOC Error | **DONE** | Section 4.1, 4.2, 4.3 | All 4 metrics tracked and reported across in-sample, LOTO, Alternate-SOC, and baselines. |
 
+---
+
+## 10. Audit & Corrections Summary (V3.9)
+
+This section summarizes the verification and honesty corrections applied across the repository during task V3.9:
+
+1. **Title & Dataset Provenance (§1.2, `docs/data_sources.md`, `src/soc/data/registry.py`):**
+   - Replaced unverified title expansions with: `record title not captured from the dataset files (UNVERIFIED); project name TEMPEST and 'LIC' cell as stated in the dataset files`.
+   - Updated `reports/handover/fabricated_metadata_audit.md` with Section 5 documenting the audit.
+2. **Out-of-Sample Prominence in Executive Summary (§1.1):**
+   - Reordered the Executive Summary so that out-of-sample generalization results (LOTO folds and Alternate-SOC folds) appear first as the primary gate findings.
+   - 2 of 5 LOTO folds pass (25 °C and 30 °C); 3 of 5 fail (15 °C, 20 °C, and 35 °C). Both Alternate-SOC folds fail.
+   - In-sample 2RC results appear second, explicitly stating the degree of parameterization (60 fitted parameters per temperature over 1,250 points, 10 pulses).
+3. **Untested Explanations Relabeled as Hypotheses (§4.2):**
+   - Relabeled speculative causal assertions (Arrhenius impedance rise, boundary extrapolation, 20% SOC step interpolation, 3-point regression window, and entropy profile) as `Hypothesis (not tested)` or `general knowledge, not verified against a source on disk`.
+   - Printed the exact fitted parameter values ($R_0, R_1, \tau_1, R_2, \tau_2$) alongside each failing fold.
+4. **Per-Fold Constant Parameter Baselines (§4.3):**
+   - Authored and executed `scripts/validation/tempest_loto_baseline.py` producing `reports/validation/tempest_loto_baseline.json`.
+   - Documented that linear parameter interpolation beats the constant-parameter baseline on all 5 LOTO folds and both Alternate-SOC folds.
+5. **Cross-Cell Comparison Table & Provenance Disclaimers (§6):**
+   - Audited CALCE, GE105, FlexiPod, and TEMPEST columns in `scripts/validation/tempest_cross_cell_comparison.py` and `reports/validation/tempest_cross_cell_comparison.json`.
+   - Marked CALCE format and nominal capacity as UNVERIFIED (measured 1.0636 Ah).
+   - Marked GE105 and FlexiPod form factor as `prismatic (general knowledge of the product; not stated in dataset files)`.
+   - Reconciled plateau slope ($1.37\text{--}1.39\text{ mV/pp}$ across 20%–80% SOC secant window) with local $< 1\text{ mV}/\%$ slope around 50% SOC, adding an erratum note to `reports/validation/ge105_report.md`.
+   - Replaced size-scaling assertions with a neutral disclaimer that values reflect measurements under stated conditions with no size inference possible across 4 cells.
+6. **Capacity Reproduction Wording (§3):**
+   - Replaced "Bit-for-Bit Reproduction" with "agreement with LIC_capacity_analysis.csv to <1e-7 Ah; both come from the same measured discharge and the same integral, so this is not an independent check".
+   - Noted the ~7% difference between measured capacity (~300–304 Ah) and the 280 Ah description as an observation only.
+7. **Reproduction Report & Governance Ledger (§8, `reports/validation/tempest_reproduction.md`):**
+   - Verified all 5 tracked script outputs and created `reports/validation/tempest_reproduction.md` auditing numbers and detailing reconciled draft vs script figures.
+8. **Specification Completeness Matrix (§9):**
+   - Built a traceability matrix confirming all 10 promised items from `reports/validation/tempest_spec_frozen.md` were executed and verified.
+9. **UConn Condition-Holdout Heading & Attribution Correction (`reports/validation/uconn_report.md`):**
+   - Updated Section 7.2 heading and accompanying text to clarify that 196 samples across 8 DEV cells were evaluated in `uconn_eval_sealed.py`, while 96 further samples across 4 sealed cells in Groups 3 and 6 were not evaluated (292 total samples across 12 cells in the dataset).
+
