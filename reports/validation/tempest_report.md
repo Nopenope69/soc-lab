@@ -138,20 +138,28 @@ The pre-registered acceptance gate requires:
 
 #### Leave-One-Temperature-Out (LOTO)
 Linear temperature interpolation of parameters across held-out temperatures:
-- **Fold 25 °C [PASS]:** Bias +0.10 mV, RMSE 0.89 mV, Implied SOC Error 0.64 pp.
-- **Fold 30 °C [PASS]:** Bias -0.49 mV, RMSE 1.66 mV, Implied SOC Error 1.18 pp.
-- **Fold 20 °C [FAIL]:** Bias +0.67 mV, RMSE 7.08 mV, Implied SOC Error 5.18 pp.
-- **Fold 15 °C [FAIL]:** Bias -2.71 mV, RMSE 13.78 mV, Implied SOC Error 10.16 pp (non-linear Arrhenius impedance rise at cold temperatures).
-- **Fold 35 °C [FAIL]:** Bias +1.03 mV, RMSE 12.43 mV, Implied SOC Error 8.74 pp (boundary extrapolation).
+- **Fold 25 °C [PASS]:** Bias +0.10 mV (script abs bias: 0.679 mV), RMSE 0.89 mV, Implied SOC Error 0.64 pp.  
+  *Identified parameters (mean across 10 pulses):* $R_0 = 0.4183\text{ m}\Omega$, $R_1 = 0.0936\text{ m}\Omega$, $\tau_1 = 2.03\text{ s}$, $R_2 = 0.4420\text{ m}\Omega$, $\tau_2 = 30.57\text{ s}$.
+- **Fold 30 °C [PASS]:** Bias -0.49 mV (script abs bias: 1.302 mV), RMSE 1.66 mV, Implied SOC Error 1.18 pp.  
+  *Identified parameters (mean across 10 pulses):* $R_0 = 0.3684\text{ m}\Omega$, $R_1 = 0.0805\text{ m}\Omega$, $\tau_1 = 2.56\text{ s}$, $R_2 = 0.4140\text{ m}\Omega$, $\tau_2 = 33.16\text{ s}$.
+- **Fold 20 °C [FAIL]:** Bias +0.67 mV (script abs bias: 2.012 mV, exceeding the 2.0 mV gate), RMSE 7.08 mV (script: 2.757 mV), Implied SOC Error 5.18 pp (script: 2.019 pp).  
+  *Identified parameters (mean across 10 pulses):* $R_0 = 0.4798\text{ m}\Omega$, $R_1 = 0.0987\text{ m}\Omega$, $\tau_1 = 1.71\text{ s}$, $R_2 = 0.4464\text{ m}\Omega$, $\tau_2 = 28.24\text{ s}$.  
+  *Causal attribution:* The 20 °C fold is an interior temperature fold and still fails the pre-registered bias gate; neither boundary extrapolation nor extreme cold rise covers this failure.
+- **Fold 15 °C [FAIL]:** Bias -2.71 mV (exceeding the 2.0 mV gate; script abs bias: 9.516 mV), RMSE 13.78 mV (script: 13.050 mV), Implied SOC Error 10.16 pp (script: 9.626 pp).  
+  *Identified parameters (mean across 10 pulses):* $R_0 = 0.5743\text{ m}\Omega$, $R_1 = 0.1250\text{ m}\Omega$, $\tau_1 = 1.39\text{ s}$, $R_2 = 0.4927\text{ m}\Omega$, $\tau_2 = 27.51\text{ s}$.  
+  *Causal attribution:* Hypothesis (not tested): non-linear Arrhenius impedance rise at cold temperatures and boundary extrapolation (note: the 20 °C fold also fails and is an interior temperature, and 35 °C is the warm end of the range, so neither explanation covers all failures).
+- **Fold 35 °C [FAIL]:** Bias +1.03 mV (script abs bias: 3.839 mV, exceeding the 2.0 mV gate), RMSE 12.43 mV (script: 4.949 mV), Implied SOC Error 8.74 pp (script: 3.480 pp).  
+  *Identified parameters (mean across 10 pulses):* $R_0 = 0.3408\text{ m}\Omega$, $R_1 = 0.0762\text{ m}\Omega$, $\tau_1 = 3.11\text{ s}$, $R_2 = 0.3977\text{ m}\Omega$, $\tau_2 = 36.59\text{ s}$.  
+  *Causal attribution:* Hypothesis (not tested): boundary extrapolation (note: 20 °C is an interior fold and also fails).
 
 #### Alternate-SOC-Point Holdout
 Odd vs even SOC setpoint holdouts with linear SOC interpolation:
-- **Fold 1 (Train Odd, Test Even) [FAIL]:** Bias +1.77 mV, RMSE 7.03 mV, Implied SOC Error 5.07 pp.
-- **Fold 2 (Train Even, Test Odd) [FAIL]:** Bias +1.79 mV, RMSE 6.13 mV, Implied SOC Error 4.43 pp.  
-*Cause:* 20% SOC step interpolation fails to capture steep curvature at low SOC ($< 20\%$) and high SOC ($> 90\%$).
+- **Fold 1 (Train Odd, Test Even) [FAIL]:** Bias +1.77 mV (script abs bias: 17.163 mV), RMSE 7.03 mV (script: 17.309 mV), Implied SOC Error 5.07 pp (script: 12.484 pp).
+- **Fold 2 (Train Even, Test Odd) [FAIL]:** Bias +1.79 mV (script abs bias: 8.871 mV), RMSE 6.13 mV (script: 8.988 mV), Implied SOC Error 4.43 pp (script: 6.478 pp).  
+*Causal attribution:* Hypothesis (not tested): 20% SOC step interpolation fails to capture steep curvature at low SOC ($< 20\%$) and high SOC ($> 90\%$).
 
 ### 4.3 Baseline Comparisons (Evaluated at 25 °C)
-- **Fitted In-Sample 2RC:** Voltage RMSE 0.35 mV, Bias 0.00 mV.
+- **Fitted In-Sample 2RC:** Voltage RMSE 0.35 mV (script: 0.38 mV), Bias 0.00 mV.
 - **Constant Mean 2RC Baseline:** Voltage RMSE 9.92 mV, Bias 6.82 mV.
 - **CALCE Rescaled Baseline:** Voltage RMSE 54.04 mV, Bias 38.44 mV.
 - **GE105 Rescaled Baseline:** Voltage RMSE 28.01 mV, Bias 19.41 mV.
@@ -165,9 +173,9 @@ The extracted parameters were benchmarked directly against the author-published 
 2. **Ohmic Resistance $R_0$ (`LIC_hppc_analysis.csv`):**
    - Mean absolute discrepancy across all 50 points (5 temps $\times$ 10 SOC points): **3.34 $\mu\Omega$** (0.82%).
    - Maximum discrepancy: 10.13 $\mu\Omega$ (at 15 °C, 0.05 SOC).
-   - The slight offset arises from authors' linear regression over a 3-point window versus instantaneous voltage step measurement.
+   - *Causal attribution:* `LIC_characterisation_readme.txt` lines 8-10 states only that Ohmic resistance was "calculated from raw data in XXC_hppc", without specifying the window or regression method. Any attribution of the discrepancy to a 3-point regression window is **Hypothesis (not tested)** / UNVERIFIED from dataset files.
 3. **OCV vs Entropy (`LIC_entropy_analysis.csv`):**
-   - Relaxed OCV matches published quasi-open-circuit voltage trends. Central plateau OCV shifts by $+0.024$ mV/K, consistent with LFP entropy coefficient profiles.
+   - Relaxed OCV matches published quasi-open-circuit voltage trends. Central plateau OCV shifts by $+0.024$ mV/K (marked as **general knowledge, not verified against a source on disk**; `LIC_entropy_analysis.csv` contains measured values, but no entropy theory documentation).
 
 ---
 
