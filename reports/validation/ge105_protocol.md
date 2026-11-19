@@ -1,5 +1,8 @@
 # Gustave Eiffel 105 Ah LFP Validation Protocol (V1.3)
 
+> [!NOTE] Revision (V1.12)  
+> Updated `LAB_VALIDATED` definition to the 5-point governance rule and replaced validated operating envelope statement with declared calibration envelope `[20, 45]` °C.
+
 > **Document ID:** PROTOCOL-GE105-001  
 > **Date:** 2026-11-19  
 > **Dataset:** EVE Energy LFP 105Ah Prismatic Cells (BUGE388..BUGE391)  
@@ -102,7 +105,7 @@ Thresholds are kept strictly identical to the repository standard; no tuning or 
 ## 7. Operational Status Labels (Rule R8)
 
 Results are tagged according to the repository validation rules:
-- **`LAB_VALIDATED`**: Assigned ONLY to test results obtained on real, hash-manifested files evaluated on the held-out test cells (`BUGE390`, `BUGE391`) under their validated operating envelope ($20\ ^\circ\text{C}$ to $50\ ^\circ\text{C}$).
+- **`LAB_VALIDATED`**: LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT. Applied declared calibration envelope [20, 45] C (ge105_v1.json); dynamic evidence exists at 25 and 40 C (dev) and 40 C (test) only.
 - **`DEVELOPMENT`**: Assigned to dev-cell evaluations (`BUGE388`, `BUGE389`), intermediate calibrations, and tests run outside the validated envelope (e.g. 0 °C, which is explicitly tagged `OUT_OF_ENVELOPE`).
 
 ---

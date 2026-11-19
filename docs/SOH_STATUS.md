@@ -1,8 +1,11 @@
 # SOH Estimator Qualification Status Matrix
 
+> [!NOTE] Revision (V1.12)  
+> Harmonized `LAB_VALIDATED` definition with the 5-point governance rule across status classifications and qualification roadmaps.
+
 > **Governing Framework**: Hardening 2 / Phase 6 Validation Standard  
 > **Status Classifications**:
-> - `LAB_VALIDATED`: Validated against real physically-aged cells from verified hash-manifested laboratory test files.
+> - `LAB_VALIDATED`: LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT.
 > - `SIM_VALIDATED`: Validated on simulation models (PyBaMM electrochemical models) or synthetic analytical degradation curves.
 > - `FIELD_VALIDATED`: Validated on real in-service fleet operational data.
 > - `UNVALIDATED`: Lacks standardized laboratory reference measurements or has not been tested against physical cell ground truth.
@@ -98,7 +101,9 @@
 
 ## 3. Road to Physical Lab Qualification (`LAB_VALIDATED`)
 
-To achieve `LAB_VALIDATED` status for any SOH estimator, the following strict criteria must be met:
+LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT.
+
+For physical battery SOH estimation, this specifically entails:
 1. **Raw Laboratory Files Outside Repository**: Data must reside at `$SOC_DATA_DIR` (e.g. `~/soc_data`) and be verified against a non-placeholder SHA-256 manifest in `data/manifests/`.
 2. **Cell-Held-Out Splits**: Evaluation must follow strict Cell Leave-One-Battery-Out (LOBO) or batch holdouts defined prior to evaluation in `configs/validation/`.
 3. **Reference Capacity Protocols**: SOH_C ground truth must be derived from C/20 or standardized 1C reference capacity checkups at controlled temperature (e.g. 25°C).

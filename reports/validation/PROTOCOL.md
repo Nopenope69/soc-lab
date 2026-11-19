@@ -1,5 +1,8 @@
 # SOC-LAB Real-Data Validation Protocol & Governance Specification
 
+> [!NOTE] Revision (V1.12)  
+> Updated `LAB_VALIDATED` definition to the 5-point governance rule (real files, tracked/reproduced scripts, pre-committed spec, independent reference beating fair baseline, and stated data volume).
+
 **Status:** ACTIVE SPECIFICATION  
 **Scope:** Real-Data Ingestion, Manifest Hash Verification, Cell-Held-Out Split Governance, and Evaluation Integrity for State of Charge (SOC) and State of Health (SOH) Estimation.
 
@@ -42,7 +45,7 @@ Every benchmark, evaluation script, and dataset loader in `soc-lab` must strictl
   - For SOH: **New Candidate vs Frozen Dual Tracker vs Constant-Training-Mean Baseline**.
 
 ### Rule R5: Strict Result Qualification Labels and Non-Pooling
-* **`LAB_VALIDATED` Status:** A result is labeled `LAB_VALIDATED` if and only if it is evaluated on real laboratory data files verified by SHA-256 manifest hashes on the sealed, cell-held-out test set.
+* **`LAB_VALIDATED` Status:** LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT.
 * **`DEVELOPMENT` Status:** Any result on synthetic cohorts, simulation models, training/validation development cells, or unverified files must be explicitly labeled `DEVELOPMENT`.
 * **Strict Non-Pooling:** Results must be reported **separately per dataset**. Performance metrics from different battery chemistries, form factors, manufacturers, or test regimes must never be averaged or pooled into a single composite metric.
 
@@ -110,5 +113,5 @@ Evaluated separately for Capacity SOH ($SOH_C$) and Resistance SOH ($SOH_R$):
    - Document model specification and freeze code before unsealing test cells (Rule R4).
 4. **Execute Sealed Test Evaluation:**
    - Evaluate candidate on sealed test cells with `final=True`.
-   - Results with valid manifest checksums receive the label **`LAB_VALIDATED`**.
+   - LAB_VALIDATED requires ALL of: (a) real files with verified manifest hashes; (b) every evaluation script tracked in the repo and reproduced from a clean shell; (c) a spec committed BEFORE the sealed set is evaluated; (d) a held-out result that beats a fair baseline on a reference that is independent of the estimator's own integral; (e) enough data to support the claim, stated in numbers. Everything else is DEVELOPMENT.
    - Output individual results per dataset without pooling (Rule R5).
