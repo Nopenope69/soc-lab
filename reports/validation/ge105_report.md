@@ -61,22 +61,34 @@ In compliance with the Phase 6 / Hardening validation rules and V1.11 LABEL RULE
 
 ---
 
-## 3. Open-Loop Model Gate & Method-Specific Diagnostic (V1.4 - V1.5)
+## 3. Open-Loop Model Gate & Diagnostic Analysis (V1.4 - V1.5)
 
-### The FlexiPod Diagnostic Answer
-A primary question motivating Task V1 was whether the open-loop 2RC ECM model-gate failure previously observed on FlexiPod ($> 2.5\ \text{pp}$ implied SOC error) was **data-specific** (poor synthetic/test data) or **method-specific** (fundamental limitation of inverting an ECM on a flat LFP plateau).
+### Separation of Criteria: Voltage Tracking vs. Implied-SOC Inversion
+The open-loop model gate evaluates two distinct criteria that must not be conflated:
+1. **Dynamic Voltage Tracking:** Evaluates terminal voltage tracking error ($|\text{Bias}_V| \le 2.0\ \text{mV}$, $\text{RMSE}_V \le 6.0\ \text{mV}$, or general threshold $\le 20.0\ \text{mV}$).
+   - **FlexiPod:** The model **failed on voltage tracking**, exhibiting terminal voltage RMSE of **23 to 87 mV** (threshold $\le 20\ \text{mV}$). This was a genuine voltage tracking failure that was never explained by method.
+   - **Gustave Eiffel (In-Sample):** 2RC voltage tracking **passes** on the plateau at 50% SOC with terminal voltage RMSE of **2.62 mV to 3.12 mV** (passing $\le 6.0\ \text{mV}$) and bias of **-1.18 mV to -1.41 mV** (passing $\le 2.0\ \text{mV}$).
+2. **Implied-SOC Error Inversion:** Evaluates open-loop voltage error mapped into SOC space ($\frac{|\Delta V|}{d\text{OCV}/d\text{SOC}} \le 2.5\ \text{pp}$ or $\le 5.0\ \text{pp}$).
+   - **Gustave Eiffel:** Implied-SOC error **fails across all conditions**, yielding **6.1 pp to 7.5 pp at 50% SOC** and **12.5 pp to 14.3 pp at 90% SOC** (failing both $\le 2.5\ \text{pp}$ and $\le 5.0\ \text{pp}$).
+   - **Physical Cause:** The derivative $d\text{OCV}/d\text{SOC}$ on the LFP two-phase plateau is near zero ($< 1\ \text{mV}/\%$). Any minute unmodeled polarization or hysteresis residual of merely $2\text{--}3\ \text{mV}$ directly causes an open-loop implied SOC error of $6\text{--}14\ \text{pp}$. The implied-SOC criterion is plateau-limited on any LFP cell and this was known in advance.
+3. **Closed-Loop Divergence Risk:** The filter does **not** automatically correct for plateau divergence. As demonstrated in closed-loop testing on held-out test cells (Item 4), when disturbed by +10 pp at 50% SOC, E7v3 diverges on the flat plateau, ending at **12.15 pp** on `BUGE390` and **16.23 pp** on `BUGE391` (worse than open-loop Coulomb counting E0).
 
-The Gustave Eiffel dev-cell evaluation provides an unequivocal answer:
-- **Voltage Bias:** $\le 1.41\ \text{mV}$ (Passed gate $\le 2.0\ \text{mV}$).
-- **Voltage RMSE:** $\le 3.12\ \text{mV}$ (Passed gate $\le 6.0\ \text{mV}$).
-- **Implied SOC Error:**
-  - At 90% SOC (steep OCV slope): **$12.5\text{--}14.3\ \text{pp}$** (Failed gate $\le 2.5\ \text{pp}$).
-  - At 50% SOC (flat LFP plateau): **$6.1\text{--}7.5\ \text{pp}$** (Failed gate $\le 2.5\ \text{pp}$).
+### In-Sample Identification & Out-of-Sample Cross-Validation
+- **In-Sample Notice:** The 2RC parameters identified in step V1.4 were identified directly from the same WLTC dynamic segments on which they were evaluated in step V1.5.
+- **Out-of-Sample Cross-Validation:** Evaluating parameters fit on `BUGE388` against `BUGE389` data and vice-versa (dev partition only):
 
-**Mathematical Cause:**  
-On the central LFP plateau ($20\%\text{--}80\%\ \text{SOC}$), the derivative $d\text{OCV}/d\text{SOC}$ drops below $0.001\ \text{V}/\text{unit SOC}$ ($< 1\ \text{mV}/\%$). Consequently, an extraordinary model with an error of merely $2.5\ \text{mV}$ produces an implied SOC error of:
-$$\Delta \text{SOC} \approx \frac{\Delta V}{|d\text{OCV}/d\text{SOC}|} = \frac{0.0025\ \text{V}}{0.00035\ \text{V}/\text{fraction}} \approx 7.1\ \text{pp}$$
-**Conclusion:** The open-loop model gate failure is **METHOD-SPECIFIC**. Inverting a static 2RC ECM voltage back to SOC without closed-loop filtering cannot pass a $2.5\ \text{pp}$ threshold on physical LFP cells. Closed-loop state estimation with observability gating is strictly mandatory for LFP.
+| Fit Cell | Eval Cell | Temp | Target SOC | Voltage Bias (mV) | Voltage RMSE (mV) | Implied SOC Err (pp) | Voltage Gate | Implied SOC Gate |
+|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **BUGE388** | **BUGE389** | 25 °C | 90% | -6.23 | 7.92 | 15.60 | FAIL | FAIL |
+| **BUGE388** | **BUGE389** | 25 °C | 50% | -2.64 | 3.77 | 7.60 | FAIL | FAIL |
+| **BUGE388** | **BUGE389** | 40 °C | 90% | -2.02 | 5.13 | 14.39 | FAIL | FAIL |
+| **BUGE388** | **BUGE389** | 40 °C | 50% | -0.77 | 2.97 | 7.07 | **PASS** | FAIL |
+| **BUGE389** | **BUGE388** | 25 °C | 90% | -2.18 | 6.59 | 13.49 | FAIL | FAIL |
+| **BUGE389** | **BUGE388** | 25 °C | 50% | -0.39 | 3.44 | 7.76 | **PASS** | FAIL |
+| **BUGE389** | **BUGE388** | 40 °C | 90% | -1.92 | 5.06 | 12.53 | **PASS** | FAIL |
+| **BUGE389** | **BUGE388** | 40 °C | 50% | -0.62 | 2.85 | 7.42 | **PASS** | FAIL |
+
+Out-of-sample voltage RMSE remains $\le 2.97\ \text{mV}$ on the 40 °C plateau, confirming model parameter transferability between physical cells at 40 °C, while implied SOC error consistently fails due to plateau flatness.
 
 ### ECM Parameter Agreement with Published Dataset (SBNO8W)
 - **Ohmic Resistance ($R_0$):** Our WLTC regression yielded $0.565\ \text{m}\Omega$ at 25 °C and $0.461\ \text{m}\Omega$ at 40 °C. The author's published pulse extraction in `batt_data.mat` reported $0.537\ \text{m}\Omega$ at 25 °C (5.2% difference) and $0.435\ \text{m}\Omega$ at 40 °C (5.9% difference).
