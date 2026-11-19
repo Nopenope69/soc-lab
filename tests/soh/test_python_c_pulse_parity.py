@@ -89,3 +89,90 @@ def test_pulse_elasticnet_python_vs_c_golden_vector_parity(tmp_path):
         # Qualification in C must be UNQUALIFIED (0)
         assert c_est.qual_c == 0, "C edge qual_c must default to UNQUALIFIED (0)"
         assert c_est.qual_r == 0, "C edge qual_r must default to UNQUALIFIED (0)"
+
+
+def test_soh_pulse_v2_python_vs_c_parity(tmp_path):
+    """Verify numerical parity between Python trained v2 model and auto-generated C header."""
+    compiler = shutil.which("gcc") or shutil.which("clang") or shutil.which("cc")
+    if compiler is None:
+        pytest.skip("Neither gcc nor clang is installed; skipping C parity test.")
+
+    header_file = Path(__file__).resolve().parents[2] / "deliverable" / "edge_pkg" / "soh_pulse_elasticnet_v2.h"
+    assert header_file.exists(), f"Auto-generated V2 C header missing: {header_file}"
+
+    # Write small C wrapper exposing soh_predict_pulse
+    c_wrapper = tmp_path / "wrapper_v2.c"
+    c_wrapper.write_text(f"""
+#include "{header_file}"
+
+void test_predict_v2(const float in[11], float* c, float* r) {{
+    soh_predict_pulse(in, c, r);
+}}
+""")
+
+    so_path = tmp_path / "libsoh_pulse_v2.so"
+    cmd = [
+        compiler,
+        "-std=c99",
+        "-O2",
+        "-shared",
+        "-fPIC",
+        "-I", str(header_file.parent),
+        str(c_wrapper),
+        "-o", str(so_path),
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 0, f"Compilation failed: {res.stderr}"
+
+    c_lib = ctypes.CDLL(str(so_path))
+    c_predict_v2 = c_lib.test_predict_v2
+    c_predict_v2.argtypes = [
+        ctypes.POINTER(ctypes.c_float),
+        ctypes.POINTER(ctypes.c_float),
+        ctypes.POINTER(ctypes.c_float),
+    ]
+    c_predict_v2.restype = None
+
+    # Load calibration parameters from deliverable/calibrations/uconn_soh_pulse_v2.json
+    calib_path = Path(__file__).resolve().parents[2] / "deliverable" / "calibrations" / "uconn_soh_pulse_v2.json"
+    import json
+    with open(calib_path, "r", encoding="utf-8") as f:
+        calib = json.load(f)
+
+    # Qualification check: must be UNQUALIFIED for 100 Ah target
+    assert calib["qualification_status"] == "UNQUALIFIED"
+
+    means = np.array(calib["scaler"]["mean"][:11], dtype=np.float32)
+    scales = np.array(calib["scaler"]["scale"][:11], dtype=np.float32)
+    coefs_c = np.array(calib["soh_c"]["coefficients"][:11], dtype=np.float32)
+    intercept_c = np.float32(calib["soh_c"]["intercept"])
+    coefs_r = np.array(calib["soh_r"]["coefficients"][:11], dtype=np.float32)
+    intercept_r = np.float32(calib["soh_r"]["intercept"])
+
+    # Test vectors
+    test_vectors = [
+        means,  # Exactly at scaler mean -> should return intercept
+        means + scales,  # 1 sigma above mean
+        means - 0.5 * scales,  # 0.5 sigma below mean
+        np.array([0.018, 0.010, 550.0, 0.065, 1400.0, 0.093, 5.5, 93.0, 0.45, 25.0, 3.31], dtype=np.float32),
+        np.array([0.025, 0.015, 400.0, 0.080, 1100.0, 0.120, 7.0, 110.0, 0.45, 25.0, 3.28], dtype=np.float32),
+    ]
+
+    for idx, vec in enumerate(test_vectors):
+        # Python prediction
+        x_norm = (vec - means) / scales
+        py_c = float(intercept_c + np.dot(coefs_c, x_norm))
+        py_r = float(intercept_r + np.dot(coefs_r, x_norm))
+
+        # C prediction
+        c_raw = (ctypes.c_float * 11)(*vec.tolist())
+        c_val_c = ctypes.c_float()
+        c_val_r = ctypes.c_float()
+        c_predict_v2(c_raw, ctypes.byref(c_val_c), ctypes.byref(c_val_r))
+
+        assert abs(py_c - c_val_c.value) <= PARITY_FP32_TOLERANCE, (
+            f"V2 vector {idx} SOH_C mismatch: Py={py_c}, C={c_val_c.value}"
+        )
+        assert abs(py_r - c_val_r.value) <= PARITY_FP32_TOLERANCE, (
+            f"V2 vector {idx} SOH_R mismatch: Py={py_r}, C={c_val_r.value}"
+        )
