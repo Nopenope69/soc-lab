@@ -1,5 +1,11 @@
 # UConn REIL Dataset 5: Comprehensive SOH Validation Report (Task V2)
 
+> [!NOTE] Revision (V2.11 Baselines, Provenance, and Governance Audit)  
+> - **Comparative Baseline Honesty**: Ridge regression achieves lower MAE than frozen `soh_pulse_v2` on both outputs on sealed cells ($SOH_C$: 0.01994 vs 0.02107; $SOH_R$: 0.009106 vs 0.009392); ElasticNet shows no improvement over Ridge. Error reductions of 50.6% ($SOH_C$) and 56.5% (condition holdout) are relative to constant-mean ONLY. Conformal coverage for $SOH_C$ is 91.2% (under-covering 95% nominal level).  
+> - **Post-Hoc Age-Only Baseline**: Added linear and non-linear (quadratic) age-only baselines fitted strictly on DEV train cells. On sealed cells, pulse $SOH_C$ (0.0211 MAE) only marginally edges out age-quadratic (0.0221 MAE) with overlapping cell bootstrap 95% CIs ([0.0181, 0.0260] vs [0.0199, 0.0281]); pulse model beats age-only on $SOH_R$ (0.0094 vs 0.0195) and under severe condition holdout (0.0219 vs 0.0473).  
+> - **Candidate & Feature Provenance**: Documented that committed sealed results in `uconn_sealed_results.json` reflect the 14-feature model (`uconn_soh_pulse_v2_frozen_v27.json`), whereas `soh_pulse_elasticnet_v2.h` was exported from a post-hoc 11-feature model modified after unsealing.  
+> - **Governance Relabeling**: Reclassified all UConn SOH qualification determinations from `LAB_VALIDATED` to **`DEVELOPMENT`** due to unmet criteria (d) and (e) of the 5-point governance rule.
+
 **Document ID:** VAL-UCONN-SOH-FINAL-001  
 **Date:** 2026-11-19  
 **Repository:** `/Users/tecbusiness/Desktop/random/SOC`  
@@ -166,13 +172,24 @@ The sealed evaluation script `scripts/validation/uconn_eval_sealed.py` was execu
 |:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **$SOH_C$** | **Constant-Training-Mean Baseline** | 0.0427 | 0.0532 | +0.0007 | 56.6% | 1.000x | 0.0% |
 | **$SOH_C$** | V1 Model ($\alpha=0.05, \rho=0.50$) | 0.0324 | 0.0393 | -0.0010 | 70.2% | 0.760x | 24.0% |
-| **$SOH_C$** | Ridge Regression ($\alpha=0.005$) | 0.0199 | 0.0244 | -0.0016 | 92.4% | 0.467x | 53.3% |
-| **$SOH_C$** | **Frozen `soh_pulse_v2`** | **0.0211** | **0.0254** | **-0.0016** | **91.2%** | **0.494x** | **50.6%** |
+| **$SOH_C$** | **Ridge Regression ($\alpha=0.005$)** | **0.0199** | **0.0244** | **-0.0016** | **92.4%** | **0.467x** | **53.3%** |
+| **$SOH_C$** | **Frozen `soh_pulse_v2` (ElasticNet)** | **0.0211** | **0.0254** | **-0.0016** | **91.2%** | **0.494x** | **50.6%** |
 |---|---|---|---|---|---|---|---|
 | **$SOH_R$** | **Constant-Training-Mean Baseline** | 0.0233 | 0.0315 | +0.0010 | 67.8% | 1.000x | 0.0% |
 | **$SOH_R$** | V1 Model ($\alpha=0.05, \rho=0.50$) | 0.0210 | 0.0284 | +0.0013 | 74.7% | 0.905x | 9.5% |
-| **$SOH_R$** | Ridge Regression ($\alpha=0.005$) | 0.0091 | 0.0112 | +0.0022 | 97.9% | 0.392x | 60.8% |
-| **$SOH_R$** | **Frozen `soh_pulse_v2`** | **0.0094** | **0.0119** | **+0.0030** | **98.6%** | **0.404x** | **59.6%** |
+| **$SOH_R$** | **Ridge Regression ($\alpha=0.005$)** | **0.0091** | **0.0112** | **+0.0022** | **97.9%** | **0.392x** | **60.8%** |
+| **$SOH_R$** | **Frozen `soh_pulse_v2` (ElasticNet)** | **0.0094** | **0.0119** | **+0.0030** | **98.6%** | **0.404x** | **59.6%** |
+
+#### Critical Findings Regarding Baselines & Uncertainty Coverage:
+1. **Ridge Outperforms ElasticNet**: On the sealed cells, Ridge regression achieves lower MAE than `soh_pulse_v2` on both outputs:
+   - $SOH_C$: Ridge MAE = **0.01994** vs `soh_pulse_v2` **0.02107**
+   - $SOH_R$: Ridge MAE = **0.009106** vs `soh_pulse_v2` **0.009392**  
+   Consequently, the $L_1$ penalty in ElasticNet yields no predictive advantage or error reduction over pure $L_2$ regularization.
+2. **Baseline Reference Anchor**: The headline error reductions of **50.6%** ($SOH_C$) and **59.6%** ($SOH_R$) are relative to the trivial **constant-training-mean baseline ONLY**. Relative to Ridge regression, `soh_pulse_v2` demonstrates negative improvement (-5.7% relative error change for $SOH_C$ and -3.1% for $SOH_R$).
+3. **Conformal Uncertainty Coverage**:
+   - $SOH_C$: Empirical coverage on sealed cells is **91.2%**, falling short of the nominal **95.0%** target (undercoverage).
+   - $SOH_R$: Empirical coverage on sealed cells is **98.6%**, proving overconservative.
+   - By comparison, Ridge achieved **92.4%** ($SOH_C$) and **97.9%** ($SOH_R$), while the constant-mean baseline severely undercovered at **56.6%** ($SOH_C$) and **67.8%** ($SOH_R$).
 
 ### 7.2 Condition-Held-Out Domain Generalization (Groups 3 and 6, 497 Samples)
 
@@ -182,6 +199,39 @@ Operating conditions in Groups 3 and 6 involve severe high-stress cycling protoc
 |:---|:---:|:---:|:---:|:---:|:---:|
 | **Constant-Training-Mean Baseline** | $SOH_C$ | 0.0502 | 1.000x | 0.0% | Fair Reference |
 | **Frozen `soh_pulse_v2`** | $SOH_C$ | **0.0219** | **0.435x** | **56.5%** | **BEATS BASELINE BY >50%** |
+
+### 7.3 Post-Hoc Age-Only Baseline Evaluation (Added After Unsealing)
+
+To rigorously isolate the value added by pulse features over simple cycle counting, age-only models were fitted exclusively on the DEV training cells (32 cells) using the RPT cycle index:
+- **Age Linear:** $\widehat{SOH} = a \cdot \text{rpt\_num} + b$
+- **Age Quadratic:** $\widehat{SOH} = a \cdot \text{rpt\_num}^2 + b \cdot \text{rpt\_num} + c$
+
+#### Comparative Evaluation Across Partitions (Post-Hoc Analysis):
+
+| Evaluation Partition | Estimator Model | $SOH_C$ Sample MAE | $SOH_C$ Mean Cell MAE [95% CI] | $SOH_R$ Sample MAE | $SOH_R$ Mean Cell MAE [95% CI] |
+|:---|:---|:---:|:---:|:---:|:---:|
+| **DEV Validation** (11 cells, 468 samples) | Constant-Training-Mean | 0.0435 | — | 0.0238 | — |
+| | Age Linear | 0.0227 | — | 0.0175 | — |
+| | Age Quadratic | 0.0227 | — | 0.0175 | — |
+| | Ridge Regression | 0.0222 | — | 0.0091 | — |
+| | **Frozen `soh_pulse_v2`** | **0.0225** | — | **0.0073** | — |
+|---|---|---|---|---|---|
+| **Sealed Cells** (21 cells, 956 samples) | Constant-Training-Mean | 0.0427 | 0.0438 [0.0424, 0.0454] | 0.0233 | 0.0248 [0.0225, 0.0271] |
+| *(Post-hoc, added after unsealing)* | Age Linear | 0.0227 | 0.0247 [0.0208, 0.0289] | 0.0195 | 0.0204 [0.0180, 0.0228] |
+| | Age Quadratic | 0.0221 | 0.0238 [0.0199, 0.0281] | 0.0195 | 0.0203 [0.0179, 0.0226] |
+| | **Ridge Regression** | **0.0196** | **0.0201 [0.0167, 0.0246]** | **0.0089** | **0.0094 [0.0073, 0.0117]** |
+| | **Frozen `soh_pulse_v2`** | **0.0211** | **0.0217 [0.0181, 0.0260]** | **0.0094** | **0.0099 [0.0073, 0.0126]** |
+|---|---|---|---|---|---|
+| **Condition Holdout** (Groups 3 & 6, 12 cells, 497 samples) | Constant-Training-Mean | 0.0499 | — | — | — |
+| *(Post-hoc, added after unsealing)* | Age Linear | 0.0475 | — | — | — |
+| | Age Quadratic | 0.0473 | — | — | — |
+| | **Frozen `soh_pulse_v2`** | **0.0219** | — | — | — |
+
+#### Plain Assessment: Does the Pulse Model Beat the Age-Only Baseline?
+- **On $SOH_C$ (Cell Holdout):** The pulse model achieves sample MAE of **0.0211**, which is only marginally better than the trivial Age-Quadratic baseline (**0.0221**) and Age-Linear baseline (**0.0227**). When evaluated by cell with a 95% bootstrap confidence interval over the 21 independent cells, `soh_pulse_v2` (0.0217 [0.0181, 0.0260]) substantially overlaps with Age-Quadratic (0.0238 [0.0199, 0.0281]) and Age-Linear (0.0247 [0.0208, 0.0289]). Thus, for cells aging under nominal laboratory conditions, pulse feature extraction provides almost no statistically distinguishable gain over a calendar/cycle counter for capacity tracking.
+- **On $SOH_R$ (Cell Holdout):** The pulse model decisively beats the age-only baselines (Sample MAE **0.0094** vs **0.0195**; Cell Mean MAE **0.0099 [0.0073, 0.0126]** vs **0.0203 [0.0179, 0.0226]**). Impedance degradation varies non-linearly across individual cells, where pulse ECM features capture physical resistance growth that age alone cannot resolve.
+- **On Condition Holdout (Groups 3 and 6):** Under severe stress cycling, cells degrade significantly faster per cycle. Age-only models fail (MAE ~0.047), while `soh_pulse_v2` achieves **0.0219 MAE**, demonstrating that pulse features track accelerated electrochemical degradation across varying stress regimes.
+- **Independent Units:** Evaluated on **21 sealed cells** (within-condition) and **2 held-out condition groups** (12 cells).
 
 ---
 
